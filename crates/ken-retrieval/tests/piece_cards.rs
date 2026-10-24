@@ -201,3 +201,80 @@ fn fixed_card_projection_preserves_roles_lines_and_limits() {
         }
     }
 }
+
+#[test]
+fn card_support_must_belong_to_the_catalog_generation() {
+    let raw: BTreeMap<String, Box<serde_json::value::RawValue>> =
+        serde_json::from_str(include_str!("fixtures/piece-inputs-cards.json")).unwrap();
+    let cases: Vec<Box<serde_json::value::RawValue>> =
+        serde_json::from_str(raw["cases"].get()).unwrap();
+    let case: BTreeMap<String, Box<serde_json::value::RawValue>> =
+        serde_json::from_str(cases[0].get()).unwrap();
+    let input: Input = serde_json::from_str(case["input"].get()).unwrap();
+    let temporary = tempfile::tempdir().unwrap();
+    for (name, bytes) in &input.catalog.files {
+        let path = temporary.path().join(name);
+        fs::create_dir_all(path.parent().unwrap()).unwrap();
+        fs::write(path, bytes).unwrap();
+    }
+    let context = DiscoveryContext {
+        cwd: temporary.path().into(),
+        forced_root: None,
+        home: None,
+    };
+    let paths = ProjectPaths::at(temporary.path(), &context).unwrap();
+    let source = Arc::new(SourceAuthority::new(&paths).unwrap());
+    let catalog = SourceCatalog::new(
+        source,
+        input
+            .catalog
+            .owners
+            .into_iter()
+            .map(|o| (o.key, o.passages))
+            .collect(),
+    )
+    .unwrap();
+    assert!(!input.matches.is_empty());
+    assert!(
+        build_piece_cards(
+            &input.matches,
+            &input.piece_kind,
+            &input.query,
+            &catalog,
+            20
+        )
+        .is_ok()
+    );
+    for change in [
+        "stale-match",
+        "stale-evidence",
+        "foreign-evidence",
+        "empty-evidence",
+        "unknown-owner",
+    ] {
+        let mut support = input.matches.clone();
+        match change {
+            "stale-match" => {
+                support[0].source_hash = "stale".into();
+                for p in &mut support[0].evidence {
+                    p.source_hash = "stale".into();
+                }
+            }
+            "stale-evidence" => support[0].evidence[0].source_hash = "stale".into(),
+            "foreign-evidence" => support[0].evidence[0].entity.qualname = Some("foreign".into()),
+            "empty-evidence" => support[0].evidence.clear(),
+            _ => support[0].entity.qualname = Some("unknown".into()),
+        }
+        assert!(
+            build_piece_cards(&support, &input.piece_kind, &input.query, &catalog, 20).is_err(),
+            "{change}"
+        );
+        let mut assembler = ken_retrieval::piece_candidates::PieceAssembler::new(Arc::new(
+            SourceCatalog::new(catalog.source().clone(), catalog.owners().to_vec()).unwrap(),
+        ));
+        assert!(
+            assembler.assemble(&support, &input.piece_kind, 10).is_err(),
+            "assembly {change}"
+        );
+    }
+}

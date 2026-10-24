@@ -13,7 +13,7 @@ from .selection_reference import owners
 from .integration_validate import rust_gate_errors
 COUNTS={'catalog':38,'assembly':45,'ranking':84,'ranking-edges':13,'ranking-empty-declaration':1,'cards':60,'evidence':86,'evidence-edges':2,'presentation':117}
 # Root discovery excludes the health test's nested child-harness execution.
-NATIVE_ROOTS={'Linux':124,'Darwin':123}
+NATIVE_ROOTS={'Linux':126,'Darwin':125}
 ROOTS={'catalog':4,'assembly':3,'ranking':9,'cards':3,'evidence':19,'presentation':9}
 PARENTS={'ranking-edges':'ranking','ranking-empty-declaration':'ranking','evidence-edges':'evidence'}
 PREDECESSOR=dict(path='docs/validation/rust-migration-2026-10-23/m4-numeric-owner',sha256='9058d60199da6ef080991203bf0b6351361a5c27c2d5e6358bf31c3f3e4d1a6e')
@@ -89,6 +89,22 @@ def original_references(packet:Path,repo:Path):
     return references
 TEST_NAMES=['portable_reference','reference','numeric_evidence','numeric_reference','dense_runtime','translation_build','piece_reference','retrieval_validate','retrieval_evidence','selection_evidence','piece_validate','piece_probe','piece_evidence']
 TEST_FILES=['tests/rust_migration/test_'+name+'.py'for name in TEST_NAMES]
+LINT_COMMANDS={
+    'fmt':['cargo','fmt','--all','--check'],
+    'clippy':['cargo','clippy','--locked','--offline','-p','ken-core','-p','ken-retrieval','--all-targets','--','-D','warnings'],
+}
+def run_lint_gates(gates:Path):
+    """Preserve actual command exits and log identities before propagating failure."""
+    import subprocess
+    records={}
+    for name,command in LINT_COMMANDS.items():
+        path=gates/(name+'.log')
+        with path.open('wb')as stream:
+            result=subprocess.run(command,stdout=stream,stderr=subprocess.STDOUT,check=False)
+        records[name]=dict(command=command,exit=result.returncode,log=identity(path))
+        (gates/'LINT.json').write_text(json.dumps(records,indent=2)+'\n')
+        if result.returncode:raise RuntimeError(name+' gate failed; actual command receipt preserved')
+
 def verify_gates(gates:Path,*,rust_roots:int,python_roots:int):
     try:
         listed=(gates/'rust-list.log').read_text();output=(gates/'rust-tests.log').read_text()
@@ -99,7 +115,12 @@ def verify_gates(gates:Path,*,rust_roots:int,python_roots:int):
                 path,node=line.split('::',1);discovered.append(path[:-3].replace('/','.')+'::'+node)
         states=junit_states(gates/'python.xml')
         require(len(discovered)==python_roots and len(set(discovered))==python_roots and set(discovered)==set(states)and set(states.values())=={'passed'},'complete piece tooling roots required')
+        lint=load(gates/'LINT.json');require(set(lint)==set(LINT_COMMANDS),'piece lint command inventory missing')
+        for name,command in LINT_COMMANDS.items():
+            row=lint[name];require(set(row)=={'command','exit','log'}and row['command']==command and type(row['exit'])is int and row['exit']==0 and row['log']==identity(gates/(name+'.log')),'piece lint execution/log differs')
+        lines=(gates/'clippy.log').read_text().splitlines()
         require((gates/'fmt.log').read_bytes()==b''and'error:'not in(gates/'clippy.log').read_text(),'piece format/lint failed')
+        require(lines and re.fullmatch(r'\s*Finished `dev` profile .*target\(s\) in \S+',lines[-1]),'piece clippy completion missing')
         return[]
     except(OSError,KeyError,TypeError,ValueError)as error:return[str(error)]
 def verify_snapshot(packet:Path,snapshot:Path):
@@ -119,7 +140,7 @@ def verify_platform(packet:Path,repo:Path):
         for family in COUNTS:
             errors=verify_capture(packet/'native'/family,references[family],repo=repo,sources=sources,native_sha256=binary['sha256'])
             require(not errors,family+': '+str(errors))
-        system=preparation['runtime']['system'];require(not verify_gates(packet/'gates',rust_roots=NATIVE_ROOTS[system],python_roots=165),'complete source-piece gates failed')
+        system=preparation['runtime']['system'];require(not verify_gates(packet/'gates',rust_roots=NATIVE_ROOTS[system],python_roots=174),'complete source-piece gates failed')
         return[]
     except(OSError,KeyError,TypeError,ValueError,IndexError)as error:return[str(error)]
 def aggregate_matrix(directory:Path,repo:Path,*,review:Path|None=None):
@@ -137,7 +158,7 @@ def aggregate_matrix(directory:Path,repo:Path,*,review:Path|None=None):
         require(record['accepted_sources']==reports[0]['sources']and isinstance(record['reviewer'],str)and record['reviewer'],'review is not bound to accepted sources')
         require(identity(review.parent/relative(record['raw_review']['path']))==record['raw_review']['identity'],'raw final review changed')
         accepted=True
-    return dict(format='ken-source-piece-acceptance/1',platforms=reports,cases_per_platform=446,differentials_per_platform=440,explicit_source_guards_per_platform=6,predecessor=PREDECESSOR,M4c2_accepted=accepted,M4_accepted=False,migration_complete=False)
+    return dict(format='ken-source-piece-acceptance/1',platforms=reports,cases_per_platform=446,differentials_per_platform=433,explicit_source_guards_per_platform=13,predecessor=PREDECESSOR,M4c2_accepted=accepted,M4_accepted=False,migration_complete=False)
 def extract_snapshot(packet:Path,destination:Path):
     """Validate bounded regular payloads before writing a new snapshot directory."""
     import hashlib,tarfile

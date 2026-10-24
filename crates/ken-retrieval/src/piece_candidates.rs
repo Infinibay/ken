@@ -4,7 +4,7 @@ use crate::{
     description::{OwnerDescription, describe_owner},
     model::evidence_matches,
     query::CodeMatch,
-    source_catalog::{PieceIdentity, SourceCatalog},
+    source_catalog::{PieceIdentity, SourceCatalog, piece_entity_kind},
 };
 use serde::{Serialize, Serializer, ser::SerializeSeq};
 use std::{
@@ -50,7 +50,11 @@ impl PieceCandidate {
                 "requested piece requires members and retrieved evidence",
             ));
         }
-        if matches!(kind.as_str(), "class" | "symbol") != entity.is_some() {
+        if matches!(kind.as_str(), "class" | "symbol") != entity.is_some()
+            || entity
+                .as_ref()
+                .is_some_and(|key| !piece_entity_kind(&kind, &key.kind))
+        {
             return Err(invalid("requested piece identity disagrees with its kind"));
         }
         let keys: HashSet<_> = members.iter().map(|m| &m.entity).collect();
@@ -145,16 +149,9 @@ impl PieceAssembler {
         let mut groups: Vec<(PieceIdentity, Vec<CodeMatch>)> = Vec::new();
         let mut lookup = HashMap::new();
         for matched in matches {
-            if !evidence_matches(&matched.entity, &matched.source_hash, &matched.evidence)
-                || self
-                    .catalog
-                    .snapshots()
-                    .get(&matched.entity.path)
-                    .is_none_or(|source| source.hash() != matched.source_hash)
-                || self.catalog.passages(&matched.entity).is_err()
-            {
-                return Err(invalid("retrieved member is outside the piece source"));
-            }
+            self.catalog
+                .admit_match(matched)
+                .map_err(|e| invalid(&e.to_string()))?;
             if let Some(primary) = self
                 .catalog
                 .primary(&matched.entity, kind)

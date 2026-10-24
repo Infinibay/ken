@@ -1,7 +1,8 @@
 //! Canonical ownership and lexical containment of immutable physical snapshots.
 use crate::{
     EntityKey, Passage, Span,
-    query::merge_spans,
+    model::evidence_matches,
+    query::{CodeMatch, merge_spans},
     source_locator::module_name,
     source_snapshot::{SourceAuthority, SourceResult, SourceSnapshot, invalid},
 };
@@ -45,6 +46,13 @@ pub struct SourceCatalog {
 }
 fn callable(kind: &str) -> bool {
     matches!(kind, "function" | "method" | "constructor" | "destructor")
+}
+pub(crate) fn piece_entity_kind(kind: &str, entity_kind: &str) -> bool {
+    match kind {
+        "class" => entity_kind == "class",
+        "symbol" => callable(entity_kind) || matches!(entity_kind, "const" | "constant"),
+        _ => false,
+    }
 }
 impl SourceCatalog {
     pub fn new(
@@ -139,6 +147,19 @@ impl SourceCatalog {
     }
     pub fn passages(&self, key: &EntityKey) -> SourceResult<&[Passage]> {
         Ok(&self.owners[self.index(key)?].1)
+    }
+    /// Admit retrieval support only from this canonical owner/source generation.
+    pub fn admit_match(&self, matched: &CodeMatch) -> SourceResult<()> {
+        if !evidence_matches(&matched.entity, &matched.source_hash, &matched.evidence)
+            || self
+                .snapshots
+                .get(&matched.entity.path)
+                .is_none_or(|s| s.hash() != matched.source_hash)
+            || self.passages(&matched.entity).is_err()
+        {
+            return Err(invalid("retrieved member is outside the piece source"));
+        }
+        Ok(())
     }
     pub fn by_path(&self) -> &BTreeMap<String, Vec<EntityKey>> {
         &self.by_path
@@ -241,14 +262,14 @@ impl SourceCatalog {
     pub fn primary(&self, key: &EntityKey, kind: &str) -> SourceResult<Option<PieceIdentity>> {
         self.index(key)?;
         Ok(match kind {
-            "class" if key.kind == "class" => Some(PieceIdentity::Entity(key.clone())),
+            "class" if piece_entity_kind(kind, &key.kind) => {
+                Some(PieceIdentity::Entity(key.clone()))
+            }
             "class" => self
                 .enclosing_class(key)?
                 .cloned()
                 .map(PieceIdentity::Entity),
-            "symbol"
-                if callable(&key.kind) || matches!(key.kind.as_str(), "const" | "constant") =>
-            {
+            "symbol" if piece_entity_kind(kind, &key.kind) => {
                 Some(PieceIdentity::Entity(key.clone()))
             }
             "symbol" => None,

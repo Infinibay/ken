@@ -1,4 +1,6 @@
 //! All scenario writes stay under one disposable owned directory.
+#[path = "owned_files.rs"]
+mod owned_files;
 use super::{Result, invalid};
 use ken_core::project::{DiscoveryContext, ProjectPaths};
 use ken_retrieval::{
@@ -6,10 +8,10 @@ use ken_retrieval::{
     source_catalog::SourceCatalog,
     source_snapshot::{SourceAuthority, SourceError, SourceResult},
 };
+use owned_files::OwnedFiles;
 use serde::Deserialize;
 use std::{
     collections::BTreeMap,
-    fs,
     path::{Component, Path, PathBuf},
     sync::Arc,
 };
@@ -38,6 +40,7 @@ fn source_invalid(message: impl Into<String>) -> SourceError {
 }
 pub struct Scenario {
     _owned: tempfile::TempDir,
+    files: OwnedFiles,
     pub root: PathBuf,
     pub source: Arc<SourceAuthority>,
 }
@@ -70,7 +73,8 @@ impl Scenario {
             .prefix("source-case-")
             .tempdir_in(cwd)?;
         let root = owned.path().join("project");
-        fs::create_dir(&root)?;
+        let files = OwnedFiles::new(owned.path())?;
+        files.directory(Path::new("project"))?;
         if physical.files.len() > 128
             || physical.owners.len() > 256
             || physical.files.values().map(Vec::len).sum::<usize>() > 4 * 1024 * 1024
@@ -83,20 +87,26 @@ impl Scenario {
             }
             let target = confined(&root, Path::new(name), owned.path())
                 .map_err(|e| source_invalid(e.to_string()))?;
-            fs::create_dir_all(target.parent().expect("owned path"))?;
-            fs::write(target, bytes)?;
+            files.write(
+                target.strip_prefix(owned.path()).expect("confined target"),
+                bytes,
+                true,
+            )?;
         }
         for link in &physical.symlinks {
             let path = confined(&root, Path::new(&link.path), owned.path())
                 .map_err(|e| source_invalid(e.to_string()))?;
-            fs::create_dir_all(path.parent().expect("owned link"))?;
             confined(
                 path.parent().expect("owned link"),
                 Path::new(&link.target),
                 owned.path(),
             )
             .map_err(|e| source_invalid(e.to_string()))?;
-            std::os::unix::fs::symlink(&link.target, path)?;
+            files.symlink(
+                Path::new(&link.target),
+                path.strip_prefix(owned.path()).expect("confined link"),
+                true,
+            )?;
         }
         let context = DiscoveryContext {
             cwd: root.clone(),
@@ -107,6 +117,7 @@ impl Scenario {
         let source = Arc::new(SourceAuthority::new(&paths)?);
         Ok(Self {
             _owned: owned,
+            files,
             root,
             source,
         })
@@ -129,6 +140,9 @@ impl Scenario {
     pub fn mutate(&self, mutation: &Mutation) -> SourceResult<()> {
         let target = confined(&self.root, Path::new(&mutation.path), self._owned.path())
             .map_err(|e| source_invalid(e.to_string()))?;
+        let relative = target
+            .strip_prefix(self._owned.path())
+            .expect("confined mutation");
         match mutation.op.as_str() {
             "write" => {
                 let bytes = mutation
@@ -138,14 +152,15 @@ impl Scenario {
                 if bytes.len() > 1024 * 1024 {
                     return Err(source_invalid("mutation exceeds1MiB"));
                 }
-                fs::write(target, bytes)?;
+                self.files.write(relative, bytes, false)?;
             }
-            "delete" => fs::remove_file(target)?,
+            "delete" => self.files.remove(relative)?,
             "symlink" => {
                 let outside = self._owned.path().join("outside.py");
-                fs::write(&outside, "outside fixture\n")?;
-                fs::remove_file(&target)?;
-                std::os::unix::fs::symlink(outside, target)?;
+                self.files
+                    .write(Path::new("outside.py"), b"outside fixture\n", false)?;
+                self.files.remove(relative)?;
+                self.files.symlink(&outside, relative, false)?;
             }
             "replace-root" => {
                 let bytes = mutation
@@ -155,10 +170,10 @@ impl Scenario {
                 if bytes.len() > 1024 * 1024 {
                     return Err(source_invalid("mutation exceeds1MiB"));
                 }
-                fs::rename(&self.root, self._owned.path().join("old-project"))?;
-                fs::create_dir(&self.root)?;
-                fs::create_dir_all(target.parent().expect("owned source path"))?;
-                fs::write(target, bytes)?;
+                self.files
+                    .rename(Path::new("project"), Path::new("old-project"))?;
+                self.files.directory(Path::new("project"))?;
+                self.files.write(relative, bytes, true)?;
             }
             _ => return Err(source_invalid("unknown disposable source mutation")),
         }

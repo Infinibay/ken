@@ -164,3 +164,51 @@ fn independent_catalogs_cannot_share_a_description_cache() {
     assert!(!Arc::ptr_eq(&a[0].members()[0], &b[0].members()[0]));
     assert_eq!(a[0].members()[0], b[0].members()[0]);
 }
+
+#[test]
+fn public_piece_identity_rejects_wrong_semantic_kind() {
+    let mut corpus: Corpus =
+        serde_json::from_str(include_str!("fixtures/piece-reference-assembly.json")).unwrap();
+    let input = corpus.cases.remove(0).input;
+    let (_directory, catalog) = fixture(input.catalog);
+    let (_, passages) = catalog
+        .owners()
+        .iter()
+        .find(|(key, _)| key.kind == "function")
+        .unwrap();
+    let description = describe_owner(passages).unwrap();
+    for (piece_kind, entity_kind, accepted) in [
+        ("class", "function", false),
+        ("symbol", "class", false),
+        ("class", "class", true),
+        ("symbol", "function", true),
+        ("symbol", "method", true),
+        ("symbol", "constructor", true),
+        ("symbol", "destructor", true),
+        ("symbol", "const", true),
+        ("symbol", "constant", true),
+        ("symbol", "module", false),
+    ] {
+        let mut member = description.clone();
+        member.entity.kind = entity_kind.into();
+        for passage in &mut member.passages {
+            passage.entity = member.entity.clone();
+        }
+        let matched = CodeMatch {
+            entity: member.entity.clone(),
+            score: 1.,
+            evidence: member.passages.clone(),
+            source_hash: member.source_hash.clone(),
+            signals: Default::default(),
+            owned_regions: vec![],
+        };
+        let result = PieceCandidate::new(
+            piece_kind.into(),
+            member.entity.path.clone(),
+            Some(member.entity.clone()),
+            vec![Arc::new(member)],
+            vec![matched],
+        );
+        assert_eq!(result.is_ok(), accepted, "{piece_kind}/{entity_kind}");
+    }
+}

@@ -42,3 +42,28 @@ The assembler is bound to its catalog generation; an immutable catalog cannot si
 Capture only new disjoint actual-original observations and the corresponding scoped suites once per platform, immediately before implementation of each concept. Record scripts/requests/raw results/exit/JUnit/owner hashes and exact discovery; supplemental observations reuse suite evidence. Preserve all861M4c1 numeric and758M4b selection observations and prior model receipts without recapturing originals. Public usage tests cover nested ownership, invalid ranges, cross-generation caches, live-file replacement/symlink escape, multibyte/escaped JSON budgets, stable priors/calls/bypass and production tree paths. No skipped/filtered roots or weakened assertions.
 
 An input-only native piece probe constructs disposable test sources only within its own temporary scenario directories and runs outside the checkout with empty PATH/HOME, verified owned resources, native loader/exec/connect auditing and measured time/RSS. Accept both actual macOSarm64/Linuxaarch64 runs, source/binary/raw/resource authentication, complete native/tooling suites and strict fmt/clippy. Capture current-source native rechecks of prior observations only when shared source/boundary changes justify them. One whole-plan fresh review and one Important/Critical TDD fix pass; archive all rulings/minors, verify archived-source receipt independently, commit/push and clean only this plan's scratch/build debris.
+
+## Review repair ruling, 24 October
+
+The final review found that card grouping did not enforce the assembler's
+source-generation admission, and the public constructor admitted a class whose
+entity was not a class. The catalog now owns shared match admission; a single
+canonical class/symbol eligibility rule governs the catalog and constructor.
+The supported symbol kinds remain function, method, constructor, destructor,
+const and constant. Invalid support is rejected before encoding or projection.
+
+Seven preserved `ranking-edges` observations deliberately construct class pieces
+with interface, enum, type, function, method, module or constant identities.
+They demonstrate inherited unsafe constructor behavior, not canonical catalog
+outputs. They remain immutable original observations. Native acceptance now
+requires the precise identity error and empty encoder/stem calls for these seven,
+in addition to the six earlier source-admission guards: **446 observations =
+433 differentials plus 13 explicitly stronger guards**. No numerical tolerance,
+valid case, source budget or production forest decision is relaxed. Cold exact
+support for other declaration kinds remains an M4d orchestration responsibility.
+
+The probe's scenario filesystem also uses an owned directory descriptor for
+creation, replacement, deletion and symlink operations, refusing symlink traversal
+in parent components. A lexical relative-path check alone is not a write boundary.
+Full lint acceptance requires the actual command, successful exit, authenticated
+log and affirmative Clippy completion; an empty or truncated log cannot pass.

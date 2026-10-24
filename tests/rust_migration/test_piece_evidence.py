@@ -92,3 +92,35 @@ def test_actual_complete_native_discovery_excludes_nested_health_harness():
     # The health suite reexecutes one root in its own filtered child harness.
     raw_passed=sum(map(int,re.findall(r'test result: ok\. (\d+) passed',output)))
     assert raw_passed==discovered+1
+
+def lint_gate_sample(tmp_path):
+    from tools.rust_migration.native_json import identity
+    gate=tmp_path/'gates';gate.mkdir()
+    (gate/'rust-list.log').write_text('parent: test\n')
+    (gate/'rust-tests.log').write_text('test parent ... ok\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.1s\n')
+    (gate/'python-list.log').write_text('tests/rust_migration/test_piece_probe.py::sample\n')
+    (gate/'python.xml').write_text('<testsuite><testcase classname="tests.rust_migration.test_piece_probe" name="sample"/></testsuite>')
+    (gate/'fmt.log').write_bytes(b'')
+    (gate/'clippy.log').write_text('    Checking ken-retrieval v0.18.0\n    Finished `dev` profile [unoptimized] target(s) in 0.5s\n')
+    commands={'fmt':['cargo','fmt','--all','--check'],'clippy':['cargo','clippy','--locked','--offline','-p','ken-core','-p','ken-retrieval','--all-targets','--','-D','warnings']}
+    (gate/'LINT.json').write_text(json.dumps({name:dict(command=command,exit=0,log=identity(gate/(name+'.log')))for name,command in commands.items()}))
+    return gate
+
+def test_complete_lint_receipt_has_actual_success_and_finished_output(tmp_path):
+    from tools.rust_migration.piece_evidence import verify_gates
+    assert not verify_gates(lint_gate_sample(tmp_path),rust_roots=1,python_roots=1)
+
+@pytest.mark.parametrize('change',['empty','truncated','exit','command','hash','missing'])
+def test_incomplete_or_resealed_lint_cannot_certify_gates(tmp_path,change):
+    from tools.rust_migration.native_json import identity
+    from tools.rust_migration.piece_evidence import verify_gates
+    gate=lint_gate_sample(tmp_path);record=load(gate/'LINT.json')
+    if change in('empty','truncated'):
+        (gate/'clippy.log').write_text(''if change=='empty'else '    Checking ken-retrieval v0.18.0\n')
+        record['clippy']['log']=identity(gate/'clippy.log')
+    elif change=='exit':record['clippy']['exit']=1
+    elif change=='command':record['clippy']['command'].remove('--all-targets')
+    elif change=='hash':(gate/'clippy.log').write_text('    Finished `dev` profile [unoptimized] target(s) in 0.6s\n')
+    else:record['fmt'].pop('exit')
+    (gate/'LINT.json').write_text(json.dumps(record))
+    assert verify_gates(gate,rust_roots=1,python_roots=1)

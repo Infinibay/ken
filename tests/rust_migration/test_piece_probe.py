@@ -43,3 +43,18 @@ def test_escape_observation_only_uses_its_owned_sibling_fixture(probe,tmp_path):
     value['cases'][0]['input']=dict(files={'../outside.py':list(content)},owners=[dict(key=key,passages=[passage])],symlinks=[dict(path='escape.py',target='../outside.py')])
     result=execute(probe,tmp_path,value);assert result.returncode==0,result.stderr.decode()
     assert json.loads(result.stdout)['cases'][0]['error']==dict(type='ValueError',message='source outside root')
+
+def test_scenario_creation_and_mutations_never_follow_linked_parents(probe,tmp_path):
+    # Every sentinel is owned by this regression's disposable pytest directory.
+    links=[dict(path='a',target='.'),dict(path='b',target='a/..'),dict(path='c',target='b/..')]
+    for operation in ('write','delete','symlink','create-link'):
+        sentinel=tmp_path/'sentinel';sentinel.write_bytes(b'unchanged')
+        physical=dict(files={},owners=[],symlinks=deepcopy(links))
+        data=dict(catalog=physical,matches=[],piece_kind='file',query='source')
+        if operation=='create-link':physical['symlinks'].append(dict(path='c/new-link',target='.'))
+        else:data['mutation']=dict(op=operation,path='c/sentinel',bytes=list(b'changed'))
+        value=request();value['cases']=[dict(id=operation,family='cards',kind='cards',input=data)]
+        result=execute(probe,tmp_path,value)
+        assert sentinel.is_file() and not sentinel.is_symlink() and sentinel.read_bytes()==b'unchanged',operation
+        assert not(tmp_path/'new-link').exists() and not(tmp_path/'new-link').is_symlink()
+        assert result.returncode!=0 or 'error'in json.loads(result.stdout)['cases'][0],operation

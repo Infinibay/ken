@@ -66,3 +66,16 @@ def test_macos_private_temp_alias_is_portable_without_hiding_diagnostic_or_size_
     assert not compare_case(expected,actual)
     actual['result']['characters']+=1;assert compare_case(expected,actual)
     actual['result']['characters']-=1;actual['result']['response']['warnings'][0]+=' invented';assert compare_case(expected,actual)
+
+def test_invalid_class_declarations_are_explicit_stronger_identity_guards():
+    ref=reference('ranking-edges');cases=[c for c in ref['cases']if c['id'].startswith('edge-declaration-kind-')and c['id']!='edge-declaration-kind-class']
+    assert len(cases)==7
+    for expected in cases:
+        original={k:deepcopy(v)for k,v in expected.items()if k!='input'}
+        assert compare_case(expected,original),'unsafe original construction cannot certify current admission'
+        actual={k:expected[k]for k in('id','family','kind')}
+        actual.update(error=dict(type='ValueError',message='requested piece identity disagrees with its kind'),encoder_calls=[],stemmer_calls=[])
+        assert not compare_case(expected,actual)
+        actual['encoder_calls']=[dict(op='query',text='unexpected')];assert compare_case(expected,actual)
+    valid=next(c for c in ref['cases']if c['id']=='edge-declaration-kind-class')
+    assert not compare_case(valid,{k:v for k,v in valid.items()if k!='input'})

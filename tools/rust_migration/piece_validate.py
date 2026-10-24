@@ -10,6 +10,13 @@ FORMAT='ken-source-piece-probe/1'
 PREFIX='ken-source-pieces-native-'
 SCOPE='native input parsing, disposable source scenarios, piece projection/ranking/presentation and registered resource loading, before output serialization'
 GUARDS={'catalog_admission':'catalog source owner is invalid','assembly_admission':'retrieved member is outside the piece source'}
+def identity_guard(case):
+    """Reviewed strengthening: class/symbol identities must be canonical types."""
+    if not case.get('family','').startswith('ranking'):return False
+    for piece in case['input'].get('pieces',[]):
+        entity=piece.get('entity')
+        if entity and ((piece['kind']=='class'and entity['kind']!='class')or(piece['kind']=='symbol'and entity['kind']not in('function','method','constructor','destructor','const','constant'))):return True
+    return False
 def portable_diagnostics(case):
     """Remove only macOS's lexical/canonical alias of the owned temp root."""
     value=case
@@ -45,7 +52,9 @@ def equal(expected,actual,case,path=()):
 def compare_case(expected,actual):
     try:
         require(all(actual.get(k)==expected.get(k)for k in('id','family','kind')),'piece case identity/order differs')
-        if expected['kind']in GUARDS:
+        if identity_guard(expected):
+            require(set(actual)=={'id','family','kind','error','encoder_calls','stemmer_calls'}and actual['error']==dict(type='ValueError',message='requested piece identity disagrees with its kind')and actual['encoder_calls']==[]and actual['stemmer_calls']==[],'piece canonical identity guard differs')
+        elif expected['kind']in GUARDS:
             require(set(actual)=={'id','family','kind','error'}and actual['error']==dict(type='ValueError',message=GUARDS[expected['kind']]),'piece source admission guard differs')
         else:equal({k:v for k,v in portable_diagnostics(expected).items()if k!='input'},portable_diagnostics(actual),expected)
         return[]

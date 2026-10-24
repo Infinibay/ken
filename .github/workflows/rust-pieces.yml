@@ -96,8 +96,11 @@ jobs:
         shell: bash
         run: |
           output=.ken/rust-migration/piece-platform/gates
-          cargo fmt --all --check > "$output/fmt.log" 2>&1
-          cargo clippy --locked --offline -p ken-core -p ken-retrieval --all-targets -- -D warnings > "$output/clippy.log" 2>&1
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          from tools.rust_migration.piece_evidence import run_lint_gates
+          run_lint_gates(Path('.ken/rust-migration/piece-platform/gates'))
+          PY
       - name: Record source and executable identities
         shell: bash
         run: |

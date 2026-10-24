@@ -425,6 +425,7 @@ pub fn build_piece_cards(
 ) -> SourceResult<Vec<PieceCard>> {
     let mut groups: Vec<(PieceIdentity, Vec<EntityKey>)> = Vec::new();
     for item in matches {
+        catalog.admit_match(item)?;
         if let Some(primary) = catalog.primary(&item.entity, kind)? {
             if let Some((_, support)) = groups.iter_mut().find(|(key, _)| *key == primary) {
                 support.push(item.entity.clone());

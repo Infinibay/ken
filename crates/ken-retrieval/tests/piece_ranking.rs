@@ -2,7 +2,7 @@ pub mod feature_support;
 use feature_support as support;
 use ken_models::{EncoderSpec, StaticTableEncoder};
 use ken_retrieval::{
-    EntityKey, Result,
+    EntityKey, Result, RetrievalError,
     description::OwnerDescription,
     feature_matrix::FeatureMatrix,
     numeric_ranker::NumericRanker,
@@ -254,12 +254,29 @@ fn piece_feature_columns_calls_and_stable_order() {
             Rc::new(Words::Synthetic(support::Encoder::new(&common)))
         };
         let stems = Arc::new(support::Stems::new(&common));
-        let pieces = input
+        // These seven preserved original feature cases deliberately construct
+        // class pieces with non-class identities. The reviewed public contract
+        // rejects them before encoding; their raw originals remain unchanged.
+        let identity_guard = input
+            .pieces
+            .iter()
+            .any(|p| p.kind == "class" && p.entity.as_ref().is_some_and(|e| e.kind != "class"));
+        let admitted = input
             .pieces
             .into_iter()
             .map(RawPiece::materialize)
-            .collect::<Result<Vec<_>>>()
-            .unwrap();
+            .collect::<Result<Vec<_>>>();
+        if identity_guard {
+            assert!(
+                matches!(admitted, Err(RetrievalError::Invalid(ref message)) if message == "requested piece identity disagrees with its kind"),
+                "identity guard {}",
+                case.id
+            );
+            assert!(encoder.take_calls().is_empty());
+            assert!(stems.calls.lock().unwrap().is_empty());
+            continue;
+        }
+        let pieces = admitted.unwrap();
         let result = if case.kind == "piece_features" {
             piece_features(
                 &input.request,
