@@ -35,10 +35,10 @@
 
 **Interfaces:** Existing prepare_grammars(lock:dict,cache:Path,destination:Path)->dict produces ken-native-grammars/1. KEN_PARSER_ORIGINAL_GRAMMARS selects its explicit SDK for capture_parser_reference(reference,out,repo=repo)->dict; no observer/schema change.
 
-- [ ] Add a registration regression requiring linux-x86_64,exact official archive identity,13unique selected files and unchanged ARM bundle digest. Run pytest test_grammar_prepare; Expected missing-registration RED.
-- [ ] Inventory the authenticated official archive,copy the same grammar revisions/symbols/licenses,add only the x86bundle metadata and prepare it at .ken/rust-migration/m4d-x86-grammar/sdk-linux-x86_64. Never overwrite an existing different SDK. Add/reuse the prepared-cache tamper/cross-platform regression for Review Focus1.
-- [ ] Capture the new x86original parser corpus and its exact scoped suite once with the frozen reference and explicit SDK. Preserve observer/request/stdout/stderr/JUnit/source/runtime/package bindings. Reuse a completed capture on retry; no ARM-original recapture. Save the validated complete new reference as deterministic gzip at crates/ken-syntax/tests/fixtures/reference-linux-x86_64.json.gz,consumed by the new tooling caller; preserve existing fixtures.
-- [ ] Run the native all-grammar public-use test with this prepared manifest before changing grammar.rs. Expected host rejection RED. Commit registration/preparation/original fixture with native support still disabled.
+- [x] Add a registration regression requiring linux-x86_64,exact official archive identity,13unique selected files and unchanged ARM bundle digest. Run pytest test_grammar_prepare; Expected missing-registration RED.
+- [x] Inventory the authenticated official archive,copy the same grammar revisions/symbols/licenses,add only the x86bundle metadata and prepare it at .ken/rust-migration/m4d-x86-grammar/sdk-linux-x86_64. Never overwrite an existing different SDK. Add/reuse the prepared-cache tamper/cross-platform regression for Review Focus1.
+- [x] Capture the new x86original parser corpus and its exact scoped suite once with the frozen reference and explicit SDK. Preserve observer/request/stdout/stderr/JUnit/source/runtime/package bindings. Reuse a completed capture on retry; no ARM-original recapture. Save the validated complete new reference as deterministic gzip at crates/ken-syntax/tests/fixtures/reference-linux-x86_64.json.gz,consumed by the new tooling caller; preserve existing fixtures.
+- [x] Run the native all-grammar public-use test with this prepared manifest before changing grammar.rs. Expected host rejection RED. Commit registration/preparation/original fixture with native support still disabled.
 
 ### Task 2: Enable the host and authenticate native parser behavior
 
