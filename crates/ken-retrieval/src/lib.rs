@@ -84,6 +84,7 @@ pub mod piece_candidates;
 pub mod piece_cards;
 pub mod piece_features;
 pub mod piece_ranking;
+pub mod presentation;
 pub mod result_selection;
 pub mod source_catalog;
 pub mod source_evidence;

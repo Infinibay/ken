@@ -3,7 +3,10 @@ use crate::Span;
 use ken_core::{project::ProjectPaths, source_reader::SourceFileReader};
 use ken_text::unicode::splitlines;
 use sha2::{Digest, Sha256};
-use std::{io, path::Path};
+use std::{
+    io,
+    path::{Path, PathBuf},
+};
 
 #[derive(Debug, thiserror::Error)]
 pub enum SourceError {
@@ -50,12 +53,17 @@ fn decode_error(bytes: &[u8], error: std::str::Utf8Error) -> SourceError {
 }
 pub struct SourceAuthority {
     reader: SourceFileReader,
+    root: PathBuf,
 }
 impl SourceAuthority {
     pub fn new(paths: &ProjectPaths) -> SourceResult<Self> {
         Ok(Self {
             reader: SourceFileReader::new(paths)?,
+            root: paths.root().to_owned(),
         })
+    }
+    pub(crate) fn location(&self, path: &str) -> PathBuf {
+        self.root.join(path)
     }
     pub fn read(&self, path: &str) -> SourceResult<SourceSnapshot> {
         let source = self.reader.open(Path::new(path)).map_err(|error| {

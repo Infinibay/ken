@@ -34,7 +34,7 @@ impl From<&EntityKey> for CardEntity {
     }
 }
 impl CardEntity {
-    fn at(&self, path: &str) -> EntityKey {
+    pub(crate) fn at(&self, path: &str) -> EntityKey {
         EntityKey {
             path: path.into(),
             kind: self.kind.clone(),

@@ -49,8 +49,9 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | M4c2 Tasks 1–2 | Implementadas y probadas en ambos hosts; falta revisión final del plan | Catálogo físico y ensamblado completo, commits `34327080` y `5d9dc6f9` |
 | M4c2 Task 3 | Ranking implementado; gates Linux x86_64 y ambos ARM pasados; revisión final del plan pendiente | 98 observaciones originales, 262 columnas y bosque de 1.280 árboles |
 | M4c2 Task 4 | Cards implementadas; gates locales y ambos ARM pasados; revisión final del plan pendiente | 60 observaciones de proyección/procedencia/frescura |
-| M4c2 Task 5 | Evidencia implementada y comparada localmente; faltan gates ARM del código nativo | 88 observaciones originales; 124 pruebas nativas y 110 de tooling locales |
-| M4c2 Tasks 6–7 | Pendientes | Presentación, probe/comparador, matriz y una revisión final |
+| M4c2 Task 5 | Evidencia implementada; gates locales y ambos ARM pasados; revisión final del plan pendiente | 88 observaciones originales; 124 pruebas nativas Linux/123 macOS y 110 de tooling por host |
+| M4c2 Task 6 | Presentación implementada y comparada localmente; faltan gates ARM del código nativo | 117 observaciones originales; 125 pruebas nativas y 111 de tooling locales |
+| M4c2 Task 7 | Pendiente | Probe/comparador, matriz y una revisión final |
 | M4d | Pendiente; requiere su propio plan | Composición de búsqueda, canales restantes, pools de vistas preparadas, uso real de modelos y aceptación CLI/MCP |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
@@ -630,3 +631,26 @@ stemming que reutilizan las 19 raíces originales). Pasaron 124 pruebas nativas
 locales, 110 de tooling, formato y Clippy estricto. Falta ejecutar esa nueva
 implementación en ambos ARM, Task 6, el probe/recibo y la revisión final de Task 7.
 M4c2, M4 y la migración global siguen sin aceptación final.
+
+La evidencia nativa de Task 5 cerró sus gates ARM en
+[40118877663](https://github.com/Infinibay/ken/actions/runs/40118877663), commit
+`b3b74726`: 124 pruebas nativas Linux, 123 macOS y 110 de tooling por host,
+formato y Clippy estricto. Se verificaron por separado sus originales, salidas
+crudas y los 757 hashes de fuentes contra ese commit.
+
+Task 6 implementa `presentation`: respuestas tipadas de propietarios y piezas,
+consulta sin pérdida, redondeo a ocho decimales, ventanas/rangos fieles y los dos
+recortes originales por prioridad. El presupuesto usa el formato numérico y
+escapado Python ya aceptado, contando los surrogates aislados como un carácter
+semántico. Las 117 observaciones y nueve raíces originales pasaron también en
+ambos ARM antes de escribir esa implementación, ejecución
+[40119578070](https://github.com/Infinibay/ken/actions/runs/40119578070).
+El oráculo necesita `onnx==1.20.1` para importar un fixture de la prueba acotada;
+no se ejecuta la raíz neural ni se descargan modelos.
+
+La comparación local de presentación pasó de API ausente RED a GREEN. Encontró
+y corrigió el formato del aviso de archivo eliminado (errno y ruta), conservando
+al lector confinado como única autoridad de bytes. Pasaron 125 pruebas nativas
+locales, 111 de tooling, formato y Clippy estricto. Falta validar esa nueva
+implementación en ARM y completar el probe/recibo/revisión de Task 7. No se ha
+sustituido el comando Python instalado ni se acepta M4/global todavía.
