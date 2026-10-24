@@ -9,6 +9,7 @@ from .native_json import identity,load
 from .piece_ranking_reference import SCRIPT as RANKING_SCRIPT
 from .piece_card_reference import SCRIPT as CARD_SCRIPT
 from .piece_source_evidence_reference import SCRIPT as EVIDENCE_SCRIPT
+from .piece_presentation_reference import SCRIPT as PRESENTATION_SCRIPT
 ROOT=Path(__file__).resolve().parents[2]
 SUITES={'catalog':['tests/retrieval/test_piece_catalog.py'],'assembly':['tests/retrieval/test_piece_candidates.py'],'ranking':['tests/retrieval/test_piece_ranking.py']}
 SUITES['ranking-edges']=SUITES['ranking']
@@ -16,6 +17,7 @@ SUITES['ranking-empty-declaration']=SUITES['ranking']
 SUITES['cards']=['tests/retrieval/test_piece_cards.py']
 SUITES['evidence']=['tests/retrieval/test_evidence.py','tests/retrieval/test_complete_owned_context.py']
 SUITES['evidence-edges']=SUITES['evidence']
+SUITES['presentation']=['tests/retrieval/test_presentation.py','tests/retrieval/test_piece_search.py::test_file_response_identity_is_the_physical_file_and_source_changes_are_detected']
 CATALOG_SCRIPT=r'''
 import hashlib,importlib,json,pathlib,platform,sys,tempfile,unicodedata
 import pytest
@@ -98,6 +100,7 @@ SCRIPTS['ranking-empty-declaration']=RANKING_SCRIPT
 SCRIPTS['cards']=CARD_SCRIPT
 SCRIPTS['evidence']=EVIDENCE_SCRIPT
 SCRIPTS['evidence-edges']=EVIDENCE_SCRIPT.replace("exit_code=pytest.main(['-o','addopts=','--rootdir='+str(root),'-q',*request['suite'],'--junitxml='+request['junit']],plugins=[Plugin()])", "cached=json.loads(pathlib.Path(request['cached_suite']).read_bytes());discovered=cached['discovered'];states=cached['test_states'];exit_code=cached['original_test_exit']")
+SCRIPTS['presentation']=PRESENTATION_SCRIPT
 def definitions(family:str,repo:Path=ROOT):return load(repo/f'crates/ken-retrieval/tests/fixtures/piece-inputs-{family}.json')['cases']
 def validate_reference(value:dict,family:str,repo:Path=ROOT):
  try:

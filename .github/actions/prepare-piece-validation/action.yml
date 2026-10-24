@@ -17,7 +17,7 @@ runs:
           tree-sitter-python==0.25.0 tree-sitter-rust==0.24.2 \
           tree-sitter-javascript==0.25.0 tree-sitter-typescript==0.23.2 \
           tree-sitter-go==0.25.0 tree-sitter-java==0.23.5 pathspec==1.1.1 regex==2026.9.29 \
-          cmake==3.31.10
+          cmake==3.31.10 onnx==1.20.1
         rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
         printf '%s\n' 'CARGO_INCREMENTAL=0' 'CARGO_BUILD_JOBS=2' 'RUST_TEST_THREADS=1' \
           'CARGO_PROFILE_DEV_DEBUG=0' 'CARGO_PROFILE_TEST_DEBUG=0' 'CMAKE_PARALLEL=2' >> "$GITHUB_ENV"
@@ -95,7 +95,7 @@ runs:
         corpus = output/'corpora'
         corpus.mkdir(exist_ok=True)
         families = {}
-        for family in ('ranking', 'ranking-edges', 'ranking-empty-declaration', 'cards', 'evidence', 'evidence-edges'):
+        for family in ('ranking', 'ranking-edges', 'ranking-empty-declaration', 'cards', 'evidence', 'evidence-edges', 'presentation'):
             destination = base if family == 'ranking' else saved/family
             value = capture(reference, destination, repo=root, family=family,
                             cached_suite=(base/'reference.json' if family.startswith('ranking-') else
