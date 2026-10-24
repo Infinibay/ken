@@ -10,12 +10,7 @@ ABS=REL=1e-6
 ERROR_KINDS={'IndexVersionError':'index_version','RuntimeError':'model','ValueError':'invalid','UnicodeEncodeError':'invalid','OperationalError':'sqlite','IntegrityError':'sqlite','FileNotFoundError':'io','PermissionError':'io'}
 def require(condition,message):
     if not condition:raise ValueError(message)
-def same_value(left,right):
-    """JSON equality preserves scalar types (Python's True equals integer 1)."""
-    if type(left)is not type(right):return False
-    if isinstance(left,dict):return left.keys()==right.keys()and all(same_value(value,right[key])for key,value in left.items())
-    if isinstance(left,list):return len(left)==len(right)and all(same_value(a,b)for a,b in zip(left,right,strict=True))
-    return left==right
+from .native_json import same_value
 def f32_blob(value):
     require(isinstance(value,dict)and set(value)=={'blob_hex'},'invalid vector blob shape')
     raw=bytes.fromhex(value['blob_hex']);require(len(raw)%4==0,'invalid F32 bytes')

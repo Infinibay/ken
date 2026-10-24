@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import tempfile
 from .fastembed_process import _distinct, _nonfinite
+from .native_json import same_value
 
 LIMIT = 32 * 1024 * 1024
 
@@ -57,8 +58,8 @@ def compare_parser_observations(cases: list[dict], actual: dict) -> list[str]:
                 if set(row) != {'id', 'error'} or expected['error']['type'] != 'UnicodeDecodeError' or 'utf-8' not in row['error']:
                     raise ValueError('original encoding failure differs')
             else:
-                if set(row) != {'id', 'parsed', 'syntax'} or row['parsed'] != expected['parsed']: raise ValueError('complete ordered ParsedFile differs: ' + row['id'])
-                if 'syntax' in expected and row['syntax'] != expected['syntax']: raise ValueError('complete syntax differs: ' + row['id'])
+                if set(row) != {'id', 'parsed', 'syntax'} or not same_value(row['parsed'],expected['parsed']): raise ValueError('complete ordered ParsedFile differs: ' + row['id'])
+                if 'syntax' in expected and not same_value(row['syntax'],expected['syntax']): raise ValueError('complete syntax differs: ' + row['id'])
         return []
     except (ValueError, KeyError, TypeError) as error: return [str(error)]
 

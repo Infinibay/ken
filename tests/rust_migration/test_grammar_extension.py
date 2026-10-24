@@ -36,12 +36,12 @@ def test_actual_added_host_capture_authenticates_complete_source_and_oracle(pack
     from tools.rust_migration.grammar_extension import verify_grammar_capture
     assert not verify_grammar_capture(packet,ROOT)
 
-@pytest.mark.parametrize('change',['host','source','binary','binary-architecture','reference','raw','input','missing','original','runtime'])
+@pytest.mark.parametrize('change',['host','source','binary','binary-architecture','reference','raw','raw-type','input','missing','original','runtime'])
 def test_resealed_or_changed_added_host_capture_rejects(packet,change):
     from tools.rust_migration.grammar_extension import verify_grammar_capture
     assert not verify_grammar_capture(packet,ROOT)
     if change=='host':
-        path=packet/'HOST.json';value=json.loads(path.read_bytes());value['platform']='linux-aarch64';path.write_text(json.dumps(value))
+        path=packet/'HOST.json';value=json.loads(path.read_bytes());value['platform']='linux-x86_64'if value['platform']=='linux-aarch64'else'linux-aarch64';path.write_text(json.dumps(value))
     elif change=='source':
         path=packet/'SOURCES.json';value=json.loads(path.read_bytes());value.pop(next(iter(value)));path.write_text(json.dumps(value))
     elif change=='binary':(packet/'bin/parser-probe').write_bytes(b'changed')
@@ -60,6 +60,8 @@ def test_resealed_or_changed_added_host_capture_rejects(packet,change):
         path.write_bytes(gzip.compress(json.dumps(value).encode(),mtime=0))
     elif change=='raw':
         path=packet/'native/stdout.json';value=json.loads(path.read_bytes());value['cases'][0]['syntax'].pop();path.write_text(json.dumps(value))
+    elif change=='raw-type':
+        path=packet/'native/stdout.json';value=json.loads(path.read_bytes());value['cases'][0]['syntax'][0][1]=int(value['cases'][0]['syntax'][0][1]);path.write_text(json.dumps(value))
     elif change=='input':
         path=packet/'native/inputs.json';value=json.loads(path.read_bytes());value['cases'][0]['expected']={};path.write_text(json.dumps(value))
     elif change=='missing':(packet/'native/stderr.log').unlink()

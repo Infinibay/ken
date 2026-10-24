@@ -14,6 +14,13 @@ def load(path:Path):
 def tree(root:Path)->dict:
     return {str(p.relative_to(root)):identity(p)for p in sorted(root.rglob('*'))if p.is_file()}
 
+def same_value(left,right):
+    """JSON equality preserves scalar types (Python's True equals integer 1)."""
+    if type(left)is not type(right):return False
+    if isinstance(left,dict):return left.keys()==right.keys()and all(same_value(value,right[key])for key,value in left.items())
+    if isinstance(left,list):return len(left)==len(right)and all(same_value(a,b)for a,b in zip(left,right,strict=True))
+    return left==right
+
 class NativeJsonCapture:
     def __init__(self,probe:Path,out:Path,*,repo:Path,prefix:str):
         self.probe,self.out,self.repo,self.prefix=probe.resolve(),out.resolve(),repo.resolve(),prefix
