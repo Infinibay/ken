@@ -71,8 +71,8 @@ La presentación compara 117 observaciones originales, incluidos redondeo,
 caracteres Unicode y avisos de fuentes cambiadas; pasa localmente 125 pruebas
 nativas y 111 de tooling en ese checkpoint. Los gates ARM, Task 7 y la revisión
 M4c2 cerraron después, en el recibo del 24/10 descrito a continuación. M4d–M8
-continúan pendientes. El catálogo de gramáticas todavía no admite x86_64;
-registrarlo es el siguiente requisito local para continuar la composición.
+continúan pendientes. El límite de gramáticas x86_64 de ese checkpoint se cerró
+en la validación posterior descrita a continuación.
 
 ## Avance al 23 de octubre
 
@@ -775,3 +775,16 @@ fuentes archivadas. Nada de ese raw se vuelve a seguir en Git.
 Siguen M4d (composición, pools, modelos reales, CLI/MCP y calidad/recursos) y
 M5–M8. La próxima extensión local es el registro de gramáticas Linux x86_64;
 el soporte BLAS ya probado no acreditaba todavía parsers ni indexación allí.
+
+
+## Gramáticas x86_64 aceptadas el 24/10
+
+El catálogo nativo admite Linux x86_64 con el mismo pack 1.8.1 y autenticación
+por biblioteca. Los registros ARM permanecen iguales. La matriz
+[40141705583](https://github.com/Infinibay/ken/actions/runs/40141705583)
+pasó en Linux x86_64, Linux aarch64 y macOS arm64: 33 pruebas Rust/doc,
+87 de tooling, 249 comparaciones por plataforma, formato y Clippy estricto.
+El recibo se revisó, reparó y reprodujo con fuentes/tooling archivados; sus
+identidades y transporte están en el [traspaso](rust-migration-handoff.md).
+Esto elimina el requisito local de sintaxis para M4d. No acredita por sí mismo
+indexación/modelos completos x86, búsqueda pública ni promoción del Ken instalado.

@@ -56,3 +56,16 @@ tar -xzf .ken/rust-migration/archives/m4-source-pieces-3e4a4e4c.tar.gz \
 El replay autentica los 4.718 miembros del recibo e importa su verificador
 archivado. No requiere Git, red ni ejecutar binarios ARM; conserva falsos los
 indicadores M4/global. No regenerar originales para suplir el archivo perdido.
+
+
+El soporte de gramáticas x86_64 tiene su propio recibo local en
+`docs/validation/rust-migration-2026-10-24/x86-grammars/` y el archivo
+`.ken/rust-migration/archives/x86-grammars-7048d3fb.tar.gz` (23.328.842 bytes),
+SHA-256 `479fd3e89717ae2130207b2859b8f83c854ddd4b61ed7adb126f90324da3535f`.
+Extraerlo en un destino nuevo y ejecutar `x86-grammars/replay.py` con Python
+3.12.9/NumPy 2.4.4 y el SHA de `FILES.json`:
+`7990e3edaf04a9b95f2ede40cb165298840d5f33094d397c1d749ee8beaf1350`.
+El replay autentica 942 miembros y usa su verificador archivado sin Git, red ni
+binarios ARM. La ejecución Actions `40141705583` conserva las tres capturas por
+30 días; el archivo local incluye además revisión, decisiones y sellado final.
+No reejecutar originales para recuperar un recibo ausente.

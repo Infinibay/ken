@@ -48,6 +48,7 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | M4b | Aceptado | Intención, selección, propietarios, vistas contextuales y ranking de entidades/pasajes; `m4-selection-review` |
 | M4c1 | Aceptado | Bosques, stemming, alineamiento, features y ranking numérico de propietarios; `m4-numeric-owner` |
 | M4c2 | Aceptado tras una revisión y una pasada de corrección | Catálogo, piezas, ranking, cards, evidencia y presentación; 446 observaciones por ARM, 126/125 raíces Rust y 174 de tooling; recibo `m4-source-pieces` |
+| Gramáticas Linux x86_64 | Aceptadas; requisito local de M4d | 33 raíces Rust/doc, 87 de tooling y 249 comparaciones en tres hosts; no equivale a aceptación completa de indexación/modelos x86 |
 | M4d | Pendiente; requiere su propio plan | Composición de búsqueda, canales restantes, pools de vistas preparadas, uso real de modelos y aceptación CLI/MCP |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
@@ -691,5 +692,40 @@ Los 1.066 originales conservan sus hashes. Los escenarios y runtimes temporales
 se limpian al cerrar sus propietarios; se mantienen raw, SDKs y cachés compartidas.
 **M4c2 está aceptado; M4 y la migración global siguen falsos.** La búsqueda pública,
 CLI/MCP y el Ken instalado todavía no usan este motor completo. Continuar por
-M4d: primero registrar las gramáticas x86_64 para poder validar localmente las
-observaciones de sintaxis; luego composición, pools, modelos y gates públicos.
+M4d: las gramáticas x86_64 quedaron registradas y validadas en el cierre siguiente;
+continuar con composición, pools, modelos y gates públicos.
+
+
+## Cierre de gramáticas Linux x86_64 del 24/10
+
+Fuentes: `7048d3fb6f4505ca44dfa222cfdde80a9c3dea3e`.
+La ejecución [40141705583](https://github.com/Infinibay/ken/actions/runs/40141705583)
+pasó en Linux x86_64, Linux aarch64 y macOS arm64: **33 raíces Rust/doc,
+87 de tooling y 249 comparaciones completas por host**, formato y Clippy estricto.
+Son 20 gramáticas, 19 parsers y 44 extensiones; las 13 bibliotecas dinámicas x86
+usan el pack 1.8.1 fijado y los dos registros ARM conservan sus bytes.
+
+La referencia x86 se capturó una vez antes de habilitar el host: 215 casos,
+217 llamadas y 124 raíces originales. Los originales ARM se reutilizaron;
+los 1.066 archivos congelados siguen intactos. La única revisión final encontró
+una falta de unión entre recibo, snapshot y tooling, además de filtros CI
+incompletos. Ambos puntos se repararon en una pasada; ocho regresiones nuevas
+pasaron de RED a GREEN. No hubo segunda revisión ni recaptura de originales.
+
+El [recibo local](validation/rust-migration-2026-10-24/x86-grammars/README.md)
+se reprodujo con el verificador archivado, ligado a las fuentes y al tooling
+revisados. Se contrastaron 273 archivos de snapshot por host contra Git.
+`FILES.json` contiene 942 miembros y tiene SHA-256
+`7990e3edaf04a9b95f2ede40cb165298840d5f33094d397c1d749ee8beaf1350`.
+
+Archivo local `.ken/rust-migration/archives/x86-grammars-7048d3fb.tar.gz`:
+23.328.842 bytes; SHA-256
+`479fd3e89717ae2130207b2859b8f83c854ddd4b61ed7adb126f90324da3535f`.
+El replay también pasó tras extraer ese archivo en un destino independiente.
+Los raw, SDKs y recibos siguen fuera de Git. Ver [transporte](validation-artifacts.md).
+
+Sólo `Grammar_x86_64_accepted` es verdadero en este recibo. Las ocho pruebas
+incrementales locales son smoke; falta aceptación completa de indexación y
+perfiles de modelos x86. Los recibos ARM anteriores conservan su aceptación.
+M4 completo, CLI/MCP y la migración global siguen pendientes; Ken instalado sigue
+siendo Python. Continuar M4d sin volver a ejecutar originales ya aceptados.
