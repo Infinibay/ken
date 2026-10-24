@@ -49,7 +49,7 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | M4c1 | Aceptado | Bosques, stemming, alineamiento, features y ranking numérico de propietarios; `m4-numeric-owner` |
 | M4c2 | Aceptado tras una revisión y una pasada de corrección | Catálogo, piezas, ranking, cards, evidencia y presentación; 446 observaciones por ARM, 126/125 raíces Rust y 174 de tooling; recibo `m4-source-pieces` |
 | Gramáticas Linux x86_64 | Aceptadas; requisito local de M4d | 33 raíces Rust/doc, 87 de tooling y 249 comparaciones en tres hosts; no equivale a aceptación completa de indexación/modelos x86 |
-| M4d | Pendiente; requiere su propio plan | Composición de búsqueda, canales restantes, pools de vistas preparadas, uso real de modelos y aceptación CLI/MCP |
+| M4d | En curso: fusión ordinal migrada; composición completa pendiente | Requisitos y observaciones de fuente/símbolos, composición de piezas, canales restantes, pools preparados, modelos y aceptación CLI/MCP |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
 | M7 | Pendiente | Daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
@@ -729,3 +729,42 @@ incrementales locales son smoke; falta aceptación completa de indexación y
 perfiles de modelos x86. Los recibos ARM anteriores conservan su aceptación.
 M4 completo, CLI/MCP y la migración global siguen pendientes; Ken instalado sigue
 siendo Python. Continuar M4d sin volver a ejecutar originales ya aceptados.
+
+
+## Avance M4d: fusión ordinal y siguiente objetivo x86_64
+
+`reranker_fusion::fused_reranker_order` ya combina el orden existente y el neural
+sin cambiar identidades ni limitar el pool. Fuentes `f239ea9b`, integración
+`b2ea3b318280c393185600d49854de2ab29fd387`. Compara exactamente 2.616 observaciones
+originales, incluidos errores, empates, subnormales y pools mayores que diez.
+Sus doce raíces originales se ejecutaron una vez antes de escribir la API Rust.
+
+La ejecución [40142505190](https://github.com/Infinibay/ken/actions/runs/40142505190)
+pasó 127 raíces Rust en Linux ARM y 126 en macOS ARM, 174 de tooling y 446
+observaciones de piezas por plataforma, formato y Clippy estricto. El aumento
+respecto de M4c2 es exactamente la nueva raíz de fusión. Las fuentes y el tooling
+se contrastaron contra Git y cada integración se reprodujo con su verificador
+archivado. La regresión de sintaxis también pasó sus tres hosts en `40142505163`.
+Localmente pasaron 127 raíces Rust, 174 de tooling y 363 comparaciones auditadas
+x86, conservando intactos los recibos M4c2 y de gramáticas.
+
+La única revisión final no encontró fallos de producción ni Critical/Important.
+Queda un Minor de cobertura: añadir por separado el caso scores `[0,1]`, peso
+`0.5`, offset `2^53`, que protege el agrupamiento aritmético ya correcto. La
+siguiente captura M4d debe incluirlo sin reescribir el corpus de 2.616 casos ni
+repetir sus doce raíces originales. Las ocho conductas apartadas tienen resolución.
+
+El [recibo parcial local](validation/rust-migration-2026-10-24/reranker-fusion/README.md)
+conserva original, fuentes, revisión y gates; `FILES.json` tiene 69 miembros y SHA
+`27d87534b036bf336590d967eca242f931f0fae5ab14d8a1fd6f3cd91ca7b6d3`.
+Los paquetes CI completos y sus verificadores permanecen fuera de Git en
+`.ken/rust-migration/fusion-ci-40142505190/`; este recibo pequeño no afirma un
+replay separado de esos paquetes externos. M4d/M4/global siguen pendientes.
+
+El usuario reiteró que quiere soporte x86_64 para el motor. Continuar por
+**Linux x86_64 como objetivo de validación completo**, ampliando modelos,
+indexación y la matriz del motor ya migrado. Gramáticas y BLAS están habilitados;
+los validadores antiguos aún fijan ARM en varios puntos y faltan runtimes x86
+registrados. Conservar sus recibos y originales, registrar recursos CPU x86
+propios y validar cada capacidad antes de declararla soportada. Después retomar
+fuente/símbolos/PieceSearch y el resto de M4d. No cambiar el Ken instalado.

@@ -788,3 +788,15 @@ El recibo se revisó, reparó y reprodujo con fuentes/tooling archivados; sus
 identidades y transporte están en el [traspaso](rust-migration-handoff.md).
 Esto elimina el requisito local de sintaxis para M4d. No acredita por sí mismo
 indexación/modelos completos x86, búsqueda pública ni promoción del Ken instalado.
+
+
+## Fusión ordinal de M4d
+
+La política `reranker_fusion::fused_reranker_order` está migrada y revisada:
+2.616 comparaciones exactas, incluyendo errores y conservación del pool. Pasó
+la integración completa Linux ARM/macOS ARM y la regresión de sintaxis en tres
+hosts. La revisión dejó un caso adicional de cobertura para el próximo corpus;
+el código conserva el agrupamiento correcto. El detalle está en el traspaso.
+La composición completa de búsqueda sigue pendiente. El siguiente objetivo
+solicitado es validar el motor migrado también en Linux x86_64, incluyendo
+modelos e indexación, además de gramáticas y BLAS ya habilitados.
