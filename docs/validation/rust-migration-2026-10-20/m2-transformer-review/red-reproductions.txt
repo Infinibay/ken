@@ -1,6 +1,0 @@
-Observed before the production fixes in this session (abridged tool output; not a new run):
-
-Python final-consumer regression: 1 failed in0.20s; actual child KeyError: CARGO_TARGET_DIR.
-Rust transformer_model: 1 failed,4 passed,0 ignored; authenticated_prompt_exclusion_and_malformed_prompt_policies_are_rejected panicked: unsupported include_prompt=false must fail before inference.
-
-After the minimal fixes: Python3/3 passed0.16s; Rust5/5 passed0.01s. Full current regression logs are retained separately.

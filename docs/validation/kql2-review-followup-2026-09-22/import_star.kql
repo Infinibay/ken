@@ -1,1 +1,0 @@
-language "kql/2"; module review; query import_star {node $import {native_kind:"import_from_statement"; node $star {native_kind:"wildcard_import";} } select $import.path,$import.line;}

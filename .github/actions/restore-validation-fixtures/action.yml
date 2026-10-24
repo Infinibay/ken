@@ -1,0 +1,18 @@
+name: Restore local validation fixtures
+description: Recover historical migration fixtures without tracking execution artifacts.
+runs:
+  using: composite
+  steps:
+    - name: Recover the pinned pre-cleanup receipts
+      shell: bash
+      run: |
+        checkpoint=02a0e6b4597649388d376375e706b6b365d14271
+        if ! git cat-file -e "$checkpoint^{commit}" 2>/dev/null; then
+          git fetch --no-tags --depth=1 origin "$checkpoint"
+        fi
+        git archive "$checkpoint" \
+          docs/validation/rust-migration-2026-10-18 \
+          docs/validation/rust-migration-2026-10-19 \
+          docs/validation/rust-migration-2026-10-20 \
+          docs/validation/rust-migration-2026-10-21 \
+          docs/validation/rust-migration-2026-10-23 | tar -x

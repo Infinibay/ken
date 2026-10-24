@@ -167,7 +167,7 @@ def matrix_cases():
 @lru_cache(maxsize=1)
 def directed_cases():
     """Individually labelled counterexamples, beyond the uniform minimum."""
-    path = DIRECTORY.parents[2] / 'docs/structural-validation/catalog-adversarial-2026-09-14/cases.json'
+    path = DIRECTORY.parent / 'fixtures/catalog-adversarial-cases.json'
     return tuple(Case('directed/' + c['id'],
                       c['rule'] + ('#' + c['variant'] if c.get('variant') else ''),
                       c['language'], 'directed-' + c['kind'], c['expected'], c['source'],

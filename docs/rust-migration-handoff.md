@@ -1,5 +1,12 @@
 # Continuar y terminar la migración a Rust
 
+Actualización del 24/10: los directorios de evidencia se retiraron del seguimiento
+de Git por pedido del usuario; sus archivos locales se conservaron. Para un clon
+nuevo, [recuperar los artefactos necesarios](validation-artifacts.md) antes de
+ejecutar la reconstrucción siguiente. La cápsula ya no viaja en el árbol actual.
+El usuario autorizó continuar la migración y agregar Linux x86_64; los recibos
+ARM históricos conservan su alcance y no certifican esta nueva arquitectura.
+
 Traspaso del 23 de octubre de 2026. Rama: `codex/rust-migration`.
 Última implementación terminada: `5d9dc6f927098f47942d5c0dd5ee72ca22853c4a`.
 Este documento y su cápsula guardan el trabajo posterior de preparación de pruebas.
@@ -85,7 +92,7 @@ Usar un clon completo; los objetos del commit inicial
 `96a9d2d5ed5b7a6dc51b13c8e97e290cae7c9908` reconstruyen la parte inalterada
 de la referencia. En un clon superficial, obtener antes ese historial.
 
-### Cápsula versionada
+### Cápsula local recuperable del historial
 
 En `docs/validation/rust-migration-2026-10-23/handoff/`:
 

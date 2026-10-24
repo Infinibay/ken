@@ -3,6 +3,7 @@ description: Prepare pinned Python/Rust, registered model data and native test e
 runs:
   using: composite
   steps:
+    - uses: ./.github/actions/restore-validation-fixtures
     - name: Install pinned validation runtimes
       shell: bash
       run: |

@@ -1,1 +1,0 @@
-PYTHONDONTWRITEBYTECODE=1 python3 audit_paths.py

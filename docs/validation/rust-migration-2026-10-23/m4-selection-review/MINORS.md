@@ -1,3 +1,0 @@
-# Deferred minors
-
-None.

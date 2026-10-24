@@ -1,8 +1,0 @@
-from pathlib import Path
-import subprocess,sys,time,json,hashlib
-out=Path(__file__).resolve().parent
-producer=out/'capture.py';pin=hashlib.sha256(producer.read_bytes()).hexdigest()
-(out/'producer-pin.json').write_text(json.dumps({'sha256':pin,'intent_sha256':hashlib.sha256((out/'intent.json').read_bytes()).hexdigest()},indent=2)+'\n')
-while not (out/'export-parity.json').exists():time.sleep(20)
-assert hashlib.sha256(producer.read_bytes()).hexdigest()==pin
-for action in ['register','run']:subprocess.run([sys.executable,str(producer),action],check=True)
