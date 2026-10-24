@@ -95,7 +95,7 @@ runs:
         corpus = output/'corpora'
         corpus.mkdir(exist_ok=True)
         families = {}
-        for family in ('ranking', 'ranking-edges', 'ranking-empty-declaration', 'cards'):
+        for family in ('ranking', 'ranking-edges', 'ranking-empty-declaration', 'cards', 'evidence'):
             destination = base if family == 'ranking' else saved/family
             value = capture(reference, destination, repo=root, family=family,
                             cached_suite=base/'reference.json' if family.startswith('ranking-') else None)

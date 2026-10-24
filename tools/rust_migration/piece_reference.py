@@ -8,11 +8,13 @@ from .retrieval_reference import digest
 from .native_json import identity,load
 from .piece_ranking_reference import SCRIPT as RANKING_SCRIPT
 from .piece_card_reference import SCRIPT as CARD_SCRIPT
+from .piece_source_evidence_reference import SCRIPT as EVIDENCE_SCRIPT
 ROOT=Path(__file__).resolve().parents[2]
 SUITES={'catalog':['tests/retrieval/test_piece_catalog.py'],'assembly':['tests/retrieval/test_piece_candidates.py'],'ranking':['tests/retrieval/test_piece_ranking.py']}
 SUITES['ranking-edges']=SUITES['ranking']
 SUITES['ranking-empty-declaration']=SUITES['ranking']
 SUITES['cards']=['tests/retrieval/test_piece_cards.py']
+SUITES['evidence']=['tests/retrieval/test_evidence.py','tests/retrieval/test_complete_owned_context.py']
 CATALOG_SCRIPT=r'''
 import hashlib,importlib,json,pathlib,platform,sys,tempfile,unicodedata
 import pytest
@@ -93,6 +95,7 @@ SCRIPTS={'catalog':CATALOG_SCRIPT,'assembly':ASSEMBLY_SCRIPT,'ranking':RANKING_S
 SCRIPTS['ranking-edges']=RANKING_SCRIPT
 SCRIPTS['ranking-empty-declaration']=RANKING_SCRIPT
 SCRIPTS['cards']=CARD_SCRIPT
+SCRIPTS['evidence']=EVIDENCE_SCRIPT
 def definitions(family:str,repo:Path=ROOT):return load(repo/f'crates/ken-retrieval/tests/fixtures/piece-inputs-{family}.json')['cases']
 def validate_reference(value:dict,family:str,repo:Path=ROOT):
  try:
