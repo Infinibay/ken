@@ -5,7 +5,7 @@ from pathlib import Path
 from .native_json import identity,load,verify_native_json
 from .selection_reference import SCRIPTS,SUITES,definitions,owners,validate_reference
 from .selection_validate import FORMAT,requests,compare_observations,source_identity
-from .retrieval_validate import runtime_files
+from .retrieval_validate import runtime_manifest
 from .index_validate import same_value,require
 from .integration_validate import _manifest_errors,rust_gate_errors
 from .receipts import junit_states
@@ -54,8 +54,8 @@ def verify_capture(out:Path,reference:dict,sources:dict|None=None,native_sha256:
         require(same_value(load(out/'inputs.json'),requests(reference)),'actual input inventory changed/contains answers')
         owned={'native-probe':execution['owned_before']['native-probe']}
         if execution['system']=='linux':
-            files=runtime_files(runtime_repo or Path(__file__).resolve().parents[2]);owned.update({'dense-blas/'+name:record for name,record in files.items()})
-            require(str(Path(execution['cwd'])/'dense-blas'/'libscipy_openblas64_-7220728c.so')in(out/'stderr.log').read_text(),'isolated pinned dense runtime not loaded')
+            runtime=runtime_manifest(runtime_repo or Path(__file__).resolve().parents[2],execution['machine']);files=runtime['files'];owned.update({'dense-blas/'+name:record for name,record in files.items()})
+            require(str(Path(execution['cwd'])/'dense-blas'/runtime['library'])in(out/'stderr.log').read_text(),'isolated pinned dense runtime not loaded')
         require(execution['owned_before']==owned,'unexpected native selection resources')
         require(set(actual)=={'format','platform','cases','metrics'}and actual['platform']==execution['system'],'native selection platform/shape differs')
         metrics=actual['metrics'];require(set(metrics)=={'elapsed_s','max_rss_bytes','scope'}and metrics['scope']==SCOPE,'selection measurement scope differs')

@@ -112,9 +112,20 @@ fn coverage(got: TermCoverage, want: &Value, is32: bool, weights32: bool, id: &s
 fn full_original_dtype_dispatch_and_term_summary_observations() {
     #[cfg(target_os = "macos")]
     let raw = include_str!("fixtures/numeric-reference-alignment.json");
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", target_arch = "aarch64"))]
     let raw = include_str!("fixtures/numeric-reference-alignment-linux.json");
-    observe(raw, 245);
+    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+    let raw = {
+        use std::io::Read;
+        let mut raw = String::new();
+        flate2::read::GzDecoder::new(
+            &include_bytes!("fixtures/numeric-reference-alignment-linux-x86_64.json.gz")[..],
+        )
+        .read_to_string(&mut raw)
+        .unwrap();
+        raw
+    };
+    observe(&raw, 245);
 }
 #[test]
 fn original_rounding_floor_and_overflow_observations() {

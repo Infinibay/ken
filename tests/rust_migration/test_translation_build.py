@@ -72,7 +72,8 @@ def test_unverified_openblas_archive_fails_before_building_or_creating_destinati
         assert not destination.exists()
 
 
-def test_openblas_build_and_published_archive_use_the_authenticated_owned_snapshot(tmp_path, monkeypatch):
+@pytest.mark.parametrize('architecture', ['aarch64', 'x86_64'])
+def test_openblas_build_and_published_archive_use_the_authenticated_owned_snapshot(tmp_path, monkeypatch, architecture):
     """Replacing the caller's path cannot change the Makefile the helper executes."""
     import hashlib
     import io
@@ -97,7 +98,7 @@ def test_openblas_build_and_published_archive_use_the_authenticated_owned_snapsh
     archive=tmp_path/'source.tar.gz';archive.write_bytes(trusted)
     monkeypatch.setattr(build,'OPENBLAS_SOURCE',{'bytes':len(trusted),'sha256':hashlib.sha256(trusted).hexdigest()})
     monkeypatch.setattr(build.platform,'system',lambda:'Linux')
-    monkeypatch.setattr(build.platform,'machine',lambda:'aarch64')
+    monkeypatch.setattr(build.platform,'machine',lambda:architecture)
     original_read=Path.read_bytes;original_which=build.shutil.which;replaced=[]
 
     def replace_after_verification(name):

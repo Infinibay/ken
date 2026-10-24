@@ -1,12 +1,12 @@
 # Migración Rust
 
-**Para retomar en otra máquina:** leer el [traspaso del 23 de octubre](rust-migration-handoff.md).
+**Para retomar en otra máquina:** leer el [traspaso actualizado](rust-migration-handoff.md).
 Incluye estado actualizado, pendientes hasta M8, comandos de reconstrucción del
 oráculo original, progreso M4c2 y riesgos conocidos. M0–M3 y M4a/M4b/M4c1 están
-aceptados; M4c2 tiene catálogo y ensamblado implementados y probados, y el siguiente
-paso es implementar su ranking de piezas (Task 3). La aplicación completa todavía
-no está migrada. El traspaso conserva las capturas y generadores que antes sólo
-existían en directorios ignorados.
+aceptados. M4c2 tiene catálogo, ensamblado y ranking de piezas implementados;
+el ranking se validó localmente en Linux x86_64 y aún necesita sus gates ARM.
+La aplicación completa todavía no está migrada. Los recibos y capturas se
+[conservan localmente y se recuperan del historial](validation-artifacts.md).
 
 La rama `codex/rust-migration` añade un ejecutable temporal, `ken-rs`.
 La implementación Python, sus datos y sus integraciones siguen activos.
@@ -22,6 +22,41 @@ cargo build --release --locked -p ken-cli
 Rust 1.95.0 y los componentes rustfmt/clippy quedan fijados en
 `rust-toolchain.toml`. Cargo fija las dependencias directas y transitivas.
 No se instala ni reemplaza el comando `ken` para ensayar esta entrega.
+
+## Continuación del 24 de octubre: ranking y Linux x86_64
+
+`piece_features` conserva el esquema de 262 columnas y sus tres pases de
+cobertura; `PieceReranker` usa el bosque registrado de 1.280 árboles y conserva
+la identidad de propuestas duplicadas mediante `PieceMatch.proposal_index`.
+Las pruebas comparan 98 observaciones originales de x86_64, llamadas del encoder
+y stemmer, scores, orden y caminos/hojas reales. Los casos adicionales reutilizan
+las nueve raíces originales de ranking; no vuelven a ejecutarlas.
+
+Linux x86_64 tiene su propio registro en
+`crates/ken-retrieval/resources/dense-runtime-x86_64.json`: los tres sidecars de
+NumPy 2.4.4 se autentican antes de cargar el BLAS ILP64. El registro ARM se
+conserva. El BLAS LP64 de compilación de CT2 se prepara desde el mismo OpenBLAS
+0.3.26, con `TARGET=CORE2` en x86_64 y `TARGET=ARMV8` en aarch64.
+La referencia de alineamiento de x86_64 está separada: las reducciones de ARM
+no se usan como expectativas de esta arquitectura ni se amplían tolerancias.
+Los nuevos fixtures de referencia se guardan comprimidos con gzip; las capturas
+crudas y los logs quedan sólo en el workspace local.
+
+El entorno local usa Python 3.12.9, Unicode 15.0, NumPy 2.4.4, CMake 3.31.10 y
+Rust 1.95.0. Las bibliotecas de ejecución se copian desde `numpy.libs` a un
+directorio local y se configura `KEN_DENSE_BLAS_DIR` con su ruta absoluta.
+`translation_build prepare-openblas` acepta ambas arquitecturas Linux y rechaza
+recibos de compilación de otra arquitectura.
+
+Validación local con Rust 1.95.0: `ken-retrieval --all-targets` pasó 71 pruebas,
+`ken-core --all-targets` pasó 50, y las suites de tooling afectadas pasaron 92.
+El corpus estructural reubicado conserva sus bytes y pasa 2.429 pruebas, con
+el único `xfail` conocido de su ledger. `cargo fmt --all --check` y Clippy de
+`ken-retrieval --all-targets` con `-D warnings` también pasan.
+
+Esto habilita y prueba recuperación/ranking en x86_64; no acredita todos los
+backends de modelos, CLI/MCP, distribución ni M4 completo en esta plataforma.
+Quedan los gates de Task 3 en macOS arm64/Linux aarch64, Tasks 4–7 y M4d–M8.
 
 ## Avance al 23 de octubre
 

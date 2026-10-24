@@ -11,13 +11,15 @@ def capture(tmp_path_factory):
     if value:return Path(value)
     root=tmp_path_factory.mktemp('retrieval-capture');system='macos'if sys.platform=='darwin'else'linux'
     with tarfile.open(ROOT/f'docs/validation/rust-migration-2026-10-23/m4-kernels-review/{system}-capture.tar.gz')as archive:archive.extractall(root,filter='data')
+    with tarfile.open(ROOT/'docs/validation/rust-migration-2026-10-23/m4-kernels-review/sources.tar.gz')as archive:
+        archive.extractall(root,members=[m for m in archive.getmembers() if m.name.startswith('native-sources/')],filter='data')
     return root
 
 def test_actual_complete_native_kernel_capture_passes(capture):
     assert not verify_capture(capture/'native',load(capture/'original/reference.json'))
 
 def test_actual_supplemental_review_regressions_pass(capture):
-    assert verify_review(capture,ROOT,'macos'if sys.platform=='darwin'else'linux')
+    assert verify_review(capture,ROOT,'macos'if sys.platform=='darwin'else'linux',snapshot=capture/'native-sources')
 
 @pytest.mark.parametrize('mutation',['request','runtime','result','original'])
 def test_supplemental_proof_rejects_resealed_changes(capture,tmp_path,mutation):
@@ -31,7 +33,7 @@ def test_supplemental_proof_rejects_resealed_changes(capture,tmp_path,mutation):
         else:v['cases'][-1]['result'][0]['passages'].reverse()
         p.write_text(json.dumps(v))
         if mutation!='runtime':e=load(base/'execution.json');e['request_sha256'if mutation=='request'else'stdout_sha256']=identity(p)['sha256'];(base/'execution.json').write_text(json.dumps(e))
-    with pytest.raises((ValueError,KeyError,TypeError)):verify_review(out,ROOT,'macos'if sys.platform=='darwin'else'linux')
+    with pytest.raises((ValueError,KeyError,TypeError)):verify_review(out,ROOT,'macos'if sys.platform=='darwin'else'linux',snapshot=capture/'native-sources')
 
 @pytest.mark.parametrize('mutation',['stdout','request','source','binary','loader','summary','rss','platform','owner','evidence','input_expected'])
 def test_resealed_native_kernel_capture_rejects_changed_proof(capture,tmp_path,mutation):

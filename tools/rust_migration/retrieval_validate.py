@@ -1,6 +1,6 @@
 """Replay kernel results with exact ordered ownership and fixed arithmetic bounds."""
 from __future__ import annotations
-import copy,math,os,shutil,sys
+import copy,math,os,shutil,sys,platform
 from pathlib import Path
 from .index_validate import same_value,require,source_identity
 from .native_json import NativeJsonCapture,identity,load
@@ -61,8 +61,14 @@ def run_capture(repo:Path,binary:Path,reference:dict,out:Path)->dict:
     if errors:raise ValueError(errors)
     return actual
 
-def runtime_files(repo:Path)->dict:
-    return load(repo/'crates/ken-retrieval/resources/dense-runtime.json')['files']
+def runtime_manifest(repo:Path,architecture:str|None=None)->dict:
+    architecture=architecture or platform.machine()
+    names={'aarch64':'dense-runtime.json','x86_64':'dense-runtime-x86_64.json'}
+    require(architecture in names,'unregistered dense runtime architecture: '+architecture)
+    return load(repo/'crates/ken-retrieval/resources'/names[architecture])
+
+def runtime_files(repo:Path,architecture:str|None=None)->dict:
+    return runtime_manifest(repo,architecture)['files']
 
 def prepare_runtime(capture):
     if sys.platform!='linux':return

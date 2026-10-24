@@ -4,7 +4,7 @@ import hashlib,json,math,re,tarfile,tempfile
 from pathlib import Path
 from .native_json import identity,load,verify_native_json
 from .retrieval_reference import SCRIPT,definitions,owners,validate_reference
-from .retrieval_validate import FORMAT,requests,compare_observations,source_identity,ERROR_KINDS,runtime_files
+from .retrieval_validate import FORMAT,requests,compare_observations,source_identity,ERROR_KINDS,runtime_manifest
 from .index_validate import same_value,require
 from .integration_validate import _manifest_errors,rust_gate_errors
 from .receipts import junit_states
@@ -27,9 +27,10 @@ def verify_capture(out:Path,reference:dict,sources:dict|None=None,native_sha256:
         require(same_value(load(out/'inputs.json'),requests(reference['cases'])),'actual retrieval input inventory rewritten/contains answers')
         owned={'native-probe':execution['owned_before']['native-probe']}
         if execution['system']=='linux':
-            files=runtime_files(runtime_repo or Path(__file__).resolve().parents[2])
+            repo=runtime_repo or Path(__file__).resolve().parents[2]
+            runtime=runtime_manifest(repo,execution['machine']);files=runtime['files']
             owned.update({'dense-blas/'+name:record for name,record in files.items()})
-            require(str(Path(execution['cwd'])/'dense-blas'/'libscipy_openblas64_-7220728c.so')in(out/'stderr.log').read_text(),'isolated pinned dense runtime was not loaded')
+            require(str(Path(execution['cwd'])/'dense-blas'/runtime['library'])in(out/'stderr.log').read_text(),'isolated pinned dense runtime was not loaded')
         require(execution['owned_before']==owned,'unexpected native retrieval resource')
         require(set(actual)=={'format','platform','cases','metrics'}and actual['platform']==execution['system'],'native retrieval platform/shape differs')
         metrics=actual['metrics'];require(set(metrics)=={'elapsed_s','max_rss_bytes','scope'}and metrics['scope']=='native request parsing and all kernels, before output serialization','kernel measurement scope differs')

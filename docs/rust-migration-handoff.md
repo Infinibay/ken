@@ -47,7 +47,7 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | M4b | Aceptado | Intención, selección, propietarios, vistas contextuales y ranking de entidades/pasajes; `m4-selection-review` |
 | M4c1 | Aceptado | Bosques, stemming, alineamiento, features y ranking numérico de propietarios; `m4-numeric-owner` |
 | M4c2 Tasks 1–2 | Implementadas y probadas en ambos hosts; falta revisión final del plan | Catálogo físico y ensamblado completo, commits `34327080` y `5d9dc6f9` |
-| M4c2 Task 3 | Sólo oráculo macOS preparado | Faltan captura Linux, prueba Rust RED, features de piezas y ranking Rust |
+| M4c2 Task 3 | Ranking Rust implementado y validado localmente en Linux x86_64 | Faltan gates macOS arm64/Linux aarch64; ver actualización del 24/10 en la sección 5 |
 | M4c2 Tasks 4–7 | Pendientes | Cards, evidencia, presentación, probe/comparador, matriz y una revisión final |
 | M4d | Pendiente; requiere su propio plan | Composición de búsqueda, canales restantes, pools de vistas preparadas, uso real de modelos y aceptación CLI/MCP |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
@@ -302,7 +302,39 @@ recrearlos con las rutas nuevas, no ejecutarlos ciegamente. No editar Rust mient
 algún host ejecuta cargo/clippy. Para sincronizar fuentes, copiar sólo contenidos
 cambiados; usar `tarfile` de Python, evitando archivos AppleDouble de tar macOS.
 
-## 5. Punto exacto de reanudación: M4c2 Task 3
+## 5. Punto exacto de reanudación: gates ARM de Task 3, luego Task 4
+
+### Actualización del 24 de octubre
+
+Se implementaron `piece_features.rs`, `piece_ranking.rs` y `tests/piece_ranking.rs`.
+En x86_64 se capturaron una vez los 84 inputs originales y sus nueve raíces de
+ranking, y 14 inputs adicionales disjuntos reutilizaron esas raíces: límites de
+términos, deduplicación, ocho declaraciones, cutoff de cancelación y declaración
+ausente con expansión de espacios. El último conserva el error original
+`'declaration_identity_stem'` como error retornado; nunca debe abortar con panic.
+También hay una regresión de sufijos: `.json` no es un archivo con extensión
+`.json`, mientras que `.config.json` sí la tiene.
+
+`PieceMatch.proposal_index: usize` está implementado: conserva la identidad de
+propuestas duplicadas aunque el resultado posea una copia de la pieza.
+Se comparan las 262 columnas, llamadas, scores y caminos/hojas de los 1.280
+árboles reales. Sólo las features de composición estática usan el bound F32 ya
+aprobado; scores, caminos, llamadas e identidades siguen siendo exactos.
+
+Los nuevos originales y logs están en el workspace local del plan, con prefijos
+`original-linux-ranking*` y `original-x86-alignment*`. Los fixtures de Linux
+nuevos de ranking declaran `machine=x86_64`: **no constituyen una captura ARM**.
+Se conserva aparte `numeric-reference-alignment-linux-x86_64.json.gz`; los 22 casos
+de alineamiento adicional coinciden con ARM y no duplican el fixture versionado.
+El [registro y preparación de x86_64](rust-migration.md) preserva los registros ARM.
+
+Próximo gate: ejecutar Task 3 con sus originales y suites nativas en macOS arm64
+y Linux aarch64. Mantener las nuevas capturas ARM separadas de las x86_64 y no
+sobrescribir recibos aceptados. Después seguir Task 4 (cards) del plan. No repetir
+las tareas 1–2 ni capturas aceptadas. M4c2/M4/global aún no están aceptados.
+
+La sección histórica siguiente describe el checkpoint portátil del 23/10;
+sus pasos 2–5 ya se realizaron en x86_64, no en ARM.
 
 ### Lo conservado
 
@@ -317,8 +349,8 @@ cambiados; usar `tarfile` de Python, evitando archivos AppleDouble de tar macOS.
 - Task 3 preparatoria: `tools/rust_migration/piece_ranking_reference.py`, ampliación
   de `piece_reference.py`, `piece-inputs-ranking.json` y
   `piece-reference-ranking.json` en `crates/ken-retrieval/tests/fixtures/`.
-  **84 observaciones macOS y 9 raíces originales aprobadas; sin Rust nuevo.**
-  Aún no existen `piece_features.rs`, `piece_ranking.rs` ni su prueba Rust.
+  En aquel checkpoint: **84 observaciones macOS y 9 raíces originales aprobadas;
+  sin Rust nuevo**. La actualización anterior registra la implementación posterior.
 - Generador correcto: `make-ranking-inputs.py` en el progreso restaurado.
   Captura válida: `original-macos-ranking/`. Captura previa con entradas aliased:
   `original-macos-ranking-aliased-inputs/`, retenida sólo para auditar el error
@@ -334,7 +366,7 @@ progreso al verificar en otra máquina. El JUnit está en la cápsula previa; no
 inventar uno para la captura nueva ni contar los 84 casos inválidos como aceptados.
 El verificador completo de esta cadena todavía corresponde a Task 7.
 
-### Siguientes pasos, en orden
+### Pasos del checkpoint del 23/10 (referencia histórica)
 
 1. Verificar hashes y restaurar el progreso. Leer el ledger y confirmar que no
    existen cambios nuevos de otro agente. Las tareas 1–2 no se reinician.
@@ -379,9 +411,8 @@ cargo clippy --locked --offline -p ken-retrieval --all-targets -- -D warnings
 .venv/bin/python -m tools.rust_migration.reference verify --repo . --manifest docs/validation/rust-migration-2026-10-18/baseline.json
 ```
 
-El primer comando **todavía debe fallar por target ausente** hasta escribir la
-prueba; no se registra aquí como ejecutado ni aprobado. Las pruebas de tooling
-existentes cubren catálogo/ensamblado; ampliar a ranking como parte de Task 3/7.
+En el checkpoint del 23/10 el primer comando fallaba por target ausente.
+Actualmente la prueba existe e incluye ranking; ver la actualización del 24/10.
 Si la sandbox deniega bind loopback en tests health de core, repetir la misma
 suite con permiso local de sockets, conservar el fallo y no filtrar tests.
 

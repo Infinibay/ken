@@ -103,13 +103,12 @@ fn native_math_dispatch_and_runtime_boundaries_are_verified() {
                 .to_string()
                 .contains("prepare dense BLAS")
         );
-        std::fs::write(
-            missing
-                .path()
-                .join("libgfortran-daac5196-038a5e3c.so.5.0.0"),
-            b"changed ELF",
-        )
-        .unwrap();
+        let first_sidecar = if cfg!(target_arch = "x86_64") {
+            "libgfortran-040039e1-0352e75f.so.5.0.0"
+        } else {
+            "libgfortran-daac5196-038a5e3c.so.5.0.0"
+        };
+        std::fs::write(missing.path().join(first_sidecar), b"changed ELF").unwrap();
         assert!(
             ken_retrieval::verify_dense_runtime(missing.path())
                 .unwrap_err()

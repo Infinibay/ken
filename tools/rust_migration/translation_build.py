@@ -22,6 +22,12 @@ from .preparation import PreparedTranslationBuild
 OPENBLAS_SOURCE={'bytes':24404912,'sha256':'4e6e4f5cb14c209262e33e6816d70221a2fe49eb69eaf0a06f065598ac602c68'}
 OPENBLAS_OPTIONS=['TARGET=ARMV8','NO_SHARED=1','BUILD_SINGLE=1','NO_LAPACK=1',
                   'ONLY_CBLAS=1','USE_OPENMP=1','NUM_THREADS=64','NUM_PARALLEL=1']
+BUILD_PLATFORMS={('Darwin','arm64'),('Linux','aarch64'),('Linux','x86_64')}
+
+def openblas_options(architecture:str)->list[str]:
+    if architecture=='aarch64':return list(OPENBLAS_OPTIONS)
+    if architecture=='x86_64':return ['TARGET=CORE2',*OPENBLAS_OPTIONS[1:]]
+    raise ValueError('unregistered OpenBLAS architecture: '+architecture)
 OPENBLAS_FILES={'source.tar.gz','lib/libopenblas.a','include/cblas.h',
                 'include/openblas_config.h','lib/pkgconfig/openblas.pc'}
 
@@ -44,8 +50,10 @@ def _openblas_errors(value:object)->list[str]:
     errors=[]
     if set(value)!={'format','platform','architecture','version','source','options','compiler','artifacts','build_ns','build_log_sha256'}:
         return ['complete OpenBLAS provenance required']
-    for key,want in [('format','ken-openblas-build/1'),('platform','Linux'),('architecture','aarch64'),
-                     ('version','0.3.26'),('source',OPENBLAS_SOURCE),('options',OPENBLAS_OPTIONS)]:
+    try:options=openblas_options(value['architecture'])
+    except ValueError as error:return [str(error)]
+    for key,want in [('format','ken-openblas-build/1'),('platform','Linux'),
+                     ('version','0.3.26'),('source',OPENBLAS_SOURCE),('options',options)]:
         errors.extend(_differences(want,value[key],'openblas.'+key))
     compiler=value['compiler']
     if (not isinstance(compiler,dict) or set(compiler)!={'path','version'} or not isinstance(compiler['path'],str)
@@ -88,10 +96,15 @@ def _openblas_snapshot(archive:Path)->bytes:
 
 def prepare_openblas(archive:Path,destination:Path)->dict:
     snapshot=_openblas_snapshot(archive)
-    if (platform.system(),platform.machine())!=('Linux','aarch64'):
-        raise ValueError('OpenBLAS preparation requires registered Linux aarch64')
+    architecture=platform.machine()
+    if (platform.system(),architecture) not in BUILD_PLATFORMS or platform.system()!='Linux':
+        raise ValueError('OpenBLAS preparation requires registered Linux architecture')
+    options=openblas_options(architecture)
     if not destination.is_absolute():raise ValueError('absolute private OpenBLAS destination required')
-    if destination.exists():return inspect_openblas(destination)
+    if destination.exists():
+        value=inspect_openblas(destination)
+        if value['architecture']!=architecture:raise ValueError('prepared OpenBLAS architecture differs')
+        return value
     compiler=shutil.which('cc')
     if not compiler:raise ValueError('native C compiler required for OpenBLAS')
     compiler=str(Path(compiler).resolve())
@@ -103,10 +116,10 @@ def prepare_openblas(archive:Path,destination:Path)->dict:
         project=source/'OpenBLAS-0.3.26'
         with tempfile.NamedTemporaryFile(prefix='openblas-attempt-',suffix='.log',dir=destination.parent,delete=False) as log:
             started=time.monotonic_ns()
-            completed=subprocess.run(['make','-j2',*OPENBLAS_OPTIONS,'CC='+compiler],cwd=project,
+            completed=subprocess.run(['make','-j2',*options,'CC='+compiler],cwd=project,
                 stdout=log,stderr=subprocess.STDOUT,timeout=1200)
             if completed.returncode==0:
-                completed=subprocess.run(['make',*OPENBLAS_OPTIONS,'CC='+compiler,'PREFIX='+str(installed),'install'],
+                completed=subprocess.run(['make',*options,'CC='+compiler,'PREFIX='+str(installed),'install'],
                     cwd=project,stdout=log,stderr=subprocess.STDOUT,timeout=120)
             duration=time.monotonic_ns()-started;log_path=Path(log.name)
         if completed.returncode:raise ValueError(f'OpenBLAS build failed; retained log: {log_path}')
@@ -120,8 +133,8 @@ def prepare_openblas(archive:Path,destination:Path)->dict:
             f'prefix={destination}\nlibdir=${{prefix}}/lib\nincludedir=${{prefix}}/include\n'
             'Name: OpenBLAS\nDescription: pinned native CPU BLAS\nVersion: 0.3.26\n'
             'Libs: -L${libdir} -lopenblas\nLibs.private: -lm -lgomp\nCflags: -I${includedir}\n')
-        receipt={'format':'ken-openblas-build/1','platform':'Linux','architecture':'aarch64','version':'0.3.26',
-            'source':OPENBLAS_SOURCE,'options':OPENBLAS_OPTIONS,'compiler':{'path':compiler,'version':version},
+        receipt={'format':'ken-openblas-build/1','platform':'Linux','architecture':architecture,'version':'0.3.26',
+            'source':OPENBLAS_SOURCE,'options':options,'compiler':{'path':compiler,'version':version},
             'artifacts':{name:_record(ready/name) for name in sorted(OPENBLAS_FILES)},
             'build_ns':duration,'build_log_sha256':_record(log_path)['sha256']}
         (ready/'ken-build.json').write_text(json.dumps(receipt,indent=2)+'\n')
@@ -146,12 +159,13 @@ def inspect_prerequisites(prepared:PreparedTranslationBuild,*,system:str|None=No
     system=platform.system() if system is None else system
     architecture=platform.machine() if architecture is None else architecture
     prepared.environment()
-    if (system,architecture) not in [('Darwin','arm64'),('Linux','aarch64')]:
+    if (system,architecture) not in BUILD_PLATFORMS:
         raise ValueError('registered native build platform required')
     cmake=_cmake(prepared.cmake)
     if system=='Linux':
         if prepared.openblas_prefix is None:raise ValueError('explicit prepared Linux OpenBLAS prefix required')
         openblas=inspect_openblas(prepared.openblas_prefix)
+        if openblas['architecture']!=architecture:raise ValueError('prepared OpenBLAS architecture differs')
     else:
         if prepared.openblas_prefix is not None:raise ValueError('foreign BLAS prefix on macOS')
         openblas=None
@@ -160,7 +174,7 @@ def inspect_prerequisites(prepared:PreparedTranslationBuild,*,system:str|None=No
 
 def proof_errors(value:object,system:str,architecture:str)->list[str]:
     try:
-        if (system,architecture) not in [('Darwin','arm64'),('Linux','aarch64')]:return ['unregistered translation build platform']
+        if (system,architecture) not in BUILD_PLATFORMS:return ['unregistered translation build platform']
         if not isinstance(value,dict) or set(value)!={'format','platform','architecture','cmake','core','openblas'}:
             return ['complete native translation build proof required']
         errors=_differences({'format':'ken-translation-build/1','platform':system,'architecture':architecture},
@@ -181,7 +195,10 @@ def proof_errors(value:object,system:str,architecture:str)->list[str]:
             if (not isinstance(compiler,dict) or set(compiler)!={'id','version'}
                     or any(not isinstance(v,str) or not v for v in compiler.values())):
                 errors.append('actual CMake compiler identity required')
-        if system=='Linux':errors.extend(_openblas_errors(value['openblas']))
+        if system=='Linux':
+            errors.extend(_openblas_errors(value['openblas']))
+            if isinstance(value['openblas'],dict) and value['openblas'].get('architecture')!=architecture:
+                errors.append('prepared OpenBLAS architecture differs')
         elif value['openblas'] is not None:errors.append('macOS requires Accelerate without a foreign BLAS prefix')
         return errors
     except (KeyError,TypeError,ValueError,AttributeError) as error:return [f'malformed native build proof: {error}']

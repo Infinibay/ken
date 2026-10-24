@@ -206,8 +206,12 @@ struct RuntimeFile {
 }
 #[cfg(target_os = "linux")]
 fn manifest() -> RuntimeManifest {
-    serde_json::from_str(include_str!("../resources/dense-runtime.json"))
-        .expect("pinned dense runtime manifest")
+    let raw = if cfg!(target_arch = "x86_64") {
+        include_str!("../resources/dense-runtime-x86_64.json")
+    } else {
+        include_str!("../resources/dense-runtime.json")
+    };
+    serde_json::from_str(raw).expect("pinned dense runtime manifest")
 }
 
 #[cfg(target_os = "linux")]
@@ -221,15 +225,15 @@ fn runtime_directory() -> Result<std::path::PathBuf> {
         .ok_or_else(|| RetrievalError::Invalid("cannot locate prepared dense BLAS runtime".into()))
 }
 
-/// Verify the pinned pure-native Linux/aarch64 BLAS bundle before loading it.
-/// Packaging places these two files beside the executable in `dense-blas/`.
+/// Verify the pinned native BLAS bundle for this architecture before loading it.
+/// Packaging places every registered sidecar beside the executable in `dense-blas/`.
 #[cfg(target_os = "linux")]
 pub fn verify_dense_runtime(directory: &std::path::Path) -> Result<()> {
     use sha2::{Digest, Sha256};
     use std::io::Read;
-    if !cfg!(target_arch = "aarch64") {
+    if !cfg!(any(target_arch = "aarch64", target_arch = "x86_64")) {
         return Err(RetrievalError::Invalid(
-            "dense BLAS runtime is pinned for Linux aarch64".into(),
+            "dense BLAS runtime is pinned for Linux aarch64 and x86_64".into(),
         ));
     }
     for (name, record) in manifest().files {

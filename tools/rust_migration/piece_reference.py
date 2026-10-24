@@ -9,6 +9,8 @@ from .native_json import identity,load
 from .piece_ranking_reference import SCRIPT as RANKING_SCRIPT
 ROOT=Path(__file__).resolve().parents[2]
 SUITES={'catalog':['tests/retrieval/test_piece_catalog.py'],'assembly':['tests/retrieval/test_piece_candidates.py'],'ranking':['tests/retrieval/test_piece_ranking.py']}
+SUITES['ranking-edges']=SUITES['ranking']
+SUITES['ranking-empty-declaration']=SUITES['ranking']
 CATALOG_SCRIPT=r'''
 import hashlib,importlib,json,pathlib,platform,sys,tempfile,unicodedata
 import pytest
@@ -86,6 +88,8 @@ for case in request['cases']:
   except Exception as error:records.append(dict(**case,error=dict(type=type(error).__name__,message=str(error).replace(str(project),'{project}').replace(str(base),'{scenario}'))))
 '''+ 'discovered=[];states=[]'+CATALOG_SCRIPT.split('discovered=[];states=[]')[1]
 SCRIPTS={'catalog':CATALOG_SCRIPT,'assembly':ASSEMBLY_SCRIPT,'ranking':RANKING_SCRIPT}
+SCRIPTS['ranking-edges']=RANKING_SCRIPT
+SCRIPTS['ranking-empty-declaration']=RANKING_SCRIPT
 def definitions(family:str,repo:Path=ROOT):return load(repo/f'crates/ken-retrieval/tests/fixtures/piece-inputs-{family}.json')['cases']
 def validate_reference(value:dict,family:str,repo:Path=ROOT):
  try:
@@ -118,7 +122,7 @@ def capture(reference:Reference,out:Path,repo:Path=ROOT,family:str='catalog',cac
   request['grammar']=dict(cache=str(sdk),**cpp)
  if cached_suite is not None:
   previous=load(cached_suite);prior=load(cached_suite.parent/'request.json')
-  if family!='ranking'or prior['suite']!=SUITES[family]or previous['owners']!=expected or previous['original_test_exit']!=0 or len(previous['discovered'])!=9 or any(s['when']!='call'or s['outcome']!='passed'for s in previous['test_states'])or identity(cached_suite.parent/'capture.py')['sha256']!=previous['script_sha256']:raise ValueError('invalid prior piece ranking suite')
+  if family not in ('ranking','ranking-edges','ranking-empty-declaration')or prior['suite']!=SUITES[family]or previous['owners']!=expected or previous['original_test_exit']!=0 or len(previous['discovered'])!=9 or any(s['when']!='call'or s['outcome']!='passed'for s in previous['test_states'])or identity(cached_suite.parent/'capture.py')['sha256']!=previous['script_sha256']:raise ValueError('invalid prior piece ranking suite')
   request['cached_suite']=str(cached_suite.resolve())
  (out/'request.json').write_text(json.dumps(request,ensure_ascii=True))
  proc=subprocess.run([str(reference.python),str(out/'capture.py'),str(out/'request.json')],cwd=reference.root,env=reference_env(reference,out/'environment'),capture_output=True)

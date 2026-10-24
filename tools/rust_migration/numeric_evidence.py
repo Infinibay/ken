@@ -7,7 +7,7 @@ from .native_json import identity,load,tree,verify_native_json
 from .numeric_reference import SCRIPTS,SUITES,REUSED_SUITE_PARENTS,definitions,validate_reference
 from .numeric_validate import FORMAT,PREFIX,SCOPE,requests,compare_observations,source_identity
 from .selection_reference import owners
-from .retrieval_validate import runtime_files
+from .retrieval_validate import runtime_manifest
 from .receipts import junit_states
 from .integration_validate import _manifest_errors,rust_gate_errors
 from .retrieval_reference import digest
@@ -77,8 +77,9 @@ def verify_capture(out:Path,reference:dict,sources:dict|None=None,native_sha256:
         owned={'native-probe':execution['owned_before']['native-probe'],'static.npz':identity(repo/'src/ken/embedder/data/ken__static-qwen3-r512-v2.npz')}
         owned.update({'ranking/'+name:record for name,record in tree(repo/'crates/ken-retrieval/resources/ranking').items()})
         if execution['system']=='linux':
-            owned.update({'dense-blas/'+name:record for name,record in runtime_files(repo).items()})
-            require(str(Path(execution['cwd'])/'dense-blas'/'libscipy_openblas64_-7220728c.so')in(out/'stderr.log').read_text(),'isolated pinned numeric BLAS not loaded')
+            runtime=runtime_manifest(repo,execution['machine'])
+            owned.update({'dense-blas/'+name:record for name,record in runtime['files'].items()})
+            require(str(Path(execution['cwd'])/'dense-blas'/runtime['library'])in(out/'stderr.log').read_text(),'isolated pinned numeric BLAS not loaded')
         require(execution['owned_before']==owned,'unexpected or stale numeric resources/runtime')
         require(set(actual)=={'format','platform','cases','metrics'}and actual['platform']==execution['system'],'numeric native platform/shape differs')
         metrics=actual['metrics'];require(set(metrics)=={'elapsed_s','max_rss_bytes','scope'}and metrics['scope']==SCOPE,'numeric measurement scope differs')
