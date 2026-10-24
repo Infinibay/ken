@@ -58,3 +58,11 @@ def test_requests_are_input_only_and_inventory_order_is_required():
     ref=reference();request=requests(ref,{})
     assert request['format']==FORMAT and all(set(c)=={'id','family','kind','input'}for c in request['cases'])
     assert compare_observations(ref,dict(format=FORMAT,platform='linux',cases=[]))
+def test_macos_private_temp_alias_is_portable_without_hiding_diagnostic_or_size_drift():
+    ref=reference();base=next(c for c in ref['cases']if c['id']=='owner-current-delete')
+    expected=deepcopy(base);actual={k:deepcopy(v)for k,v in base.items()if k!='input'}
+    expected['result']['response']['warnings'][0]=expected['result']['response']['warnings'][0].replace('{project}','/private{project}')
+    expected['result']['characters']+=len('/private')
+    assert not compare_case(expected,actual)
+    actual['result']['characters']+=1;assert compare_case(expected,actual)
+    actual['result']['characters']-=1;actual['result']['response']['warnings'][0]+=' invented';assert compare_case(expected,actual)

@@ -1,6 +1,7 @@
 """Exact source-piece observations, with only the approved feature-column bounds."""
 from __future__ import annotations
 import json,math,shutil
+from copy import deepcopy
 from pathlib import Path
 from .index_validate import require,source_identity
 from .native_json import NativeJsonCapture,identity
@@ -9,6 +10,17 @@ FORMAT='ken-source-piece-probe/1'
 PREFIX='ken-source-pieces-native-'
 SCOPE='native input parsing, disposable source scenarios, piece projection/ranking/presentation and registered resource loading, before output serialization'
 GUARDS={'catalog_admission':'catalog source owner is invalid','assembly_admission':'retrieved member is outside the piece source'}
+def portable_diagnostics(case):
+    """Remove only macOS's lexical/canonical alias of the owned temp root."""
+    value=case
+    if case.get('family')=='presentation'and'result'in case:
+        result=case['result'];response=result['response'];warnings=response['warnings']
+        if any('/private{project}'in warning for warning in warnings):
+            require(type(result['characters'])is int and result['characters']==len(json.dumps(response,ensure_ascii=False,separators=(',',':'))),'piece reported character count differs')
+            value=deepcopy(case);new=value['result'];normalized=[warning.replace('/private{project}','{project}')for warning in warnings]
+            new['response']['warnings']=normalized
+            new['characters']-=sum(len(a)-len(b)for a,b in zip(warnings,normalized,strict=True))
+    return value
 def bound(case,path):
     if case['kind']=='piece_features'and len(path)==4 and path[:2]==('result','values'):
         return 1e-6 if case['input'].get('production')and path[-1]>=30 else 1e-12
@@ -35,7 +47,7 @@ def compare_case(expected,actual):
         require(all(actual.get(k)==expected.get(k)for k in('id','family','kind')),'piece case identity/order differs')
         if expected['kind']in GUARDS:
             require(set(actual)=={'id','family','kind','error'}and actual['error']==dict(type='ValueError',message=GUARDS[expected['kind']]),'piece source admission guard differs')
-        else:equal({k:v for k,v in expected.items()if k!='input'},actual,expected)
+        else:equal({k:v for k,v in portable_diagnostics(expected).items()if k!='input'},portable_diagnostics(actual),expected)
         return[]
     except(KeyError,TypeError,ValueError,IndexError)as error:return[str(error)]
 def compare_observations(reference,actual):

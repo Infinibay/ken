@@ -117,7 +117,7 @@ def verify_platform(packet:Path,repo:Path):
         for family in COUNTS:
             errors=verify_capture(packet/'native'/family,references[family],repo=repo,sources=sources,native_sha256=binary['sha256'])
             require(not errors,family+': '+str(errors))
-        system=preparation['runtime']['system'];require(not verify_gates(packet/'gates',rust_roots=125 if system=='Linux' else 124,python_roots=163),'complete source-piece gates failed')
+        system=preparation['runtime']['system'];require(not verify_gates(packet/'gates',rust_roots=125 if system=='Linux' else 124,python_roots=164),'complete source-piece gates failed')
         return[]
     except(OSError,KeyError,TypeError,ValueError,IndexError)as error:return[str(error)]
 def aggregate_matrix(directory:Path,repo:Path,*,review:Path|None=None):
