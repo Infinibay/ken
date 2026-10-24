@@ -7,16 +7,15 @@ use std::{
 };
 pub struct SourceFileReader {
     paths: ProjectPaths,
-    root: File,
 }
 pub struct SourceFile {
     file: File,
 }
 impl SourceFileReader {
     pub fn new(paths: &ProjectPaths) -> io::Result<Self> {
+        crate::source_handles::open_root(paths.root())?;
         Ok(Self {
             paths: paths.clone(),
-            root: crate::source_handles::open_root(paths.root())?,
         })
     }
     pub fn open(&self, path: &Path) -> io::Result<SourceFile> {
@@ -27,7 +26,11 @@ impl SourceFileReader {
                 "source path escapes project root",
             )
         })?;
-        let file = crate::source_handles::open(&self.root, relative, false)?;
+        // Bind each new read to the current root name. A previously opened
+        // source retains its own handle, but a renamed root is not a snapshot
+        // for future reads (which must detect changed source hashes).
+        let root = crate::source_handles::open_root(self.paths.root())?;
+        let file = crate::source_handles::open(&root, relative, false)?;
         if !file.metadata()?.is_file() {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidInput,

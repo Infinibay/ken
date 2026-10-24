@@ -573,3 +573,35 @@ perfiles y plataformas prometidas está verificada, CLI/MCP/integraciones usan R
 de verdad sin intérprete, datos y rollback están probados y calidad/recursos
 cumplen los contratos. Hasta entonces mantener `M4_accepted`/aceptación global
 falsos donde corresponda y documentar el próximo corte exacto.
+
+### Continuación del 24/10: runners ARM y preparación de cards
+
+El workflow `Native source-piece gates` ejecuta ahora Rust 1.95 y el oráculo
+portátil en runners reales `ubuntu-24.04-arm` y `macos-15`. El primer intento,
+[40113265720](https://github.com/Infinibay/ken/actions/runs/40113265720), pasó
+las 98 observaciones de ranking de piezas y sus dos raíces de pruebas en ambos
+hosts. Las suites completas detectaron diferencias de alineamiento numérico
+frente a los recibos históricos; ese intento **no acepta Task 3**.
+
+El commit `41d324bd` conserva esos originales y prepara una comparación con
+Python congelado en los mismos runners, sin ampliar tolerancias ni cambiar el
+cálculo para ajustarlo a resultados esperados. Sus artefactos guardan originales,
+resultados, descubrimiento y hashes; todavía requieren interpretación y cierre
+de los gates. Los originales se guardan en caché antes de compilar para evitar
+repetir las capturas cuando falla una prueba nativa.
+
+Task 4 tiene 60 observaciones originales nuevas en Linux x86_64 y tres raíces de
+pruebas, con tarjetas completas, texto canónico, límites de líneas/caracteres,
+procedencia y cambios de archivos/directorios. El mismo workflow captura las
+familias faltantes en ARM. Esto prepara la implementación de cards; no equivale
+a su aceptación nativa ni a completar M4c2.
+
+La prueba nueva del lector físico también detectó que reemplazar el directorio
+raíz conservaba por error las lecturas del directorio anterior. Cada apertura
+nueva adquiere ahora un descriptor confinado del directorio actual; los archivos
+ya abiertos conservan su propio descriptor. La regresión pasó de RED a GREEN,
+y las suites completas core/búsqueda pasaron localmente. El intento adicional de
+indexación pasó publicación (7 raíces), pero sus 8 pruebas incrementales carecen
+de `KEN_GRAMMAR_MANIFEST`; el catálogo de gramáticas aún no admite Linux x86_64.
+Ese límite sigue pendiente y no debe confundirse con aceptación de indexación en
+esta arquitectura.

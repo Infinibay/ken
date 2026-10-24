@@ -27,6 +27,23 @@ fn source_handle_retains_metadata_and_bytes_after_path_replacement() {
     );
 }
 #[test]
+fn a_new_source_read_observes_the_current_project_directory() {
+    let parent = tempfile::tempdir().unwrap();
+    let root = parent.path().join("project");
+    fs::create_dir(&root).unwrap();
+    fs::write(root.join("a.py"), b"original").unwrap();
+    let reader = reader(&root);
+    let opened = reader.open(Path::new("a.py")).unwrap();
+    fs::rename(&root, parent.path().join("old-project")).unwrap();
+    fs::create_dir(&root).unwrap();
+    fs::write(root.join("a.py"), b"replacement").unwrap();
+    assert_eq!(opened.read().unwrap(), b"original");
+    assert_eq!(
+        reader.open(Path::new("a.py")).unwrap().read().unwrap(),
+        b"replacement"
+    );
+}
+#[test]
 fn internal_symlinks_are_admitted_but_escape_and_special_files_are_not() {
     use std::{ffi::CString, os::unix::ffi::OsStrExt, os::unix::fs::symlink};
     let root = tempfile::tempdir().unwrap();
