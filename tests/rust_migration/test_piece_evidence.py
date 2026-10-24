@@ -40,3 +40,41 @@ def test_resealed_or_incomplete_native_evidence_rejects(packet,change):
     else:execution['owned_before']['static.npz']['sha256']='0'*64;execution['owned_after']=deepcopy(execution['owned_before'])
     (out/'execution.json').write_text(json.dumps(execution)+'\n')
     assert verify_capture(out,reference,repo=ROOT)
+def snapshot_packet(tmp_path):
+    import hashlib,io,tarfile
+    from tools.rust_migration.piece_evidence import PREDECESSOR
+    packet=tmp_path/'packet';packet.mkdir()
+    payloads={'Cargo.toml':b'fixture manifest\n','Cargo.lock':b'fixture lock\n','rust-toolchain.toml':b'fixture toolchain\n','tools/rust_migration/scope.py':b'# frozen validation scope\n',PREDECESSOR['path']+'/FILES.json':(ROOT/PREDECESSOR['path']/'FILES.json').read_bytes()}
+    records={name:dict(bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())for name,raw in payloads.items()}
+    (packet/'SNAPSHOT.json').write_text(json.dumps(records))
+    (packet/'SOURCES.json').write_text(json.dumps({name:records[name]for name in ('Cargo.toml','Cargo.lock','rust-toolchain.toml')}))
+    (packet/'VALIDATION-SOURCES.json').write_text(json.dumps({'tools/rust_migration/scope.py':records['tools/rust_migration/scope.py']}))
+    def archive(extra=None,duplicate=False,symlink=False,corrupt=False):
+        with tarfile.open(packet/'source-snapshot.tar.gz','w:gz')as output:
+            for name,raw in payloads.items():
+                info=tarfile.TarInfo(name);info.size=len(raw);output.addfile(info,io.BytesIO(b'x'*len(raw)if corrupt else raw))
+                if duplicate:output.addfile(info,io.BytesIO(raw));duplicate=False
+            if extra:
+                info=tarfile.TarInfo(extra);info.size=0
+                if symlink:info.type=tarfile.SYMTYPE;info.linkname='../../outside'
+                output.addfile(info,io.BytesIO())
+    archive();return packet,payloads,archive
+
+def test_archived_sources_extract_and_authenticate_before_replay(tmp_path):
+    from tools.rust_migration.piece_evidence import extract_snapshot
+    packet,payloads,_=snapshot_packet(tmp_path);destination=tmp_path/'snapshot'
+    assert extract_snapshot(packet,destination)==destination
+    assert all((destination/name).read_bytes()==raw for name,raw in payloads.items())
+@pytest.mark.parametrize('change',['parent','absolute','symlink','duplicate','corrupt','existing'])
+def test_unsafe_or_changed_source_archives_never_escape_or_overwrite(tmp_path,change):
+    from tools.rust_migration.piece_evidence import extract_snapshot
+    packet,_,archive=snapshot_packet(tmp_path);destination=tmp_path/'snapshot';outside=tmp_path/'outside';outside.write_bytes(b'unchanged')
+    if change=='parent':archive(extra='../outside')
+    elif change=='absolute':archive(extra=str(outside))
+    elif change=='symlink':archive(extra='link',symlink=True)
+    elif change=='duplicate':archive(duplicate=True)
+    elif change=='corrupt':archive(corrupt=True)
+    else:destination.mkdir();(destination/'keep').write_bytes(b'keep')
+    with pytest.raises((ValueError,OSError)):extract_snapshot(packet,destination)
+    assert outside.read_bytes()==b'unchanged'
+    if change=='existing':assert(destination/'keep').read_bytes()==b'keep'

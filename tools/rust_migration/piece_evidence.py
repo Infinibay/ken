@@ -117,7 +117,7 @@ def verify_platform(packet:Path,repo:Path):
         for family in COUNTS:
             errors=verify_capture(packet/'native'/family,references[family],repo=repo,sources=sources,native_sha256=binary['sha256'])
             require(not errors,family+': '+str(errors))
-        system=preparation['runtime']['system'];require(not verify_gates(packet/'gates',rust_roots=125 if system=='Linux' else 124,python_roots=156),'complete source-piece gates failed')
+        system=preparation['runtime']['system'];require(not verify_gates(packet/'gates',rust_roots=125 if system=='Linux' else 124,python_roots=163),'complete source-piece gates failed')
         return[]
     except(OSError,KeyError,TypeError,ValueError,IndexError)as error:return[str(error)]
 def aggregate_matrix(directory:Path,repo:Path,*,review:Path|None=None):
@@ -136,3 +136,26 @@ def aggregate_matrix(directory:Path,repo:Path,*,review:Path|None=None):
         require(identity(review.parent/relative(record['raw_review']['path']))==record['raw_review']['identity'],'raw final review changed')
         accepted=True
     return dict(format='ken-source-piece-acceptance/1',platforms=reports,cases_per_platform=446,differentials_per_platform=440,explicit_source_guards_per_platform=6,predecessor=PREDECESSOR,M4c2_accepted=accepted,M4_accepted=False,migration_complete=False)
+def extract_snapshot(packet:Path,destination:Path):
+    """Validate bounded regular payloads before writing a new snapshot directory."""
+    import hashlib,tarfile
+    require(not destination.exists(),'snapshot destination already exists')
+    records=load(packet/'SNAPSHOT.json');require(0<len(records)<=8192,'piece snapshot file count exceeds bound')
+    for name,record in records.items():
+        relative(name);require(set(record)=={'bytes','sha256'}and type(record['bytes'])is int and 0<=record['bytes']<=64*1024*1024,'invalid source snapshot record')
+    require(sum(record['bytes']for record in records.values())<=512*1024*1024,'piece snapshot exceeds512MiB')
+    payloads={}
+    with tarfile.open(packet/'source-snapshot.tar.gz','r:gz')as archive:
+        for member in archive:
+            require(member.isfile()and member.name in records and member.name not in payloads,'unsafe or unexpected piece source member')
+            expected=records[member.name];require(member.size==expected['bytes'],'piece source member size differs')
+            stream=archive.extractfile(member);require(stream is not None,'piece source payload missing');data=stream.read(expected['bytes']+1)
+            require(len(data)==expected['bytes']and hashlib.sha256(data).hexdigest()==expected['sha256'],'piece source archive payload differs')
+            payloads[member.name]=data
+    require(payloads.keys()==records.keys(),'piece source archive inventory differs')
+    for name,record in load(packet/'SOURCES.json').items():require(records.get(name)==record,'piece source archive has different build inputs')
+    destination.mkdir(parents=True)
+    for name,data in payloads.items():
+        target=destination/relative(name);target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+    verify_snapshot(packet,destination)
+    return destination
