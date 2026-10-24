@@ -83,8 +83,8 @@ def test_actual_complete_native_discovery_excludes_nested_health_harness():
     import platform,re
     from tools.rust_migration.integration_validate import rust_gate_errors
     from tools.rust_migration.piece_evidence import NATIVE_ROOTS
-    native=Path(os.environ.get('KEN_PIECE_NATIVE_DIR',ROOT/'.superpowers/sdd/2026-10-23-rust-source-pieces/native-x86-probe-audit'))
-    gates=native.parent/'gates'
+    native=os.environ.get('KEN_PIECE_NATIVE_DIR')
+    gates=Path(native).parent/'gates'if native else ROOT/'docs/validation/rust-migration-2026-10-23/m4-source-pieces/repair-evidence/gates'
     listed=(gates/'rust-list.log').read_text();output=(gates/'rust-tests.log').read_text()
     assert not rust_gate_errors(listed,output)
     discovered=len(re.findall(r'^([^\n]+): test$',listed,re.M))

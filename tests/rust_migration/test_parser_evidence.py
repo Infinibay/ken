@@ -13,6 +13,8 @@ REPO = Path(__file__).resolve().parents[2]
 
 @pytest.fixture(scope='module')
 def capture(tmp_path_factory):
+    prepared=os.environ.get('KEN_PARSER_NATIVE_CAPTURE')
+    if prepared:return Path(prepared),parser_cases(REPO)
     out = tmp_path_factory.mktemp('parser-evidence') / 'capture'
     probe = Path(os.environ['KEN_PARSER_PROBE']).absolute()
     manifest = Path(os.environ['KEN_GRAMMAR_MANIFEST']).absolute()

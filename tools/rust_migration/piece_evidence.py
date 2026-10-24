@@ -94,16 +94,8 @@ LINT_COMMANDS={
     'clippy':['cargo','clippy','--locked','--offline','-p','ken-core','-p','ken-retrieval','--all-targets','--','-D','warnings'],
 }
 def run_lint_gates(gates:Path):
-    """Preserve actual command exits and log identities before propagating failure."""
-    import subprocess
-    records={}
-    for name,command in LINT_COMMANDS.items():
-        path=gates/(name+'.log')
-        with path.open('wb')as stream:
-            result=subprocess.run(command,stdout=stream,stderr=subprocess.STDOUT,check=False)
-        records[name]=dict(command=command,exit=result.returncode,log=identity(path))
-        (gates/'LINT.json').write_text(json.dumps(records,indent=2)+'\n')
-        if result.returncode:raise RuntimeError(name+' gate failed; actual command receipt preserved')
+    from .command_gates import run_lint_gates as run
+    run(gates,LINT_COMMANDS)
 
 def verify_gates(gates:Path,*,rust_roots:int,python_roots:int):
     try:
@@ -115,12 +107,8 @@ def verify_gates(gates:Path,*,rust_roots:int,python_roots:int):
                 path,node=line.split('::',1);discovered.append(path[:-3].replace('/','.')+'::'+node)
         states=junit_states(gates/'python.xml')
         require(len(discovered)==python_roots and len(set(discovered))==python_roots and set(discovered)==set(states)and set(states.values())=={'passed'},'complete piece tooling roots required')
-        lint=load(gates/'LINT.json');require(set(lint)==set(LINT_COMMANDS),'piece lint command inventory missing')
-        for name,command in LINT_COMMANDS.items():
-            row=lint[name];require(set(row)=={'command','exit','log'}and row['command']==command and type(row['exit'])is int and row['exit']==0 and row['log']==identity(gates/(name+'.log')),'piece lint execution/log differs')
-        lines=(gates/'clippy.log').read_text().splitlines()
-        require((gates/'fmt.log').read_bytes()==b''and'error:'not in(gates/'clippy.log').read_text(),'piece format/lint failed')
-        require(lines and re.fullmatch(r'\s*Finished `dev` profile .*target\(s\) in \S+',lines[-1]),'piece clippy completion missing')
+        from .command_gates import lint_gate_errors
+        require(not lint_gate_errors(gates,LINT_COMMANDS),'piece format/lint receipt failed')
         return[]
     except(OSError,KeyError,TypeError,ValueError)as error:return[str(error)]
 def verify_snapshot(packet:Path,snapshot:Path):
@@ -160,25 +148,8 @@ def aggregate_matrix(directory:Path,repo:Path,*,review:Path|None=None):
         accepted=True
     return dict(format='ken-source-piece-acceptance/1',platforms=reports,cases_per_platform=446,differentials_per_platform=433,explicit_source_guards_per_platform=13,predecessor=PREDECESSOR,M4c2_accepted=accepted,M4_accepted=False,migration_complete=False)
 def extract_snapshot(packet:Path,destination:Path):
-    """Validate bounded regular payloads before writing a new snapshot directory."""
-    import hashlib,tarfile
-    require(not destination.exists(),'snapshot destination already exists')
-    records=load(packet/'SNAPSHOT.json');require(0<len(records)<=8192,'piece snapshot file count exceeds bound')
-    for name,record in records.items():
-        relative(name);require(set(record)=={'bytes','sha256'}and type(record['bytes'])is int and 0<=record['bytes']<=64*1024*1024,'invalid source snapshot record')
-    require(sum(record['bytes']for record in records.values())<=512*1024*1024,'piece snapshot exceeds512MiB')
-    payloads={}
-    with tarfile.open(packet/'source-snapshot.tar.gz','r:gz')as archive:
-        for member in archive:
-            require(member.isfile()and member.name in records and member.name not in payloads,'unsafe or unexpected piece source member')
-            expected=records[member.name];require(member.size==expected['bytes'],'piece source member size differs')
-            stream=archive.extractfile(member);require(stream is not None,'piece source payload missing');data=stream.read(expected['bytes']+1)
-            require(len(data)==expected['bytes']and hashlib.sha256(data).hexdigest()==expected['sha256'],'piece source archive payload differs')
-            payloads[member.name]=data
-    require(payloads.keys()==records.keys(),'piece source archive inventory differs')
-    for name,record in load(packet/'SOURCES.json').items():require(records.get(name)==record,'piece source archive has different build inputs')
-    destination.mkdir(parents=True)
-    for name,data in payloads.items():
-        target=destination/relative(name);target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+    from .native_snapshot import extract_source_snapshot
+    required=dict(load(packet/'SOURCES.json'));required.update(load(packet/'VALIDATION-SOURCES.json'))
+    extract_source_snapshot(packet,destination,required=required)
     verify_snapshot(packet,destination)
     return destination

@@ -1,0 +1,145 @@
+name: Native grammar extension gates
+on:
+  push:
+    branches: [codex/rust-migration]
+    paths:
+      - 'crates/ken-syntax/**'
+      - 'crates/ken-text/**'
+      - 'tools/rust_migration/grammar*'
+      - 'tools/rust_migration/command_gates.py'
+      - 'tests/rust_migration/test_grammar*'
+      - 'tests/rust_migration/test_command_gates.py'
+      - 'tests/rust_migration/test_parser*'
+      - '.github/workflows/rust-syntax.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-grammar-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    env:
+      CARGO_BUILD_JOBS: '2'
+      CARGO_INCREMENTAL: '0'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+      CARGO_TERM_COLOR: never
+      RUST_TEST_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/restore-validation-fixtures
+      - uses: astral-sh/setup-uv@v5
+      - name: Prepare pinned scoped development tools
+        shell: bash
+        run: |
+          uv python install 3.12.9 --no-bin
+          uv venv --python 3.12.9 --managed-python .venv
+          uv pip install --python .venv/bin/python pytest==9.1.1 numpy==2.4.4 \
+            tree-sitter==0.25.2 tree-sitter-language-pack==1.8.1 \
+            tree-sitter-python==0.25.0 tree-sitter-rust==0.24.2 \
+            tree-sitter-javascript==0.25.0 tree-sitter-typescript==0.23.2 \
+            tree-sitter-go==0.25.0 tree-sitter-java==0.23.5 \
+            pathspec==1.1.1 regex==2026.9.29 tokenizers==0.22.2 \
+            snowballstemmer==3.0.1 huggingface-hub==0.36.2
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Prepare native archive and process auditing tools
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = Linux ]; then
+            sudo apt-get update
+            sudo apt-get install --yes strace zstd
+          else
+            command -v zstd || brew install zstd
+          fi
+      - name: Restore originals and prepare the registered host SDK
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import json, os, sys
+          from tools.rust_migration.portable_reference import restore_portable
+          from tools.rust_migration.grammar_prepare import prepare_grammars, native_platform
+          root=Path.cwd();base=root/'.ken/rust-migration/grammar-extension'
+          restore_portable(root,root/'docs/validation/rust-migration-2026-10-23/handoff',reference=base/'reference',progress=base/'preserved-progress',python=Path(sys.executable).absolute())
+          sdk=base/('sdk-'+native_platform())
+          prepare_grammars(json.loads((root/'crates/ken-syntax/grammars.lock.json').read_bytes()),base/'archives',sdk)
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              stream.write('KEN_GRAMMAR_MANIFEST='+str(sdk/'manifest.json')+'\n')
+              stream.write('KEN_PARSER_ORIGINAL_GRAMMARS='+str(sdk)+'\n')
+              stream.write('KEN_RUST_REFERENCE='+str(base/'reference')+'\n')
+          PY
+          cargo test --locked -p ken-syntax --all-targets --no-run
+      - name: Execute every native syntax and lifetime root
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          from tools.rust_migration.command_gates import run_command_gates
+          from tools.rust_migration.grammar_extension import RUST_COMMANDS
+          gates=Path('.ken/rust-migration/grammar-platform/gates');gates.mkdir(parents=True)
+          run_command_gates(gates,RUST_COMMANDS,record_name='RUST.json')
+          PY
+      - name: Capture complete input-only native parser observations
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import os
+          from tools.rust_migration.grammar_packet import capture_packet
+          root=Path.cwd();packet=root/'.ken/rust-migration/grammar-platform'
+          capture_packet(root,Path(os.environ['KEN_GRAMMAR_MANIFEST']),packet)
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              stream.write('KEN_GRAMMAR_EXTENSION_PACKET='+str(packet)+'\n')
+              stream.write('KEN_PARSER_REFERENCE_OUT='+str(packet/'original')+'\n')
+              stream.write('KEN_PARSER_PROBE='+str(root/'target/debug/examples/parser_probe')+'\n')
+              stream.write('KEN_PARSER_NATIVE_CAPTURE='+str(packet/'native')+'\n')
+          PY
+      - name: Require formatting and strict native lint
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          from tools.rust_migration.command_gates import run_lint_gates
+          from tools.rust_migration.grammar_extension import LINT_COMMANDS
+          run_lint_gates(Path('.ken/rust-migration/grammar-platform/gates'),LINT_COMMANDS)
+          PY
+      - name: Execute complete scoped tooling and authenticate its receipt
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import json, sys
+          from tools.rust_migration.command_gates import run_command_gates
+          from tools.rust_migration.grammar_extension import TEST_FILES,verify_grammar_packet
+          packet=Path('.ken/rust-migration/grammar-platform');gates=packet/'gates'
+          prefix=[sys.executable,'-m','pytest','-o','addopts=','-q',*TEST_FILES]
+          run_command_gates(gates,{'python-list':[*prefix,'--collect-only'],'python-tests':[*prefix,'--junitxml='+str(gates/'python.xml')]},record_name='PYTHON.json')
+          records=json.loads((gates/'RUST.json').read_bytes());records.update(json.loads((gates/'PYTHON.json').read_bytes()))
+          (gates/'COMMANDS.json').write_text(json.dumps(records,indent=2)+'\n')
+          errors=verify_grammar_packet(packet,Path.cwd());assert not errors,errors
+          PY
+      - name: Preserve immutable sources, tooling and resources
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          from tools.rust_migration.grammar_packet import snapshot_packet
+          snapshot_packet(Path.cwd(),Path('.ken/rust-migration/grammar-platform'))
+          PY
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: grammar-${{ runner.os }}-${{ runner.arch }}
+          path: .ken/rust-migration/grammar-platform/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30

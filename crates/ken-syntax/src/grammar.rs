@@ -107,6 +107,8 @@ fn platform() -> &'static str {
         "macos-arm64"
     } else if cfg!(all(target_os = "linux", target_arch = "aarch64")) {
         "linux-aarch64"
+    } else if cfg!(all(target_os = "linux", target_arch = "x86_64")) {
+        "linux-x86_64"
     } else {
         "unsupported-platform"
     }

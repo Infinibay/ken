@@ -65,3 +65,17 @@ The receipt may accept **Grammar_x86_64** only. M4 search composition, x86model
 profiles/full indexing, global M3-on-x86, CLI/MCP, M5–M8 and replacing installed
 Python Ken remain required separate work. Preserve all1066frozen originals and
 accepted M4c2 receipts; no release,tag,merge or installed-command replacement.
+
+## Hermetic oracle fixture
+
+The consumed x86gzip fixture includes its complete reference and the six minimal
+original-process records needed to authenticate/reuse it in clean CI: reference,
+request,stdout,stderr,observations and JUnit. Those bytes come from the one
+preserved capture; restoring them never reruns the original suite. Its bounded
+transport has a fixed member whitelist and refuses changed existing destinations.
+All general execution directories,SDKs,builds and acceptance receipts remain
+ignored/local. ARM originals are restored from the authenticated M3receipt.
+
+Actual command/lint and bounded source-snapshot transport policies are shared
+with prior validators,with backward-compatible wrappers. Syntax supplies its
+own commands; it does not import retrieval scoring or build unrelated models.

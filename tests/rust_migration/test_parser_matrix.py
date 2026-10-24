@@ -1,5 +1,6 @@
 """Resealed receipts still require complete original/native platform evidence."""
 import json
+import os
 from pathlib import Path
 import shutil
 import tarfile
@@ -14,13 +15,37 @@ def seal(folder):
     rows = [dict(path=str(p.relative_to(folder)), **identity(p)) for p in sorted(folder.rglob('*')) if p.is_file() and p.name != 'FILES.json']
     (folder / 'FILES.json').write_text(json.dumps(dict(files=rows), indent=2) + '\n')
 
-def test_actual_matrix_accepts_only_parsers():
-    result = aggregate_parser_matrix(PROOF, REPO, current=True)
+@pytest.fixture(scope='module')
+def historical_repo(tmp_path_factory):
+    # Replaying a historical certificate requires its exact native sources and
+    # preserved originals, not today's Rust tree or modified Python checkout.
+    repo=tmp_path_factory.mktemp('archived-parser-repo')
+    shutil.copytree(PROOF/'native-sources',repo,dirs_exist_ok=True)
+    original=Path(os.environ.get('KEN_RUST_REFERENCE',REPO/'.ken/rust-migration/portable-reference'))
+    baseline=REPO/'docs/validation/rust-migration-2026-10-18/baseline.json'
+    for row in json.loads(baseline.read_bytes())['files']:
+        target=repo/row['path'];target.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copyfile(original/row['path'],target)
+    target=repo/'docs/validation/rust-migration-2026-10-18/baseline.json'
+    target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(baseline,target)
+    predecessor=json.loads((PROOF/'INDEX.json').read_bytes())['predecessor']['path']
+    shutil.copytree(REPO/predecessor,repo/predecessor)
+    return repo
+
+def test_actual_matrix_accepts_only_archived_parsers(historical_repo):
+    result = aggregate_parser_matrix(PROOF, historical_repo, current=True)
     assert result['passed'], result
     assert result['M3b_accepted'] and not result['M3_accepted'] and not result['migration_complete']
 
+def test_archived_acceptance_cannot_certify_changed_current_sources(historical_repo,tmp_path):
+    repo=tmp_path/'changed';shutil.copytree(historical_repo,repo)
+    source=repo/'crates/ken-syntax/src/grammar.rs'
+    source.write_bytes(source.read_bytes()+b'\n// changed after archived acceptance\n')
+    result=aggregate_parser_matrix(PROOF,repo,current=True)
+    assert not result['passed']and 'current parser source differs'in result['errors']
+
 @pytest.mark.parametrize('mutation', ['platform', 'source', 'grammar', 'original', 'missing', 'gate', 'summary'])
-def test_resealed_matrix_cannot_hide_missing_or_changed_proof(tmp_path, mutation):
+def test_resealed_matrix_cannot_hide_missing_or_changed_proof(tmp_path, mutation, historical_repo):
     out = tmp_path / 'proof'; shutil.copytree(PROOF, out)
     index = json.loads((out / 'INDEX.json').read_bytes())
     if mutation == 'platform': index['platforms'].pop('linux')
@@ -43,4 +68,4 @@ def test_resealed_matrix_cannot_hide_missing_or_changed_proof(tmp_path, mutation
         with tarfile.open(out / 'linux-capture.tar.gz', 'w:gz') as archive:
             for name in ('native', 'original'): archive.add(capture / name, arcname=name)
     (out / 'INDEX.json').write_text(json.dumps(index)); seal(out)
-    assert not aggregate_parser_matrix(out, REPO)['passed']
+    assert not aggregate_parser_matrix(out, historical_repo)['passed']
