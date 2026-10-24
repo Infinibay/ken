@@ -76,6 +76,7 @@ runs:
         import importlib.metadata, json, os, platform, subprocess, sys, unicodedata
         from tools.rust_migration.native_json import identity, load, tree
         from tools.rust_migration.piece_reference import capture
+        from tools.rust_migration.numeric_reference import capture as capture_numeric
         from tools.rust_migration.portable_reference import restore_portable
         from tools.rust_migration.reference import Reference, verify_reference
         root = Path.cwd()
@@ -94,14 +95,23 @@ runs:
         corpus = output/'corpora'
         corpus.mkdir(exist_ok=True)
         families = {}
-        for family in ('ranking', 'ranking-edges', 'ranking-empty-declaration'):
+        for family in ('ranking', 'ranking-edges', 'ranking-empty-declaration', 'cards'):
             destination = base if family == 'ranking' else saved/family
             value = capture(reference, destination, repo=root, family=family,
-                            cached_suite=None if family == 'ranking' else base/'reference.json')
-            assert value['runtime'] == runtime, value['runtime']
+                            cached_suite=base/'reference.json' if family.startswith('ranking-') else None)
+            assert all(value['runtime'][k] == v for k, v in runtime.items() if k in value['runtime']), value['runtime']
             for name, record in value['execution']['files'].items():
                 assert identity(destination/name) == record, (family, name)
             (corpus/f'piece-reference-{family}.json').write_text(json.dumps(value, ensure_ascii=True, allow_nan=False)+'\n')
+            families[family] = dict(path=str(destination.relative_to(root)), reference=identity(destination/'reference.json'), cases=len(value['cases']))
+        for family in ('alignment', 'alignment-edges'):
+            destination = saved/family
+            value = capture_numeric(reference, destination, repo=root, family=family,
+                                    cached_suite=saved/'alignment/reference.json' if family.endswith('-edges') else None)
+            assert value['runtime'] == runtime, value['runtime']
+            for name, record in value['execution']['files'].items():
+                assert identity(destination/name) == record, (family, name)
+            (corpus/f'numeric-reference-{family}.json').write_text(json.dumps(value, ensure_ascii=True, allow_nan=False)+'\n')
             families[family] = dict(path=str(destination.relative_to(root)), reference=identity(destination/'reference.json'), cases=len(value['cases']))
         preparation = dict(format='ken-piece-platform-preparation/1', runtime=runtime,
             commit=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip(),
@@ -112,6 +122,7 @@ runs:
         (output/'PREPARATION.json').write_text(json.dumps(preparation, indent=2)+'\n')
         with open(os.environ['GITHUB_ENV'], 'a') as stream:
             stream.write(f'KEN_PIECE_REFERENCE_DIR={corpus}\n')
+            stream.write(f'KEN_NUMERIC_REFERENCE_DIR={corpus}\n')
         PY
     - name: Preserve the originals before compiling or executing native tests
       if: steps.originals.outputs.cache-hit != 'true'

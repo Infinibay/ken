@@ -7,10 +7,12 @@ from .selection_reference import owners
 from .retrieval_reference import digest
 from .native_json import identity,load
 from .piece_ranking_reference import SCRIPT as RANKING_SCRIPT
+from .piece_card_reference import SCRIPT as CARD_SCRIPT
 ROOT=Path(__file__).resolve().parents[2]
 SUITES={'catalog':['tests/retrieval/test_piece_catalog.py'],'assembly':['tests/retrieval/test_piece_candidates.py'],'ranking':['tests/retrieval/test_piece_ranking.py']}
 SUITES['ranking-edges']=SUITES['ranking']
 SUITES['ranking-empty-declaration']=SUITES['ranking']
+SUITES['cards']=['tests/retrieval/test_piece_cards.py']
 CATALOG_SCRIPT=r'''
 import hashlib,importlib,json,pathlib,platform,sys,tempfile,unicodedata
 import pytest
@@ -90,6 +92,7 @@ for case in request['cases']:
 SCRIPTS={'catalog':CATALOG_SCRIPT,'assembly':ASSEMBLY_SCRIPT,'ranking':RANKING_SCRIPT}
 SCRIPTS['ranking-edges']=RANKING_SCRIPT
 SCRIPTS['ranking-empty-declaration']=RANKING_SCRIPT
+SCRIPTS['cards']=CARD_SCRIPT
 def definitions(family:str,repo:Path=ROOT):return load(repo/f'crates/ken-retrieval/tests/fixtures/piece-inputs-{family}.json')['cases']
 def validate_reference(value:dict,family:str,repo:Path=ROOT):
  try:

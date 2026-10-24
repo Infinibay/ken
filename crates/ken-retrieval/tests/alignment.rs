@@ -110,6 +110,10 @@ fn coverage(got: TermCoverage, want: &Value, is32: bool, weights32: bool, id: &s
 }
 #[test]
 fn full_original_dtype_dispatch_and_term_summary_observations() {
+    if let Some(raw) = platform_reference("alignment") {
+        observe(&raw, 245);
+        return;
+    }
     #[cfg(target_os = "macos")]
     let raw = include_str!("fixtures/numeric-reference-alignment.json");
     #[cfg(all(target_os = "linux", target_arch = "aarch64"))]
@@ -129,11 +133,23 @@ fn full_original_dtype_dispatch_and_term_summary_observations() {
 }
 #[test]
 fn original_rounding_floor_and_overflow_observations() {
+    if let Some(raw) = platform_reference("alignment-edges") {
+        observe(&raw, 22);
+        return;
+    }
     #[cfg(target_os = "macos")]
     let raw = include_str!("fixtures/numeric-reference-alignment-edges.json");
     #[cfg(target_os = "linux")]
     let raw = include_str!("fixtures/numeric-reference-alignment-edges-linux.json");
     observe(raw, 22);
+}
+fn platform_reference(family: &str) -> Option<String> {
+    std::env::var_os("KEN_NUMERIC_REFERENCE_DIR").map(|directory| {
+        std::fs::read_to_string(
+            std::path::PathBuf::from(directory).join(format!("numeric-reference-{family}.json")),
+        )
+        .expect("read authenticated same-host numeric reference")
+    })
 }
 fn observe(raw: &str, count: usize) {
     let corpus: Corpus = serde_json::from_str(raw).unwrap();
