@@ -3,8 +3,8 @@
 **Para retomar en otra máquina:** leer el [traspaso actualizado](rust-migration-handoff.md).
 Incluye estado actualizado, pendientes hasta M8, comandos de reconstrucción del
 oráculo original, progreso M4c2 y riesgos conocidos. M0–M3 y M4a/M4b/M4c1 están
-aceptados. M4c2 tiene catálogo, ensamblado, ranking, tarjetas, selección de
-evidencia y presentación implementados; presentación aún necesita sus gates ARM.
+aceptados. M4c2 también cerró su revisión, reparación y recibo de ambos ARM: catálogo,
+ensamblado, ranking, tarjetas, selección de evidencia y presentación nativos.
 La aplicación completa todavía no está migrada. Los recibos y capturas se
 [conservan localmente y se recuperan del historial](validation-artifacts.md).
 
@@ -69,9 +69,10 @@ localmente 124 pruebas nativas y 110 de tooling. También pasó ambos ARM en
 `40118877663` (124 raíces Linux, 123 macOS y 110 de tooling por host).
 La presentación compara 117 observaciones originales, incluidos redondeo,
 caracteres Unicode y avisos de fuentes cambiadas; pasa localmente 125 pruebas
-nativas y 111 de tooling. Quedan sus gates ARM, Task 7 y M4d–M8, además de la
-revisión final del plan M4c2. El catálogo de
-gramáticas de indexación todavía no admite x86_64; ese soporte sigue pendiente.
+nativas y 111 de tooling en ese checkpoint. Los gates ARM, Task 7 y la revisión
+M4c2 cerraron después, en el recibo del 24/10 descrito a continuación. M4d–M8
+continúan pendientes. El catálogo de gramáticas todavía no admite x86_64;
+registrarlo es el siguiente requisito local para continuar la composición.
 
 ## Avance al 23 de octubre
 
@@ -753,3 +754,24 @@ pendientes. Se conservaron los1066originales y se limpiaron221.5MiB/319.5MiB de
 artefactos regenerables de ken-index en los targets macOS/Linux. Los commits
 validados se suben periódicamente a `origin/codex/rust-migration` por petición
 del usuario; el gate local no certifica una ejecución de CI remota.
+
+## Cierre M4c2 del 24 de octubre
+
+M4c2 está aceptado en ambos ARM tras una revisión y una pasada de reparación,
+con fuentes `3e4a4e4c` y ejecución `40127406181`. Pasaron 126 raíces Rust Linux,
+125 macOS y 174 de tooling por host, formato y Clippy estricto. Las 446
+observaciones incluyen 433 comparaciones y 13 guardas más estrictas explícitas;
+los originales, modelos y tolerancias se conservaron. El recibo anterior no
+certifica búsqueda pública ni aceptación global.
+
+Se corrigieron la escritura del probe a través de enlaces, admisión de soporte
+stale en cards, identidad semántica del constructor y evidencia incompleta de
+Clippy. Las cifras anteriores que sumaban resultados Rust incluían un hijo de
+la prueba de salud; el recibo final verifica las raíces descubiertas.
+El [traspaso](rust-migration-handoff.md#cierre-m4c2-del-2410-recibo-revisado-y-transportable)
+fija los hashes del recibo y del archivo local transportable, con replay desde
+fuentes archivadas. Nada de ese raw se vuelve a seguir en Git.
+
+Siguen M4d (composición, pools, modelos reales, CLI/MCP y calidad/recursos) y
+M5–M8. La próxima extensión local es el registro de gramáticas Linux x86_64;
+el soporte BLAS ya probado no acreditaba todavía parsers ni indexación allí.

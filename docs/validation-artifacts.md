@@ -29,3 +29,30 @@ El corpus adversarial que consumen las pruebas estructurales vive en
 Guardar nuevas ejecuciones en `.ken/rust-migration/` o en el directorio local
 del plan bajo `.superpowers/sdd/`. Incorporar a los fixtures versionados sólo
 las entradas y observaciones que las pruebas de regresión consuman.
+
+## Recibos nuevos posteriores a la limpieza
+
+El cierre M4c2 del 24/10 nunca versionó sus logs. Su recibo completo se guarda en
+`docs/validation/rust-migration-2026-10-23/m4-source-pieces/` y en el archivo local
+`.ken/rust-migration/archives/m4-source-pieces-3e4a4e4c.tar.gz` (340.368.226 bytes):
+SHA-256 `feafc8ea7dfe9f81beaf729e5ba15766ff7ab70eb3d3c656a8dd9c447172f5d7`.
+Transportar ese archivo para recuperar también la revisión y el sellado local.
+Las dos capturas previas al sellado se pueden descargar de la ejecución Actions
+`40127406181` durante sus 30 días de retención; no contienen por sí solas el
+recibo posrevisión completo.
+
+Extraer el archivo verificado en un destino nuevo y ejecutar el replay con el
+entorno de validación Python 3.12.9/NumPy 2.4.4:
+
+```sh
+mkdir -p .ken/rust-migration/receipt-copy
+# Verificar primero el SHA-256 anterior; no sobrescribir otro recibo local.
+tar -xzf .ken/rust-migration/archives/m4-source-pieces-3e4a4e4c.tar.gz \
+  -C .ken/rust-migration/receipt-copy
+.venv/bin/python -B .ken/rust-migration/receipt-copy/m4-source-pieces/replay.py \
+  92954a5df4ea37bf4820b50e695b023d84d305fab29e7c19c09b93ea7d781e20
+```
+
+El replay autentica los 4.718 miembros del recibo e importa su verificador
+archivado. No requiere Git, red ni ejecutar binarios ARM; conserva falsos los
+indicadores M4/global. No regenerar originales para suplir el archivo perdido.

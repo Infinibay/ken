@@ -8,16 +8,17 @@ El usuario autorizó continuar la migración y agregar Linux x86_64; los recibos
 ARM históricos conservan su alcance y no certifican esta nueva arquitectura.
 
 Traspaso del 23 de octubre de 2026. Rama: `codex/rust-migration`.
-Última implementación terminada: `5d9dc6f927098f47942d5c0dd5ee72ca22853c4a`.
-Este documento y su cápsula guardan el trabajo posterior de preparación de pruebas.
+Punto histórico del traspaso: `5d9dc6f927098f47942d5c0dd5ee72ca22853c4a`.
+Cierre M4c2 del 24/10: `3e4a4e4ccd6762f437af43f618e8631984e67b39`;
+ver el recibo y la identidad de archivo al final de este documento.
 **La migración completa todavía no está terminada.** La aplicación instalada sigue
 siendo Python; `ken-rs` no sustituye todavía todos sus comandos.
 
-El usuario pidió documentar, hacer commit y push a esta misma rama y **detenerse**.
-Este checkpoint no autoriza trabajo en segundo plano. Al recibir una nueva orden
-de continuar, retomar desde M4c2 Task 3, sin reiniciar M0/M1 ni repetir capturas
-originales aceptadas. Conservar originales, ejecutar de forma nativa, comprobar
-las pruebas antes de avanzar y hacer commits/push periódicos.
+La parada solicitada el 23/10 quedó superada por la orden de continuar del 24/10.
+El usuario autorizó los push a esta rama y el soporte Linux x86_64. Continuar
+por M4d, sin reiniciar M0/M1 ni repetir originales aceptados. Conservar fuentes,
+recibos y archivos locales; comprobar cada bloque y subir commits periódicos.
+Esta autorización no incluye merge, release, tags ni reemplazar el Ken instalado.
 
 ## 1. Autoridad y lectura inicial
 
@@ -46,12 +47,7 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | M4a | Aceptado | BM25F/SQL, búsqueda densa y fusión; `m4-kernels-review` |
 | M4b | Aceptado | Intención, selección, propietarios, vistas contextuales y ranking de entidades/pasajes; `m4-selection-review` |
 | M4c1 | Aceptado | Bosques, stemming, alineamiento, features y ranking numérico de propietarios; `m4-numeric-owner` |
-| M4c2 Tasks 1–2 | Implementadas y probadas en ambos hosts; falta revisión final del plan | Catálogo físico y ensamblado completo, commits `34327080` y `5d9dc6f9` |
-| M4c2 Task 3 | Ranking implementado; gates Linux x86_64 y ambos ARM pasados; revisión final del plan pendiente | 98 observaciones originales, 262 columnas y bosque de 1.280 árboles |
-| M4c2 Task 4 | Cards implementadas; gates locales y ambos ARM pasados; revisión final del plan pendiente | 60 observaciones de proyección/procedencia/frescura |
-| M4c2 Task 5 | Evidencia implementada; gates locales y ambos ARM pasados; revisión final del plan pendiente | 88 observaciones originales; 124 pruebas nativas Linux/123 macOS y 110 de tooling por host |
-| M4c2 Task 6 | Presentación implementada y comparada localmente; faltan gates ARM del código nativo | 117 observaciones originales; 125 pruebas nativas y 111 de tooling locales |
-| M4c2 Task 7 | Pendiente | Probe/comparador, matriz y una revisión final |
+| M4c2 | Aceptado tras una revisión y una pasada de corrección | Catálogo, piezas, ranking, cards, evidencia y presentación; 446 observaciones por ARM, 126/125 raíces Rust y 174 de tooling; recibo `m4-source-pieces` |
 | M4d | Pendiente; requiere su propio plan | Composición de búsqueda, canales restantes, pools de vistas preparadas, uso real de modelos y aceptación CLI/MCP |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
@@ -450,12 +446,12 @@ suite con permiso local de sockets, conservar el fallo y no filtrar tests.
   hojas, scores, llamadas, orden y evidencia son exactos. Transportar NaN/Inf
   con categoría IEEE explícita; no convertir silenciosamente en null.
 
-## 6. Completar M4c2 y M4d
+## 6. M4c2 cerrado; continuar M4d
 
-Cada tarea tiene archivos, interfaces, casos RED/GREEN y comandos en el plan.
-Esta lista explica qué falta y cuándo se puede dar por cerrado:
+Todas las tareas M4c2 cerraron con el recibo del 24/10. Esta tabla conserva
+sus responsabilidades y contratos; el siguiente bloque pendiente es M4d:
 
-| Tarea pendiente | Responsabilidad | Criterio de aceptación esencial |
+| Tarea cerrada | Responsabilidad | Criterio de aceptación esencial |
 | --- | --- | --- |
 | 4: `piece_cards.rs` | Proyección fija de piezas con evidencia física | Cards/card_text/canónico iguales; roles y gaps correctos, sin líneas fabricadas o repetidas; límites 64 líneas / 4 excerpts / 12.000 caracteres; fuente stale o fuera del root rechazada |
 | 5: `evidence.rs`, `source_evidence.rs` | Ventanas y refinamiento dentro del owner | Judge recibe documentos/purpose reales; ramas distantes conservadas en fragmentos; ≤40 líneas totales; sin votos duplicados ni texto de hijos; >64 cues; scores finitos por bundle; bypasses sin calls |
@@ -488,8 +484,8 @@ M4d debe fijar antes de implementar el contrato de composición y aceptación:
 
 Antes de cada bloque nuevo, escribir su especificación y plan Superpowers con
 llamada representativa, propietarios, archivos, pruebas y salida verificable.
-La autorización de continuar ya existe; no volver a pedir aprobación de etapa
-por rutina. El usuario debe volver a ordenar continuar tras este traspaso/parada.
+La orden de continuar del 24/10 ya está vigente; no volver a pedir aprobación
+de etapa por rutina.
 
 1. **M5a, representación/persistencia estructural:** producir CFG/IR desde los
    parsers/modelo común; identidades, relaciones, valores, evidencia/versionado,
@@ -654,3 +650,46 @@ al lector confinado como única autoridad de bytes. Pasaron 125 pruebas nativas
 locales, 111 de tooling, formato y Clippy estricto. Falta validar esa nueva
 implementación en ARM y completar el probe/recibo/revisión de Task 7. No se ha
 sustituido el comando Python instalado ni se acepta M4/global todavía.
+
+## Cierre M4c2 del 24/10: recibo revisado y transportable
+
+Fuentes aceptadas: `3e4a4e4ccd6762f437af43f618e8631984e67b39`.
+La ejecución [40127406181](https://github.com/Infinibay/ken/actions/runs/40127406181)
+pasó todos los gates en Linux aarch64 y macOS arm64: **126/125 raíces Rust**,
+**174 de tooling por host**, formato y Clippy estricto. Son raíces descubiertas;
+las cifras anteriores obtenidas sumando `passed` incluían además un subproceso
+de la prueba de salud y no deben usarse como inventario de raíces.
+
+Cada plataforma acredita **446 observaciones: 433 comparaciones y 13 guardas
+más estrictas**. Siete casos originales sintéticos etiquetaban como clase una
+declaración de otro tipo; se conservan sus resultados originales y se exige
+ahora el error preciso sin llamadas de encoding. Las otras seis guardas de
+admisión ya estaban declaradas. No se cambiaron modelos, tolerancias numéricas,
+salidas válidas ni presupuestos para obtener el resultado.
+
+La única revisión final encontró tres Important: escritura del probe por cadenas
+de enlaces, soporte stale en cards y clase con entidad no clase. Una incidencia
+de recibos Clippy se elevó de Minor a Important. Las cuatro se reprodujeron y
+corrigieron en una pasada; los diez comportamientos apartados tienen resolución
+explícita. No hubo segunda revisión ni recaptura de originales aceptados.
+
+El [recibo local](validation/rust-migration-2026-10-23/m4-source-pieces/README.md)
+contiene revisión, decisiones, reparaciones, binarios, originales, auditorías,
+snapshots y replay. Sus 986 archivos de fuentes/tooling por plataforma se
+contrastaron contra Git y la aceptación se repitió con el verificador archivado.
+`FILES.json` tiene SHA-256
+`92954a5df4ea37bf4820b50e695b023d84d305fab29e7c19c09b93ea7d781e20`.
+
+Archivo local `.ken/rust-migration/archives/m4-source-pieces-3e4a4e4c.tar.gz`:
+340.368.226 bytes; SHA-256
+`feafc8ea7dfe9f81beaf729e5ba15766ff7ab70eb3d3c656a8dd9c447172f5d7`.
+Se mantiene fuera de Git. Las capturas de plataforma también están en Actions
+por 30 días: Linux `12572999379`, macOS `12573364847`. El recibo posrevisión
+completo se transporta con el archivo local; no se reconstruye recapturando.
+
+Los 1.066 originales conservan sus hashes. Los escenarios y runtimes temporales
+se limpian al cerrar sus propietarios; se mantienen raw, SDKs y cachés compartidas.
+**M4c2 está aceptado; M4 y la migración global siguen falsos.** La búsqueda pública,
+CLI/MCP y el Ken instalado todavía no usan este motor completo. Continuar por
+M4d: primero registrar las gramáticas x86_64 para poder validar localmente las
+observaciones de sintaxis; luego composición, pools, modelos y gates públicos.
