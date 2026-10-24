@@ -3,13 +3,15 @@ on:
   push:
     branches: [codex/rust-migration]
     paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'rust-toolchain.toml'
+      - 'pyproject.toml'
       - 'crates/ken-syntax/**'
       - 'crates/ken-text/**'
-      - 'tools/rust_migration/grammar*'
-      - 'tools/rust_migration/command_gates.py'
-      - 'tests/rust_migration/test_grammar*'
-      - 'tests/rust_migration/test_command_gates.py'
-      - 'tests/rust_migration/test_parser*'
+      - 'tools/rust_migration/**'
+      - 'tests/rust_migration/**'
+      - '.github/actions/restore-validation-fixtures/**'
       - '.github/workflows/rust-syntax.yml'
   workflow_dispatch:
 permissions:
@@ -120,20 +122,14 @@ jobs:
           import json, sys
           from tools.rust_migration.command_gates import run_command_gates
           from tools.rust_migration.grammar_extension import TEST_FILES,verify_grammar_packet
+          from tools.rust_migration.grammar_packet import snapshot_packet
           packet=Path('.ken/rust-migration/grammar-platform');gates=packet/'gates'
           prefix=[sys.executable,'-m','pytest','-o','addopts=','-q',*TEST_FILES]
           run_command_gates(gates,{'python-list':[*prefix,'--collect-only'],'python-tests':[*prefix,'--junitxml='+str(gates/'python.xml')]},record_name='PYTHON.json')
           records=json.loads((gates/'RUST.json').read_bytes());records.update(json.loads((gates/'PYTHON.json').read_bytes()))
           (gates/'COMMANDS.json').write_text(json.dumps(records,indent=2)+'\n')
+          snapshot_packet(Path.cwd(),packet)
           errors=verify_grammar_packet(packet,Path.cwd());assert not errors,errors
-          PY
-      - name: Preserve immutable sources, tooling and resources
-        shell: bash
-        run: |
-          .venv/bin/python - <<'PY'
-          from pathlib import Path
-          from tools.rust_migration.grammar_packet import snapshot_packet
-          snapshot_packet(Path.cwd(),Path('.ken/rust-migration/grammar-platform'))
           PY
       - uses: actions/upload-artifact@v7
         if: always()

@@ -5,7 +5,7 @@ from pathlib import Path
 from .native_json import identity,load
 from .parser_validate import run_parser_capture,source_identity,LIMIT
 from .grammar_prepare import native_platform
-from .grammar_extension import ORIGINAL_FILES,PREDECESSOR_FILES_SHA,read_reference,restore_fixture_original,native_cases,verify_grammar_capture,require
+from .grammar_extension import ORIGINAL_FILES,PREDECESSOR_FILES_SHA,read_reference,restore_fixture_original,native_cases,verify_grammar_capture,validation_identity,SUPPORT_FILES,require
 
 def capture_packet(repo:Path,manifest:Path,out:Path):
     require(not(out/'HOST.json').exists(),'grammar packet already captured')
@@ -38,12 +38,9 @@ def capture_packet(repo:Path,manifest:Path,out:Path):
 
 def snapshot_packet(repo:Path,out:Path):
     sources=source_identity(repo);require(sources==load(out/'SOURCES.json'),'grammar sources changed after execution')
-    validation=[p for folder in ('tools/rust_migration','tests/rust_migration')for p in(repo/folder).glob('*.py')]
-    validation.extend(repo/name for name in ('.github/workflows/rust-syntax.yml','.github/actions/restore-validation-fixtures/action.yml'))
-    tooling={str(path.relative_to(repo)):identity(path)for path in sorted(validation)}
+    tooling=validation_identity(repo)
     records=dict(sources);records.update(tooling)
-    for name in ('docs/validation/rust-migration-2026-10-18/baseline.json','docs/superpowers/specs/2026-10-24-rust-x86-grammars-design.md','docs/superpowers/plans/2026-10-24-rust-x86-grammars.md'):
-        records[name]=identity(repo/name)
+    for name in SUPPORT_FILES:records[name]=identity(repo/name)
     with tarfile.open(out/'source-snapshot.tar.gz','w:gz')as archive:
         for name in sorted(records):archive.add(repo/name,arcname=name,recursive=False)
     (out/'SNAPSHOT.json').write_text(json.dumps(records,indent=2)+'\n')

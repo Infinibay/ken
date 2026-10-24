@@ -4,10 +4,9 @@ import hashlib,tarfile
 from pathlib import Path,PurePosixPath
 from .native_json import load
 
-def extract_source_snapshot(packet:Path,destination:Path,*,required:dict):
+def read_source_snapshot(packet:Path,*,required:dict):
     def require(value,message):
         if not value:raise ValueError(message)
-    require(not destination.exists()and not destination.is_symlink(),'snapshot destination already exists')
     records=load(packet/'SNAPSHOT.json');require(isinstance(records,dict)and 0<len(records)<=8192,'snapshot file count exceeds bound')
     for name,row in records.items():
         require(isinstance(name,str)and bool(name)and'\x00'not in name,'invalid snapshot member name')
@@ -25,6 +24,11 @@ def extract_source_snapshot(packet:Path,destination:Path,*,required:dict):
             require(len(raw)==row['bytes']and hashlib.sha256(raw).hexdigest()==row['sha256'],'snapshot payload differs')
             payloads[member.name]=raw
     require(payloads.keys()==records.keys(),'snapshot inventory differs')
+    return payloads
+
+def extract_source_snapshot(packet:Path,destination:Path,*,required:dict):
+    if destination.exists()or destination.is_symlink():raise ValueError('snapshot destination already exists')
+    payloads=read_source_snapshot(packet,required=required)
     destination.mkdir(parents=True)
     for name,raw in payloads.items():
         path=destination/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(raw)

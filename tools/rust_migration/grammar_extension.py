@@ -1,6 +1,6 @@
 """Authenticate added-host syntax without borrowing whole-project acceptance."""
 from __future__ import annotations
-import base64,gzip,hashlib,json,re,struct
+import base64,gzip,hashlib,json,re,struct,tarfile
 from pathlib import Path
 from .fastembed_process import _distinct,_nonfinite
 from .native_json import identity,load
@@ -19,7 +19,7 @@ RUST_COMMANDS={
  'doc-tests':['cargo','test','--locked','--offline','-p','ken-syntax','--doc'],
  'probe-build':['cargo','build','--locked','--offline','-p','ken-syntax','--example','parser_probe'],
 }
-PYTHON_ROOTS=79
+PYTHON_ROOTS=87
 ORIGINAL_FILES=("reference.json","request.json","stdout.log","stderr.log","original-observations.json","original-tests.xml")
 PREDECESSOR_FILES_SHA="c1541177be2a0716ff52276d7cfe042ae4ff5acea75d3f4c90d4a3452ab48ff8"
 
@@ -99,7 +99,6 @@ def verify_grammar_capture(packet:Path,repo:Path):
         if host['platform']=='linux-x86_64':
             require(reference==read_reference(repo/'crates/ken-syntax/tests/fixtures/reference-linux-x86_64.json.gz'),'registered actual x86oracle differs')
         else:
-            import tarfile
             manifest=packet/'PREDECESSOR-FILES.json';require(identity(manifest)['sha256']==PREDECESSOR_FILES_SHA,'accepted parser predecessor differs')
             filename=('linux'if host['system']=='Linux'else'macos')+'-capture.tar.gz'
             pinned=next(row for row in load(manifest)['files']if row['path']==filename)
@@ -114,7 +113,7 @@ def verify_grammar_capture(packet:Path,repo:Path):
         require(execution['manifest']['platform']==host['platform'],'native grammar resource target differs')
         errors=verify_parser_capture(packet/'native',native_cases(reference,repo),sources,identity(binary)['sha256'],load(repo/'crates/ken-syntax/grammars.lock.json'))
         require(not errors,'; '.join(errors));return[]
-    except(OSError,ValueError,KeyError,TypeError,IndexError,EOFError)as error:return[str(error)]
+    except(OSError,ValueError,KeyError,TypeError,IndexError,EOFError,tarfile.TarError)as error:return[str(error)]
 
 def verify_grammar_gates(gates:Path,*,python_roots:int=PYTHON_ROOTS):
     try:
@@ -139,9 +138,39 @@ def verify_grammar_gates(gates:Path,*,python_roots:int=PYTHON_ROOTS):
         errors=lint_gate_errors(gates,LINT_COMMANDS);require(not errors,'; '.join(errors));return[]
     except(OSError,ValueError,KeyError,TypeError,IndexError)as error:return[str(error)]
 
+VALIDATION_FILES=('.github/workflows/rust-syntax.yml','.github/actions/restore-validation-fixtures/action.yml','pyproject.toml')
+SUPPORT_FILES=('docs/validation/rust-migration-2026-10-18/baseline.json','docs/superpowers/specs/2026-10-24-rust-x86-grammars-design.md','docs/superpowers/plans/2026-10-24-rust-x86-grammars.md')
+
+def validation_identity(repo:Path):
+    files=[p for folder in ('tools/rust_migration','tests/rust_migration')for p in(repo/folder).glob('*.py')]
+    files.extend(repo/name for name in VALIDATION_FILES)
+    return{str(path.relative_to(repo)):identity(path)for path in sorted(files)}
+
+def verify_grammar_snapshot(packet:Path,repo:Path):
+    try:
+        from .native_snapshot import read_source_snapshot
+        sources=load(packet/'SOURCES.json');tooling=load(packet/'VALIDATION-SOURCES.json')
+        require(sources==source_identity(repo),'archived native source inventory differs')
+        require(tooling==validation_identity(repo),'complete current grammar tooling inventory differs')
+        expected=dict(sources);expected.update(tooling);expected.update({name:identity(repo/name)for name in SUPPORT_FILES})
+        require(load(packet/'SNAPSHOT.json')==expected,'complete grammar snapshot inventory differs')
+        read_source_snapshot(packet,required=expected)
+        return[]
+    except(OSError,ValueError,KeyError,TypeError,IndexError,EOFError,tarfile.TarError)as error:return[str(error)]
+
+def verify_grammar_review(path:Path,sources:dict,tooling:dict):
+    try:
+        value=load(path)
+        require(value['format']=='ken-grammar-extension-review/1'and value['whole_plan']is True and value['critical_open']==[]and value['important_open']==[],'whole-plan grammar review is not closed')
+        require(isinstance(value['reviewer'],str)and bool(value['reviewer']),'grammar reviewer missing')
+        require(value['accepted_sources']==sources and value['accepted_tooling']==tooling,'review does not bind native sources and complete tooling')
+        name=Path(value['raw_review']['path']);require(not name.is_absolute()and'..'not in name.parts and identity(path.parent/name)==value['raw_review']['identity'],'raw grammar review differs')
+        return[]
+    except(OSError,ValueError,KeyError,TypeError,IndexError)as error:return[str(error)]
+
 def verify_grammar_packet(packet:Path,repo:Path):
-    errors=verify_grammar_capture(packet,repo)
-    return errors or verify_grammar_gates(packet/'gates')
+    errors=verify_grammar_capture(packet,repo)or verify_grammar_gates(packet/'gates')
+    return errors or verify_grammar_snapshot(packet,repo)
 
 def extract_grammar_snapshot(packet:Path,destination:Path):
     from .native_snapshot import extract_source_snapshot
@@ -159,12 +188,11 @@ def aggregate_grammar_hosts(directory:Path,repo:Path,review:Path|None=None):
         for platform in HOSTS:
             packet=directory/platform;host=load(packet/'HOST.json');require(host['platform']==platform,'actual grammar host missing')
             errors=verify_grammar_packet(packet,repo);require(not errors,platform+': '+str(errors))
-            result['platforms'].append(dict(platform=platform,commit=host['commit'],sources=load(packet/'SOURCES.json'),native=identity(packet/'bin/parser-probe')))
-        rows=result['platforms'];require(re.fullmatch('[0-9a-f]{40}',rows[0]['commit'])and all(row['commit']==rows[0]['commit']and row['sources']==rows[0]['sources']for row in rows),'grammar hosts ran different candidate sources')
+            result['platforms'].append(dict(platform=platform,commit=host['commit'],sources=load(packet/'SOURCES.json'),tooling=load(packet/'VALIDATION-SOURCES.json'),native=identity(packet/'bin/parser-probe')))
+        rows=result['platforms'];require(re.fullmatch('[0-9a-f]{40}',rows[0]['commit'])and all(row['commit']==rows[0]['commit']and row['sources']==rows[0]['sources']and row['tooling']==rows[0]['tooling']for row in rows),'grammar hosts ran different candidate sources')
         result['gates_passed']=True
         if review is not None:
-            value=load(review);require(value['format']=='ken-grammar-extension-review/1'and value['whole_plan']is True and value['critical_open']==[]and value['important_open']==[]and value['accepted_sources']==rows[0]['sources'],'whole-plan grammar review not closed/source-bound')
-            name=Path(value['raw_review']['path']);require(not name.is_absolute()and'..'not in name.parts and identity(review.parent/name)==value['raw_review']['identity'],'raw grammar review differs')
+            errors=verify_grammar_review(review,rows[0]['sources'],rows[0]['tooling']);require(not errors,'; '.join(errors))
             result['Grammar_x86_64_accepted']=True
     except(OSError,ValueError,KeyError,TypeError,IndexError)as error:result['errors'].append(str(error))
     return result

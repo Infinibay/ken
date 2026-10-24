@@ -139,3 +139,32 @@ def test_archived_grammar_sources_replay_without_the_live_checkout(packet,tmp_pa
     snapshot_packet(ROOT,packet)
     snapshot=tmp_path/'snapshot';extract_grammar_snapshot(packet,snapshot)
     assert not verify_grammar_capture(packet,snapshot)
+
+@pytest.mark.parametrize('change',['none','missing-tooling','missing-inventory','missing-archive','changed-validator','cross-host-tooling','archive-bytes'])
+def test_finalized_packet_requires_the_complete_current_tooling_archive(packet,tmp_path,change):
+    from tools.rust_migration.grammar_packet import snapshot_packet
+    from tools.rust_migration.grammar_extension import verify_grammar_snapshot,extract_grammar_snapshot
+    snapshot_packet(ROOT,packet)
+    assert not verify_grammar_snapshot(packet,ROOT)
+    repo=ROOT
+    if change=='missing-tooling':(packet/'VALIDATION-SOURCES.json').unlink()
+    elif change=='missing-inventory':(packet/'SNAPSHOT.json').unlink()
+    elif change=='missing-archive':(packet/'source-snapshot.tar.gz').unlink()
+    elif change=='changed-validator':
+        repo=tmp_path/'snapshot';extract_grammar_snapshot(packet,repo)
+        path=repo/'tools/rust_migration/grammar_extension.py';path.write_bytes(path.read_bytes()+b'\n# changed without collecting different node IDs\n')
+    elif change=='cross-host-tooling':
+        path=packet/'VALIDATION-SOURCES.json';value=json.loads(path.read_bytes());value['tools/rust_migration/grammar_extension.py']['sha256']='0'*64;path.write_text(json.dumps(value))
+    elif change=='archive-bytes':(packet/'source-snapshot.tar.gz').write_bytes(b'changed archive')
+    errors=verify_grammar_snapshot(packet,repo)
+    assert bool(errors)==(change!='none')
+
+def test_review_is_bound_to_both_native_sources_and_complete_tooling(tmp_path):
+    from tools.rust_migration.grammar_extension import verify_grammar_review
+    source={'Cargo.toml':dict(bytes=1,sha256='a'*64)};tooling={'tools/rust_migration/grammar_extension.py':dict(bytes=1,sha256='b'*64)}
+    raw=tmp_path/'REVIEW.md';raw.write_text('One whole-plan test review; no open blocking findings.\n')
+    record=dict(format='ken-grammar-extension-review/1',whole_plan=True,reviewer='test-review',critical_open=[],important_open=[],accepted_sources=source,accepted_tooling=tooling,raw_review=dict(path=raw.name,identity=identity(raw)))
+    path=tmp_path/'REVIEW.json';path.write_text(json.dumps(record))
+    assert not verify_grammar_review(path,source,tooling)
+    record=json.loads(path.read_bytes());record['accepted_tooling']['tools/rust_migration/grammar_extension.py']['sha256']='c'*64;path.write_text(json.dumps(record))
+    assert verify_grammar_review(path,source,tooling)
