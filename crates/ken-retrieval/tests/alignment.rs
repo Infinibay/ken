@@ -115,11 +115,13 @@ fn full_original_dtype_dispatch_and_term_summary_observations() {
         return;
     }
     #[cfg(target_os = "macos")]
-    let raw = include_str!("fixtures/numeric-reference-alignment.json");
+    let raw: std::borrow::Cow<'_, str> =
+        include_str!("fixtures/numeric-reference-alignment.json").into();
     #[cfg(all(target_os = "linux", target_arch = "aarch64"))]
-    let raw = include_str!("fixtures/numeric-reference-alignment-linux.json");
+    let raw: std::borrow::Cow<'_, str> =
+        include_str!("fixtures/numeric-reference-alignment-linux.json").into();
     #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
-    let raw = {
+    let raw: std::borrow::Cow<'_, str> = {
         use std::io::Read;
         let mut raw = String::new();
         flate2::read::GzDecoder::new(
@@ -127,7 +129,7 @@ fn full_original_dtype_dispatch_and_term_summary_observations() {
         )
         .read_to_string(&mut raw)
         .unwrap();
-        raw
+        raw.into()
     };
     observe(&raw, 245);
 }
