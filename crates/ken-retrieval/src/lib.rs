@@ -91,3 +91,5 @@ pub mod result_selection;
 pub mod source_catalog;
 pub mod source_evidence;
 pub mod source_snapshot;
+
+pub mod reranker_fusion;
