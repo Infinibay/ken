@@ -8,6 +8,7 @@ use crate::{
     matrix::Matrix,
     piece_candidates::PieceCandidate,
     query::SearchRequest,
+    reductions::python_sum as prior_sum,
     stemming::WordStemmer,
     vocabulary::code_terms_python,
     word_encoder::WordEncoder,
@@ -117,27 +118,6 @@ fn document(members: &[&OwnerDescription], identity: &str) -> TermDocument {
         .zip(fields)
         .map(|(field, text)| (field.into(), code_terms_python(&text, Some(4096))))
         .collect()
-}
-
-/// Python3.12 float sum preserves a small residual between cancelling priors.
-/// Keep this separate from NumPy pairwise reduction and ordered tree addition.
-/// See CPython v3.12.9 Python/bltinmodule.c, builtin_sum_impl.
-fn prior_sum(values: impl Iterator<Item = f64>) -> f64 {
-    let mut total = 0_f64;
-    let mut correction = 0_f64;
-    for value in values {
-        let next = total + value;
-        correction += if total.abs() >= value.abs() {
-            (total - next) + value
-        } else {
-            (value - next) + total
-        };
-        total = next;
-    }
-    if correction != 0. && correction.is_finite() {
-        total += correction;
-    }
-    total
 }
 
 pub fn piece_features(

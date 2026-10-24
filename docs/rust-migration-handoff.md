@@ -47,9 +47,10 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | M4b | Aceptado | Intención, selección, propietarios, vistas contextuales y ranking de entidades/pasajes; `m4-selection-review` |
 | M4c1 | Aceptado | Bosques, stemming, alineamiento, features y ranking numérico de propietarios; `m4-numeric-owner` |
 | M4c2 Tasks 1–2 | Implementadas y probadas en ambos hosts; falta revisión final del plan | Catálogo físico y ensamblado completo, commits `34327080` y `5d9dc6f9` |
-| M4c2 Task 3 | Ranking Rust implementado y validado localmente en Linux x86_64 | Faltan gates macOS arm64/Linux aarch64; ver actualización del 24/10 en la sección 5 |
-| M4c2 Task 4 | Cards implementadas; comparación local completa, falta matriz nativa ARM | 60 observaciones de proyección/procedencia/frescura; 123 pruebas nativas y 108 de tooling locales |
-| M4c2 Tasks 5–7 | Pendientes | Evidencia, presentación, probe/comparador, matriz y una revisión final |
+| M4c2 Task 3 | Ranking implementado; gates Linux x86_64 y ambos ARM pasados; revisión final del plan pendiente | 98 observaciones originales, 262 columnas y bosque de 1.280 árboles |
+| M4c2 Task 4 | Cards implementadas; gates locales y ambos ARM pasados; revisión final del plan pendiente | 60 observaciones de proyección/procedencia/frescura |
+| M4c2 Task 5 | Evidencia implementada y comparada localmente; faltan gates ARM del código nativo | 88 observaciones originales; 124 pruebas nativas y 110 de tooling locales |
+| M4c2 Tasks 6–7 | Pendientes | Presentación, probe/comparador, matriz y una revisión final |
 | M4d | Pendiente; requiere su propio plan | Composición de búsqueda, canales restantes, pools de vistas preparadas, uso real de modelos y aceptación CLI/MCP |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
@@ -596,9 +597,9 @@ pruebas, con tarjetas completas, texto canónico, límites de líneas/caracteres
 procedencia y cambios de archivos/directorios. El mismo workflow captura las
 familias faltantes en ARM. `piece_cards` ya implementa unidades, extractos y
 tarjetas tipadas, proyección canónica y validación física. Sus 60 observaciones
-coinciden localmente; las suites completas pasan 123 pruebas nativas y 108 de
-tooling, junto con fmt/Clippy estricto. Todavía falta aceptar sus gates ARM y
-completar M4c2.
+coinciden localmente; las suites completas pasaron 123 pruebas nativas y 108 de
+tooling, junto con fmt/Clippy estricto. Sus gates ARM se cerraron en la ejecución
+posterior indicada abajo; completar M4c2 sigue pendiente.
 
 La prueba nueva del lector físico también detectó que reemplazar el directorio
 raíz conservaba por error las lecturas del directorio anterior. Cada apertura
@@ -609,3 +610,23 @@ indexación pasó publicación (7 raíces), pero sus 8 pruebas incrementales car
 de `KEN_GRAMMAR_MANIFEST`; el catálogo de gramáticas aún no admite Linux x86_64.
 Ese límite sigue pendiente y no debe confundirse con aceptación de indexación en
 esta arquitectura.
+
+La ejecución posterior [40117742527](https://github.com/Infinibay/ken/actions/runs/40117742527)
+(commit `45dc4195`) pasó todos los gates en **ambos hosts ARM**: 123 pruebas
+nativas en Linux y 122 en macOS (la prueba del sidecar BLAS es exclusiva de Linux),
+109 de tooling, formato y Clippy estricto por host, además de las 98
+observaciones de ranking y 60 de tarjetas. El ajuste de almacenamiento del
+fixture (`Cow<str>`) resolvió el lint exclusivo de ARM; no cambió la aritmética.
+Los originales de evidencia (86 observaciones/19 raíces) también se capturaron
+antes de comenzar esa implementación nativa.
+
+Task 5 ya implementa `evidence` y `source_evidence`: verificación de fuente,
+completar regiones propias, ventanas y bundles juzgados, selección léxica con
+máscaras dinámicas y un presupuesto común de 40 líneas. `result_selection` es la
+autoridad compartida de deduplicación por archivo y slots para futura presentación.
+La suma Python 3.12 existente se comparte desde `reductions`, sin duplicarla.
+Las 88 observaciones locales coinciden (86 iniciales y dos adicionales de
+stemming que reutilizan las 19 raíces originales). Pasaron 124 pruebas nativas
+locales, 110 de tooling, formato y Clippy estricto. Falta ejecutar esa nueva
+implementación en ambos ARM, Task 6, el probe/recibo y la revisión final de Task 7.
+M4c2, M4 y la migración global siguen sin aceptación final.

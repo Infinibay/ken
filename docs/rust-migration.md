@@ -3,8 +3,8 @@
 **Para retomar en otra máquina:** leer el [traspaso actualizado](rust-migration-handoff.md).
 Incluye estado actualizado, pendientes hasta M8, comandos de reconstrucción del
 oráculo original, progreso M4c2 y riesgos conocidos. M0–M3 y M4a/M4b/M4c1 están
-aceptados. M4c2 tiene catálogo, ensamblado, ranking y tarjetas de piezas
-implementados; ranking y tarjetas aún necesitan cerrar sus gates ARM.
+aceptados. M4c2 tiene catálogo, ensamblado, ranking, tarjetas y selección de
+evidencia implementados; evidencia aún necesita sus gates nativos ARM.
 La aplicación completa todavía no está migrada. Los recibos y capturas se
 [conservan localmente y se recuperan del historial](validation-artifacts.md).
 
@@ -61,7 +61,12 @@ backends de modelos, CLI/MCP, distribución ni M4 completo en esta plataforma.
 propietario. Sus 60 observaciones originales pasan localmente, incluidas fuentes
 cambiadas y reemplazo del directorio raíz. Las suites actuales pasan 72 pruebas
 de retrieval, 51 de core y 108 de tooling, junto con fmt y Clippy estricto.
-Quedan cerrar los gates ARM de Tasks 3–4, Tasks 5–7 y M4d–M8. El catálogo de
+Ranking y tarjetas pasaron todos sus gates en ambos ARM en la ejecución
+`40117742527`: 123 pruebas nativas en Linux, 122 en macOS y 109 de tooling por host, formato y Clippy
+estricto. La selección de evidencia conserva 88 observaciones originales, máscaras
+dinámicas para más de 64 pistas y un presupuesto total de 40 líneas; pasa
+localmente 124 pruebas nativas y 110 de tooling. Quedan sus gates ARM, Tasks 6–7
+y M4d–M8, además de la revisión final del plan M4c2. El catálogo de
 gramáticas de indexación todavía no admite x86_64; ese soporte sigue pendiente.
 
 ## Avance al 23 de octubre

@@ -4,10 +4,10 @@ import pytest
 from pathlib import Path
 from tools.rust_migration.piece_reference import validate_reference,definitions
 ROOT=Path(__file__).resolve().parents[2]
-@pytest.mark.parametrize('family,count',[('catalog',38),('assembly',45),('ranking',84),('ranking-edges',13),('ranking-empty-declaration',1),('cards',60),('evidence',86)])
+@pytest.mark.parametrize('family,count',[('catalog',38),('assembly',45),('ranking',84),('ranking-edges',13),('ranking-empty-declaration',1),('cards',60),('evidence',86),('evidence-edges',2)])
 def test_catalog_observations_authenticate_complete_input_and_original_suite(family,count):
  suffix='-linux' if family in ('ranking-edges','ranking-empty-declaration') else ''
- if family in ('cards','evidence'):suffix='-linux-x86_64'
+ if family in ('cards','evidence','evidence-edges'):suffix='-linux-x86_64'
  path=ROOT/f'crates/ken-retrieval/tests/fixtures/piece-reference-{family}{suffix}.json'
  raw=path.read_bytes() if path.exists() else gzip.decompress(path.with_suffix('.json.gz').read_bytes())
  value=json.loads(raw)

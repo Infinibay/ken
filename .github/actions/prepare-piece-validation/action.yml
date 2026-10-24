@@ -95,10 +95,11 @@ runs:
         corpus = output/'corpora'
         corpus.mkdir(exist_ok=True)
         families = {}
-        for family in ('ranking', 'ranking-edges', 'ranking-empty-declaration', 'cards', 'evidence'):
+        for family in ('ranking', 'ranking-edges', 'ranking-empty-declaration', 'cards', 'evidence', 'evidence-edges'):
             destination = base if family == 'ranking' else saved/family
             value = capture(reference, destination, repo=root, family=family,
-                            cached_suite=base/'reference.json' if family.startswith('ranking-') else None)
+                            cached_suite=(base/'reference.json' if family.startswith('ranking-') else
+                                          saved/'evidence/reference.json' if family == 'evidence-edges' else None))
             assert all(value['runtime'][k] == v for k, v in runtime.items() if k in value['runtime']), value['runtime']
             for name, record in value['execution']['files'].items():
                 assert identity(destination/name) == record, (family, name)
