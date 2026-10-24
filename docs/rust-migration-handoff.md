@@ -48,7 +48,8 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | M4c1 | Aceptado | Bosques, stemming, alineamiento, features y ranking numérico de propietarios; `m4-numeric-owner` |
 | M4c2 Tasks 1–2 | Implementadas y probadas en ambos hosts; falta revisión final del plan | Catálogo físico y ensamblado completo, commits `34327080` y `5d9dc6f9` |
 | M4c2 Task 3 | Ranking Rust implementado y validado localmente en Linux x86_64 | Faltan gates macOS arm64/Linux aarch64; ver actualización del 24/10 en la sección 5 |
-| M4c2 Tasks 4–7 | Pendientes | Cards, evidencia, presentación, probe/comparador, matriz y una revisión final |
+| M4c2 Task 4 | Cards implementadas; comparación local completa, falta matriz nativa ARM | 60 observaciones de proyección/procedencia/frescura; 123 pruebas nativas y 108 de tooling locales |
+| M4c2 Tasks 5–7 | Pendientes | Evidencia, presentación, probe/comparador, matriz y una revisión final |
 | M4d | Pendiente; requiere su propio plan | Composición de búsqueda, canales restantes, pools de vistas preparadas, uso real de modelos y aceptación CLI/MCP |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
@@ -593,8 +594,11 @@ repetir las capturas cuando falla una prueba nativa.
 Task 4 tiene 60 observaciones originales nuevas en Linux x86_64 y tres raíces de
 pruebas, con tarjetas completas, texto canónico, límites de líneas/caracteres,
 procedencia y cambios de archivos/directorios. El mismo workflow captura las
-familias faltantes en ARM. Esto prepara la implementación de cards; no equivale
-a su aceptación nativa ni a completar M4c2.
+familias faltantes en ARM. `piece_cards` ya implementa unidades, extractos y
+tarjetas tipadas, proyección canónica y validación física. Sus 60 observaciones
+coinciden localmente; las suites completas pasan 123 pruebas nativas y 108 de
+tooling, junto con fmt/Clippy estricto. Todavía falta aceptar sus gates ARM y
+completar M4c2.
 
 La prueba nueva del lector físico también detectó que reemplazar el directorio
 raíz conservaba por error las lecturas del directorio anterior. Cada apertura
