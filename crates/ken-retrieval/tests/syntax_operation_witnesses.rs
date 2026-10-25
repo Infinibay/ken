@@ -51,6 +51,35 @@ fn frozen_cst_body_witnesses_preserve_original_selection_recovery_and_cache() {
         );
     }
     assert_eq!(owners, 144);
+    // Supplemental source-derived contract check, not a new frozen observation.
+    // The original whole-module extent misses the callable's ending line.
+    let mut case = corpus()
+        .cases
+        .into_iter()
+        .find(|c| c.id == "js-recovery")
+        .unwrap();
+    let bytes = case.input.files.values().next().unwrap();
+    assert!(
+        grammars
+            .syntax(ken_syntax::Language::JavaScript, bytes, "sample.js")
+            .unwrap()
+            .root()
+            .has_error()
+    );
+    for owner in &mut case.input.owners {
+        for passage in &mut owner.passages {
+            passage.span = ken_retrieval::Span::new(1, 3).unwrap();
+            passage.entity_span = passage.span;
+        }
+    }
+    let (_directory, catalog) = support::catalog(case.input).unwrap();
+    let key = catalog.owners()[0].0.clone();
+    assert_eq!(catalog.extent(&key).unwrap(), [1, 3]);
+    let mut observer = SyntaxOperationWitnesses::new(Arc::new(catalog), grammars);
+    assert_eq!(
+        observer.for_owner(&key).unwrap(),
+        ["invocation".to_owned()].into()
+    );
 }
 #[test]
 fn returned_witnesses_and_late_disk_changes_do_not_mutate_cached_source() {
@@ -95,6 +124,32 @@ fn backend_admission_is_explicit_for_python_jsx_and_unknown_owners() {
     assert!(observer.for_owner(&key).is_err());
     key.path = "missing.py".into();
     assert!(observer.for_owner(&key).is_err());
+    // Canonical catalog admission succeeds before the backend rejects either suffix.
+    for path in ["canonical.py", "canonical.jsx"] {
+        let mut case = corpus()
+            .cases
+            .into_iter()
+            .find(|c| c.id == "js-stored")
+            .unwrap();
+        let bytes = case.input.files.remove("sample.js").unwrap();
+        case.input.files.insert(path.into(), bytes);
+        for owner in &mut case.input.owners {
+            owner.key.path = path.into();
+            for passage in &mut owner.passages {
+                passage.entity.path = path.into();
+            }
+        }
+        let (_directory, catalog) = support::catalog(case.input).unwrap();
+        let key = catalog.owners()[0].0.clone();
+        assert!(!catalog.passages(&key).unwrap().is_empty());
+        let mut observer = SyntaxOperationWitnesses::new(Arc::new(catalog), grammars());
+        match observer.for_owner(&key) {
+            Err(ken_retrieval::source_snapshot::SourceError::Invalid(message)) => {
+                assert!(message.contains("syntax witness backend requires"))
+            }
+            other => panic!("expected explicit backend rejection for {path}, got {other:?}"),
+        }
+    }
 }
 #[test]
 fn real_source_witnesses_supply_the_explicit_preference_policy() {
