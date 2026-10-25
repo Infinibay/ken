@@ -98,3 +98,5 @@ pub mod symbol_views;
 
 pub mod symbol_preferences;
 pub mod symbol_requirements;
+
+pub mod syntax_operation_witnesses;
