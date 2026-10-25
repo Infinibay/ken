@@ -92,4 +92,6 @@ pub mod source_catalog;
 pub mod source_evidence;
 pub mod source_snapshot;
 
+pub mod paired_reranker;
 pub mod reranker_fusion;
+pub mod symbol_views;

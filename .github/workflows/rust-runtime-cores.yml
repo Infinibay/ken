@@ -10,6 +10,10 @@ on:
       - 'uv.lock'
       - 'crates/ken-models/**'
       - 'crates/ken-native-model-api/**'
+      - 'crates/ken-core/**'
+      - 'crates/ken-retrieval/**'
+      - 'crates/ken-text/**'
+      - 'crates/ken-syntax/**'
       - 'native/ken-torch-backend/**'
       - 'tools/rust_migration/**'
       - 'tests/rust_migration/**'
@@ -62,7 +66,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install --yes strace build-essential pkg-config
+          sudo apt-get install --yes strace zstd build-essential pkg-config
           mkdir -p .ken/rust-migration/native-core-build
           curl --fail --location --silent --show-error \
             https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.26/OpenBLAS-0.3.26.tar.gz \
@@ -121,7 +125,28 @@ jobs:
           with open(os.environ['GITHUB_ENV'],'a')as stream:
               stream.write('KEN_ETTIN_SOURCE='+str(source)+'\n')
           PY
-      - name: Execute and authenticate complete x86 CPU, context and Ettin gates
+      - name: Prepare authenticated x86 retrieval libraries
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import json,numpy,os,shutil
+          from tools.rust_migration.native_json import identity
+          from tools.rust_migration.retrieval_validate import runtime_files
+          from tools.rust_migration.grammar_prepare import prepare_grammars
+          root=Path.cwd();base=root/'.ken/rust-migration/retrieval-data'
+          dense=base/'dense-blas';dense.mkdir(parents=True)
+          source=Path(numpy.__file__).parent.parent/'numpy.libs'
+          for name,record in runtime_files(root,'x86_64').items():
+              assert identity(source/name)==record,name
+              shutil.copyfile(source/name,dense/name)
+          grammar=base/'grammars'
+          prepare_grammars(json.loads((root/'crates/ken-syntax/grammars.lock.json').read_bytes()),base/'archives',grammar)
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              stream.write('KEN_DENSE_BLAS_DIR='+str(dense)+'\n')
+              stream.write('KEN_GRAMMAR_MANIFEST='+str(grammar/'manifest.json')+'\n')
+          PY
+      - name: Execute and authenticate complete x86 models and symbol views
         shell: bash
         run: |
           .venv/bin/python - <<'PY'
@@ -131,6 +156,7 @@ jobs:
           from tools.rust_migration.native_core_evidence import verify_core_packet
           from tools.rust_migration.context_host import run_context_host, verify_context_host
           from tools.rust_migration.ettin_host import run_ettin_host, verify_ettin_host
+          from tools.rust_migration.symbol_views_host import run_host as run_symbol_views, verify_host as verify_symbol_views
           root=Path.cwd();packet=root/'.ken/rust-migration/native-core-platform'
           run_host(root,root/'.ken/rust-migration/native-core-sdk',packet,root/'.ken/rust-migration/native-torch-target')
           errors=verify_core_packet(packet,root);assert not errors,errors
@@ -138,6 +164,8 @@ jobs:
           errors=verify_context_host(packet,root);assert not errors,errors
           run_ettin_host(root,root/'.ken/rust-migration/native-core-sdk',Path(os.environ['KEN_ETTIN_SOURCE']),packet)
           errors=verify_ettin_host(packet,root);assert not errors,errors
+          run_symbol_views(root,root/'.ken/rust-migration/native-core-sdk',Path(os.environ['KEN_ETTIN_SOURCE']),packet)
+          errors=verify_symbol_views(packet,root);assert not errors,errors
           PY
       - uses: actions/upload-artifact@v7
         if: always()

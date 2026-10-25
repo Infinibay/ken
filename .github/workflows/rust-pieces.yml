@@ -1,16 +1,8 @@
 name: Native source-piece gates
 
 on:
-  push:
-    branches: [codex/rust-migration]
-    paths:
-      - '.github/workflows/rust-pieces.yml'
-      - '.github/actions/prepare-piece-validation/**'
-      - 'crates/ken-retrieval/**'
-      - 'crates/ken-core/**'
-      - 'tools/rust_migration/piece*'
-      - 'tools/rust_migration/portable_reference.py'
-      - 'tests/rust_migration/test_piece*'
+  # Historical ARM acceptance remains available explicitly. Active migration
+  # runs the complete native retrieval suites on x86 via rust-runtime-cores.
   workflow_dispatch:
 
 permissions:

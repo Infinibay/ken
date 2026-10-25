@@ -38,3 +38,32 @@ def lint_gate_errors(gates:Path,commands:dict[str,list[str]]):
         if not(lines and re.fullmatch(r'\s*Finished `dev` profile .*target\(s\) in \S+',lines[-1])):raise ValueError('clippy completion missing')
         return[]
     except(OSError,ValueError)as error:return[str(error)]
+
+def python_scope_commands(executable:str,files:list[str],out:Path):
+    command=[executable,'-m','pytest','-o','addopts=','-q',*files]
+    return{'python-list':[*command,'--collect-only'],'python-tests':[*command,'--junitxml='+str(out/'gates/python.xml')]}
+
+def run_python_scope(out:Path,files:list[str]):
+    import sys
+    (out/'PYTHON-OUTPUT.json').write_text(json.dumps(dict(format='ken-native-python-scope/1',recorded_directory=str(out.resolve())),indent=2)+'\n')
+    run_command_gates(out/'gates',python_scope_commands(sys.executable,files,out.resolve()),record_name='PYTHON.json')
+
+def python_scope_errors(out:Path,files:list[str],count:int):
+    from .receipts import junit_states
+    try:
+        record=load(out/'PYTHON-OUTPUT.json');recorded=Path(record['recorded_directory'])
+        if(set(record)!={'format','recorded_directory'}or record['format']!='ken-native-python-scope/1'or not recorded.is_absolute()or'..'in recorded.parts or recorded.name!=out.name):raise ValueError('scoped Python output differs')
+        records=load(out/'gates/PYTHON.json')
+        if set(records)!={'python-list','python-tests'}:raise ValueError('scoped Python commands missing')
+        executable=records['python-list']['command'][0]
+        if Path(executable).name not in('python','python3','python3.12'):raise ValueError('scoped Python executable differs')
+        errors=command_gate_errors(out/'gates',python_scope_commands(executable,files,recorded),record_name='PYTHON.json')
+        if errors:return errors
+        nodes=[]
+        for line in(out/'gates/python-list.log').read_text().splitlines():
+            for file in files:
+                if line.startswith(file+'::'):nodes.append(line.replace(file,file[:-3].replace('/','.')))
+        states=junit_states(out/'gates/python.xml')
+        if len(nodes)!=len(set(nodes))or len(nodes)!=count or set(nodes)!=set(states)or set(states.values())!={'passed'}:raise ValueError('scoped Python discovery/completion differs')
+        return[]
+    except(OSError,KeyError,ValueError,TypeError,IndexError)as error:return[str(error)]
