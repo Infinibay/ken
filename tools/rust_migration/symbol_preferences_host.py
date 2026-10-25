@@ -6,21 +6,25 @@ from .native_core_evidence import require
 from .native_binary import check_native_architecture
 from .symbol_views_host import verify_host as verify_views
 from .symbol_preferences_reference import FIXTURE,validate_reference
+from . import symbol_preferences_whitespace as whitespace
 from .command_gates import run_command_gates,command_gate_errors,run_python_scope,python_scope_errors
 PREFIX='ken-symbol-preferences-'
 REFERENCE_ID=dict(bytes=6670,sha256='dfa4e7b78aabd72e573435aeb0564d219ee18cf48c664218abc83fd472351e73')
 TEST_FILES=['tests/rust_migration/test_symbol_preferences_reference.py','tests/rust_migration/test_symbol_preferences_host.py']
-PYTHON_ROOTS=19
+PYTHON_ROOTS=21
 COMMANDS={'preferences-build':['cargo','build','--locked','--offline','-p','ken-retrieval','--example','symbol_preferences_probe']}
 def reference(repo:Path):
     require(identity(repo/FIXTURE)==REFERENCE_ID,'preserved preference original differs')
-    value=json.loads(gzip.decompress((repo/FIXTURE).read_bytes()));errors=validate_reference(value);require(not errors,str(errors));return value
+    value=json.loads(gzip.decompress((repo/FIXTURE).read_bytes()));errors=validate_reference(value);require(not errors,str(errors))
+    require(identity(repo/whitespace.FIXTURE)==dict(bytes=1116,sha256='7ab32bc98cbc5b51d1740391b44e354b8a792de4d2dec2e4fc734ed335d61165'),'whitespace original differs')
+    extension=json.loads(gzip.decompress((repo/whitespace.FIXTURE).read_bytes()));errors=whitespace.validate(extension);require(not errors,str(errors))
+    return value|dict(whitespace=extension)
 
 def request(original:dict):
-    return dict(cases=[{k:row[k]for k in('id','kind','input')}for row in original['cases']],catalogs=[row['input']for row in original['catalogs']])
+    return dict(cases=[{k:row[k]for k in('id','kind','input')}for row in original['cases']+original['whitespace']['cases']],catalogs=[row['input']for row in original['catalogs']])
 
 def compare(original:dict,actual:dict):
-    expected=dict(format='ken-symbol-preferences-native/1',cases=[dict(id=row['id'],result=row['result'])for row in original['cases']],catalogs=[row['result']for row in original['catalogs']])
+    expected=dict(format='ken-symbol-preferences-native/1',cases=[dict(id=row['id'],result=row['result'])for row in original['cases']+original['whitespace']['cases']],catalogs=[row['result']for row in original['catalogs']])
     return []if same_value(actual,expected)else['native explicit symbol preferences differ']
 
 def verify_capture(packet:Path,repo:Path):

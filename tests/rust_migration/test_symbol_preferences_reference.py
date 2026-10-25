@@ -28,3 +28,17 @@ def test_existing_preference_destination_never_reads_reference_or_recaptures(tmp
     monkeypatch.setattr(module,'verify_reference',lambda *a:pytest.fail('reference read'))
     monkeypatch.setattr(module.subprocess,'run',lambda *a,**kw:pytest.fail('original recaptured'))
     with pytest.raises(FileExistsError):module.capture(reference,tmp_path)
+def test_whitespace_extension_preserves_separate_first_observations():
+    from tools.rust_migration.symbol_preferences_whitespace import FIXTURE,cases,validate
+    value=json.loads(gzip.decompress((ROOT/FIXTURE).read_bytes()))
+    assert len(value['cases'])==len(cases())==118 and not validate(value)
+    assert value['cases'][20]['result']['operations']==[]
+def test_changed_whitespace_extension_rejects():
+    from tools.rust_migration.symbol_preferences_whitespace import FIXTURE,validate
+    raw=gzip.decompress((ROOT/FIXTURE).read_bytes())
+    for change in ('observer','input','result'):
+        value=json.loads(raw)
+        if change=='observer':value['script_sha256']='a'*64
+        elif change=='input':value['cases'][0]['input']={}
+        else:value['cases'][0]['result']['operations']=['invented']
+        assert validate(value)

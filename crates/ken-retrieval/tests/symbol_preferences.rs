@@ -176,3 +176,28 @@ fn java_test_annotations_obey_twelve_line_and_first_brace_bounds() {
         );
     }
 }
+#[test]
+fn frozen_nonspace_boundary_rejects_backtracking_into_python_whitespace() {
+    #[derive(Deserialize)]
+    struct Extension {
+        cases: Vec<Case>,
+    }
+    let mut raw = String::new();
+    flate2::read::GzDecoder::new(
+        include_bytes!("fixtures/symbol-preferences-whitespace-reference.json.gz").as_slice(),
+    )
+    .read_to_string(&mut raw)
+    .unwrap();
+    let data: Extension =
+        serde_json::from_str(&ken_retrieval::json_transport::python_strings(&raw).unwrap())
+            .unwrap();
+    assert_eq!(data.cases.len(), 118);
+    for case in data.cases {
+        assert_eq!(
+            support::observe(&case.kind, &case.input).unwrap(),
+            case.result,
+            "{}",
+            case.id
+        );
+    }
+}

@@ -82,6 +82,7 @@ fn compile(pattern: &str, ignore_case: bool) -> Arc<Compiled> {
                 match next {
                     'w'=>{if in_class {out.push_str(&word)}else{out.push_str(&wc)}},
                     's'=>{if in_class {out.push_str(space)}else{out.push('[');out.push_str(space);out.push(']')}},
+                    'S' if !in_class=>{out.push_str("[^");out.push_str(space);out.push(']')},
                     'b' if !in_class=>out.push_str(&format!("(?:(?<!{wc})(?={wc})|(?<={wc})(?!{wc}))")),
                     _=>{out.push('\\');out.push(next)}
                 }
