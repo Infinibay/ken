@@ -49,3 +49,22 @@ native probe, scoped tamper tests, current x86 CI and source/archive authenticat
 One fresh final review for this new plan, one Important repair pass, no re-review.
 Only preference capability may close; full source observers/search/M4/global stay
 pending. Preserve raw/SDK/workspaces locally and outside Git; push authorized.
+
+
+## Validation isolation after observed contextual runner variability
+
+Candidate2c0bf3ac passed the complete local stack but CI40230143378 failed the
+unchanged contextual boundary511 vector before reaching this policy. Diagnostic
+40231386038 on AMD EPYC7763 passed baseline45ab/current and matched Python/native
+exactly in3cases×file/memory×1/2threads×repeats. The failing runner CPU was not
+recorded; the precise cause remains unproved. Do not alter vectors, tolerances or
+model identity, and do not infer a global model acceptance from a later passing
+runner. Retain the failing packet and diagnostic.
+
+The real profile dependency graph is core→Ettin→views→preferences, with context
+independent after core. Run independent profiles to completion after a contextual
+failure, skip real dependents when their parent fails, record CPU and per-profile
+states, and keep the workflow failed if ANY profile fails or skips. This gives
+actual CI evidence for the new policy while preserving the contextual failure.
+Record scope status separately; full stack/global acceptance remains pending if
+context differs. No relaxed numerical check or fake observer is permitted.

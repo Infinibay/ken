@@ -10,8 +10,8 @@ from . import symbol_preferences_whitespace as whitespace
 from .command_gates import run_command_gates,command_gate_errors,run_python_scope,python_scope_errors
 PREFIX='ken-symbol-preferences-'
 REFERENCE_ID=dict(bytes=6670,sha256='dfa4e7b78aabd72e573435aeb0564d219ee18cf48c664218abc83fd472351e73')
-TEST_FILES=['tests/rust_migration/test_symbol_preferences_reference.py','tests/rust_migration/test_symbol_preferences_host.py']
-PYTHON_ROOTS=21
+TEST_FILES=['tests/rust_migration/test_symbol_preferences_reference.py','tests/rust_migration/test_symbol_preferences_host.py','tests/rust_migration/test_symbol_profile_sequence.py']
+PYTHON_ROOTS=24
 COMMANDS={'preferences-build':['cargo','build','--locked','--offline','-p','ken-retrieval','--example','symbol_preferences_probe']}
 def reference(repo:Path):
     require(identity(repo/FIXTURE)==REFERENCE_ID,'preserved preference original differs')
