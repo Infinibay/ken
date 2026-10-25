@@ -2,7 +2,7 @@
 
 > **For agentic workers:** Use superpowers:executing-plans inline. No implementer agents; one fresh scoped final reviewer and no re-review.
 
-**Goal:** Establish and correct the demonstrated x86 numerical compatibility failure without altering frozen answers to get green.
+**Goal:** Establish trustworthy same-runner x86 numerical parity and correct the diagnostic evidence boundaries, preserving frozen answers.
 **Architecture:** fixed diagnostic inputs → independent Python/native observations → raw command records → scoped comparison report. Runtime gates remain separate.
 **Tech Stack:** pinned Rust1.95/Python3.12.9/NumPy2.4.4/ORT1.25.1 and existing native probes; no dependencies added.
 **Spec:** docs/superpowers/specs/2026-10-25-rust-x86-numerics-design.md
@@ -28,15 +28,27 @@ Files: tools/rust_migration/x86_numeric_{diagnostic,context,alignment}.py;
 tests/rust_migration/test_x86_numeric_diagnostic.py.
 Interfaces: fixed_inputs(repo), record(command,request,env), context_observe,
 alignment_observe, validate_report.
-- [ ] RED missing observer/protocol tests; implement fixed input selection, independent
+- [x] RED missing observer/protocol tests; implement fixed input selection, independent
   original Python adapters, raw command records and strict report validation; GREEN.
-- [ ] Local same-host native/Python observation and Haswell intervention, hashes,
+- [x] Local same-host native/Python observation and Haswell intervention, hashes,
   no overwrites, unchanged frozen fixtures; commit.
 
 ### Task 2: Same-runner CI and justified closure
 Files: .github/workflows/rust-context-x86-diagnostic.yml; handoff and scoped receipts.
-- [ ] RED workflow/coverage tests; wire two replicas and authenticated preparation,
+- [x] RED workflow/coverage tests; wire two replicas and authenticated preparation,
   full/filtered baseline/candidate commands; GREEN local tooling, push/dispatch.
-- [ ] Inspect every actual result, retain all observations and source identities;
+- [x] Inspect every actual result, retain all observations and source identities;
   reproduce a cause before any runtime/test-contract change. One final review,
   Important repair if needed, sealed isolated replay and truthful handoff.
+
+
+Completed diagnostic scope at f8d68146:37tooling rootsPASS; v2CI40244828414 both
+replicasPASS recording/validation, independent candidate/baseline source targets;
+sealed isolated replayPASS. Actual9V45 Python/native exact in observed cases,
+bothfail the same frozen expectations in full+filtered suites.9V74without exposed
+AVX512 usesHaswell and all6commandsPASS; first9V74withAVX512 usesSkylakeX and
+shares Python/native/frozen differences. Kernel Haswell intervention restores
+alignment in both languages. No runtime patch justified in these measured cases.
+Root-specific ORT ISA mechanism remains unproved. Next capability: independently
+registered execution-profile references for full corpora; no model/CST/M4/global
+acceptance. One review,2Important repairedRED→GREEN, noMinors/no re-review.

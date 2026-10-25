@@ -1231,3 +1231,119 @@ confirmando explícitamente los éxitos locales y los fallos/skips remotos.
 `SyntaxOperationWitnesses_x86_64_accepted=false`, `ci_acceptance_pending=true`.
 Los1066archivos originales siguen intactos. Raw, pesos,SDK,cachés y ambos workspaces
 permanecen locales sin tracking, siguiendo la instrucción de conservarlos.
+
+## Diagnóstico numérico x86 por entorno de ejecución
+
+La investigación posterior a `c7889b1d` encontró coincidencia exacta de valores
+entre el Python original y los callers Rust en los casos observados. Las
+expectativas congeladas bajo Linux/x86_64 no son portables a todos los entornos
+numéricos x86 observados. Esto no constituye aceptación global del modelo ni de
+la migración; permite distinguir una divergencia del port de una variación que
+el propio original también produce.
+
+Se midieron tres casos de contexto (`empty-query`, `passage-boundary511`,
+`passage-boundary512`) y el caso de alineamiento
+`product-float32-float32-float64-4-128-3`. El adaptador Python original está
+verificado por hash de fuente; se comparó con la sonda nativa y con sesiones ORT
+Python por archivo/memoria, 1/2 hilos y dos repeticiones. Tokens, artefactos,
+runtime nativo, dimensiones, tipos y resultados completos se verifican antes de
+reconstruir la comparación. Las sondas reciben sólo entradas, nunca resultados
+esperados. Los 1066 archivos congelados y las referencias previas siguen intactos.
+
+En el primer diagnóstico, `a679e4f8` / CI40243860877, los runners fueron EPYC9V74
+(AVX512/VNNI, OpenBLAS SkylakeX) y EPYC7763 (AVX2, OpenBLAS Haswell). En el 9V74,
+Python y Rust producen el mismo valor ponderado `2.1855458146647404`, diferente
+del congelado `2.1855457487859224`. En procesos nuevos, la intervención
+`OPENBLAS_CORETYPE=Haswell` selecciona efectivamente Haswell y devuelve el valor
+congelado en ambos lenguajes. En el 7763, ambas selecciones ya coinciden con el
+congelado. Esta intervención demuestra el efecto de la selección del kernel
+BLAS en el caso medido; no se aplica como política de producción.
+
+En contexto, Python y Rust coinciden exactamente entre sí también en el 9V74,
+aunque los vectores difieren de los congelados, incluido boundary511. Todos los
+modos de carga/hilos observados coinciden. La intervención Haswell pertenece al
+experimento de alineamiento: no demuestra ni corrige el mecanismo interno de ORT.
+La atribución precisa a una instrucción/kernel de ORT continúa sin probarse.
+
+La revisión independiente encontró 0 Critical, 2 Important y 0 Minor. Ambos
+Important quedaron reparados en una sola pasada `f8d68146`, sin re-review:
+
+- Los payloads incompletos podían pasar replay. Once clases de mutación de
+  resultados, con hashes y resumen actualizados, fueron RED; ahora se exigen
+  campos, dimensiones/dtypes, valores finitos, máximos, fuente, modo/hilos y
+  runtime/core completos y coherentes.
+- La procedencia de suites permitía un override de fixtures y checkouts
+  cruzados. Las regresiones fueron RED; ahora se elimina y vigila
+  `KEN_NUMERIC_REFERENCE_DIR`, cada rol declara revisión/directorio/target y se
+  verifican sus nombres exactos de tests, command, cwd, target y exit real.
+
+La comprobación de procedencia reveló además una contaminación concreta de Cargo:
+tras compilar un baseline en un target compartido, ejecutar desde el candidato
+podía reutilizar un test cuyo `CARGO_MANIFEST_DIR` seguía apuntando al baseline.
+Se reprodujo con la fixture presente en el candidato, exit101 y el archivo `.d`
+apuntando al otro checkout antes y después. Los targets independientes por rol
+eliminan esa ambigüedad. El baseline recibe sólo el soporte histórico de selección
+de plataformas, autenticado contra su SHA preservado; ello permite ejecutar las
+8 raíces completas. No implica ejecutar ni revalidar binarios ARM/macOS.
+
+Los datos v1 se preservan y sus observadores numéricos pueden verificarse con los
+nuevos validadores de payloads. Su comparación de suites completas no se acepta
+como prueba de procedencia: el baseline también carecía del soporte ignorado.
+El formato v2 distingue esos datos históricos de las ejecuciones corregidas.
+
+Localmente, las 37 pruebas del diagnóstico pasaron. Candidato `f8d68146` y
+baseline aceptado `49bf56ce` pasaron sus tres comandos separados: contexto
+completo (8 raíces), contexto filtrado (1 raíz) y alineamiento (4 raíces).
+Los árboles/archivos de modelos, API nativa, matemática de alineamiento y Cargo
+son idénticos entre ambas revisiones; los directorios y targets de ejecución
+permanecen distintos.
+
+El diagnóstico reforzado CI40244828414 vuelve a observar el EPYC9V45 que había
+fallado en CI40240899343. En el mismo 9V45, Python original y Rust coinciden
+exactamente en los casos medidos. Candidato y baseline fallan únicamente en los
+mismos tests numéricos registrados: contexto completo 7/8, filtrado 0/1 y
+alineamiento 3/4. Al repetirse también filtrados y en el baseline, las discrepancias
+observadas no dependen del orden de las otras raíces ni de un cambio reciente del
+port. Los exits101 y los vectores completos siguen siendo datos de fallo frente
+a los congelados, no aprobaciones de esas suites.
+
+El workflow de diagnóstico retorna éxito sólo cuando termina y valida sus
+observaciones, incluso si un comando registrado de modelos retorna101. No
+sustituye el workflow de modelos/búsqueda, que continúa fallando si cualquiera
+de sus perfiles falla o se omite. Las referencias, tolerancias y modelos no se
+modificaron; tampoco se fuerza un kernel antiguo para imitar otro CPU.
+
+Siguiente capacidad: registrar referencias independientes del original por
+perfil numérico de ejecución, con identidad de runtime/kernel y selección
+verificada, conservando las referencias Haswell existentes. Usar sólo
+`Linux/x86_64` para elegir una expectativa resulta demasiado amplio. Antes de
+promover un perfil nuevo se necesita observar su corpus completo del original;
+los tres casos de contexto y el caso de alineamiento de este diagnóstico no
+prueban todos los inputs ni todos los CPUs.
+
+Siguen pendientes la aceptación de CI del bloque CST, el backend Python AST,
+OperationWitnesses completo, SymbolRanker/PieceSearch y M4/global. No se modifica
+la aplicación instalada. Los raw, targets y worktrees de diagnóstico permanecen
+locales fuera de Git según la instrucción de conservación.
+
+El CI reforzado completo40244828414 terminó correctamente en ambas réplicas, con
+37checks del diagnóstico aprobados en cada una. Un detalle importante: el EPYC9V74
+de esta segunda época NO anunciaba AVX512/VNNI y seleccionó Haswell; allí todas las
+suites de ambos checkouts pasaron y las mediciones coincidieron con el congelado.
+El EPYC9V45 sí anunciaba AVX512/VNNI y seleccionó SkylakeX; mostró las diferencias
+compartidas por Python/Rust descritas arriba. El primer 9V74 sí anunciaba AVX512.
+Por tanto, tampoco basta el nombre comercial del CPU: importan las capacidades
+expuestas al proceso y el kernel realmente seleccionado. Las épocas se conservan
+por separado y ninguna observación se elige por obtener un gate numérico verde.
+
+Recibo local `docs/validation/rust-migration-2026-10-25/x86-numerics`: 917 miembros,
+578 archivos de fuentes autenticados por blob Git y SHA256. FILES SHA256
+`ff2c2370179f99b619502ddf396568c46d4cad9e4d4bdcccac8fcba00a504c51`.
+Transporte `.ken/rust-migration/x86-numerics/x86-numerics-f8d68146.tar.gz`,
+17420031 bytes, SHA256
+`ff3cfe5fa9f901c246928834d25b317a20649020a93542ca4c8150466c0e7b0a`.
+La extracción `/tmp/ken-x86-numerics-r1p92ud2` pasó replay aislado con validadores
+archivados. Su estado dice `diagnosis_tooling_complete=true`,
+`model_acceptance=false`, `CST_CI_acceptance=false`, `migration_complete=false`.
+Las cuatro réplicas de ambas épocas se conservan: la segunda época corrige
+instrumentación, no repite ejecuciones buscando un gate numérico verde.
