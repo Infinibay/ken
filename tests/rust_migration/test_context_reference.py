@@ -98,3 +98,10 @@ def test_generated_context_fixtures_record_original_errors_and_extra_row_gap(ori
     assert oracle['results'][1]['calls'][0]['ids'] == [4, 1, 2, 5]
     for row in manifest['files']:
         assert hashlib.sha256((out / row['path']).read_bytes()).hexdigest() == row['sha256']
+
+
+def test_linux_device_discovery_warning_is_bounded_and_specific():
+    warning='\x1b[0;93m2026-10-25 00:43:33.823586002 [W:onnxruntime:Default, device_discovery.cc:133 GetPciBusId] Skipping pci_bus_id for PCI path at "/sys/devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0004:00/MSFT1000:00/5620e0c7-8062-4dce-aeb7-520c7ef76171" because filename "5620e0c7-8062-4dce-aeb7-520c7ef76171" did not match expected pattern of [0-9a-f]+:[0-9a-f]+:[0-9a-f]+[.][0-9a-f]+\x1b[m\n'
+    assert stderr_errors(warning,'Linux')==[]
+    for value,system in [(warning,'Darwin'),(warning*2,'Linux'),(warning+'unexpected\n','Linux'),(warning.replace('GetPciBusId','RunFailure'),'Linux'),(warning.replace('Skipping pci_bus_id','invalid model'),'Linux')]:
+        assert stderr_errors(value,system)

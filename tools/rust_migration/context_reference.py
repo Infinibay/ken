@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 import subprocess
 import tempfile
@@ -12,12 +13,18 @@ from .reference import Reference, reference_env, verify_reference
 
 TOLERANCES = {'atol': 2e-6, 'rtol': 1e-5, 'cosine_min': .999999}
 CPU_WARNING = 'onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0\n'
+PCI_WARNING = re.compile(
+    r'\x1b\[0;93m\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{9} '
+    r'\[W:onnxruntime:Default, device_discovery\.cc:133 GetPciBusId\] '
+    r'Skipping pci_bus_id for PCI path at "/sys/devices/[^"\n]{1,1024}" '
+    r'because filename "[0-9a-f-]{36}" did not match expected pattern of '
+    + re.escape('[0-9a-f]+:[0-9a-f]+:[0-9a-f]+[.][0-9a-f]+') + r'\x1b\[m\n')
 
 
 def stderr_errors(value: str, system: str) -> list[str]:
-    # The warning depends on CPU identification. Its absence or one exact line
-    # is allowed on Linux; every other byte/count and every macOS byte fails.
-    return [] if value == '' or (system == 'Linux' and value == CPU_WARNING) else ['unexpected contextual stderr']
+    # Only one known hardware discovery warning is allowed on Linux. Retain
+    # the raw diagnostic, reject repeats, model errors and all macOS stderr.
+    return [] if value == '' or (system == 'Linux' and (value == CPU_WARNING or PCI_WARNING.fullmatch(value))) else ['unexpected contextual stderr']
 
 
 def context_cases() -> list[dict]:

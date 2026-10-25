@@ -4,7 +4,7 @@ import json,platform,shutil,subprocess,tarfile
 from .native_json import NativeJsonCapture,identity,load
 from .native_platform import native_target
 from .native_binary import check_native_architecture
-from .native_core_evidence import PREFIX,core_request,core_source_identity,runtime_records,resource_names,verify_core_capture
+from .native_core_evidence import PREFIX,CONFINEMENT_PREFIX,core_request,core_source_identity,runtime_records,resource_names,verify_core_capture
 
 VALIDATION_FILES=('.github/workflows/rust-runtime-cores.yml','pyproject.toml','uv.lock','tools/rust_migration/data/native-sdk-sources.json','tools/rust_migration/data/transformer-cores.json')
 SUPPORT_FILES=('docs/superpowers/specs/2026-10-24-rust-x86-runtime-cores-design.md','docs/superpowers/plans/2026-10-24-rust-x86-runtime-cores.md')
@@ -21,7 +21,11 @@ def capture_packet(repo:Path,module:Path,sdk:Path,out:Path):
     check_native_architecture(binary,target);check_native_architecture(module,target)
     out.mkdir(parents=True,exist_ok=True);(out/'bin').mkdir();shutil.copy2(binary,out/'bin/native_core_probe');shutil.copy2(module,out/'bin/backend')
     module_id=identity(module);(out/'MODULE.json').write_text(json.dumps(module_id,indent=2)+'\n');shutil.copyfile(sdk/'PREPARATION.json',out/'SDK.json')
-    with NativeJsonCapture(binary,out/'native',repo=repo,prefix=PREFIX)as capture:
+    if target[0]=='macos':
+        guard=repo/'target/debug/examples/native_isolation_probe';check_native_architecture(guard,target);shutil.copy2(guard,out/'bin/native_isolation_probe')
+        with NativeJsonCapture(guard,out/'confinement',repo=repo,prefix=CONFINEMENT_PREFIX,macos_confinement=True)as capture:
+            capture.run({'format':'ken-native-isolation-request/1'})
+    with NativeJsonCapture(binary,out/'native',repo=repo,prefix=PREFIX,macos_confinement=True)as capture:
         onnx_registration,onnx,torch=runtime_records(repo,target);library,backend=resource_names(target)
         (capture.root/'onnx').mkdir();shutil.copyfile(ready['prepared']['onnx_library'],capture.root/'onnx'/library)
         for name in torch['libraries']:

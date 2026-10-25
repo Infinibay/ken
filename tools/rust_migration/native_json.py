@@ -5,6 +5,11 @@ from pathlib import Path
 from .fastembed_process import _distinct,_nonfinite
 
 LIMIT=16*1024*1024
+MACOS_CONFINEMENT='(version 1)(allow default)(deny network*)(deny process-fork)(deny process-exec (require-not (require-any (literal (param "NATIVE")) (literal "/usr/bin/env"))))'
+def macos_confined_command(native:Path):
+    # sandbox-exec is platform protected: pass DYLD through env's arguments so
+    # SIP does not strip the loader audit before the native executable starts.
+    return ['/usr/bin/sandbox-exec','-D','NATIVE='+str(native),'-p',MACOS_CONFINEMENT,'/usr/bin/env','DYLD_PRINT_LIBRARIES=1',str(native)]
 def identity(path:Path)->dict:
     with path.open('rb')as stream:return dict(bytes=path.stat().st_size,sha256=hashlib.file_digest(stream,'sha256').hexdigest())
 def load(path:Path):
@@ -22,8 +27,9 @@ def same_value(left,right):
     return left==right
 
 class NativeJsonCapture:
-    def __init__(self,probe:Path,out:Path,*,repo:Path,prefix:str):
+    def __init__(self,probe:Path,out:Path,*,repo:Path,prefix:str,macos_confinement:bool=False):
         self.probe,self.out,self.repo,self.prefix=probe.resolve(),out.resolve(),repo.resolve(),prefix
+        self.macos_confinement=macos_confinement
     def __enter__(self):
         with self.probe.open('rb')as stream:magic=stream.read(4)
         if magic not in (b'\x7fELF',b'\xcf\xfa\xed\xfe',b'\xfe\xed\xfa\xcf',b'\xca\xfe\xba\xbe')or not os.access(self.probe,os.X_OK):raise ValueError('native executable required; interpreter scripts rejected')
@@ -47,7 +53,9 @@ class NativeJsonCapture:
             tracer=shutil.which('strace')
             if not tracer:raise ValueError('actual Linux exec/connect audit required')
             command=[tracer,'--seccomp-bpf','-f','-e','trace=execve,execveat,connect','-o',str(self.out/'exec.trace'),*command];env['LD_DEBUG']='libs'
-        else:env['DYLD_PRINT_LIBRARIES']='1'
+        else:
+            env['DYLD_PRINT_LIBRARIES']='1'
+            if self.macos_confinement:command=macos_confined_command(self.native)
         with(self.out/'stdout.json').open('wb')as stdout,(self.out/'stderr.log').open('wb')as stderr:
             process=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=stdout,stderr=stderr,cwd=self.root,env=env,start_new_session=True)
             try:process.communicate(raw,timeout=60)
@@ -58,12 +66,12 @@ class NativeJsonCapture:
         receipt=dict(format='ken-native-json-execution/1',command=command,cwd=str(self.root),env=env,system=system,machine=platform.machine(),exit=process.returncode,timeout_s=60,native_sha256=self.binary['sha256'],request_sha256=identity(self.out/'inputs.json')['sha256'],stdout_sha256=identity(self.out/'stdout.json')['sha256'],stderr_sha256=identity(self.out/'stderr.log')['sha256'],owned_before=before,owned_after=tree(self.root))
         (self.out/'execution.json').write_text(json.dumps(receipt,indent=2)+'\n')
         if identity(self.probe)!=self.binary or identity(self.native)!=self.binary:raise ValueError('native executable changed during execution')
-        errors=verify_native_json(self.out,self.prefix)
+        errors=verify_native_json(self.out,self.prefix,macos_confinement=self.macos_confinement)
         if errors:raise ValueError(errors)
         return load(self.out/'stdout.json')
     def __exit__(self,*args):self.temporary.cleanup()
 
-def verify_native_json(out:Path,prefix:str)->list[str]:
+def verify_native_json(out:Path,prefix:str,*,macos_confinement:bool=False)->list[str]:
     try:
         def require(value,message):
             if not value:raise ValueError(message)
@@ -81,7 +89,9 @@ def verify_native_json(out:Path,prefix:str)->list[str]:
             trace=(out/'exec.trace').read_text()
             require(len(re.findall(r'\bexecve(?:at)?\(',trace))==1 and command[-1]in trace and not re.search(r'\bconnect\(',trace),'unexpected native subprocess/network')
             require(env['LD_DEBUG']=='libs'and b'calling init:'in loader,'actual Linux loader audit missing')
-        else:require(receipt['system']=='macos'and command==[str(root/'native-probe')]and env['DYLD_PRINT_LIBRARIES']=='1'and b'dyld['in loader,'actual macOS loader audit missing')
+        else:
+            expected=macos_confined_command(root/'native-probe')if macos_confinement else[str(root/'native-probe')]
+            require(receipt['system']=='macos'and command==expected and env['DYLD_PRINT_LIBRARIES']=='1'and b'dyld['in loader,'actual macOS loader audit/confinement missing')
         load(out/'inputs.json');load(out/'stdout.json')
         return []
     except(OSError,ValueError,KeyError,TypeError,IndexError)as error:return[str(error)]

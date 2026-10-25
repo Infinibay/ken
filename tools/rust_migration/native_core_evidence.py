@@ -6,6 +6,20 @@ from .native_binary import check_native_architecture
 from .context_compare import core_for_platform
 from .transformer_cores import transformer_core
 PREFIX='ken-native-cpu-cores-'
+CONFINEMENT_PREFIX='ken-native-core-confinement-'
+
+def verify_core_confinement(packet:Path,target):
+    if target[0]!='macos':return[]
+    try:
+        capture=packet/'confinement'
+        errors=verify_native_json(capture,CONFINEMENT_PREFIX,macos_confinement=True);require(not errors,str(errors))
+        execution=load(capture/'execution.json');binary=packet/'bin/native_isolation_probe';check_native_architecture(binary,target)
+        require((execution['system'],execution['machine'])==('macos','arm64'),'confinement witness host differs')
+        require(execution['owned_before']=={'native-probe':identity(binary)}and execution['native_sha256']==identity(binary)['sha256'],'confinement witness binary differs')
+        require(same_value(load(capture/'inputs.json'),{'format':'ken-native-isolation-request/1'}),'confinement witness request differs')
+        require(same_value(load(capture/'stdout.json'),dict(format='ken-native-isolation-observation/1',self_child_blocked=True,absolute_child_blocked=True,network_blocked=True)),'actual process/network enforcement absent')
+        return[]
+    except(OSError,ValueError,KeyError,TypeError,IndexError)as error:return[str(error)]
 
 def require(value,message):
     if not value:raise ValueError(message)
@@ -35,10 +49,11 @@ def core_request(repo:Path,root:Path,module:dict,target):
 
 def verify_core_capture(packet:Path,repo:Path):
     try:
-        errors=verify_native_json(packet/'native',PREFIX);require(not errors,str(errors))
+        errors=verify_native_json(packet/'native',PREFIX,macos_confinement=True);require(not errors,str(errors))
         execution=load(packet/'native/execution.json');root=Path(execution['cwd'])
         require(execution['system']in('linux','macos'),'unknown native core host')
         target=native_target('Darwin'if execution['system']=='macos'else'Linux',execution['machine'])
+        errors=verify_core_confinement(packet,target);require(not errors,str(errors))
         require(not root.is_relative_to(repo.resolve()),'native core process ran inside checkout')
         require(load(packet/'SOURCES.json')==core_source_identity(repo),'native core source snapshot differs')
         binary=packet/'bin/native_core_probe';module=packet/'bin/backend';binary_id=identity(binary);module_id=identity(module)

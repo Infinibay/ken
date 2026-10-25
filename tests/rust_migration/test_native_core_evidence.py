@@ -44,7 +44,8 @@ def test_changed_or_resealed_core_capture_never_passes(packet,change):
         path.write_text(json.dumps(value));execution=packet/'native/execution.json';record=json.loads(execution.read_bytes());record['request_sha256']=identity(path)['sha256'];execution.write_text(json.dumps(record))
     elif change=='loader':(packet/'native/stderr.log').write_text('libpython3.12.so\n')
     elif change=='missing':(packet/'native/stdout.json').unlink()
-    elif change=='exec':(packet/'native/exec.trace').write_text('execve("python",[],[]) = 0\nconnect(1,{},0) = 0\n')
+    elif change=='exec':
+        path=packet/'native/execution.json';value=json.loads(path.read_bytes());value['command']=['/usr/bin/python',value['command'][-1]];path.write_text(json.dumps(value))
     else:
         path=packet/'native/execution.json';value=json.loads(path.read_bytes());value['owned_before']['torch/lib/foreign.so']={'bytes':4,'sha256':'a'*64};value['owned_after']=value['owned_before'];path.write_text(json.dumps(value))
     assert verify_core_capture(packet,ROOT)
@@ -77,3 +78,28 @@ def test_whole_plan_core_review_binds_native_sources_and_tooling(tmp_path):
     record=dict(format='ken-native-cpu-core-review/1',whole_plan=True,reviewer='test-review',critical_open=[],important_open=[],accepted_sources=source,accepted_tooling=tooling,raw_review=dict(path=raw.name,identity=identity(raw)))
     path=tmp_path/'REVIEW.json';path.write_text(json.dumps(record));assert not verify_core_review(path,source,tooling)
     changed=json.loads(path.read_bytes());changed['accepted_tooling']={};path.write_text(json.dumps(changed));assert verify_core_review(path,source,tooling)
+
+@pytest.mark.parametrize('change',['missing','permissive'])
+def test_new_macos_core_requires_process_and_network_confinement(packet,change):
+    from tools.rust_migration.native_json import identity,verify_native_json
+    capture=packet/'native';path=capture/'execution.json';record=json.loads(path.read_bytes())
+    record['system']='macos';record['machine']='arm64';root=Path(record['cwd'])
+    record['command']=[str(root/'native-probe')];record['env'].pop('LD_DEBUG',None);record['env']['DYLD_PRINT_LIBRARIES']='1'
+    (capture/'stderr.log').write_text('dyld[123]: native-probe\n')
+    record['stderr_sha256']=identity(capture/'stderr.log')['sha256']
+    if change=='permissive':record['command']=['/usr/bin/sandbox-exec','-p','(version 1)(allow default)',str(root/'native-probe')]
+    path.write_text(json.dumps(record))
+    assert verify_native_json(capture,'ken-native-cpu-cores-',macos_confinement=True)
+
+
+def test_macos_confinement_requires_actual_denied_child_and_network_observations(packet,tmp_path):
+    from tools.rust_migration.native_core_evidence import verify_core_confinement
+    from tools.rust_migration.native_json import identity
+    assert verify_core_confinement(tmp_path,('macos','aarch64'))
+    if json.loads((packet/'native/execution.json').read_bytes())['system']=='macos':
+        assert not verify_core_confinement(packet,('macos','aarch64'))
+        path=packet/'confinement/stdout.json';original=json.loads(path.read_bytes())
+        for key in('self_child_blocked','absolute_child_blocked','network_blocked'):
+            path.write_text(json.dumps(original|{key:False}))
+            execution=packet/'confinement/execution.json';record=json.loads(execution.read_bytes());record['stdout_sha256']=identity(path)['sha256'];execution.write_text(json.dumps(record))
+            assert verify_core_confinement(packet,('macos','aarch64'))

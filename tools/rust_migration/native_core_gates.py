@@ -5,9 +5,9 @@ from .command_gates import command_gate_errors,lint_gate_errors
 from .integration_validate import rust_gate_errors
 from .native_json import load
 from .receipts import junit_states
-ROOT_TEST=['cargo','test','--locked','--offline','-p','ken-models','--test','native_onnx','--example','native_core_probe']
+ROOT_TEST=['cargo','test','--locked','--offline','-p','ken-models','--test','native_onnx','--example','native_core_probe','--example','native_isolation_probe']
 TORCH_TEST=['cargo','test','--locked','--offline','--manifest-path','native/ken-torch-backend/Cargo.toml']
-ROOT_COMMANDS={'native-list':[*ROOT_TEST,'--','--list'],'native-tests':[*ROOT_TEST,'--no-fail-fast'],'probe-build':['cargo','build','--locked','--offline','-p','ken-models','--example','native_core_probe','--example','model_integration_probe']}
+ROOT_COMMANDS={'native-list':[*ROOT_TEST,'--','--list'],'native-tests':[*ROOT_TEST,'--no-fail-fast'],'probe-build':['cargo','build','--locked','--offline','-p','ken-models','--example','native_core_probe','--example','model_integration_probe','--example','native_isolation_probe']}
 TORCH_COMMANDS={'torch-list':[*TORCH_TEST,'--','--list'],'torch-tests':[*TORCH_TEST,'--no-fail-fast'],'torch-build':['cargo','build','--locked','--offline','--manifest-path','native/ken-torch-backend/Cargo.toml']}
 LINT_COMMANDS={'fmt':['cargo','fmt','--all','--check'],'clippy':['cargo','clippy','--locked','--offline','-p','ken-models','--all-targets','--','-D','warnings']}
 TORCH_LINT={'fmt':['cargo','fmt','--manifest-path','native/ken-torch-backend/Cargo.toml','--check'],'clippy':['cargo','clippy','--locked','--offline','--manifest-path','native/ken-torch-backend/Cargo.toml','--all-targets','--','-D','warnings']}
@@ -16,13 +16,13 @@ def test_files(repo:Path):
     files=sorted(str(path.relative_to(repo))for path in(repo/'tests/rust_migration').glob('test_*.py')if any(path.name.startswith('test_'+prefix+'_')for prefix in('context','ettin','fastembed','transformer','integration')))
     return files+['tests/rust_migration/test_native_platform.py','tests/rust_migration/test_native_core_prepare.py','tests/rust_migration/test_native_core_evidence.py']
 
-PYTHON_ROOTS=357
+PYTHON_ROOTS=361
 
 def verify_core_gates(gates:Path):
     try:
         errors=command_gate_errors(gates,{**ROOT_COMMANDS,**TORCH_COMMANDS},record_name='RUST.json')
         if errors:return errors
-        for prefix,count in [('native',5),('torch',15)]:
+        for prefix,count in [('native',6),('torch',15)]:
             listed=(gates/(prefix+'-list.log')).read_text();output=(gates/(prefix+'-tests.log')).read_text()
             if rust_gate_errors(listed,output)or len(re.findall(r'^([^\n]+): test$',listed,re.M))!=count:raise ValueError('complete native core test roots required: '+prefix)
         files=test_files(Path(__file__).resolve().parents[2]);records=load(gates/'PYTHON.json')
