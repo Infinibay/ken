@@ -35,4 +35,7 @@ def test_existing_capture_destination_never_runs_original_again(tmp_path,monkeyp
     from tools.rust_migration.reference import Reference
     monkeypatch.setattr(module,'verify_reference',lambda *a:[])
     monkeypatch.setattr(module.subprocess,'run',lambda *a,**k:pytest.fail('original recaptured'))
-    with pytest.raises(FileExistsError):module.capture(Reference.load(ROOT/'.ken/rust-migration/portable-reference'),tmp_path,Path('/unused'))
+    unused=tmp_path/'no-frozen-reference'
+    reference=Reference(unused,unused/'reference-manifest.json','unused',unused/'python')
+    assert not reference.manifest_path.exists()
+    with pytest.raises(FileExistsError):module.capture(reference,tmp_path,Path('/unused'))
