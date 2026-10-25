@@ -118,7 +118,7 @@ def verify_core_packet(packet:Path,repo:Path):
         expected=[next(row for row in sources if(row['package'],row['os'],row['arch'])==(name,*target))for name in('onnxruntime','torch')]
         require(sdk['sources']==expected and sdk['extraction']['exit']==0,'prepared SDK source proof differs')
         require(all(sdk[key]is False for key in('NativeCPUCore_x86_64_accepted','M2_accepted','migration_complete')),'SDK preparation cannot claim acceptance')
-        return verify_core_capture(packet,repo)or verify_core_gates(packet/'gates')or verify_core_snapshot(packet,repo)
+        return verify_core_capture(packet,repo)or verify_core_gates(packet/'gates',system=target[0])or verify_core_snapshot(packet,repo)
     except(OSError,ValueError,KeyError,TypeError,IndexError,StopIteration)as error:return[str(error)]
 
 CORE_HOSTS={'linux-x86_64':('linux','x86_64'),'linux-aarch64':('linux','aarch64'),'macos-arm64':('macos','aarch64')}

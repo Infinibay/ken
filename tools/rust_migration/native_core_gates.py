@@ -16,13 +16,17 @@ def test_files(repo:Path):
     files=sorted(str(path.relative_to(repo))for path in(repo/'tests/rust_migration').glob('test_*.py')if any(path.name.startswith('test_'+prefix+'_')for prefix in('context','ettin','fastembed','transformer','integration')))
     return files+['tests/rust_migration/test_native_platform.py','tests/rust_migration/test_native_core_prepare.py','tests/rust_migration/test_native_core_evidence.py']
 
-PYTHON_ROOTS=361
+PYTHON_ROOTS=364
 
-def verify_core_gates(gates:Path):
+def native_test_roots(system:str):
+    if system not in('linux','macos'):raise ValueError('unknown native core gate platform')
+    return{'native':6,'torch':16 if system=='macos'else 15}
+
+def verify_core_gates(gates:Path,*,system:str='linux'):
     try:
         errors=command_gate_errors(gates,{**ROOT_COMMANDS,**TORCH_COMMANDS},record_name='RUST.json')
         if errors:return errors
-        for prefix,count in [('native',6),('torch',15)]:
+        for prefix,count in native_test_roots(system).items():
             listed=(gates/(prefix+'-list.log')).read_text();output=(gates/(prefix+'-tests.log')).read_text()
             if rust_gate_errors(listed,output)or len(re.findall(r'^([^\n]+): test$',listed,re.M))!=count:raise ValueError('complete native core test roots required: '+prefix)
         files=test_files(Path(__file__).resolve().parents[2]);records=load(gates/'PYTHON.json')

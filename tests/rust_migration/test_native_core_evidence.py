@@ -103,3 +103,13 @@ def test_macos_confinement_requires_actual_denied_child_and_network_observations
             path.write_text(json.dumps(original|{key:False}))
             execution=packet/'confinement/execution.json';record=json.loads(execution.read_bytes());record['stdout_sha256']=identity(path)['sha256'];execution.write_text(json.dumps(record))
             assert verify_core_confinement(packet,('macos','aarch64'))
+
+@pytest.mark.parametrize('system,torch',[('linux',15),('macos',16)])
+def test_native_core_inventory_includes_macos_mps_root(system,torch):
+    from tools.rust_migration.native_core_gates import native_test_roots
+    assert native_test_roots(system)=={'native':6,'torch':torch}
+
+
+def test_native_core_inventory_rejects_unknown_platform():
+    from tools.rust_migration.native_core_gates import native_test_roots
+    with pytest.raises(ValueError):native_test_roots('windows')
