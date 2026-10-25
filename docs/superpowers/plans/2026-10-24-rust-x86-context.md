@@ -17,9 +17,9 @@ Base:26ec740d, after accepted CPU-core sourceece7a0c6.
 
 - [x] Actual original20histories and4original scoped tests captured once; initial
   native input-only20history experiment PASS. Preserve original/transport hashes.
-- [ ] Run existing production contextual root with actual x86 weights/core before
+- [x] Run existing production contextual root with actual x86 weights/core before
   edits. Expected RED at the aarch64 guard, not missing-data setup.
-- [ ] Add a test-private selector invariant test before implementation: exact
+- [x] Add a test-private selector invariant test before implementation: exact
   supported original metadata, same fixed20cases, immutable x86 fixture SHA and
   unknown/crossed target rejection. Expected missing-helper/fixture RED.
 
@@ -31,20 +31,26 @@ and the existing three-host runtime workflow. Reuse parent core snapshots plus
 bounded contextual registration/reference/spec/plan support. No production API
 or dependency changes.
 
-- [ ] Copy exact observed JSON bytes; select only the actual OS/architecture.
+- [x] Copy exact observed JSON bytes; select only the actual OS/architecture.
   Keep original ARM paths and explicit unsupported-target rejection. Existing
   history/model comparison code and numerical bounds stay unchanged.
-- [ ] Run all contextual native roots with real production weights and the
+- [x] Run all contextual native roots with real production weights and the
   authenticated standalone ORT. Expected complete GREEN, no skipped roots.
-- [ ] Fresh native input-only execution against the reused original, source and
+- [x] Fresh native input-only execution against the reused original, source and
   binary/resource fingerprints, actual Linux exec/connect/loader audit. No
   recapture. Requirefmt/strictClippy and affected complete tooling/regressions.
 
 ## Task 3: Review and record the capability
 
-- [ ] One fresh final whole-plan reviewer; rule on all findings and declined
+- [x] One fresh final whole-plan reviewer; rule on all findings and declined
   behaviors, one Important/Critical RED→GREEN repair pass if needed, no re-review.
 - [ ] Authenticate source/tooling/gates and archive/replay the scoped receipt.
   Keep raw local; update handoff with exact capability and remaining models/index.
 - [ ] Commit/push to the authorized migration branch; continue remaining x86
   model/oracle requirements. Never claim complete M2/M3x86 or M4/global here.
+
+Estado: código b9ea0578, x86/macOS8/20/11 PASS. ARM reproduce el mismo fallo
+numérico en el baseline26ec y en el candidato; causa sin determinar. Important
+JUnit reparado RED→GREEN, menores diferidos. Estado archivado, aceptación formal
+pendiente: no marcar el conjunto de tres hosts como verde. Continuación en
+docs/rust-migration-handoff.md.

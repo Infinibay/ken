@@ -812,8 +812,8 @@ El original tiene 935725 bytes y SHA-256
 Transporte local: `.ken/rust-migration/archives/x86-context-preparation-9b9ff88b.tar.gz`,
 4603583 bytes, SHA-256
 `18417f23303f9a21aa32c20b7d2a861648afe211e004fc182616a66734f20869`.
-Conservar sus labels `9b9ff88b` y reutilizarlo sin recapturar. El siguiente cambio
-es incorporarlo al test contextual que todavía exige aarch64. Además pasaron
+Conservar sus labels `9b9ff88b` y reutilizarlo sin recapturar. Ese original ya se incorporó al test permanente; el estado posterior está al final
+de este documento. Además pasaron
 localmente 7 contratos de los encoders/juez con Torch real y 6 de `ken-rs status`.
 
 Hubo una revisión final y una pasada TDD. El Important de aislamiento quedó
@@ -821,3 +821,48 @@ resuelto. El conteo se corrigió por plataforma tras observar las 16 pruebas
 macOS: no se omitió ninguna. Menor diferido: una descarga fallida puede dejar
 su temporal `.sdk-download-*`; la limpieza se hará por separado. Las decisiones,
 los intentos y los límites están en `LEDGER.md` del recibo local.
+
+## Estado contextual x86_64 y fallo ARM preexistente
+
+El fixture contextual propio de Linux x86_64 ya está incorporado y el test dejó
+de exigir aarch64. Se conserva el original de 935725 bytes y SHA-256
+`b1feb05a1abe09637450f55c6988f669884183df76f675e6696a7827ee0a5733`.
+No se volvió a capturar. El candidato de código es
+`b9ea0578151c887c92984e3112734ffd81d94a77`.
+
+En el [CI 40154476254](https://github.com/Infinibay/ken/actions/runs/40154476254),
+Linux x86_64 y macOS pasaron sus 8 raíces contextuales Rust, 20 historiales
+nativos auditados y 11 de tooling, además del padre CPU completo. Los tres
+hosts pasaron el padre CPU (6 raíces ONNX/protocolo, 15/16 Torch, 364 de tooling,
+formato y Clippy). También pasaron gramáticas y fuentes/piezas del candidato.
+La única revisión final encontró un Important de vinculación del JUnit; quedó
+reparado mediante RED→GREEN y comprobación del destino declarado, incluido el
+transporte a otra carpeta. No hubo segunda revisión.
+
+**La matriz contextual completa no está aceptada y el workflow global queda rojo.**
+Linux ARM falla en `passage-boundary511`: esperado `0.21820393204689023`,
+obtenido `0.181270033121109`. El diagnóstico ejecutó en el mismo runner tanto
+la versión actual como el baseline intacto `26ec740d...`: ambos fallaron igual.
+Los logs confirman que el baseline se compiló desde su worktree. El selector
+x86 y la corrección del JUnit no introdujeron esa diferencia. Su causa exacta
+sigue sin determinarse; no atribuirla todavía al hardware ni al backend.
+No se cambiaron los originales, tolerancias ni criterios para convertirlo en verde.
+
+El [estado local preservado](validation/rust-migration-2026-10-24/x86-context-status/README.md)
+registra x86=true, macOS=true y ARM=false; no es un recibo de aceptación.
+`FILES.json`: 3818 miembros, SHA-256
+`72eb98dacf9590a18965b9cfd5dcfa734a218b05deea72912792a74f56eb56dc`.
+Archivo local `.ken/rust-migration/archives/x86-context-status-b9ea0578.tar.gz`,
+121742888 bytes, SHA-256
+`f1ed4cd7ff7f5e195e237a8084512266700ce8acac8fe260579bb5e2ba1e9bba`.
+Los verificadores archivados reproducen los estados observados. Los raw, SDK,
+pesos y diagnósticos siguen fuera de Git. El recibo CPU aceptado de ece7a0c6
+permanece intacto.
+
+Quedan dos menores de este bloque: el audit contextual tiene un límite de 60 s
+frente a los 600 s históricos, y el hash Rust del fixture se comprueba en una
+raíz de test separada del consumo. El conjunto completo sí exige esa raíz y el
+coordinador Python comprueba el hash antes de comparar. El resto de modelos,
+CT2, indexación x86 y M4/global siguen pendientes. La siguiente investigación
+es explicar la diferencia ARM conservando la evidencia del baseline; no recapturar
+sus vectores para hacer coincidir la implementación.
