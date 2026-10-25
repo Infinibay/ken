@@ -13,7 +13,7 @@ REFERENCE = Path('docs/validation/rust-migration-2026-10-20/m2-transformer-refer
 TOOLING = ('transformer_process.py', 'transformer_compare.py', 'transformer_evidence.py',
            'transformer_validate.py', 'transformer_reference.py', 'preparation.py', 'model_validate.py',
            'transformer_sources.py', 'transformer_prepare.py', 'transformer_execution.py',
-           'data/transformer-cores.json')
+           'data/transformer-cores.json', 'native_platform.py', 'transformer_cores.py')
 REQUIRED_GATES = ('transformer_unit', 'transformer_parity', 'transformer_ownership',
                   'native_torch', 'native_mlx', 'capacity')
 

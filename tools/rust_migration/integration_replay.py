@@ -172,7 +172,7 @@ def replay_role(directory:Path,repo:Path,system:str,name:str,phase:str)->list[st
         runtime=actual['runtime'];require(set(runtime)=={'onnx','torch','mlx'},'incomplete runtime declaration')
         require(runtime['torch']is None and runtime['mlx']is None,'unselected optional tensor core loaded')
         if name in('context','reranker','fastembed'):
-            declaration=_json(repo/'docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json')
+            declaration=_json(repo/'crates/ken-models/resources/onnx-runtime-libraries.json')
             identity=next(r for r in declaration['libraries']if r['os']==system and r['arch']=='aarch64')
             require(runtime['onnx']==identity,'actual ONNX core identity differs')
             # NativeOnnxRuntime authenticates bytes, maps a NamedTempFile, then

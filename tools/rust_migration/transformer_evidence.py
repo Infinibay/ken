@@ -47,7 +47,8 @@ def gate_errors(files: dict[str, bytes], row: dict, source_root: Path) -> list[s
         from .transformer_sources import capacity_plan
         registry = json.loads((source_root/'tools/rust_migration/data/transformer-cores.json').read_bytes())
         models = json.loads((source_root/'crates/ken-models/resources/transformer-catalog.json').read_bytes())['models']
-        cores = [c for c in registry['cores'] if c['os'] == row['platform']]
+        from .transformer_cores import transformer_cores
+        cores = transformer_cores(registry,row['platform'],row['architecture'])
         modules = {}
         for backend in {c['backend'] for c in cores}:
             sizes = {p['native_module']['bytes'] for p in row['profiles'] if p['runtime']['backend'] == backend}

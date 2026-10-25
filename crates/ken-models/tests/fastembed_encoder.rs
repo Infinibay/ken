@@ -12,9 +12,7 @@ use std::{
 
 fn runtime(path: Option<PathBuf>) -> NativeOnnxRuntime {
     NativeOnnxRuntime::from_json(
-        include_str!(
-            "../../../docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json"
-        ),
+        include_str!("../resources/onnx-runtime-libraries.json"),
         &path.unwrap_or_else(|| {
             PathBuf::from(std::env::var_os("KEN_ORT_LIBRARY").expect("prepare KEN_ORT_LIBRARY"))
         }),

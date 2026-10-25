@@ -13,9 +13,7 @@ fn manifest() -> Value {
 }
 fn runtime() -> NativeOnnxRuntime {
     NativeOnnxRuntime::from_json(
-        include_str!(
-            "../../../docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json"
-        ),
+        include_str!("../resources/onnx-runtime-libraries.json"),
         &PathBuf::from(
             std::env::var_os("KEN_ORT_LIBRARY").expect("prepare KEN_ORT_LIBRARY for Ettin tests"),
         ),
@@ -246,9 +244,7 @@ fn empty_pool_and_top11_do_not_load_and_model_failure_precedes_query_guard() {
     let model = RerankerModel::from_json(&manifest()["pair"]["definition"].to_string()).unwrap();
     let temp = tempfile::tempdir().unwrap();
     let missing = NativeOnnxRuntime::from_json(
-        include_str!(
-            "../../../docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json"
-        ),
+        include_str!("../resources/onnx-runtime-libraries.json"),
         &temp.path().join("absent-core"),
     )
     .unwrap();

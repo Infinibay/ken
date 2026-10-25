@@ -70,7 +70,7 @@ def capture_roles(repo:Path,probe:Path,out:Path)->dict:
             declaration=declarations[name];assets=declaration['source']if'source'in declaration else declaration
             request['source_overrides'][assets['model_id']]=os.environ[{'context':'KEN_CONTEXT_SNAPSHOT','reranker':'KEN_ETTIN_SOURCE','expansion':'KEN_TRANSLATION_SOURCE'}[name]]
         if name in('context','reranker','fastembed'):
-            request['onnx']={'registration':json.loads((repo/'docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json').read_bytes()),'library':os.environ['KEN_ORT_LIBRARY']}
+            request['onnx']={'registration':json.loads((repo/'crates/ken-models/resources/onnx-runtime-libraries.json').read_bytes()),'library':os.environ['KEN_ORT_LIBRARY']}
         phases=['public','offline']if name=='fastembed'else['offline']
         for phase in phases:
             request['policy']=phase;output=out/(name+'-'+phase)

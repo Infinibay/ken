@@ -352,7 +352,11 @@ mod tests {
         (temp, model, files)
     }
     fn runtime() -> NativeOnnxRuntime {
-        NativeOnnxRuntime::from_json(include_str!("../../../docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json"),&PathBuf::from(std::env::var_os("KEN_ORT_LIBRARY").expect("prepare KEN_ORT_LIBRARY"))).unwrap()
+        NativeOnnxRuntime::from_json(
+            include_str!("../resources/onnx-runtime-libraries.json"),
+            &PathBuf::from(std::env::var_os("KEN_ORT_LIBRARY").expect("prepare KEN_ORT_LIBRARY")),
+        )
+        .unwrap()
     }
     #[test]
     fn actual_gpu_registration_failure_rebuilds_cpu_and_cpu_failures_propagate() {

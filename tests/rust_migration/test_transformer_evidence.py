@@ -47,14 +47,14 @@ def gate_fixture():
  import hashlib
  from tools.rust_migration.transformer_sources import capacity_plan
  from tools.rust_migration.transformer_evidence import OWNERSHIP_CASES
- root=Path(__file__).resolve().parents[2];cores=json.loads((root/'tools/rust_migration/data/transformer-cores.json').read_text())['cores'];core=next(r for r in cores if r['os']=='linux' and r['backend']=='torch')
+ root=Path(__file__).resolve().parents[2];cores=json.loads((root/'tools/rust_migration/data/transformer-cores.json').read_text())['cores'];core=next(r for r in cores if (r['os'],r['arch'],r['backend'])==('linux','aarch64','torch'))
  models=json.loads((root/'crates/ken-models/resources/transformer-catalog.json').read_text())['models'];plans=[capacity_plan(m,core,module_bytes=10,acquire=True) for m in models];need=max(p['required_free_bytes'] for p in plans)
  capacity={'model_plans':plans,'next_phase_required_free_bytes':need,'observed_free_bytes':need+1,'measured_allocated_bytes':1024,'measured_allocated_plus_next_phase_bytes':1024+need,'declared_total_bytes':2*need}
  files={'capacity.json':json.dumps(capacity).encode(),'unit.log':b'95 passed in 1.0s','parity.log':b'1 passed in 1.0s','owners.log':b'1 passed in 1.0s','torch.log':b'test result: ok. 14 passed; 0 failed; 0 ignored;','native-owners.log':('\n'.join('test '+name+' ... ok' for name in OWNERSHIP_CASES)+'\ntest result: ok. 30 passed; 0 failed; 0 ignored;').encode()}
  gates={}
  for name,artifact in [('transformer_unit','unit.log'),('transformer_parity','parity.log'),('transformer_ownership','owners.log'),('native_torch','torch.log'),('capacity','capacity.json')]:gates[name]={'ran':True,'passed':True,'exit_code':0,'artifact':artifact,'sha256':hashlib.sha256(files[artifact]).hexdigest()}
  gates['native_mlx']={'applicable':False,'reason':'Apple GPU only'}
- return root,files,{'platform':'linux','profiles':[{'runtime':{'backend':'torch'},'native_module':{'bytes':10}}],'gates':gates}
+ return root,files,{'platform':'linux','architecture':'aarch64','profiles':[{'runtime':{'backend':'torch'},'native_module':{'bytes':10}}],'gates':gates}
 
 def test_gate_outputs_and_capacity_are_replayed_not_accepted_as_booleans():
  from tools.rust_migration.transformer_evidence import gate_errors

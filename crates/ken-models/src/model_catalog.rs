@@ -290,8 +290,11 @@ mod tests {
         )
     }
     fn onnx() -> NativeOnnxRuntime {
-        NativeOnnxRuntime::from_json(include_str!("../../../docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json"),
-            &PathBuf::from(std::env::var_os("KEN_ORT_LIBRARY").expect("prepare real ONNX runtime"))).unwrap()
+        NativeOnnxRuntime::from_json(
+            include_str!("../resources/onnx-runtime-libraries.json"),
+            &PathBuf::from(std::env::var_os("KEN_ORT_LIBRARY").expect("prepare real ONNX runtime")),
+        )
+        .unwrap()
     }
 
     #[test]

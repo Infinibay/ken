@@ -22,7 +22,7 @@ def native_producer()->dict:
         ROOT/'crates/ken-models/examples/fastembed_probe.rs',
         ROOT/'crates/ken-models/examples/support/mod.rs',
         ROOT/'crates/ken-models/examples/support/observed_peak.rs',
-        ROOT/'docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json']
+        ROOT/'crates/ken-models/resources/onnx-runtime-libraries.json']
     files={str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest()for path in paths}
     return {'engine':'rust','ken_models':'0.18.0','tokenizers':'0.22.2','ort':'2.0.0-rc.14','api':25,
             'source_sha256':hashlib.sha256(json.dumps(files,sort_keys=True,separators=(',',':')).encode()).hexdigest(),

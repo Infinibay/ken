@@ -10,6 +10,8 @@ from .transformer_compare import compare_prepared_transformer
 from .transformer_evidence import source_identity
 from .transformer_reference import read_original
 from .transformer_sources import source_lease
+from .native_platform import native_target
+from .transformer_cores import transformer_core
 
 
 def _gate(repo, environment, out, name, command, *, timeout=600):
@@ -37,13 +39,16 @@ def execute_platform(repo: Path, preparation: Path, legacy_platform: Path, sourc
     prepared = json.loads(preparation.read_bytes())
     if prepared['format'] != 'ken-transformer-preparation/1' or prepared['source_files'] != source_identity(repo):
         raise ValueError('stale native transformer build preparation')
+    system,architecture=native_target(platform.system(),platform.machine())
+    if prepared.get('platform')!=system or prepared.get('architecture')!=architecture:
+        raise ValueError('prepared native platform/architecture differs')
+    if architecture=='x86_64':
+        raise ValueError('fresh x86_64 transformer originals required before profile execution')
     base = json.loads((legacy_platform/'summary.json').read_bytes())
     fingerprints = fastembed_fingerprints(repo, None,
         repo/'src/ken/embedder/data/ken__static-qwen3-r512-v2.npz', None, None, None)
     errors = fastembed_receipt_errors(base, fingerprints) + execution_errors(legacy_platform, base)
     if errors: raise ValueError('current complete34-gate base required: '+str(errors))
-    system = 'macos' if platform.system() == 'Darwin' else 'linux'
-    if prepared['platform'] != system: raise ValueError('prepared native platform differs')
     slots = prepared['prepared']; catalogue = repo/'crates/ken-models/resources/transformer-catalog.json'
     runtimes = repo/'tools/rust_migration/data/transformer-cores.json'
     registry = json.loads(runtimes.read_bytes())
@@ -55,7 +60,7 @@ def execute_platform(repo: Path, preparation: Path, legacy_platform: Path, sourc
     out.mkdir(parents=True)
     shutil.copytree(legacy_platform, out/'base', ignore=shutil.ignore_patterns('environment'))
     row = {'format': FORMAT, 'scope': 'transformer-local', 'synthetic_fixture': False,
-           'passed': False, 'M2_accepted': False, 'platform': system, 'architecture': 'aarch64',
+           'passed': False, 'M2_accepted': False, 'platform': system, 'architecture': architecture,
            'source_files': before, 'tooling': tooling, 'profiles': [], 'gates': {}}
     def save(): (out/'summary.json').write_text(json.dumps(row, indent=2, allow_nan=False)+'\n')
     save()
@@ -109,7 +114,7 @@ def execute_platform(repo: Path, preparation: Path, legacy_platform: Path, sourc
             records = [r for r in originals if r['capture']['settings']['model_id'] == definition['name']]
             if not records: continue
             # One shared borrowed/acquired source, released before the next model.
-            torch = next(r for r in registry['cores'] if r['os'] == system and r['backend'] == 'torch')
+            torch = transformer_core(registry,platform.system(),platform.machine(),'torch')
             initial = PreparedNativeTransformer(Path(slots['sentence_probe']), sources, catalogue,
                 Path(slots['torch_module']), Path(slots['torch_core']), runtimes, acquire=acquire)
             with source_lease(initial, definition, torch, module_bytes=slots['torch_module_identity']['bytes']) as leased:

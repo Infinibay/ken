@@ -38,3 +38,58 @@ def test_sdk_sources_pin_actual_cpu_wheels_and_license_provenance():
         row=rows[key];assert row['wheel']['sha256']==sha and row['wheel']['bytes']==size
         assert row['wheel']['url'].startswith('https://')and len(row['licenses'])==2
     assert rows['torch','linux','x86_64']['version']=='2.9.0+cpu'
+
+import pytest
+
+@pytest.mark.parametrize('system,machine,target',[
+    ('Darwin','arm64',('macos','aarch64')),
+    ('Linux','aarch64',('linux','aarch64')),
+    ('Linux','x86_64',('linux','x86_64')),
+    ('macos','aarch64',('macos','aarch64')),
+    ('linux','aarch64',('linux','aarch64')),
+    ('linux','x86_64',('linux','x86_64')),
+])
+def test_actual_host_selects_its_exact_onnx_and_torch_records(system,machine,target):
+    from tools.rust_migration.native_platform import native_target
+    from tools.rust_migration.context_compare import core_for_platform
+    from tools.rust_migration.transformer_cores import transformer_core,transformer_cores
+    onnx=json.loads((ROOT/'crates/ken-models/resources/onnx-runtime-libraries.json').read_bytes())
+    registry=json.loads((ROOT/'tools/rust_migration/data/transformer-cores.json').read_bytes())
+    assert native_target(system,machine)==target
+    core=core_for_platform(onnx,system,machine);assert(core['os'],core['arch'])==target
+    torch=transformer_core(registry,system,machine,'torch');assert(torch['os'],torch['arch'])==target
+    assert all((r['os'],r['arch'])==target for r in transformer_cores(registry,system,machine))
+
+@pytest.mark.parametrize('system,machine',[('Darwin','x86_64'),('Linux','AMD64'),('Windows','AMD64'),('Linux','arm64')])
+def test_unregistered_host_has_no_same_os_or_architecture_alias(system,machine):
+    from tools.rust_migration.native_platform import native_target
+    with pytest.raises(ValueError,match='platform'):native_target(system,machine)
+
+@pytest.mark.parametrize('change',['arm-only','duplicate','missing-backend','format'])
+def test_mixed_linux_core_lookup_rejects_ambiguous_or_missing_target(change):
+    from tools.rust_migration.transformer_cores import transformer_core
+    registry=json.loads((ROOT/'tools/rust_migration/data/transformer-cores.json').read_bytes())
+    x86=next(row for row in registry['cores']if row['arch']=='x86_64')
+    if change=='arm-only':registry['cores'].remove(x86)
+    elif change=='duplicate':registry['cores'].append(dict(x86))
+    elif change=='missing-backend':x86['backend']='mlx'
+    else:registry['format']='unversioned'
+    with pytest.raises(ValueError):transformer_core(registry,'Linux','x86_64','torch')
+
+def test_x86_onnx_lookup_rejects_duplicate_or_foreign_records():
+    from tools.rust_migration.context_compare import core_for_platform
+    registry=json.loads((ROOT/'crates/ken-models/resources/onnx-runtime-libraries.json').read_bytes())
+    x86=core_for_platform(registry,'Linux','x86_64')
+    for rows in ([row for row in registry['libraries']if row is not x86],registry['libraries']+[dict(x86)]):
+        with pytest.raises(ValueError,match='platform'):core_for_platform(dict(registry,libraries=rows),'Linux','x86_64')
+
+def test_old_os_only_transformer_profiles_cannot_be_used_as_x86_originals(tmp_path,monkeypatch):
+    from tools.rust_migration import transformer_execution as execution
+    from tools.rust_migration.transformer_evidence import source_identity
+    monkeypatch.setattr(execution.platform,'system',lambda:'Linux')
+    monkeypatch.setattr(execution.platform,'machine',lambda:'x86_64')
+    prepared=tmp_path/'prepared.json';prepared.write_text(json.dumps(dict(format='ken-transformer-preparation/1',platform='linux',architecture='x86_64',source_files=source_identity(ROOT))))
+    out=tmp_path/'out'
+    with pytest.raises(ValueError,match='x86_64.*original'):
+        execution.execute_platform(ROOT,prepared,tmp_path/'missing-legacy',tmp_path/'sources',out)
+    assert not out.exists()

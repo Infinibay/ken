@@ -43,11 +43,12 @@ def test_clean_acquisition_ownership_gate_uses_prepared_metadata_and_workspace_t
     slots.update(metadata_sources=str(metadata), workspace_target=str(target))
     preparation = tmp_path / 'preparation.json'
     preparation.write_text(json.dumps({
-        'format': 'ken-transformer-preparation/1', 'platform': 'linux', 'source_files': {},
+        'format': 'ken-transformer-preparation/1', 'platform': 'linux', 'architecture': 'aarch64', 'source_files': {},
         'prepared': slots, 'capacity': {'observed_free_bytes': 3, 'next_phase_required_free_bytes': 1,
         'measured_allocated_plus_next_phase_bytes': 2, 'declared_total_bytes': 4},
     }))
     monkeypatch.setattr(execution.platform, 'system', lambda: 'Linux')
+    monkeypatch.setattr(execution.platform, 'machine', lambda: 'aarch64')
     monkeypatch.setattr(execution, 'source_identity', lambda _: {})
     monkeypatch.setattr(execution, 'read_original', lambda *_: {})
     monkeypatch.setattr(execution, 'seal_execution', lambda *_a, **_k: {})

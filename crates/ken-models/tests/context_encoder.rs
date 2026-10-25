@@ -10,9 +10,7 @@ fn fixtures() -> PathBuf {
 }
 fn runtime() -> NativeOnnxRuntime {
     NativeOnnxRuntime::from_json(
-        include_str!(
-            "../../../docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json"
-        ),
+        include_str!("../resources/onnx-runtime-libraries.json"),
         &PathBuf::from(
             std::env::var_os("KEN_ORT_LIBRARY").expect("prepare KEN_ORT_LIBRARY for context tests"),
         ),
@@ -173,9 +171,7 @@ fn empty_passages_need_no_runtime_and_results_are_independent_under_concurrency(
             .unwrap(),
     );
     let missing = NativeOnnxRuntime::from_json(
-        include_str!(
-            "../../../docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json"
-        ),
+        include_str!("../resources/onnx-runtime-libraries.json"),
         &std::env::temp_dir().join("absent-ken-context-core"),
     )
     .unwrap();
@@ -263,7 +259,11 @@ fn lazy_context_child() {
                 .verify(&root.join("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"))
                 .unwrap(),
         );
-        let missing=NativeOnnxRuntime::from_json(include_str!("../../../docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json"),&std::env::temp_dir().join("absent-ken-cold-context-core")).unwrap();
+        let missing = NativeOnnxRuntime::from_json(
+            include_str!("../resources/onnx-runtime-libraries.json"),
+            &std::env::temp_dir().join("absent-ken-cold-context-core"),
+        )
+        .unwrap();
         let encoder = ContextEncoder::new(model, snapshot, missing).unwrap();
         assert!(encoder.embed_passages(&[]).unwrap().is_empty());
         assert!(!encoder.is_prepared().unwrap());

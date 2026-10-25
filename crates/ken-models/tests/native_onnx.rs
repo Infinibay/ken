@@ -8,10 +8,7 @@ use std::{
 };
 
 fn manifest() -> Value {
-    serde_json::from_str(include_str!(
-        "../../../docs/validation/rust-migration-2026-10-18/m2-context/runtime-libraries.json"
-    ))
-    .unwrap()
+    serde_json::from_str(include_str!("../resources/onnx-runtime-libraries.json")).unwrap()
 }
 
 fn current(value: &mut Value) -> &mut Value {

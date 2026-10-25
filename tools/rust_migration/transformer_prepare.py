@@ -4,6 +4,8 @@ from __future__ import annotations
 import argparse, hashlib, json, os, platform, shutil, subprocess, sys, tempfile
 from pathlib import Path
 from .transformer_evidence import source_identity
+from .native_platform import native_target
+from .transformer_cores import transformer_core,transformer_cores
 from .transformer_sources import allocated_footprint, capacity_plan, RESERVE_BYTES
 
 
@@ -70,9 +72,9 @@ def prepare_transformers(repo: Path, torch_package: Path, mlx_package: Path | No
                          out: Path, target: Path, cmake: Path | None) -> dict:
     if out.exists() or any(not p.is_absolute() for p in (repo, torch_package, out, target)):
         raise ValueError('fresh explicit absolute transformer preparation paths required')
-    system = 'macos' if platform.system() == 'Darwin' else 'linux'
+    system,architecture = native_target(platform.system(),platform.machine())
     registry = json.loads((repo/'tools/rust_migration/data/transformer-cores.json').read_text())
-    torch = next(r for r in registry['cores'] if r['os'] == system and r['backend'] == 'torch')
+    torch = transformer_core(registry,platform.system(),platform.machine(),'torch')
     before = source_identity(repo)
     out.mkdir(parents=True)
     env = os.environ.copy()
@@ -99,7 +101,7 @@ def prepare_transformers(repo: Path, torch_package: Path, mlx_package: Path | No
                 'torch_module_identity': artifact(module), 'workspace_target': str(target)}
     if system == 'macos':
         if mlx_package is None or not mlx_package.is_absolute(): raise ValueError('explicit pinned MLX SDK required on macOS')
-        mlx = next(r for r in registry['cores'] if r['os'] == system and r['backend'] == 'mlx')
+        mlx = transformer_core(registry,platform.system(),platform.machine(),'mlx')
         for name, expected in mlx['libraries'].items():
             if artifact(mlx_package/name) != expected: raise ValueError('unregistered MLX SDK library: '+name)
         env.update(KEN_MLX_CORE=str(mlx_package), CARGO_TARGET_DIR=str(out/'mlx-target'))
@@ -115,14 +117,14 @@ def prepare_transformers(repo: Path, torch_package: Path, mlx_package: Path | No
     if before != source_identity(repo): raise ValueError('native source changed while building transformers')
     catalogue = json.loads((repo/'crates/ken-models/resources/transformer-catalog.json').read_text())
     plans = [capacity_plan(model, core, module_bytes=prepared[core['backend']+'_module_identity']['bytes'], acquire=True)
-             for model in catalogue['models'] for core in registry['cores'] if core['os'] == system
-             and (core['backend'] == 'torch' or model['architecture'] == 'qwen3')]
+             for model in catalogue['models'] for core in transformer_cores(registry,platform.system(),platform.machine())
+             if core['backend'] == 'torch' or model['architecture'] == 'qwen3']
     metadata = prepare_tokenizer_sources(repo/'crates/ken-models/resources/transformer-catalog.json', out/'metadata')
     prepared['metadata_sources'] = str(metadata)
     allocated = allocated_footprint([repo, target, out, Path(sys.prefix)])
     usage = shutil.disk_usage(out); required = max(p['required_free_bytes'] for p in plans)
     if usage.free < required: raise OSError('insufficient transformer model/private-copy free space plus3GiB reserve')
-    report = {'format': 'ken-transformer-preparation/1', 'platform': system, 'source_files': before,
+    report = {'format': 'ken-transformer-preparation/1', 'platform': system, 'architecture': architecture, 'source_files': before,
               'prepared': prepared, 'capacity': {'measured_allocated_bytes': allocated,
               'observed_free_bytes': usage.free, 'declared_total_bytes': usage.total,
               'next_phase_required_free_bytes': required, 'model_plans': plans,

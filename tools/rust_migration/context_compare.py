@@ -17,10 +17,11 @@ from .compare import _differences
 from .context_reference import TOLERANCES, capture, context_cases, snapshot_state, stderr_errors
 from .model_compare import _audit, _sha, _vector
 from .reference import Reference
+from .native_platform import native_target
 
 ROOT=Path(__file__).resolve().parents[2]
 GOLDEN=ROOT/'docs/validation/rust-migration-2026-10-18/m2-context/reference.json'
-RUNTIME_REGISTRATION=GOLDEN.with_name('runtime-libraries.json')
+RUNTIME_REGISTRATION=ROOT/'crates/ken-models/resources/onnx-runtime-libraries.json'
 
 RUNTIME={'engine':'rust','ken_models':'0.18.0','tokenizers':'0.22.2',
          'ort':'2.0.0-rc.14','device':'cpu','intra_threads':2,'inter_threads':1}
@@ -89,8 +90,8 @@ def compare_histories(expected:dict,rows:object)->list[str]:
 
 
 def core_for_platform(registration:dict,system:str,architecture:str)->dict:
-    target={('Darwin','arm64'):('macos','aarch64'),('Linux','aarch64'):('linux','aarch64')}.get((system,architecture))
-    if registration.get('format')!='ken-native-onnx/1' or target is None:
+    target=native_target(system,architecture)
+    if registration.get('format')!='ken-native-onnx/1':
         raise ValueError('unregistered native runtime platform')
     rows=[r for r in registration.get('libraries',[]) if (r.get('os'),r.get('arch'))==target]
     if len(rows)!=1:raise ValueError('ambiguous or missing native runtime platform')
