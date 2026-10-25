@@ -476,28 +476,80 @@ fn native_head_prepares_lazily_without_python_built_cache() {
     );
 }
 
+fn original_for_host(os: &str, arch: &str) -> Value {
+    use sha2::{Digest, Sha256};
+    let (system, machine) = match (os, arch) {
+        ("linux", "x86_64") => ("Linux", "x86_64"),
+        ("linux", "aarch64") => ("Linux", "aarch64"),
+        ("macos", "aarch64") => ("Darwin", "arm64"),
+        _ => panic!("prepare a separate Ettin original for this OS/architecture"),
+    };
+    let (path, digest) = if (os, arch) == ("linux", "x86_64") {
+        (
+            root().join("linux-x86_64-original.json"),
+            "ec1a7477107da440828fd0f46ab2c6d9be45a5d64c7c516306797aa2636e20ce",
+        )
+    } else {
+        (
+            repo().join("docs/validation/rust-migration-2026-10-19/m2-ettin/reference.json"),
+            "ddbd13c1e29d8a4f689b58cb9041aa0fcea4745618f065423ddf7dbe4cf7824b",
+        )
+    };
+    let bytes = fs::read(path).unwrap();
+    assert_eq!(format!("{:x}", Sha256::digest(&bytes)), digest);
+    let document: Value = serde_json::from_slice(&bytes).unwrap();
+    let original = if (os, arch) == ("linux", "x86_64") {
+        document
+    } else {
+        document["platforms"][format!("{system}/{machine}")].clone()
+    };
+    assert_eq!(original["platform"], system, "crossed Ettin original OS");
+    assert_eq!(
+        original["architecture"], machine,
+        "crossed Ettin original architecture"
+    );
+    original
+}
+
+#[test]
+fn original_selection_keeps_each_host_and_rejects_crossed_targets() {
+    let mut previous: Option<Value> = None;
+    for (os, arch, system, machine) in [
+        ("linux", "x86_64", "Linux", "x86_64"),
+        ("linux", "aarch64", "Linux", "aarch64"),
+        ("macos", "aarch64", "Darwin", "arm64"),
+    ] {
+        let original = original_for_host(os, arch);
+        assert_eq!(original["platform"], system);
+        assert_eq!(original["architecture"], machine);
+        assert_eq!(original["cases"].as_array().unwrap().len(), 23);
+        assert_eq!(original["results"].as_array().unwrap().len(), 23);
+        if let Some(expected) = &previous {
+            for field in [
+                "cases",
+                "definition",
+                "source_artifacts",
+                "artifacts",
+                "tolerances",
+            ] {
+                assert_eq!(original[field], expected[field], "{field}");
+            }
+        }
+        previous = Some(original);
+    }
+    for (os, arch) in [
+        ("linux", "arm64"),
+        ("macos", "x86_64"),
+        ("windows", "x86_64"),
+        ("freebsd", "aarch64"),
+    ] {
+        assert!(std::panic::catch_unwind(|| original_for_host(os, arch)).is_err());
+    }
+}
+
 #[test]
 fn registered_ettin_matches_all23_frozen_platform_histories() {
-    let proof: Value = serde_json::from_slice(
-        &fs::read(repo().join("docs/validation/rust-migration-2026-10-19/m2-ettin/reference.json"))
-            .unwrap(),
-    )
-    .unwrap();
-    let platform = format!(
-        "{}/{}",
-        if cfg!(target_os = "macos") {
-            "Darwin"
-        } else {
-            "Linux"
-        },
-        if cfg!(target_os = "macos") {
-            "arm64"
-        } else {
-            "aarch64"
-        }
-    );
-    let oracle = &proof["platforms"][platform];
-    assert!(!oracle.is_null());
+    let oracle = original_for_host(std::env::consts::OS, std::env::consts::ARCH);
     let model = RerankerModel::from_json(&oracle["definition"].to_string()).unwrap();
     let source = PathBuf::from(
         std::env::var_os("KEN_ETTIN_SOURCE")
