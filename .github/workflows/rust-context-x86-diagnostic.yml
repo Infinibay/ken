@@ -1,0 +1,149 @@
+name: Contextual x86 same-runner numerical diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/rust-migration]
+    paths: ['.github/workflows/rust-context-x86-diagnostic.yml']
+permissions:
+  contents: read
+jobs:
+  diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CARGO_BUILD_JOBS: '2'
+      CARGO_INCREMENTAL: '0'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/restore-validation-fixtures
+      - uses: astral-sh/setup-uv@v5
+      - name: Prepare the same locked environment and authenticated CPU core
+        shell: bash
+        run: |
+          uv python install 3.12.9 --no-bin
+          uv sync --locked --dev --extra torch --python 3.12.9 --managed-python
+          uv pip install --python .venv/bin/python cmake==3.31.10
+          rustup toolchain install 1.95.0 --profile minimal
+          sudo apt-get update
+          sudo apt-get install --yes build-essential pkg-config
+          mkdir -p .ken/context-x86-diagnostic
+          curl --fail --location --silent --show-error \
+            https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.26/OpenBLAS-0.3.26.tar.gz \
+            --output .ken/context-x86-diagnostic/OpenBLAS-0.3.26.tar.gz
+          .venv/bin/python -m tools.rust_migration.translation_build prepare-openblas \
+            --archive "$PWD/.ken/context-x86-diagnostic/OpenBLAS-0.3.26.tar.gz" \
+            --destination "$PWD/.ken/context-x86-diagnostic/openblas"
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import cmake,os
+          from tools.rust_migration.preparation import PreparedTranslationBuild
+          from tools.rust_migration.native_core_prepare import prepare_native_cores
+          root=Path.cwd()
+          prepare_native_cores(root,root/'.ken/context-x86-diagnostic/archives',root/'.ken/context-x86-diagnostic/sdk',target=('linux','x86_64'))
+          values=PreparedTranslationBuild(Path(cmake.__file__).parent/'data/bin/cmake',root/'.ken/context-x86-diagnostic/openblas').environment()
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              for name,value in values.items():stream.write(name+'='+value+'\n')
+          PY
+      - name: Compile the unchanged native contextual probe
+        shell: bash
+        run: |
+          cargo build --locked -p ken-models --example context_probe
+      - name: Compare identical token inputs across Python load modes and native Rust
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          from importlib.metadata import version
+          import hashlib,json,platform,subprocess
+          import numpy as np
+          import onnxruntime as ort
+          from tokenizers import Tokenizer
+          from ken.model_assets import ModelAssets
+          from tools.rust_migration.context_reference import snapshot_state
+          root=Path.cwd();out=root/'.ken/context-x86-diagnostic/results';out.mkdir(parents=True)
+          def save(name,value):
+              (out/name).write_text(json.dumps(value,indent=2,allow_nan=False)+'\n')
+          definition=json.loads((root/'src/ken/embedder/data/code-context-int8.json').read_bytes())
+          snapshot=ModelAssets.from_dict(definition).resolve(cache_dir=root/'.ken/context-x86-diagnostic/models',local_files_only=False)
+          artifacts=snapshot_state(snapshot,definition)
+          reference=root/'crates/ken-models/tests/fixtures/context/linux-x86_64-original.json'
+          assert hashlib.sha256(reference.read_bytes()).hexdigest()=='b1feb05a1abe09637450f55c6988f669884183df76f675e6696a7827ee0a5733'
+          original=json.loads(reference.read_bytes())
+          ids={'empty-query','passage-boundary511','passage-boundary512'}
+          cases=[case for case in original['cases'] if case['id'] in ids]
+          assert len(cases)==3
+          ready=json.loads((root/'.ken/context-x86-diagnostic/sdk/PREPARATION.json').read_bytes())
+          request=dict(registration=definition,snapshot=str(snapshot),runtime_registration=json.loads((root/'crates/ken-models/resources/onnx-runtime-libraries.json').read_bytes()),library=ready['prepared']['onnx_library'],cases=cases)
+          save('native-inputs.json',request)
+          child=subprocess.run([str(root/'target/debug/examples/context_probe')],input=json.dumps(request),text=True,capture_output=True,timeout=600,check=True)
+          (out/'native-stdout.json').write_text(child.stdout);(out/'native-stderr.log').write_text(child.stderr)
+          native=json.loads(child.stdout)
+          tokenizer=Tokenizer.from_file(str(snapshot/'tokenizer.json'));tokenizer.no_padding();tokenizer.enable_truncation(max_length=512)
+          vectors={};tokens={}
+          for case,row in zip(cases,native['results'],strict=True):
+              call=case['calls'][0];text=call['text']
+              if call['kind']=='query':text=definition['query_prefix']+text
+              encoded=tokenizer.encode(text)
+              tokens[case['id']]={'ids':encoded.ids,'attention_mask':encoded.attention_mask}
+              assert tokens[case['id']]==row['calls'][0]
+              vectors[case['id']]=row['calls'][1] if call['kind']=='query' else row['calls'][1][0]
+          save('tokens.json',tokens)
+          summary=[]
+          graph=snapshot/'onnx/model.onnx'
+          for mode in ('file','memory'):
+              for threads in (1,2):
+                  options=ort.SessionOptions();options.intra_op_num_threads=threads;options.inter_op_num_threads=1
+                  session=ort.InferenceSession(str(graph) if mode=='file' else graph.read_bytes(),sess_options=options,providers=['CPUExecutionProvider'])
+                  observed={}
+                  for name,token in tokens.items():
+                      inputs={('input_ids' if key=='ids' else key):np.array([value],dtype=np.int64)for key,value in token.items()}
+                      observed[name]=[session.run(['sentence_embedding'],inputs)[0][0].tolist()for _ in range(2)]
+                      index=next(i for i,case in enumerate(original['cases'])if case['id']==name)
+                      frozen=original['results'][index]['calls'][1]
+                      if name.startswith('passage'):frozen=frozen[0]
+                      vector=np.array(observed[name][0],dtype=np.float64)
+                      summary.append(dict(mode=mode,threads=threads,case=name,first=float(vector[0]),frozen_first=frozen[0],native_first=vectors[name][0],max_abs_frozen=float(np.max(np.abs(vector-frozen))),max_abs_native=float(np.max(np.abs(vector-vectors[name]))),max_abs_repeat=float(np.max(np.abs(vector-observed[name][1])))))
+                  save(f'python-{mode}-{threads}.json',observed)
+          import onnxruntime.capi.onnxruntime_pybind11_state as binding
+          save('environment.json',dict(system=platform.platform(),machine=platform.machine(),cpuinfo=Path('/proc/cpuinfo').read_text(),runtime={p:version(p)for p in ('numpy','onnxruntime','tokenizers')},artifacts=artifacts,pybind_sha256=hashlib.sha256(Path(binding.__file__).read_bytes()).hexdigest(),native_runtime=native['runtime'],ort_build=ort.get_build_info(),note='Diagnostic observations only. No new oracle, tolerance change, or acceptance.'))
+          save('summary.json',summary)
+          print(json.dumps(summary,indent=2))
+          PY
+      - name: Compare unchanged accepted baseline and candidate on this same x86 runner
+        if: always()
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PYCODE'
+          from pathlib import Path
+          import hashlib,json,os,subprocess
+          root=Path.cwd();out=root/'.ken/context-x86-diagnostic/results';out.mkdir(parents=True,exist_ok=True)
+          baseline=root/'.ken/context-x86-diagnostic/baseline'
+          baseline_sha='45ab4dc495df6265f7ad2c70dc347f9042013104'
+          candidate_sha='2c0bf3aca309eb194df13a691c53a02c0a423e9d'
+          subprocess.run(['git','worktree','add','--detach',str(baseline),baseline_sha],check=True)
+          identities={}
+          for path in ('crates/ken-models','crates/ken-native-model-api','Cargo.toml','Cargo.lock','rust-toolchain.toml'):
+              rows={sha:subprocess.check_output(['git','rev-parse',sha+':'+path],text=True).strip()for sha in(baseline_sha,candidate_sha)}
+              assert len(set(rows.values()))==1,(path,rows)
+              identities[path]=rows
+          request=json.loads((out/'native-inputs.json').read_bytes());env=os.environ|{'KEN_ORT_LIBRARY':request['library'],'KEN_CONTEXT_SNAPSHOT':request['snapshot'],'CARGO_TARGET_DIR':str(root/'target')}
+          results=[]
+          command=['cargo','test','--locked','-p','ken-models','--test','context_encoder','registered_context_matches_all_twenty_local_frozen_histories','--','--exact','--nocapture']
+          for name,source in [('candidate',root),('baseline',baseline)]:
+              child=subprocess.run(command,cwd=source,env=env,capture_output=True,timeout=600)
+              (out/(name+'-stdout.log')).write_bytes(child.stdout);(out/(name+'-stderr.log')).write_bytes(child.stderr)
+              results.append(dict(name=name,source=str(source),command=command,exit=child.returncode,stdout_sha256=hashlib.sha256(child.stdout).hexdigest(),stderr_sha256=hashlib.sha256(child.stderr).hexdigest()))
+          (out/'baseline-comparison.json').write_text(json.dumps(dict(baseline=baseline_sha,candidate=candidate_sha,identical_inputs=identities,results=results,note='Observed test states only; no acceptance or oracle changes.'),indent=2)+'\n')
+          print(json.dumps(results,indent=2))
+          PYCODE
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: contextual-x86-diagnostic
+          path: .ken/context-x86-diagnostic/results/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
