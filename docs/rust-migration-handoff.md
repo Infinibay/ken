@@ -1125,3 +1125,109 @@ no se revalidan. Continúan los dos menores heredados: clase de error del path g
 `"."` y cobertura directa del guard neural de scores adicionales no finitos. Siguiente
 paso: portar los observadores de operaciones sobre el catálogo para completar la
 composición de símbolos.
+
+## Testigos sintácticos de operaciones: Linux x86_64
+
+`SyntaxOperationWitnesses` implementa el backend Java/JavaScript/TypeScript del
+observador original: detecta invocaciones y retornos de un flag con actualización.
+`SourceCatalog` conserva la autoridad sobre snapshots, owners canónicos y extents;
+`GrammarCatalog` conserva la selección de gramáticas; el nuevo backend posee las
+cachés por archivo y por owner. No lee nuevamente el disco para observar código.
+El resultado devuelto es una copia independiente de la caché y las extensiones no
+admitidas producen un error explícito. La política de preferencias consume los
+testigos reales sin alterar scores neuronales.
+
+La primera captura independiente, anterior al backend Rust, contiene 120 casos,
+144 owners y cuatro raíces originales disjuntas aprobadas. Referencia267835bytes
+SHA256 `26dd79e21a5016116938846666dd9ab79b02fd250043b0e30e2ca4c9a2b323a8`;
+fixture12758bytes SHA256
+`3f1f851be636cce48403df41fda0d88a49f28b6159df7e924d4a04899c64d805`.
+Nunca recapturar `.ken/rust-migration/syntax-operation-witnesses/original`.
+La primera finalización rechazó una versión mal anotada del language-pack; se
+corrigió sólo el validador contra el lockfile1.8.1 y se finalizaron las mismas
+observaciones existentes. No se repitieron ni los observadores ni esas pruebas.
+Los1066archivos congelados y los fixtures previos se conservan intactos.
+
+Se conserva la selección exacta del callable por rango/orden/desempate y el end
+line; se inspecciona sólo su body y se excluyen callables anidados. Clases locales,
+constructores, getters, cuerpos ausentes y árboles recuperados mantienen el
+comportamiento original. La igualdad de targets quita espacios Python incluso
+dentro de literales; no es equivalencia AST. Gramáticas Java/JS/TS/TSX son builtin:
+la sonda posee sólo el binario y el manifiesto canónico de20entradas, sin afirmar
+que cargó veinte módulos dinámicos. El manifiesto, los recursos poseídos, entradas
+y resultados se autentican. La ejecución nativa aislada tiene PATH vacío y audita
+exec/connect y loader; no recibe respuestas esperadas ni ejecuta Python.
+
+La coordinación admite un grafo explícito sin cambiar la API anterior de cuatro
+perfiles. Syntax depende de preferencias; contexto sigue siendo independiente
+tras core. Cinco pruebas nuevas verifican dependencia, propagación del fallo y
+rechazo de grafos inválidos antes de ejecutar callbacks. El job falla si cualquier
+perfil falla o se omite. Se conserva la incertidumbre contextual documentada en el
+recibo anterior; esta ejecución no demuestra una causa ni todos los CPUs x86.
+
+La implementación tiene alcance **SyntaxOperationWitnesses_x86_64**; su aceptación
+completa de CI permanece pendiente. Python necesita un backend que
+preserve la semántica de su AST: RustPython0.4 no satisface directamente los
+contratos de surrogates, identificadores y strings Python3.12. No se añadió ninguna
+dependencia ni un fallback parcial. Quedan Python AST witnesses, el router completo
+OperationWitnesses, SymbolRanker, PieceSearch, modelos restantes y cierre M4/global.
+ARM/macOS no se revalidan y la aplicación instalada continúa en Python.
+
+
+El candidato `417453b7f90c5d88885f0a7b5a189d9e320af024` pasó la cadena local
+completa con fuentes fijas:145 raíces nativas de core/retrieval,25checks nuevos,
+formato/Clippy estricto y padres CPU6/15/364,contexto8/20/11,Ettin16/23/38,
+vistas61/5/27 y preferencias404/21/24. El replay aislado con validadores extraídos
+pasó. También pasó el [CI de gramáticas40240925523](https://github.com/Infinibay/ken/actions/runs/40240925523),
+cuyas fuentes se autenticaron contra Git.
+
+La única revisión independiente encontró0Critical,1Important de cobertura y1Minor.
+El Important quedó corregido en `417453b7`: el caso congelado de recuperación sólo
+admitía extent de módulo1..4 y no seleccionaba el callable que acaba en3; la prueba
+de backend sólo usaba owners desconocidos. Dos mutaciones deliberadas (descartar
+árboles con errores y devolver vacío para extensiones no admitidas) pasaban los
+4tests anteriores. Las nuevas comprobaciones, derivadas del contrato fuente y
+separadas de los120casos congelados, fallaron ante ambas mutaciones. Restaurar los
+bytes exactos del backend dejó4/4GREEN. Ahora se observa invocation en un árbol
+con error mediante extent canónico1..3 y se exige Invalid ante owners canónicos
+.py/.jsx. Sólo cambiaron55líneas de tests; no hubo recaptura ni cambio de lógica.
+El Minor diferido es la falta de un owner que seleccione específicamente el getter.
+
+El [CI final40240899343](https://github.com/Infinibay/ken/actions/runs/40240899343)
+**falló** en un AMD EPYC9V45. Contexto obtuvo7/8: el caso boundary511 volvió a
+esperar-0.015078825876116753 y recibir0.15921735763549805. La suite de recuperación
+obtuvo144/145: `full_original_dtype_dispatch_and_term_summary_observations`, caso
+`product-float32-float32-float64-4-128-3/weighted`, obtuvo2.1855458146647404 frente
+a2.1855457487859224. Los4tests de testigos nuevos pasaron también allí. Ettin pasó;
+preferencias y la sonda aislada de testigos se omitieron por la dependencia fallida.
+El job global mantuvo failure. Los sources de modelos/API/Cargo/alignment no
+cambiaron frente al candidato anteriormente aprobado49bf56ce. La correlación con
+el CPU distinto no demuestra la causa; falta comparar Python/Rust y baseline en el
+mismo9V45, conservando suite completa y sólo el test registrado como observaciones
+diferentes. No alterar tolerancias, modelos ni originales para obtener verde.
+
+El CI anterior40240129308 se canceló al quedar reemplazado por las mejores pruebas;
+se conservan metadata, logs y artefacto parcial. Corría en AMD EPYC7763, había pasado
+las8raíces de contexto y fue interrumpido durante compilación de recuperación.
+Nunca se acepta como ejecución completa. El paquete local inicial29b35d49 sí pasó
+completo y se conserva separado del paquete final417453b7.
+
+Task3 del plan sigue pendiente: la implementación y las pruebas locales están
+completas, pero no hay aceptación remota de esta capacidad ni cierre M4/global.
+El recibo verifica tanto los éxitos locales como el fallo remoto: un replay válido
+de evidencia no convierte el resultado de CI en éxito. El siguiente trabajo es el
+diagnóstico numérico en el CPU que falla; la implementación Python AST sigue después.
+
+Recibo local `docs/validation/rust-migration-2026-10-25/syntax-operation-witnesses`:
+3207miembros, FILES SHA256
+`f3a6de5c599da2961a2a1f4a9db6220230707516426e8094f420a0d019db40fb`.
+Transporte `.ken/rust-migration/archives/syntax-operation-witnesses-417453b7.tar.gz`,
+127565131bytes, SHA256
+`9b77142ebc9952948c253b007c174837e6df10a26b90e9a6f9e892caf0448358`.
+Se autenticaron1261entradas locales y1261del CI fallido contra el candidato Git,
+y305de gramáticas; datos históricos ignorados contra02a0e6b. El transporte extraído
+en `/tmp/ken-syntax-witnesses-u1iyqxt3` pasó replay aislado con validadores archivados,
+confirmando explícitamente los éxitos locales y los fallos/skips remotos.
+`SyntaxOperationWitnesses_x86_64_accepted=false`, `ci_acceptance_pending=true`.
+Los1066archivos originales siguen intactos. Raw, pesos,SDK,cachés y ambos workspaces
+permanecen locales sin tracking, siguiendo la instrucción de conservarlos.
