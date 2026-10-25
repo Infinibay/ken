@@ -271,27 +271,37 @@ fn lazy_context_child() {
     }
 }
 
+fn original_for_host(os: &str, arch: &str) -> Value {
+    let (system, machine) = match (os, arch) {
+        ("linux", "x86_64") => ("Linux", "x86_64"),
+        ("linux", "aarch64") => ("Linux", "aarch64"),
+        ("macos", "aarch64") => ("Darwin", "arm64"),
+        _ => panic!("prepare a separate original oracle for this OS/architecture"),
+    };
+    let original: Value = if (os, arch) == ("linux", "x86_64") {
+        serde_json::from_slice(&fs::read(fixtures().join("linux-x86_64-original.json")).unwrap())
+            .unwrap()
+    } else {
+        let document: Value = serde_json::from_slice(
+            &fs::read(
+                repo().join("docs/validation/rust-migration-2026-10-18/m2-context/reference.json"),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        document["platforms"][format!("{system}/{machine}")].clone()
+    };
+    assert_eq!(original["platform"], system, "crossed original OS");
+    assert_eq!(
+        original["architecture"], machine,
+        "crossed original architecture"
+    );
+    original
+}
+
 #[test]
 fn registered_context_matches_all_twenty_local_frozen_histories() {
-    let document: Value = serde_json::from_slice(
-        &fs::read(
-            repo().join("docs/validation/rust-migration-2026-10-18/m2-context/reference.json"),
-        )
-        .unwrap(),
-    )
-    .unwrap();
-    let key = if cfg!(target_os = "macos") {
-        "Darwin/arm64"
-    } else {
-        "Linux/aarch64"
-    };
-    assert_eq!(
-        std::env::consts::ARCH,
-        "aarch64",
-        "prepare a separate original oracle for another architecture"
-    );
-    let oracle = &document["platforms"][key];
-    assert!(oracle.is_object());
+    let oracle = original_for_host(std::env::consts::OS, std::env::consts::ARCH);
     let definition =
         fs::read_to_string(repo().join("src/ken/embedder/data/code-context-int8.json")).unwrap();
     let model = ContextModel::from_json(&definition).unwrap();
@@ -317,4 +327,37 @@ fn registered_context_matches_all_twenty_local_frozen_histories() {
         let encoder = ContextEncoder::new(model.clone(), Arc::clone(&snapshot), runtime()).unwrap();
         history(&encoder, case, result, &oracle["tolerances"]);
     }
+}
+
+#[test]
+fn original_selection_keeps_each_host_and_rejects_crossed_or_unknown_targets() {
+    use sha2::{Digest, Sha256};
+    let mut cases = None;
+    for (os, arch, system, machine) in [
+        ("linux", "x86_64", "Linux", "x86_64"),
+        ("linux", "aarch64", "Linux", "aarch64"),
+        ("macos", "aarch64", "Darwin", "arm64"),
+    ] {
+        let original = original_for_host(os, arch);
+        assert_eq!(original["platform"], system);
+        assert_eq!(original["architecture"], machine);
+        assert_eq!(original["cases"].as_array().unwrap().len(), 20);
+        assert_eq!(original["results"].as_array().unwrap().len(), 20);
+        if let Some(expected) = &cases {
+            assert_eq!(&original["cases"], expected);
+        }
+        cases = Some(original["cases"].clone());
+    }
+    for (os, arch) in [
+        ("linux", "arm64"),
+        ("macos", "x86_64"),
+        ("windows", "x86_64"),
+    ] {
+        assert!(std::panic::catch_unwind(|| original_for_host(os, arch)).is_err());
+    }
+    let fixture = fs::read(fixtures().join("linux-x86_64-original.json")).unwrap();
+    assert_eq!(
+        format!("{:x}", Sha256::digest(fixture)),
+        "b1feb05a1abe09637450f55c6988f669884183df76f675e6696a7827ee0a5733"
+    );
 }

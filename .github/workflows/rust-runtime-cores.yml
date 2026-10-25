@@ -91,16 +91,35 @@ jobs:
           root=Path.cwd()
           prepare_native_cores(root,root/'.ken/rust-migration/native-core-archives',root/'.ken/rust-migration/native-core-sdk',target=native_target(platform.system(),platform.machine()))
           PY
-      - name: Execute and authenticate complete native CPU core gates
+      - name: Prepare pinned contextual model data
         shell: bash
         run: |
           .venv/bin/python - <<'PY'
           from pathlib import Path
+          import json, os
+          from ken.model_assets import ModelAssets
+          from tools.rust_migration.context_reference import snapshot_state
+          root=Path.cwd()
+          definition=json.loads((root/'src/ken/embedder/data/code-context-int8.json').read_bytes())
+          snapshot=ModelAssets.from_dict(definition).resolve(cache_dir=root/'.ken/rust-migration/context-data',local_files_only=False)
+          snapshot_state(snapshot,definition)
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              stream.write('KEN_CONTEXT_SNAPSHOT='+str(snapshot)+'\n')
+          PY
+      - name: Execute and authenticate complete native CPU and contextual gates
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import os
           from tools.rust_migration.native_core_run import run_host
           from tools.rust_migration.native_core_evidence import verify_core_packet
+          from tools.rust_migration.context_host import run_context_host, verify_context_host
           root=Path.cwd();packet=root/'.ken/rust-migration/native-core-platform'
           run_host(root,root/'.ken/rust-migration/native-core-sdk',packet,root/'.ken/rust-migration/native-torch-target')
           errors=verify_core_packet(packet,root);assert not errors,errors
+          run_context_host(root,root/'.ken/rust-migration/native-core-sdk',Path(os.environ['KEN_CONTEXT_SNAPSHOT']),packet)
+          errors=verify_context_host(packet,root);assert not errors,errors
           PY
       - uses: actions/upload-artifact@v7
         if: always()
