@@ -1038,3 +1038,90 @@ su rendimiento no se revalidaron. El workflow histórico ARM de piezas queda
 manual; la suite nativa de retrieval corre automáticamente en x86_64. Continuar
 con los observadores de operaciones y requisitos de símbolos para componer
 SymbolRanker/PieceSearch sin mezclar esa política con el adaptador neural.
+
+
+## Preferencias explícitas de símbolos: Linux x86_64
+
+El candidato de validación `49bf56ce2dedc4df327ff1c99942438e0ddf0e3a` pasó los CI
+[modelos/búsqueda40232431774](https://github.com/Infinibay/ken/actions/runs/40232431774) y
+[gramáticas40232431765](https://github.com/Infinibay/ken/actions/runs/40232431765), ambos
+con un único host Linux x86_64. `symbol_requirements` interpreta requisitos explícitos de
+operaciones, tests y operadores; `symbol_preferences` aplica tres preferencias estables:
+operaciones → tests → operadores. Conserva todos los candidatos, sus puntuaciones
+neuronales y el orden previo dentro de cada grupo. Los arrays de evidencia y la
+permutación se validan antes de indexar. La identidad de test utiliza rol, extensión y
+contexto callable del catálogo inmutable, incluyendo el prefijo Java original de 12 líneas
+y el primer brace. El patrón TEST_OBJECT tiene un solo dueño compartido con intent.
+
+La primera observación anterior a los APIs Rust contiene 286 casos de política, 21
+identidades de catálogos reales tras cambiar el disco y 13 raíces originales puras.
+Referencia de 110121 bytes SHA256
+`af38fdcb6a19a0a8e0b8780ce8cf526a9c641e9392fc7537f5f24a0d076d010a`; fixture de 6670 bytes
+SHA256 `dfa4e7b78aabd72e573435aeb0564d219ee18cf48c664218abc83fd472351e73`. Nunca
+recapturar `.ken/rust-migration/symbol-preferences/original`.
+
+La única revisión fresca encontró 0 Critical, 1 Important y 1 Minor. El Important:
+Oniguruma no trata U+001C–U+001F como espacios, y un \S sin traducir podía consumirlos al
+retroceder \s+, inventando una invocación incluso ante `no listener` o `nothing`. Se
+capturaron 118 observaciones nuevas y disjuntas ANTES DE LA CORRECCIÓN, conservando el
+fixture de 286 casos intacto. Referencia de 23283 bytes SHA256
+`73bf887642412edcfb29fb2ab7c312d830518c0c17b72be82b69f1d57e144c6b`; fixture de 1116 bytes
+SHA256 `7ab32bc98cbc5b51d1740391b44e354b8a792de4d2dec2e4fc734ed335d61165`. Nunca
+recapturar `.ken/rust-migration/symbol-preferences/whitespace-original`. El test nativo
+fue RED antes del arreglo y GREEN después: text_patterns traduce \S fuera de clases con el
+complemento de su misma clase Python de \s. La regla queda en el matcher, sin duplicarla
+en la política. Una sola reparación, sin segunda revisión. Minor diferido: is_test_case
+recorre owners por candidato; queda una mejora de consulta indexada, sin benchmark de
+rendimiento.
+
+Pasaron 141 raíces nativas únicas de core/retrieval (134 previas +7), 404 observaciones de
+requisitos/preferencias, 21 identidades y 24 raíces de tooling, formato/Clippy estricto.
+La sonda nativa recibe sólo entradas. Se exige también CPU 6/15/364, contexto 8/20/11,
+Ettin 16/23/38, vistas 61/5/27 y gramáticas. Los modelos, tolerancias, los 1066 archivos
+congelados y originales previos permanecen intactos. La política compone con las vistas
+neuronales sin alterar sus scores.
+
+La primera ejecución nativa completa omitió rutas de runtime/modelo: dos tests reales de
+Ettin fallaron por falta de recursos; ambos pasaron con el entorno fijado. El primer
+paquete local completo se descartó porque añadí el observador disjunto mientras corría y
+el control de fuentes detectó el cambio. Ambos raw y el paquete marcado `c032a960` se
+preservan; no se aceptan ni cambian sus etiquetas. La época reparada marcada `2c0bf3ac`
+pasó local. El ejecutor `49bf56ce` pasó la cadena local y los CI completos con fuentes
+fijas. El runner del CI aprobado fue AMD EPYC 7763, con AVX2.
+
+Recibo local `docs/validation/rust-migration-2026-10-25/symbol-preferences`: 3032
+miembros, FILES SHA256 `98bfb5936043f0ee931cbcb02d56bfe52fc1ff8079a07ba2de89060d05e40a74`.
+Transporte `.ken/rust-migration/archives/symbol-preferences-49bf56ce.tar.gz`, 98734579
+bytes, SHA256 `72b0084b6a16b807487ddeffc11e68f7cdd9eeb947e7b0fa9f1e34543e2ba13a`.
+Snapshots de modelos/gramáticas autenticados contra el candidato Git; datos históricos
+ignorados contra checkpoint `02a0e6b...`. Replay aislado con tooling archivado pasó
+también desde el transporte extraído fuera del checkout, ignorando PYTHONPATH vivo. Raw,
+SDK, pesos y cachés siguen locales y sin tracking.
+
+Se conserva además el fallo contextual anterior en CI 40230143378: en passage-boundary511
+esperaba -0.015078825876116753 y obtuvo 0.15921735763549805, antes de ejecutar
+preferencias. Sus 1244 entradas se autenticaron contra `2c0bf3ac`; el padre CPU completo
+pasó, contexto 7/8 y los perfiles siguientes no se ejecutaron. Los árboles de
+ken-models/API nativa y Cargo son idénticos a `45ab4dc4`; esta igualdad no determina la
+causa del fallo. El diagnóstico 40231386038 en AMD EPYC 7763 pasó el test de los 20
+historiales del baseline y del candidato; en 3 casos × carga archivo/memoria × 1/2 hilos ×
+2 repeticiones, Python/Rust y el original coincidieron exactamente en 768 componentes. Ese
+diagnóstico filtró el test registrado y no comparó las 8 raíces completas; el CPU del
+runner fallido no se registró. La causa exacta continúa sin demostrar. No se modificaron
+vectores, modelos ni tolerancias. El recibo conserva ambos estados, sus fuentes y raw: no
+es aceptación de todos los CPUs x86 ni del modelo global. La hipótesis de kernels/ISA
+sigue pendiente; el diagnóstico no la prueba.
+
+El ejecutor ahora registra CPU-ENVIRONMENT y PROFILE-STATES, completa los perfiles
+independientes y omite dependientes sólo cuando falta su padre real:
+core→Ettin→vistas→preferencias; contexto es independiente tras core. Tres pruebas
+RED→GREEN verifican esta coordinación. El job global sigue fallando si cualquier perfil
+falla o se omite. Esta separación no relaja ninguna comparación numérica.
+
+Acepta sólo **SymbolPreferences_x86_64**. El caller suministra testigos de operaciones; la
+observación real OperationWitnesses no se simula ni queda implementada aquí. Faltan esos
+observadores, SymbolRanker/PieceSearch completos, modelos restantes, M4/global. ARM/macOS
+no se revalidan. Continúan los dos menores heredados: clase de error del path generado
+`"."` y cobertura directa del guard neural de scores adicionales no finitos. Siguiente
+paso: portar los observadores de operaciones sobre el catálogo para completar la
+composición de símbolos.

@@ -29,9 +29,9 @@
 Files:tools/rust_migration/symbol_preferences_reference.py,new immutable fixture,
 tests/rust_migration/test_symbol_preferences_reference.py.
 Interfaces:cases(),capture(Reference,out),validate_reference.
-- [ ] Write validation tests; REDmissingfixture then first capture original neutral
+- [x] Write validation tests; REDmissingfixture then first capture original neutral
   pure policy and real catalogs before Rust; selected disjoint pure original tests.
-- [ ] Authenticate observer/input/result/source/runtime/test roots, refuse recapture;
+- [x] Authenticate observer/input/result/source/runtime/test roots, refuse recapture;
   GREEN scoped tooling and commit. Retain all raw locally.
 
 ### Task 2: Native requirements and preferences
@@ -40,18 +40,18 @@ Files:crates/ken-retrieval/src/{symbol_requirements,symbol_preferences}.rs,
 intent.rs shared TEST_OBJECT,lib.rs,tests/symbol_preferences.rs,
 examples/symbol_preferences_probe.rs.
 Interfaces:requirements,SymbolRequirements,is_test_case,apply_symbol_preferences.
-- [ ] Representative typed caller frozen-fixture tests REDmissingAPIs, then implement
+- [x] Representative typed caller frozen-fixture tests REDmissingAPIs, then implement
   interpretation/catalog identity/stable preference passes; GREEN. Validate malformed
   collaborator shapes/orders separately; complete native suites/fmt/strictClippy.
-- [ ] Input-only native probe for all new cases; original owns observations, native
+- [x] Input-only native probe for all new cases; original owns observations, native
   computes results. No source-operation observer stub or fullsearch acceptance claim.
 
 ### Task 3: x86 validation and closure
 
 Files:tools/rust_migration/symbol_preferences_host.py,new scoped host tests,
 x86 runtime workflow,current native-root inventory, migration docs.
-- [ ] Scoped protocol/audit/fixture/request/output tamper tests RED→GREEN;
+- [x] Scoped protocol/audit/fixture/request/output tamper tests RED→GREEN;
   execute full current x86 stack and new policy probe without original recapture.
-- [ ] Commit/push actualcandidate CI,one fresh final review,at mostoneImportant
+- [x] Commit/push actualcandidate CI,one fresh final review,at mostoneImportant
   RED→GREEN repair pass,no re-review; authenticate Git/snapshots/isolatedarchive
   replay. Close only preference capability and document remaining observers/search.

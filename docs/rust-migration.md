@@ -962,3 +962,25 @@ replay aislado con tooling archivado. Todo el raw continúa local y sin tracking
 Quedan las preferencias de operaciones/test/operadores, SymbolRanker y
 PieceSearch completos, modelos restantes y M4/global. El foco activo sigue
 siendo sólo Linux x86_64; el workflow histórico ARM de piezas pasa a manual.
+
+
+## Requisitos y preferencias de símbolos en Rust
+
+`2c0bf3ac` completa las preferencias explícitas de operaciones, tests y operadores
+para Linux x86_64. Conserva las tres prioridades estables y la pertenencia de
+candidatos; la identidad de test usa el catálogo inmutable. Componen con las
+vistas neuronales sin modificar los scores. La observación de operaciones es
+el siguiente componente pendiente, antes de cerrar SymbolRanker/PieceSearch.
+
+Pasaron 141 pruebas nativas, 404 casos de política, 21 identidades y 24 tests de
+tooling, con CPU/contexto/Ettin/vistas/gramáticas y formato/Clippy. CI:
+[modelos/búsqueda](https://github.com/Infinibay/ken/actions/runs/40232431774) y
+[gramáticas](https://github.com/Infinibay/ken/actions/runs/40232431765).
+El recibo conserva también un fallo contextual anterior no reproducido en el
+diagnóstico AMD; su causa sigue pendiente y no se cambiaron tolerancias. La revisión
+encontró y corrigió mediante RED→GREEN un falso requisito de
+invocación por diferencias entre espacios Python y Oniguruma. Queda como Minor
+una mejora de consulta indexada al clasificar tests. El
+[handoff](rust-migration-handoff.md#preferencias-explícitas-de-símbolos-linux-x86_64)
+registra originales inmutables, decisiones, límites, recibo y replay archivado.
+Los observadores, la búsqueda completa, M4/global y otras plataformas siguen pendientes.
