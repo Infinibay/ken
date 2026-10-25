@@ -84,3 +84,17 @@ def test_resealed_diagnostic_rejects_wrong_evidence(actual_packet,change):
     elif change=='context-order':mutate_record('context-native','input',lambda v:v['cases'].reverse())
     else:report['environment']['identical_sources']['Cargo.lock']={report['environment']['candidate']:'different'}
     report_path.write_text(json.dumps(report));assert verify_report(actual_packet)
+
+def test_full_and_filtered_suite_commands_keep_distinct_scopes():
+    from tools.rust_migration.x86_numeric_diagnostic import suite_commands
+    commands=suite_commands()
+    assert set(commands)=={'context-full','context-filtered','alignment'}
+    assert commands['context-full']==['cargo','test','--locked','--offline','-p','ken-models','--test','context_encoder','--no-fail-fast']
+    assert commands['context-filtered']==['cargo','test','--locked','--offline','-p','ken-models','--test','context_encoder','registered_context_matches_all_twenty_local_frozen_histories','--','--exact','--nocapture']
+    assert commands['alignment']==['cargo','test','--locked','--offline','-p','ken-retrieval','--test','alignment','--no-fail-fast']
+
+def test_resealed_observer_command_must_name_the_measured_boundary(actual_packet):
+    from tools.rust_migration.x86_numeric_diagnostic import verify_report
+    path=actual_packet/'report.json';value=json.loads(path.read_bytes());row=value['records'][0]
+    row['command']=['echo','measured'];(actual_packet/(row['name']+'.record.json')).write_text(json.dumps(row));path.write_text(json.dumps(value))
+    assert verify_report(actual_packet)

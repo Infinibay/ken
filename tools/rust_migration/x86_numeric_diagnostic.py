@@ -88,6 +88,10 @@ def comparison(out:Path):
         alignment.append(dict(mode=mode,blas=python['blas'],similarities=vector_difference(similarities,result['values']),python_weighted=python['coverage']['weighted'],native_weighted=result['coverage']['weighted'],frozen_weighted=expected['coverage']['weighted'],weighted_native_difference=abs(python['coverage']['weighted']-result['coverage']['weighted']),weighted_frozen_difference=abs(python['coverage']['weighted']-expected['coverage']['weighted'])))
     return dict(context=context,alignment=alignment,cpu_cause_established=False,note='Same-host parity, frozen differences, and kernel intervention are separate observations. This report grants no model acceptance.')
 
+def suite_commands():
+    context=['cargo','test','--locked','--offline','-p','ken-models','--test','context_encoder']
+    return {'context-full':[*context,'--no-fail-fast'],'context-filtered':[*context,'registered_context_matches_all_twenty_local_frozen_histories','--','--exact','--nocapture'],'alignment':['cargo','test','--locked','--offline','-p','ken-retrieval','--test','alignment','--no-fail-fast']}
+
 def verify_report(out:Path):
     try:
         value=load(out/'report.json');require(set(value)=={'format','complete_observations','model_acceptance','suites','environment','inputs_sha256','records','comparison'},'diagnostic report fields differ')
@@ -99,8 +103,19 @@ def verify_report(out:Path):
         require([r['name']for r in value['records']]==wanted,'complete observer/suite inventory required')
         for row in value['records']:
             require(not verify_record(out,row),'raw command differs: '+row['name'])
-            if row['name']in OBSERVERS:require(row['exit']==0,'observer failed: '+row['name'])
+            if row['name']in OBSERVERS:
+                name=row['name'];argv=row['command'];require(row['exit']==0,'observer failed: '+name)
+                if name=='context-native' or name.endswith('-rust'):
+                    require(len(argv)==1 and Path(argv[0]).name==('context_probe'if name=='context-native'else'numeric_owner_probe'),'native observer command differs')
+                else:
+                    kind='python-alignment'if name.startswith('alignment-')else'python-context'
+                    expected=['-B','-m',MODULE,kind,'--repo',row['cwd']]
+                    if kind=='python-context':
+                        mode='adapter'if name=='context-adapter'else name.split('-')[1];threads='1'if name=='context-adapter'else name.split('-')[2]
+                        expected+=['--mode',mode,'--threads',threads]
+                    require(Path(argv[0]).name in('python','python3','python3.12')and argv[1:]==expected,'Python observer command differs')
             else:
+                kind=row['name'].split('-',1)[1];require(row['command']==suite_commands()[kind],'numerical suite command differs')
                 stdout=(out/(row['name']+'.stdout')).read_text();states=re.findall(r'^test (\S+) \.\.\. (ok|FAILED)$',stdout,re.M)
                 count=8 if row['name'].endswith('context-full')else 1 if row['name'].endswith('context-filtered')else 4
                 require(len(states)==len({name for name,_ in states})==count,'suite did not execute complete scope')
@@ -157,9 +172,7 @@ def run(repo:Path,out:Path,sdk:Path,snapshot:Path,*,suites:bool):
         baseline=out.parent/(out.name+'-baseline');subprocess.run(['git','worktree','add','--detach',str(baseline),BASELINE],cwd=repo,check=True)
         for who,source in [('candidate',repo),('baseline',baseline)]:
             for kind in('context-full','context-filtered','alignment'):
-                command=['cargo','test','--locked','--offline','-p','ken-retrieval'if kind=='alignment'else'ken-models','--test','alignment'if kind=='alignment'else'context_encoder']
-                if kind=='context-filtered':command+=['registered_context_matches_all_twenty_local_frozen_histories','--','--exact','--nocapture']
-                else:command+=['--no-fail-fast']
+                command=suite_commands()[kind]
                 records.append(record(out,who+'-'+kind,command,cwd=source,env=env))
     for row in records:
         if row['name']in OBSERVERS:require(row['exit']==0,'observer failed: '+row['name']+' (see raw stderr)')
