@@ -923,3 +923,56 @@ experimento local x86; **Ettin completo, matriz de modelos/M2/M3, índice x86,
 M4 y migración global siguen sin aceptar**. Falta integrar los modelos x86 en
 sus ejecutores/recibos completos, luego CT2, composición de búsqueda y los
 subsistemas restantes; resolver por separado la identidad numérica ARM contextual.
+
+## Foco x86_64: ejecutor de modelos cerrado el 25 de octubre
+
+La instrucción actual del usuario es avanzar **sólo en x86_64 por ahora**.
+Los workflows activos de modelos y gramáticas ejecutan Linux x86_64; los
+originales, registros y recibos históricos de ARM/macOS se conservan. La
+investigación numérica ARM queda diferida y no bloquea este nuevo alcance.
+
+El candidato `45ab4dc495df6265f7ad2c70dc347f9042013104` pasó el
+[CI de modelos 40217751708](https://github.com/Infinibay/ken/actions/runs/40217751708)
+y el [CI de gramáticas 40217751756](https://github.com/Infinibay/ken/actions/runs/40217751756),
+con un único job Linux x86_64 en cada workflow. El ejecutor completo pasó:
+
+- CPU: 6 raíces ONNX/protocolo, 15 Torch y 364 de tooling; formato/Clippy estricto.
+- Contexto: 8 raíces Rust, 20 historiales auditados y 11 de tooling.
+- Ettin: 16 raíces Rust, 23 historiales auditados y 38 de tooling.
+
+`tools/rust_migration/ettin_host.py` integra Ettin con el padre CPU y reutiliza
+su referencia existente de SHA `ec1a7477...`; nunca llama al comparador legacy
+que recaptura Python. La petición contiene configuración, casos, fuente y core,
+sin respuestas. Se exige preparación Rust fresca y reutilización sin upstream.
+Los 15 artefactos de entrada permanecen intactos; sólo se permiten los cuatro
+archivos de caché declarados, con bytes/hashes exactos.
+
+`NativeJsonCapture` mantiene el protocolo `/1` inmutable de 60 s. Su extensión
+explícita `generated_files` usa `/2`, 600 s y contrato autorizado por el caller;
+rechaza entradas sobrescritas, salidas ausentes/extra/alteradas, symlinks y cambios
+de contrato. La auditoría conserva exec/connect/loader y rechaza carga de Python.
+No es una sandbox general de filesystem; los callers actuales trabajan desde el
+checkout y ejecutan código nativo revisado. Los originales/tolerancias/modelos
+Rust no cambiaron. Los 1066 archivos congelados y ambos originales x86 siguen intactos.
+
+La única revisión fresca encontró 0 Critical, 0 Important y un Minor diferido:
+el path generado inválido `"."` falla antes de ejecutar con `IndexError`, en vez
+de `ValueError`. Los cuatro paths reales de Ettin no se ven afectados. No hubo
+pasada de reparación ni segunda revisión.
+
+Recibo local `docs/validation/rust-migration-2026-10-25/x86-models`: 1630 miembros,
+`FILES.json` SHA256
+`d22252ad561c5c5dbe4a0fdf8ef5aa0f82c579952a5fd24ab0923c2d1a6ce3b6`.
+Se autenticaron 1225 entradas de modelos y 289 de gramáticas contra el candidato
+Git; los datos históricos ignorados se vinculan al checkpoint `02a0e6b...`.
+Transporte `.ken/rust-migration/archives/x86-models-45ab4dc4.tar.gz`, 54559658 bytes,
+SHA256 `653ad538d2d17cfecae831f3c200cd82446e11126acb53621b7a9fd5b6b069a8`.
+`replay.py` usa Python aislado y el tooling archivado; también pasó desde el
+transporte extraído fuera del checkout, ignorando un PYTHONPATH del repo vivo.
+Raw, SDK, pesos y cachés siguen locales y fuera de Git.
+
+Este recibo acepta **Context_x86_64 y Ettin_x86_64** bajo el alcance de un host.
+La matriz contextual histórica de tres hosts permanece con su estado anterior.
+M2/M3 completos en x86_64, su índice, M4 y la migración global siguen pendientes. Continuar
+los perfiles de modelos x86 restantes y la composición de búsqueda M4; no volver
+a investigar ARM ni recapturar los originales para avanzar en este foco.

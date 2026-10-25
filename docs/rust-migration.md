@@ -918,3 +918,24 @@ El [handoff](rust-migration-handoff.md#continuación-del-25-de-octubre-diagnóst
 registra evidencia, hashes, replay y alcance exacto. La evidencia permanece local
 y fuera de Git. Esto verifica el test/experimento Ettin x86; no acepta todavía
 la matriz completa de modelos, CT2, indexación x86, M4 ni la migración global.
+
+## Foco actual: Linux x86_64
+
+Por instrucción del usuario, el trabajo activo continúa sólo en x86_64. El
+candidato `45ab4dc4` integra el ejecutor Ettin al flujo CPU → contexto → reranker
+y pasó ambos CI de modelos/gramáticas en Linux x86_64. CPU pasó 6/15 raíces
+ONNX/Torch y 364 de tooling; contexto 8/20/11 y Ettin 16/23/38
+(raíces Rust/historiales/tooling), con formato/Clippy estricto.
+
+La preparación nativa de Ettin autoriza sólo sus cuatro archivos de caché y
+conserva las 15 entradas verificadas. El protocolo de auditoría anterior sigue
+inmutable; la generación exige un contrato explícito con hashes y rechaza
+salidas faltantes, extra, alteradas o cambios en las entradas. Se reutilizan los
+originales existentes sin capturarlos de nuevo.
+
+El [handoff](rust-migration-handoff.md#foco-x86_64-ejecutor-de-modelos-cerrado-el-25-de-octubre)
+registra el recibo, revisión, hashes y replay aislado del transporte. Contexto y
+Ettin x86 quedan aceptados en este alcance; ARM/macOS, los modelos restantes,
+M2/M3 completos en x86_64, M4 y la migración global mantienen sus pendientes. La revisión
+dejó un detalle menor de clase de error para el path inválido `"."`, que se
+rechaza antes de ejecutar. Todo el raw permanece local y fuera de Git.
