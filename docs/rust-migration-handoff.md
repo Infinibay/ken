@@ -976,3 +976,65 @@ La matriz contextual histórica de tres hosts permanece con su estado anterior.
 M2/M3 completos en x86_64, su índice, M4 y la migración global siguen pendientes. Continuar
 los perfiles de modelos x86 restantes y la composición de búsqueda M4; no volver
 a investigar ARM ni recapturar los originales para avanzar en este foco.
+
+
+## Vistas neuronales de símbolos en Rust: Linux x86_64
+
+El candidato `206f4861571b7dd6300649043dd90d2e0d69774f` pasó el
+[CI de modelos/búsqueda 40225028046](https://github.com/Infinibay/ken/actions/runs/40225028046)
+y el [CI de gramáticas 40225028097](https://github.com/Infinibay/ken/actions/runs/40225028097),
+con un único host Linux x86_64. `paired_reranker` posee la conversión escalar y
+la delegación al modelo; `symbol_views` posee admisión del código completo,
+deduplicación, fallback por candidato, media exacta `(original+code)/2` y orden
+estable. Rechaza vistas de más de 64 líneas Python o 12000 codepoints enteras;
+nunca puntúa un prefijo. Conserva Unicode/surrogates en las proyecciones y la
+inferencia vacía no necesita recursos del modelo.
+
+La primera observación independiente, anterior a los APIs Rust, contiene 61
+casos de política, 5 frames reales de Ettin y 2 pruebas originales. Las peticiones
+neutrales desactivan naturalmente las preferencias de operaciones/tests/operadores;
+no se sustituyó la política original. El original preparó su propio modelo desde
+las 15 entradas verificadas. Referencia cruda de 566724 bytes, SHA256
+`77fe898f25f5ad42cff951b023262065e9b633c1010ddf556e7a5f1ec7944e0e`;
+fixture comprimido de 7320 bytes, SHA256
+`80bf3b93cfa93533da9c3fdf0b9654e0317c7785b00fe059e7b2b5b51f59261f`.
+**Nunca recapturar** `.ken/rust-migration/symbol-views/original`.
+El nuevo test de agrupación de fusión usa una observación separada; no modifica
+el corpus anterior de 2616 casos. Los 1066 archivos congelados y los originales
+x86 de contexto/Ettin siguen idénticos.
+
+Pasaron RED→GREEN de política/adaptador y los 134 roots nativos únicos de
+ken-core/ken-retrieval (127 anteriores + 7 nuevos), 27 roots de tooling,
+formato/Clippy estricto y los 5 frames nativos reales auditados. El probe calcula
+sus propios logits de tarjetas y de código; recibe sólo entradas, sin respuestas.
+Permanecen obligatorios los padres CPU 6/15/364, contexto 8/20/11 y Ettin
+16/23/38, además de gramáticas. Las cuatro salidas de caché y las 15 entradas
+inmutables se verifican junto con el binario/core y exec/connect/loader.
+
+La única revisión fresca encontró 0 Critical, 1 Important y 1 Minor. El Important
+era un test que cargaba el árbol congelado local antes de probar el rechazo de
+recaptura: fallaba en checkout limpio. Se reprodujo RED en la copia archivada y
+se reparó en `206f4861` construyendo un Reference temporal sin archivos; GREEN
+aislado sin `.ken` local, suite completa y CI del candidato. No hubo segunda
+revisión. Minor diferido: falta un test directo de NaN/±Inf devueltos por el
+colaborador adicional; el guard de finitud existe. Se conserva también el Minor
+previo del path generado `"."` (IndexError antes de ejecutar).
+
+Recibo local `docs/validation/rust-migration-2026-10-25/symbol-views`: 1683
+miembros, `FILES.json` SHA256 `c5827e651d92f23f4138e7522afd6365b88767c3de90505cb57baa0cb6776a6d`. Transporte local
+`.ken/rust-migration/archives/symbol-views-206f4861.tar.gz`, 59365577 bytes, SHA256 `dc747bdfa63159a2d45dd3ab8d286ea98b62b2b054cc783dd9b8e51b7590da73`.
+Los snapshots de modelos/gramáticas se autentican byte por byte contra el
+candidato Git; los inputs históricos ignorados contra checkpoint `02a0e6b...`.
+Pasó `replay.py` con Python aislado y tooling archivado, también desde el transporte
+extraído fuera del checkout e ignorando PYTHONPATH vivo. El paquete precommit
+anterior conserva su HOST `9fb448c`; no se relabeló como evidencia del candidato.
+Raw, originales, SDK, pesos y cachés permanecen locales y fuera de Git.
+
+Acepta sólo **SymbolViews_x86_64**, un prerrequisito neural para componer búsqueda.
+Preferencias de operaciones/test/operadores, SymbolRanker completo, PieceSearch,
+modelos restantes, M4 y migración global siguen pendientes. EntityKey conserva
+su contrato escalar; PythonText mantiene las proyecciones lossless. ARM/macOS y
+su rendimiento no se revalidaron. El workflow histórico ARM de piezas queda
+manual; la suite nativa de retrieval corre automáticamente en x86_64. Continuar
+con los observadores de operaciones y requisitos de símbolos para componer
+SymbolRanker/PieceSearch sin mezclar esa política con el adaptador neural.

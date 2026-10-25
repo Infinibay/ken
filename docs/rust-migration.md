@@ -939,3 +939,26 @@ Ettin x86 quedan aceptados en este alcance; ARM/macOS, los modelos restantes,
 M2/M3 completos en x86_64, M4 y la migración global mantienen sus pendientes. La revisión
 dejó un detalle menor de clase de error para el path inválido `"."`, que se
 rechaza antes de ejecutar. Todo el raw permanece local y fuera de Git.
+
+
+## Vistas de símbolos: siguiente componente nativo x86_64
+
+`206f4861` completa las vistas neuronales de símbolos y su adaptador Ettin:
+admite código completo con límites Python de 64 líneas/12000 codepoints,
+deduplica la inferencia adicional, conserva fallback y orden estable mediante
+la media original. La inferencia vacía sigue sin cargar recursos.
+
+Pasaron los 134 roots nativos de core/retrieval, 61 observaciones de política,
+5 frames reales y 27 tests de tooling, junto con CPU/contexto/Ettin, gramáticas,
+formato y Clippy. CI x86: [modelos/búsqueda](https://github.com/Infinibay/ken/actions/runs/40225028046)
+y [gramáticas](https://github.com/Infinibay/ken/actions/runs/40225028097).
+La revisión independiente encontró un test dependiente de un archivo local;
+quedó reparado con RED→GREEN y validación en checkout limpio. Queda un Minor
+de cobertura directa del guard de scores adicionales no finitos.
+
+El [handoff](rust-migration-handoff.md#vistas-neuronales-de-símbolos-en-rust-linux-x86_64)
+contiene alcance, originales nuevos inmutables, hashes del recibo/transporte y
+replay aislado con tooling archivado. Todo el raw continúa local y sin tracking.
+Quedan las preferencias de operaciones/test/operadores, SymbolRanker y
+PieceSearch completos, modelos restantes y M4/global. El foco activo sigue
+siendo sólo Linux x86_64; el workflow histórico ARM de piezas pasa a manual.
