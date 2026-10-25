@@ -14,7 +14,12 @@ ALIGNMENT_ID='product-float32-float32-float64-4-128-3'
 OBSERVERS=['alignment-'+mode+'-'+language for mode in('native','haswell')for language in('python','rust')]+['context-native','context-adapter','context-file-1','context-file-2','context-memory-1','context-memory-2']
 SOURCE_PATHS=['crates/ken-models','crates/ken-native-model-api','crates/ken-retrieval/src/alignment.rs','crates/ken-retrieval/src/dense_math.rs','crates/ken-retrieval/tests/alignment.rs','Cargo.toml','Cargo.lock','rust-toolchain.toml']
 SUITES=[who+'-'+kind for who in('candidate','baseline')for kind in('context-full','context-filtered','alignment')]
-ENV_KEYS=('OPENBLAS_CORETYPE','OPENBLAS_NUM_THREADS','KEN_DENSE_BLAS_DIR','KEN_ORT_LIBRARY','KEN_CONTEXT_SNAPSHOT','CARGO_TARGET_DIR','RUST_TEST_THREADS','CARGO_BUILD_JOBS')
+SUITE_ROOTS={
+ 'context-full':{'empty_passages_need_no_runtime_and_results_are_independent_under_concurrency','first_query_is_lazy_and_missing_runtime_is_an_error_in_clean_processes','frozen_fixture_preserves_prefix_specials_raw_output_and_serialized_policy_override','lazy_context_child','malformed_graphs_and_outputs_return_errors_including_hidden_extra_rows','original_selection_keeps_each_host_and_rejects_crossed_or_unknown_targets','registered_context_matches_all_twenty_local_frozen_histories','snapshot_must_accredit_the_context_models_exact_artifacts'},
+ 'context-filtered':{'registered_context_matches_all_twenty_local_frozen_histories'},
+ 'alignment':{'full_original_dtype_dispatch_and_term_summary_observations','original_rounding_floor_and_overflow_observations','alignment_rejects_output_overflow_before_allocation_or_ffi','frozen_statistic_dtype_controls_numeric_forest_branches'},
+}
+ENV_KEYS=('KEN_NUMERIC_REFERENCE_DIR','OPENBLAS_CORETYPE','OPENBLAS_NUM_THREADS','KEN_DENSE_BLAS_DIR','KEN_ORT_LIBRARY','KEN_CONTEXT_SNAPSHOT','CARGO_TARGET_DIR','RUST_TEST_THREADS','CARGO_BUILD_JOBS')
 
 def require(ok,message):
     if not ok:raise ValueError(message)
@@ -66,12 +71,13 @@ def vector_difference(actual,expected):
     return dict(max_abs=max(abs(x-y)for x,y in zip(actual,expected,strict=True)),exact=same_value(actual,expected),within_frozen_tolerance=all(abs(x-y)<=2e-6+1e-5*abs(y)for x,y in zip(actual,expected,strict=True)))
 
 def comparison(out:Path):
+    from . import x86_numeric_payloads as payloads
     frozen=load(out/'original-context.json');wanted={c['id']:r for c,r in zip(frozen['cases'],frozen['results'],strict=True)}
-    native=load(out/'context-native.stdout');require([c['id']for c in native['results']]==IDS,'native context membership differs')
+    native=load(out/'context-native.stdout');payloads.context_native(native,load(out/'context-native.input.json'),frozen);require([c['id']for c in native['results']]==IDS,'native context membership differs')
     native_vectors={row['id']:row['calls'][1]if row['id']=='empty-query'else row['calls'][1][0]for row in native['results']}
     context=[]
     for name in OBSERVERS[5:]:
-        value=load(out/(name+'.stdout'));require([r['id']for r in value['cases']]==IDS,'Python context membership differs')
+        value=load(out/(name+'.stdout'));payloads.context_python(value,name);require([r['id']for r in value['cases']]==IDS,'Python context membership differs')
         for row,native_row in zip(value['cases'],native['results'],strict=True):
             require(same_value(row['tokens'],native_row['calls'][0]),'native/Python token inputs differ')
             expected=wanted[row['id']]['calls'][1];expected=expected if row['id']=='empty-query'else expected[0]
@@ -82,6 +88,7 @@ def comparison(out:Path):
     alignment=[]
     for mode in('native','haswell'):
         python=load(out/('alignment-'+mode+'-python.stdout'));rust=load(out/('alignment-'+mode+'-rust.stdout'))
+        payloads.alignment(python,rust,load(out/'inputs.json')['alignment'],mode)
         require(len(rust['cases'])==1 and rust['cases'][0]['id']==ALIGNMENT_ID,'native alignment membership differs')
         result=rust['cases'][0]['result'];similarities=[x for row in python['similarities']for x in row]
         require(set(python['coverage'])==set(result['coverage'])==set(expected['coverage']),'alignment coverage differs')
@@ -95,13 +102,14 @@ def suite_commands():
 def verify_report(out:Path):
     try:
         value=load(out/'report.json');require(set(value)=={'format','complete_observations','model_acceptance','suites','environment','inputs_sha256','records','comparison'},'diagnostic report fields differ')
-        require(value['format']=='ken-x86-numeric-diagnostic/1'and value['complete_observations']is True and value['model_acceptance']is False and type(value['suites'])is bool,'capture is not model acceptance')
+        require(value['format']=='ken-x86-numeric-diagnostic/2'and value['complete_observations']is True and value['model_acceptance']is False and type(value['suites'])is bool,'capture is not model acceptance')
         require(identity(out/'original-context.json')['sha256']==CONTEXT_SHA and identity(out/'original-alignment.json.gz')['sha256']==ALIGNMENT_SHA,'frozen transport differs')
         fixed=inputs_from(load(out/'original-context.json'),json.loads(gzip.decompress((out/'original-alignment.json.gz').read_bytes())))
         require(same_value(load(out/'inputs.json'),fixed)and value['inputs_sha256']==digest(fixed),'fixed inputs contain answers or differ')
         wanted=OBSERVERS+(SUITES if value['suites']else[])
         require([r['name']for r in value['records']]==wanted,'complete observer/suite inventory required')
         for row in value['records']:
+            require('KEN_NUMERIC_REFERENCE_DIR'not in row['environment'],'alternate frozen fixture override forbidden')
             require(not verify_record(out,row),'raw command differs: '+row['name'])
             if row['name']in OBSERVERS:
                 name=row['name'];argv=row['command'];require(row['exit']==0,'observer failed: '+name)
@@ -115,10 +123,10 @@ def verify_report(out:Path):
                         expected+=['--mode',mode,'--threads',threads]
                     require(Path(argv[0]).name in('python','python3','python3.12')and argv[1:]==expected,'Python observer command differs')
             else:
-                kind=row['name'].split('-',1)[1];require(row['command']==suite_commands()[kind],'numerical suite command differs')
+                who,kind=row['name'].split('-',1);require(row['cwd']==value['environment']['sources'][who]['directory']and row['environment'].get('CARGO_TARGET_DIR')==value['environment']['sources'][who]['target'],'suite crossed its source checkout/target');require(row['command']==suite_commands()[kind],'numerical suite command differs')
                 stdout=(out/(row['name']+'.stdout')).read_text();states=re.findall(r'^test (\S+) \.\.\. (ok|FAILED)$',stdout,re.M)
                 count=8 if row['name'].endswith('context-full')else 1 if row['name'].endswith('context-filtered')else 4
-                require(len(states)==len({name for name,_ in states})==count,'suite did not execute complete scope')
+                require(len(states)==count and {name for name,_ in states}==SUITE_ROOTS[kind],'suite did not execute exact complete scope')
                 require(row['exit']==(101 if any(state=='FAILED'for _,state in states)else 0),'suite exit disagrees with states')
         for mode in('native','haswell'):
             row=next(r for r in value['records']if r['name']=='alignment-'+mode+'-rust')
@@ -134,6 +142,11 @@ def verify_report(out:Path):
                 require(same_value(load(out/(name+'.input.json')),request),'Python context request differs')
         require(same_value(request['registration'],load(out/'original-context.json')['definition']),'context registration differs')
         candidate=value['environment']['candidate'];require(isinstance(candidate,str)and bool(re.fullmatch('[0-9a-f]{40}',candidate)),'candidate commit differs')
+        roles=value['environment']['sources'];require(set(roles)=={'candidate','baseline'},'source roles missing')
+        require(roles['candidate']['revision']==candidate and roles['baseline']['revision']==BASELINE,'suite source revisions differ')
+        require(all(set(row)=={'revision','directory','target'}and Path(row['directory']).is_absolute()and'..'not in Path(row['directory']).parts for row in roles.values()),'suite source directories differ')
+        require(roles['candidate']['directory']!=roles['baseline']['directory']and roles['candidate']['target']!=roles['baseline']['target'],'suite checkouts/targets must be distinct')
+        native=next(r for r in value['records']if r['name']=='context-native');require(native['cwd']==roles['candidate']['directory']and native['command']==[str(Path(native['cwd'])/'target/debug/examples/context_probe')],'native candidate source differs')
         sources=value['environment']['identical_sources']
         require(set(sources)==set(SOURCE_PATHS),'baseline source inventory differs')
         for path,identities in sources.items():
@@ -144,6 +157,15 @@ def verify_report(out:Path):
         return[]
     except(OSError,ValueError,KeyError,TypeError,IndexError,StopIteration)as error:return[str(error)]
 
+def execution_environment(repo:Path,context:dict):
+    env=os.environ|{'PYTHONPATH':str(repo)+os.pathsep+str(repo/'src'),'KEN_ORT_LIBRARY':context['library'],'KEN_CONTEXT_SNAPSHOT':context['snapshot'],'CARGO_TARGET_DIR':str(repo/'target'),'RUST_TEST_THREADS':'1'}
+    for key in('OPENBLAS_CORETYPE','KEN_NUMERIC_REFERENCE_DIR'):env.pop(key,None)
+    return env
+
+def suite_environment(environment:dict,out:Path,who:str):
+    require(who in('candidate','baseline'),'unknown suite source role')
+    return environment|{'CARGO_TARGET_DIR':str(out.parent/(out.name+'-targets')/who)}
+
 def run(repo:Path,out:Path,sdk:Path,snapshot:Path,*,suites:bool):
     from .context_reference import snapshot_state
     from .context_host import context_request
@@ -153,8 +175,7 @@ def run(repo:Path,out:Path,sdk:Path,snapshot:Path,*,suites:bool):
     context=context_request(repo,dict(definition=definition,cases=fixed['context']),out)
     context['snapshot']=str(snapshot.resolve());context['library']=ready['prepared']['onnx_library']
     alignment=dict(format='ken-numeric-owner-probe/1',resources={},cases=[fixed['alignment']]);records=[]
-    env=os.environ|{'PYTHONPATH':str(repo)+os.pathsep+str(repo/'src'),'KEN_ORT_LIBRARY':context['library'],'KEN_CONTEXT_SNAPSHOT':str(snapshot.resolve()),'CARGO_TARGET_DIR':str(repo/'target'),'RUST_TEST_THREADS':'1'}
-    env.pop('OPENBLAS_CORETYPE',None)
+    env=execution_environment(repo,context)
     for mode in('native','haswell'):
         child_env=env|({'OPENBLAS_CORETYPE':'Haswell'}if mode=='haswell'else{})
         records.append(record(out,'alignment-'+mode+'-python',[sys.executable,'-B','-m',MODULE,'python-alignment','--repo',str(repo)],cwd=repo,request=fixed['alignment'],env=child_env))
@@ -167,16 +188,21 @@ def run(repo:Path,out:Path,sdk:Path,snapshot:Path,*,suites:bool):
     for path in SOURCE_PATHS:
         identities[path]={sha:subprocess.check_output(['git','rev-parse',sha+':'+path],cwd=repo,text=True).strip()for sha in(BASELINE,candidate)}
         require(len(set(identities[path].values()))==1,'baseline numerical source differs: '+path)
-    environment=dict(system=platform.platform(),machine=platform.machine(),cpuinfo=Path('/proc/cpuinfo').read_text(),candidate=candidate,baseline=BASELINE,identical_sources=identities,artifacts=snapshot_state(snapshot,definition))
+    baseline=out.parent/(out.name+'-baseline')
+    environment=dict(sources=dict(candidate=dict(directory=str(repo),revision=candidate,target=suite_environment(env,out,'candidate')['CARGO_TARGET_DIR']),baseline=dict(directory=str(baseline),revision=BASELINE,target=suite_environment(env,out,'baseline')['CARGO_TARGET_DIR'])),system=platform.platform(),machine=platform.machine(),cpuinfo=Path('/proc/cpuinfo').read_text(),candidate=candidate,baseline=BASELINE,identical_sources=identities,artifacts=snapshot_state(snapshot,definition))
     if suites:
-        baseline=out.parent/(out.name+'-baseline');subprocess.run(['git','worktree','add','--detach',str(baseline),BASELINE],cwd=repo,check=True)
+        subprocess.run(['git','worktree','add','--detach',str(baseline),BASELINE],cwd=repo,check=True)
+        require(subprocess.check_output(['git','rev-parse','HEAD'],cwd=baseline,text=True).strip()==BASELINE,'executed baseline revision differs')
+        from .context_host import LEGACY,LEGACY_SHA
+        require(identity(repo/LEGACY)['sha256']==LEGACY_SHA,'historical cross-target selection support differs')
+        destination=baseline/LEGACY;destination.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(repo/LEGACY,destination)
         for who,source in [('candidate',repo),('baseline',baseline)]:
             for kind in('context-full','context-filtered','alignment'):
                 command=suite_commands()[kind]
-                records.append(record(out,who+'-'+kind,command,cwd=source,env=env))
+                records.append(record(out,who+'-'+kind,command,cwd=source,env=suite_environment(env,out,who),timeout=1200))
     for row in records:
         if row['name']in OBSERVERS:require(row['exit']==0,'observer failed: '+row['name']+' (see raw stderr)')
-    value=dict(format='ken-x86-numeric-diagnostic/1',complete_observations=True,model_acceptance=False,suites=suites,environment=environment,inputs_sha256=digest(fixed),records=records,comparison=comparison(out))
+    value=dict(format='ken-x86-numeric-diagnostic/2',complete_observations=True,model_acceptance=False,suites=suites,environment=environment,inputs_sha256=digest(fixed),records=records,comparison=comparison(out))
     save(out/'report.json',value);errors=verify_report(out);require(not errors,str(errors));return value
 
 def main():

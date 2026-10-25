@@ -54,8 +54,11 @@ def test_report_verifier_refuses_summary_without_raw_observers(tmp_path):
 @pytest.fixture
 def actual_packet(tmp_path):
     import os,shutil
-    source=Path(os.environ.get('KEN_X86_NUMERIC_PACKET',ROOT/'.ken/rust-migration/x86-numerics/local-observations'))
-    destination=tmp_path/'packet';shutil.copytree(source,destination);return destination
+    source=Path(os.environ.get('KEN_X86_NUMERIC_PACKET',ROOT/'.ken/rust-migration/x86-numerics/local-final'))
+    destination=tmp_path/'packet';shutil.copytree(source,destination)
+    from tools.rust_migration.x86_numeric_diagnostic import verify_report
+    assert not verify_report(destination)
+    return destination
 
 def test_actual_diagnostic_is_replayable_and_not_acceptance(actual_packet):
     from tools.rust_migration.x86_numeric_diagnostic import verify_report
@@ -98,3 +101,51 @@ def test_resealed_observer_command_must_name_the_measured_boundary(actual_packet
     path=actual_packet/'report.json';value=json.loads(path.read_bytes());row=value['records'][0]
     row['command']=['echo','measured'];(actual_packet/(row['name']+'.record.json')).write_text(json.dumps(row));path.write_text(json.dumps(value))
     assert verify_report(actual_packet)
+
+@pytest.mark.parametrize('change',['maxima','source','native-rows','native-columns','native-dtype','python-shape','coverage','blas-core','context-source','context-mode','context-runtime'])
+def test_review_payload_completeness_survives_resealed_comparison(actual_packet,change):
+    from tools.rust_migration.x86_numeric_diagnostic import comparison,verify_report
+    from tools.rust_migration.native_json import identity
+    path=actual_packet/'report.json';report=json.loads(path.read_bytes())
+    name='context-native'if change=='context-runtime'else'context-file-2'if change.startswith('context-')else'alignment-native-rust'if change.startswith('native-')else'alignment-haswell-python'
+    row=next(r for r in report['records']if r['name']==name);raw=actual_packet/(name+'.stdout');value=json.loads(raw.read_bytes())
+    if change=='maxima':value.pop('maxima')
+    elif change=='source':value['source_sha256']='0'*64
+    elif change=='native-rows':value['cases'][0]['result']['rows']=2
+    elif change=='native-columns':value['cases'][0]['result']['columns']=6
+    elif change=='native-dtype':value['cases'][0]['result']['dtype']='float64'
+    elif change=='python-shape':value['similarities']=[sum(value['similarities'][:2],[]),sum(value['similarities'][2:],[])]
+    elif change=='coverage':value['coverage']['above50']=True
+    elif change=='blas-core':value['blas']['core']=''
+    elif change=='context-source':value.pop('source_sha256')
+    elif change=='context-mode':value['mode']='adapter'
+    else:value['runtime']['sha256']='0'*64
+    raw.write_text(json.dumps(value));row['stdout']=identity(raw);(actual_packet/(name+'.record.json')).write_text(json.dumps(row))
+    try:report['comparison']=comparison(actual_packet)
+    except(ValueError,KeyError,TypeError):pass
+    path.write_text(json.dumps(report));assert verify_report(actual_packet)
+
+
+def test_review_execution_environment_clears_alternate_fixture_override(monkeypatch,tmp_path):
+    from tools.rust_migration.x86_numeric_diagnostic import execution_environment
+    monkeypatch.setenv('KEN_NUMERIC_REFERENCE_DIR',str(tmp_path))
+    value=execution_environment(ROOT,dict(library='/runtime',snapshot='/snapshot'))
+    assert 'KEN_NUMERIC_REFERENCE_DIR'not in value
+
+
+def test_review_suites_cannot_cross_source_checkouts(actual_packet):
+    from tools.rust_migration.x86_numeric_diagnostic import verify_report
+    packet=actual_packet
+    path=packet/'report.json';report=json.loads(path.read_bytes());assert report['suites']is True
+    candidate=next(r['cwd']for r in report['records']if r['name']=='candidate-context-full')
+    row=next(r for r in report['records']if r['name']=='baseline-context-full');row['cwd']=candidate
+    (packet/(row['name']+'.record.json')).write_text(json.dumps(row));path.write_text(json.dumps(report))
+    assert verify_report(packet)
+
+def test_review_each_source_owns_a_separate_cargo_target(tmp_path):
+    from tools.rust_migration.x86_numeric_diagnostic import suite_environment
+    original={'CARGO_TARGET_DIR':'/old-shared-target'}
+    candidate=suite_environment(original,tmp_path/'packet','candidate')
+    baseline=suite_environment(original,tmp_path/'packet','baseline')
+    assert candidate['CARGO_TARGET_DIR']!=baseline['CARGO_TARGET_DIR']
+    assert original['CARGO_TARGET_DIR']=='/old-shared-target'
