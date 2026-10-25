@@ -1,0 +1,112 @@
+name: Native CPU runtime core gates
+on:
+  push:
+    branches: [codex/rust-migration]
+    paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'rust-toolchain.toml'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - 'crates/ken-models/**'
+      - 'crates/ken-native-model-api/**'
+      - 'native/ken-torch-backend/**'
+      - 'tools/rust_migration/**'
+      - 'tests/rust_migration/**'
+      - '.github/actions/restore-validation-fixtures/**'
+      - '.github/workflows/rust-runtime-cores.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-cpu-cores-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    env:
+      CARGO_BUILD_JOBS: '2'
+      CARGO_INCREMENTAL: '0'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+      CMAKE_PARALLEL: '2'
+      RUST_TEST_THREADS: '1'
+      CARGO_TERM_COLOR: never
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/restore-validation-fixtures
+      - uses: astral-sh/setup-uv@v5
+      - name: Prepare locked CPU validation tools
+        shell: bash
+        run: |
+          uv python install 3.12.9 --no-bin
+          uv sync --locked --dev --extra torch --python 3.12.9 --managed-python
+          uv pip install --python .venv/bin/python cmake==3.31.10
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          .venv/bin/python - <<'PY'
+          import cmake, os, platform, sqlite3
+          from pathlib import Path
+          assert (platform.python_version(),sqlite3.sqlite_version)==('3.12.9','3.47.1')
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              stream.write('CMAKE='+str(Path(cmake.__file__).parent/'data/bin/cmake')+'\n')
+          PY
+      - name: Prepare Linux build and process auditing
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes strace build-essential pkg-config
+          mkdir -p .ken/rust-migration/native-core-build
+          curl --fail --location --silent --show-error \
+            https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.26/OpenBLAS-0.3.26.tar.gz \
+            --output .ken/rust-migration/native-core-build/OpenBLAS-0.3.26.tar.gz
+          .venv/bin/python -m tools.rust_migration.translation_build prepare-openblas \
+            --archive "$PWD/.ken/rust-migration/native-core-build/OpenBLAS-0.3.26.tar.gz" \
+            --destination "$PWD/.ken/rust-migration/native-core-build/openblas"
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import os
+          from tools.rust_migration.preparation import PreparedTranslationBuild
+          values=PreparedTranslationBuild(Path(os.environ['CMAKE']),Path.cwd()/'.ken/rust-migration/native-core-build/openblas').environment()
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              for name,value in values.items():stream.write(name+'='+value+'\n')
+          PY
+      - name: Prepare authenticated native SDK data
+        shell: bash
+        run: |
+          cargo fetch --locked
+          cargo fetch --locked --manifest-path native/ken-torch-backend/Cargo.toml
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import platform
+          from tools.rust_migration.native_core_prepare import prepare_native_cores
+          from tools.rust_migration.native_platform import native_target
+          root=Path.cwd()
+          prepare_native_cores(root,root/'.ken/rust-migration/native-core-archives',root/'.ken/rust-migration/native-core-sdk',target=native_target(platform.system(),platform.machine()))
+          PY
+      - name: Execute and authenticate complete native CPU core gates
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          from tools.rust_migration.native_core_run import run_host
+          from tools.rust_migration.native_core_evidence import verify_core_packet
+          root=Path.cwd();packet=root/'.ken/rust-migration/native-core-platform'
+          run_host(root,root/'.ken/rust-migration/native-core-sdk',packet,root/'.ken/rust-migration/native-torch-target')
+          errors=verify_core_packet(packet,root);assert not errors,errors
+          PY
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: native-cores-${{ runner.os }}-${{ runner.arch }}
+          path: .ken/rust-migration/native-core-platform/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30

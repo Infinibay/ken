@@ -1,6 +1,6 @@
 """Authenticate added-host syntax without borrowing whole-project acceptance."""
 from __future__ import annotations
-import base64,gzip,hashlib,json,re,struct,tarfile
+import base64,gzip,hashlib,json,re,tarfile
 from pathlib import Path
 from .fastembed_process import _distinct,_nonfinite
 from .native_json import identity,load
@@ -82,11 +82,8 @@ def _original(packet:Path,reference,repo:Path):
     require(len(states)==124 and set(states.values())=={'passed'},'complete original parser suite required')
 
 def _binary_host(path:Path,host:str):
-    with path.open('rb')as stream:header=stream.read(32)
-    if host.startswith('linux-'):
-        require(header[:6]==b'\x7fELF\x02\x01'and len(header)>=20,'native64bit Linux binary required')
-        require(struct.unpack('<H',header[18:20])[0]==(62 if host=='linux-x86_64' else 183),'native binary architecture differs')
-    else:require(header[:4]==b'\xcf\xfa\xed\xfe'and len(header)>=8 and struct.unpack('<I',header[4:8])[0]==0x0100000c,'native arm64 macOS binary required')
+    from .native_binary import check_native_architecture
+    check_native_architecture(path,HOSTS[host])
 
 def verify_grammar_capture(packet:Path,repo:Path):
     try:
