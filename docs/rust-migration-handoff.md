@@ -49,6 +49,7 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | M4c1 | Aceptado | Bosques, stemming, alineamiento, features y ranking numérico de propietarios; `m4-numeric-owner` |
 | M4c2 | Aceptado tras una revisión y una pasada de corrección | Catálogo, piezas, ranking, cards, evidencia y presentación; 446 observaciones por ARM, 126/125 raíces Rust y 174 de tooling; recibo `m4-source-pieces` |
 | Gramáticas Linux x86_64 | Aceptadas; requisito local de M4d | 33 raíces Rust/doc, 87 de tooling y 249 comparaciones en tres hosts; no equivale a aceptación completa de indexación/modelos x86 |
+| Runtimes CPU Linux x86_64 | Aceptados | ONNX/Torch autenticados; 6 raíces ONNX/protocolo, 15/16 Torch y 364 de tooling por host en tres hosts; modelos e índice completos x86 siguen pendientes |
 | M4d | En curso: fusión ordinal migrada; composición completa pendiente | Requisitos y observaciones de fuente/símbolos, composición de piezas, canales restantes, pools preparados, modelos y aceptación CLI/MCP |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
@@ -761,10 +762,62 @@ Los paquetes CI completos y sus verificadores permanecen fuera de Git en
 `.ken/rust-migration/fusion-ci-40142505190/`; este recibo pequeño no afirma un
 replay separado de esos paquetes externos. M4d/M4/global siguen pendientes.
 
-El usuario reiteró que quiere soporte x86_64 para el motor. Continuar por
-**Linux x86_64 como objetivo de validación completo**, ampliando modelos,
-indexación y la matriz del motor ya migrado. Gramáticas y BLAS están habilitados;
-los validadores antiguos aún fijan ARM en varios puntos y faltan runtimes x86
-registrados. Conservar sus recibos y originales, registrar recursos CPU x86
-propios y validar cada capacidad antes de declararla soportada. Después retomar
-fuente/símbolos/PieceSearch y el resto de M4d. No cambiar el Ken instalado.
+El usuario reiteró que quiere Linux x86_64 como objetivo de validación completo.
+Gramáticas, BLAS y runtimes CPU están habilitados; modelos e indexación requieren
+su propia aceptación de arquitectura. El primer original contextual x86 ya está
+preparado, con 20 comparaciones nativas exitosas. Continuar desde ese original,
+conservar los recibos y después retomar la composición restante de M4d.
+
+## Runtimes CPU Linux x86_64 aceptados el 24/10
+
+El candidato `ece7a0c67c5c7ad64e0cb72a1e2cd03fb099c458` añade selección exacta por OS y arquitectura,
+ONNX 1.25.1/API25 y Torch 2.9.0 CPU para Linux x86_64. Las fuentes oficiales,
+licencias, bytes y cierre de bibliotecas quedan autenticados antes de publicar
+un SDK en un destino nuevo. Los registros ARM conservan sus identidades.
+
+El CI [40149696864](https://github.com/Infinibay/ken/actions/runs/40149696864)
+pasó en Linux x86_64, Linux aarch64 y macOS arm64: 6 raíces ONNX/protocolo por
+host, 15 de Torch en Linux y 16 en macOS, 364 de tooling por host, formato y
+Clippy estricto en ambos workspaces. La raíz adicional de macOS es la prueba
+MPS existente. Linux registra exec/connect reales; esta capacidad nueva exige
+en macOS un sandbox y un probe que demuestra el bloqueo de un hijo propio,
+un ejecutable de ruta absoluta y una conexión. Se preservó el alcance de los
+protocolos históricos. También pasaron las regresiones de gramáticas en tres
+hosts (`40149696833`) y de fuentes/piezas en dos ARM (`40149696715`), con sus
+fuentes y tooling contrastados contra Git y replay archivado independiente.
+
+El recibo local está en
+`docs/validation/rust-migration-2026-10-24/x86-runtime-cores`.
+`FILES.json` contiene 3762 miembros y SHA-256
+`150a0f88cacfe22c98d8d053411299bf5281eef30cc68a112a25aaa754c4ce12`.
+Archivo local: `.ken/rust-migration/archives/x86-runtime-cores-ece7a0c6.tar.gz`, 108804290 bytes,
+SHA-256 `19b7361473f7074712f4aa5f059c925d555e0095ba369af976a98363b90039bc`.
+Pasó el replay desde los snapshots archivados y desde el transporte extraído.
+El replay se aísla de `PYTHONPATH` para cargar el validador archivado. Los 1.066
+originales congelados siguen intactos; SDKs, raw y archivos permanecen locales.
+
+Sólo `NativeCPUCore_x86_64_accepted=true`. La aceptación completa de modelos e
+índice x86, M4 y la migración global siguen pendientes. El Ken instalado sigue
+siendo Python. Faltan los originales x86 y matrices completas de los restantes
+modelos/perfiles, CT2, indexación con sus historiales y composición de búsqueda.
+El executor antiguo de transformers rechaza x86 hasta contar con originales
+ligados a arquitectura: no retirar esa guarda ni usar originales ARM como prueba.
+
+El siguiente original contextual ya existe en `.ken/rust-migration/x86-context`:
+20 historiales originales x86, 4 pruebas originales y 20 comparaciones nativas
+pasaron con los límites existentes y un solo exec, sin conexiones. Es un
+experimento pendiente de fixture permanente y cierre de su propia capacidad.
+El original tiene 935725 bytes y SHA-256
+`b1feb05a1abe09637450f55c6988f669884183df76f675e6696a7827ee0a5733`.
+Transporte local: `.ken/rust-migration/archives/x86-context-preparation-9b9ff88b.tar.gz`,
+4603583 bytes, SHA-256
+`18417f23303f9a21aa32c20b7d2a861648afe211e004fc182616a66734f20869`.
+Conservar sus labels `9b9ff88b` y reutilizarlo sin recapturar. El siguiente cambio
+es incorporarlo al test contextual que todavía exige aarch64. Además pasaron
+localmente 7 contratos de los encoders/juez con Torch real y 6 de `ken-rs status`.
+
+Hubo una revisión final y una pasada TDD. El Important de aislamiento quedó
+resuelto. El conteo se corrigió por plataforma tras observar las 16 pruebas
+macOS: no se omitió ninguna. Menor diferido: una descarga fallida puede dejar
+su temporal `.sdk-download-*`; la limpieza se hará por separado. Las decisiones,
+los intentos y los límites están en `LEDGER.md` del recibo local.
