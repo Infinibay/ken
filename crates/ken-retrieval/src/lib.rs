@@ -95,3 +95,6 @@ pub mod source_snapshot;
 pub mod paired_reranker;
 pub mod reranker_fusion;
 pub mod symbol_views;
+
+pub mod symbol_preferences;
+pub mod symbol_requirements;

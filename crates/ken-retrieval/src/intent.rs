@@ -5,6 +5,7 @@ use crate::{
 };
 use ken_text::PythonText;
 use serde::{Deserialize, Serialize};
+pub(crate) const TEST_OBJECT: &str = r"^¿?(?:which|what|find|show|locate|qué|que|cuál|busca|buscá|muestra|encuentra|localiza)\s+(?P<modifiers>(?:[\w-]+\s+){0,8}?)(?:tests?|pruebas?|regressions?|regresi[oó]n(?:es)?)\b";
 const BOUNDARIES: &str = "function method class module file symbol implementation handler helper función funcion método metodo clase módulo modulo archivo implementación that which where who when whose que in of for from with to en de con para por";
 const KINDS: &str = "class|struct|interface|enum|trait|type|function|method|utility|helper|clase|tipo|iterador|iterator";
 const MODIFIERS: &str = "public|private|protected|abstract|sealed|final|static|async";
@@ -102,11 +103,8 @@ fn requests_tests(query: &PythonText) -> bool {
         query.clone()
     };
     for phrase in [query, &object_query] {
-        if let Some(m) = p::find(
-            r"^¿?(?:which|what|find|show|locate|qué|que|cuál|busca|buscá|muestra|encuentra|localiza)\s+(?P<modifiers>(?:[\w-]+\s+){0,8}?)(?:tests?|pruebas?|regressions?|regresi[oó]n(?:es)?)\b",
-            false,
-            phrase,
-        ) && phrase.codepoints().get(m.end) != Some(&45)
+        if let Some(m) = p::find(TEST_OBJECT, false, phrase)
+            && phrase.codepoints().get(m.end) != Some(&45)
             && !has_boundary_word(&m.named["modifiers"])
         {
             return true;

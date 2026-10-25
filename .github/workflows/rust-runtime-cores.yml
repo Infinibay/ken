@@ -146,7 +146,7 @@ jobs:
               stream.write('KEN_DENSE_BLAS_DIR='+str(dense)+'\n')
               stream.write('KEN_GRAMMAR_MANIFEST='+str(grammar/'manifest.json')+'\n')
           PY
-      - name: Execute and authenticate complete x86 models and symbol views
+      - name: Execute and authenticate complete x86 models and symbol policies
         shell: bash
         run: |
           .venv/bin/python - <<'PY'
@@ -157,6 +157,7 @@ jobs:
           from tools.rust_migration.context_host import run_context_host, verify_context_host
           from tools.rust_migration.ettin_host import run_ettin_host, verify_ettin_host
           from tools.rust_migration.symbol_views_host import run_host as run_symbol_views, verify_host as verify_symbol_views
+          from tools.rust_migration.symbol_preferences_host import run_host as run_preferences, verify_host as verify_preferences
           root=Path.cwd();packet=root/'.ken/rust-migration/native-core-platform'
           run_host(root,root/'.ken/rust-migration/native-core-sdk',packet,root/'.ken/rust-migration/native-torch-target')
           errors=verify_core_packet(packet,root);assert not errors,errors
@@ -166,6 +167,8 @@ jobs:
           errors=verify_ettin_host(packet,root);assert not errors,errors
           run_symbol_views(root,root/'.ken/rust-migration/native-core-sdk',Path(os.environ['KEN_ETTIN_SOURCE']),packet)
           errors=verify_symbol_views(packet,root);assert not errors,errors
+          run_preferences(root,packet)
+          errors=verify_preferences(packet,root);assert not errors,errors
           PY
       - uses: actions/upload-artifact@v7
         if: always()
