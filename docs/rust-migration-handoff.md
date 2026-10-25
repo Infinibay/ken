@@ -866,3 +866,60 @@ coordinador Python comprueba el hash antes de comparar. El resto de modelos,
 CT2, indexación x86 y M4/global siguen pendientes. La siguiente investigación
 es explicar la diferencia ARM conservando la evidencia del baseline; no recapturar
 sus vectores para hacer coincidir la implementación.
+
+## Continuación del 25 de octubre: diagnóstico ARM y Ettin x86_64
+
+El [diagnóstico ARM 40213861529](https://github.com/Infinibay/ken/actions/runs/40213861529)
+terminó correctamente en `1cecb476`. Para `empty-query`, `passage-boundary511` y
+`passage-boundary512`, Python ONNX y Rust producen exactamente los mismos 768
+componentes. Se probaron carga desde archivo/memoria, uno/dos hilos y dos
+repeticiones: las doce combinaciones son estables e idénticas entre lenguajes.
+Los dos textos largos difieren del original ARM preservado, con máximos absolutos
+0.967323899 y 1.681113482. En x86 las doce combinaciones coinciden exactamente
+también con su original; sus ocho raíces contextuales volvieron a pasar.
+
+Esto reproduce la diferencia en el runtime compartido, también mediante Python
+ONNX directo con los mismos tokens y opciones; no es exclusiva del port Rust.
+No identifica todavía la instrucción/kernel/condición de CPU responsable. La
+aceptación contextual completa sigue falsa y el workflow histórico sigue rojo.
+No cambiar tolerancias, recapturar los originales ni convertir este diagnóstico
+de tres casos en aceptación de los veinte historiales.
+
+Diagnóstico local: `docs/validation/rust-migration-2026-10-25/context-arm-diagnostic`,
+26 miembros, `FILES.json` SHA256
+`3ed530c628f8bd8eb7eb38d1ed794f50bcaace5f98b7cfa7e34e7d5502fffab8`.
+Transporte `.ken/rust-migration/archives/context-arm-diagnostic-1cecb476.tar.gz`,
+246579 bytes, SHA256
+`70f7b9bb3f7b3d30fc2f2a63037ff8acb5b03a6900333913460ccf39238a9e99`.
+Se verificaron sus miembros y se reprodujo el análisis archivado. Este análisis
+requiere, además, los originales del repo con sus hashes fijados; no es autónomo.
+
+El siguiente bloque independiente quedó implementado en `3da84508`: el test real
+de Ettin elige el original por OS **y** arquitectura, verifica su hash antes de
+consumirlo y rechaza destinos desconocidos. Antes trataba todo Linux como aarch64.
+El scorer, compilador de cabeza, políticas y tolerancias no cambiaron.
+
+Su primera captura Linux x86_64, anterior al selector, contiene los 23 historiales:
+667940 bytes, SHA256
+`ec1a7477107da440828fd0f46ab2c6d9be45a5d64c7c516306797aa2636e20ce`.
+Se consume sin cambios en `crates/ken-models/tests/fixtures/ettin/linux-x86_64-original.json`.
+**Nunca recapturar** `.ken/rust-migration/x86-ettin/original.json`. Pasaron 24
+pruebas originales, RED→GREEN del selector, las 16 raíces nativas del target
+`onnx_reranker`, formato/Clippy estricto y 23 historiales en una sonda nativa con
+preparación Rust fresca y reutilización sin fuente. Auditoría: un exec, ningún
+connect, sin Python; fuentes/core/binario intactos. Caché nativo y fuentes
+verificadas quedan locales. Los 1066 archivos congelados siguen idénticos.
+La única revisión final del plan Ettin encontró 0 Critical/Important/Minor.
+
+Evidencia local: `docs/validation/rust-migration-2026-10-25/x86-ettin`, 256 miembros,
+`FILES.json` SHA256
+`4f15fc3a39e94a8a6b7091db24e88a8b6be0414cb9e06bf6f40ec21b2913f0fe`.
+Transporte `.ken/rust-migration/archives/x86-ettin-test-3da84508.tar.gz`, 4915668
+bytes, SHA256
+`7bb91c418006587e41738ecdb323dc99cfe9fcdbbe1e741bf40a89775914c883`.
+`replay.py` exige Python aislado y usa el tooling archivado para comparar todos
+los historiales y verificar raw/auditoría/pruebas. Es verificación del test y
+experimento local x86; **Ettin completo, matriz de modelos/M2/M3, índice x86,
+M4 y migración global siguen sin aceptar**. Falta integrar los modelos x86 en
+sus ejecutores/recibos completos, luego CT2, composición de búsqueda y los
+subsistemas restantes; resolver por separado la identidad numérica ARM contextual.

@@ -899,3 +899,22 @@ coordinador Python comprueba el hash antes de comparar. El resto de modelos,
 CT2, indexación x86 y M4/global siguen pendientes. La siguiente investigación
 es explicar la diferencia ARM conservando la evidencia del baseline; no recapturar
 sus vectores para hacer coincidir la implementación.
+
+## Actualización del 25 de octubre
+
+El diagnóstico ARM confirmó igualdad exacta Python ONNX/Rust en tres casos y
+doce combinaciones de carga/hilos; ambos reproducen la diferencia frente al
+original histórico. La causa concreta del kernel/CPU sigue pendiente y no cambian
+los originales ni las tolerancias. La matriz contextual completa sigue sin aceptar.
+
+En `3da84508`, el test de Ettin usa su original propio Linux x86_64, autenticado
+en el consumidor, sin tomar el de ARM. Pasaron 16 raíces nativas, 23 historiales
+en una ejecución nativa auditada, 24 pruebas originales y formato/Clippy estricto.
+La revisión final no encontró problemas. La referencia nueva de 667940 bytes y
+SHA256 `ec1a7477107da440828fd0f46ab2c6d9be45a5d64c7c516306797aa2636e20ce`
+ya está consumida: reutilizarla, nunca recapturarla.
+
+El [handoff](rust-migration-handoff.md#continuación-del-25-de-octubre-diagnóstico-arm-y-ettin-x86_64)
+registra evidencia, hashes, replay y alcance exacto. La evidencia permanece local
+y fuera de Git. Esto verifica el test/experimento Ettin x86; no acepta todavía
+la matriz completa de modelos, CT2, indexación x86, M4 ni la migración global.
