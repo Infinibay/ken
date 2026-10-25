@@ -1,6 +1,9 @@
 name: Contextual ARM numerical diagnostic
 on:
   workflow_dispatch:
+  push:
+    branches: [codex/rust-migration]
+    paths: ['.github/workflows/rust-context-diagnostic.yml']
 permissions:
   contents: read
 jobs:
