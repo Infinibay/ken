@@ -121,6 +121,33 @@ jobs:
           run_context_host(root,root/'.ken/rust-migration/native-core-sdk',Path(os.environ['KEN_CONTEXT_SNAPSHOT']),packet)
           errors=verify_context_host(packet,root);assert not errors,errors
           PY
+      - name: Preserve ARM contextual regression diagnostics
+        if: failure() && runner.os == 'Linux' && runner.arch == 'ARM64'
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import json, os, shutil, subprocess
+          root=Path.cwd();packet=root/'.ken/rust-migration/native-core-platform'
+          output=packet/'context/diagnostics';output.mkdir(parents=True,exist_ok=True)
+          (output/'cpuinfo.txt').write_bytes(Path('/proc/cpuinfo').read_bytes())
+          ready=json.loads((root/'.ken/rust-migration/native-core-sdk/PREPARATION.json').read_bytes())
+          env=os.environ|{'KEN_ORT_LIBRARY':ready['prepared']['onnx_library'],'CARGO_TARGET_DIR':str(root/'target')}
+          command=['cargo','test','--locked','--offline','-p','ken-models','--test','context_encoder','registered_context_matches_all_twenty_local_frozen_histories','--','--exact']
+          records=[]
+          def record(name,argv,cwd):
+              result=subprocess.run(argv,cwd=cwd,env=env,capture_output=True,timeout=600)
+              (output/(name+'.stdout.log')).write_bytes(result.stdout)
+              (output/(name+'.stderr.log')).write_bytes(result.stderr)
+              records.append(dict(name=name,command=argv,cwd=str(cwd),exit=result.returncode))
+              (output/'commands.json').write_text(json.dumps(records,indent=2)+'\n')
+          record('current-filtered',command,root)
+          baseline=root/'.ken/rust-migration/baseline-context-26ec'
+          subprocess.run(['git','worktree','add','--detach',str(baseline),'26ec740d357fd11e41ee41929e651c0cceb94af2'],check=True)
+          legacy='docs/validation/rust-migration-2026-10-18/m2-context/reference.json'
+          target=baseline/legacy;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(root/legacy,target)
+          record('baseline-filtered',command,baseline)
+          PY
       - uses: actions/upload-artifact@v7
         if: always()
         with:

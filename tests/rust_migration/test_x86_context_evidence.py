@@ -51,3 +51,29 @@ def test_changed_or_resealed_context_capture_rejects(packet,change):
 def test_context_snapshot_requires_registration_original_and_design(tmp_path):
     from tools.rust_migration.context_host import verify_context_support
     assert verify_context_support(tmp_path,ROOT)
+
+
+def test_context_junit_destination_matches_its_recorded_output(tmp_path,monkeypatch):
+    """Isolate destination consistency; this synthetic gate is not native evidence."""
+    from tools.rust_migration import context_host as module
+    out=tmp_path/'context';gates=out/'gates';gates.mkdir(parents=True)
+    count=getattr(module,'PYTHON_ROOTS',10)
+    nodes=[module.TEST_FILE+'::case_'+str(i)for i in range(count)]
+    states={node.replace(module.TEST_FILE,module.TEST_FILE[:-3].replace('/','.')):'passed'for node in nodes}
+    (gates/'python-list.log').write_text('\n'.join(nodes)+'\n')
+    (gates/'context-list.log').write_text('\n'.join('unit_'+str(i)+': test'for i in range(8))+'\n')
+    (gates/'context-tests.log').write_text('isolated metadata fixture\n')
+    monkeypatch.setattr(module,'command_gate_errors',lambda *a,**kw:[])
+    monkeypatch.setattr(module,'rust_gate_errors',lambda *a:[])
+    monkeypatch.setattr(module,'junit_states',lambda *a:states)
+    base=['/usr/bin/python','-m','pytest','-o','addopts=','-q',module.TEST_FILE]
+    destination='--junitxml='+str(gates/'python.xml')
+    records={'python-list':{'command':[*base,'--collect-only']},'python-tests':{'command':[*base,destination]}}
+    (out/'PYTHON-OUTPUT.json').write_text(json.dumps({'format':'ken-context-python-output/1','recorded_directory':str(out.resolve())}))
+    record=gates/'PYTHON.json';record.write_text(json.dumps(records))
+    assert not module.verify_context_gates(out)
+    for crossed in('/tmp/unrelated.xml','/tmp/python.xml'):
+        records['python-tests']['command'][-1]='--junitxml='+crossed;record.write_text(json.dumps(records))
+        assert module.verify_context_gates(out)
+    records['python-tests']['command'][-1]=destination;record.write_text(json.dumps(records))
+    assert not module.verify_context_gates(out)

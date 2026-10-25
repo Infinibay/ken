@@ -19,8 +19,13 @@ X86_SHA='b1feb05a1abe09637450f55c6988f669884183df76f675e6696a7827ee0a5733'
 REGISTRATION='src/ken/embedder/data/code-context-int8.json'
 SUPPORT=(REGISTRATION,LEGACY,'docs/superpowers/specs/2026-10-24-rust-x86-context-design.md','docs/superpowers/plans/2026-10-24-rust-x86-context.md')
 TEST_FILE='tests/rust_migration/test_x86_context_evidence.py'
+PYTHON_ROOTS=11
 RUST_TEST=['cargo','test','--locked','--offline','-p','ken-models','--test','context_encoder']
 COMMANDS={'context-list':[*RUST_TEST,'--','--list'],'context-tests':[*RUST_TEST,'--no-fail-fast'],'context-build':['cargo','build','--locked','--offline','-p','ken-models','--example','context_probe']}
+
+def context_python_commands(executable:str,out:Path):
+    command=[executable,'-m','pytest','-o','addopts=','-q',TEST_FILE]
+    return{'python-list':[*command,'--collect-only'],'python-tests':[*command,'--junitxml='+str(out/'gates/python.xml')]}
 
 def host_original(repo:Path,system:str,machine:str):
     target=native_target(system,machine)
@@ -86,13 +91,18 @@ def verify_context_gates(out:Path):
         import re
         require(not rust_gate_errors(listed,output)and len(re.findall(r'^([^\n]+): test$',listed,re.M))==8,'all8contextual native roots required')
         records=load(out/'gates/PYTHON.json');require(set(records)=={'python-list','python-tests'},'contextual tooling commands missing')
+        locations=load(out/'PYTHON-OUTPUT.json')
+        require(set(locations)=={'format','recorded_directory'}and locations['format']=='ken-context-python-output/1','contextual recorded output missing')
+        recorded=Path(locations['recorded_directory']);require(recorded.is_absolute()and recorded.name=='context','contextual recorded directory differs')
+        executable=records['python-list']['command'][0]
+        require(Path(executable).name in('python','python3','python3.12'),'contextual Python executable differs')
+        commands=context_python_commands(executable,recorded)
         for name,row in records.items():
-            argv=row['command'];require(Path(argv[0]).name in('python','python3','python3.12')and argv[1:-1]==['-m','pytest','-o','addopts=','-q',TEST_FILE],'contextual tooling scope differs')
-            require(argv[-1]=='--collect-only'if name=='python-list'else argv[-1].startswith('--junitxml='),'contextual tooling discovery/JUnit missing')
-        errors=command_gate_errors(out/'gates',{name:row['command']for name,row in records.items()},record_name='PYTHON.json');require(not errors,str(errors))
+            require(row['command']==commands[name],'contextual tooling scope/JUnit destination differs')
+        errors=command_gate_errors(out/'gates',commands,record_name='PYTHON.json');require(not errors,str(errors))
         discovered=[line for line in(out/'gates/python-list.log').read_text().splitlines()if line.startswith(TEST_FILE+'::')]
         expected={line.replace(TEST_FILE,TEST_FILE[:-3].replace('/','.'))for line in discovered};states=junit_states(out/'gates/python.xml')
-        require(len(discovered)==len(expected)==10 and expected==set(states)and set(states.values())=={'passed'},'all10contextual tooling roots required')
+        require(len(discovered)==len(expected)==PYTHON_ROOTS and expected==set(states)and set(states.values())=={'passed'},'complete contextual tooling roots required')
         return[]
     except(OSError,ValueError,KeyError,TypeError,IndexError)as error:return[str(error)]
 
@@ -119,8 +129,8 @@ def run_context_host(repo:Path,sdk:Path,snapshot:Path,packet:Path):
             capture.run(request)
         errors=verify_context_capture(packet,repo);require(not errors,str(errors))
         os.environ['KEN_CONTEXT_HOST_PACKET']=str(packet)
-        command=[sys.executable,'-m','pytest','-o','addopts=','-q',TEST_FILE]
-        run_command_gates(gates,{'python-list':[*command,'--collect-only'],'python-tests':[*command,'--junitxml='+str(gates/'python.xml')]},record_name='PYTHON.json')
+        (out/'PYTHON-OUTPUT.json').write_text(json.dumps(dict(format='ken-context-python-output/1',recorded_directory=str(out.resolve())),indent=2)+'\n')
+        run_command_gates(gates,context_python_commands(sys.executable,out.resolve()),record_name='PYTHON.json')
         errors=verify_context_host(packet,repo);require(not errors,str(errors))
     finally:
         os.environ.clear();os.environ.update(environment)
