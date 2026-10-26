@@ -21,6 +21,7 @@ jobs:
       CARGO_PROFILE_TEST_DEBUG: '0'
       RUST_TEST_THREADS: '1'
       CMAKE_PARALLEL: '2'
+      OPENBLAS_NUM_THREADS: '1'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -85,16 +86,26 @@ jobs:
             -o .ken/context-x86-diagnostic/x86-features-probe
           .venv/bin/python - <<'PYCODE'
           from pathlib import Path
-          import sys
+          import sys,os,subprocess
           from tools.rust_migration.portable_reference import restore_portable
+          from tools.rust_migration.execution_host import detect_profiles
+          from tools.rust_migration.execution_profiles import capture,descriptors,save
+          from tools.rust_migration.execution_registry import INDEX
+          from tools.rust_migration.native_json import load,same_value
           root=Path.cwd();base=root/'.ken/context-x86-diagnostic'
-          restore_portable(root,root/'docs/validation/rust-migration-2026-10-23/handoff',reference=base/'original',progress=base/'historical-progress',python=Path(sys.executable))
+          restored=restore_portable(root,root/'docs/validation/rust-migration-2026-10-23/handoff',reference=base/'original',progress=base/'historical-progress',python=Path(sys.executable))
+          probe=base/'x86-features-probe';caps,alignment=detect_profiles(probe,repo=root)
+          profiles=descriptors(caps,{k:alignment[k]for k in('core','threads','sha256')},root)
+          registry=load(root/INDEX)
+          known={kind:any(same_value(row['descriptor'],descriptor)for row in registry['families'][kind])for kind,descriptor in profiles.items()}
+          out=base/'profile-original';out.mkdir()
+          save(out/'DETECTED.json',dict(candidate=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),capabilities=caps,descriptors=profiles,known=known,cpuinfo=Path('/proc/cpuinfo').read_text()))
+          if all(known.values()):
+              save(out/'STATUS.json',dict(state='known-profile-original-not-repeated'))
+          else:
+              result=capture(restored.reference,Path(os.environ['KEN_CONTEXT_SNAPSHOT']),probe,out/'original',root)
+              save(out/'STATUS.json',dict(state='first-unknown-profile-original-captured',ids=result['ids']))
           PYCODE
-          .venv/bin/python -B -m tools.rust_migration.execution_profiles capture \
-            --repo "$PWD" --reference "$PWD/.ken/context-x86-diagnostic/original" \
-            --snapshot "$KEN_CONTEXT_SNAPSHOT" \
-            --probe "$PWD/.ken/context-x86-diagnostic/x86-features-probe" \
-            --out "$PWD/.ken/context-x86-diagnostic/profile-original"
       - uses: actions/upload-artifact@v7
         if: always()
         with:
