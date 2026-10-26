@@ -34,7 +34,7 @@ def test_resealed_original_capture_rejects_wrong_contract(original,change):
 def test_registered_full_profiles_preserve_legacy_and_all_inputs(tmp_path):
     from tools.rust_migration.execution_registry import register,select,LEGACY_CONTEXT,LEGACY_ALIGNMENT
     from tools.rust_migration.native_json import identity
-    files=[LEGACY_CONTEXT,LEGACY_ALIGNMENT,'crates/ken-retrieval/tests/fixtures/numeric-inputs-alignment.json','src/ken/embedder/data/code-context-int8.json']
+    files=[LEGACY_CONTEXT,LEGACY_ALIGNMENT,'crates/ken-retrieval/tests/fixtures/numeric-inputs-alignment.json','src/ken/embedder/data/code-context-int8.json','crates/ken-models/resources/onnx-runtime-libraries.json']
     for name in files:
         target=tmp_path/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(ROOT/name,target)
     before={name:identity(tmp_path/name)for name in files}
@@ -47,3 +47,22 @@ def test_registered_full_profiles_preserve_legacy_and_all_inputs(tmp_path):
             _,original=select(tmp_path,kind,row['descriptor'])
             assert len(original['cases'])==(20 if kind=='context'else 245)
     with pytest.raises(ValueError):register(tmp_path,captures)
+
+def test_frozen_source_inventory_is_authenticated_instead_of_declared(tmp_path):
+    from tools.rust_migration.execution_profiles import authenticate_frozen,FP
+    from tools.rust_migration.reference import Reference
+    original=Reference.load(ROOT/'.ken/rust-migration/portable-reference')
+    authenticate_frozen(original)
+    manifest=json.loads(original.manifest_path.read_bytes())
+    manifest['files'][0]['sha256']='0'*64
+    (tmp_path/'reference-manifest.json').write_text(json.dumps(manifest))
+    assert Reference.load(tmp_path).fingerprint==FP
+    with pytest.raises(ValueError,match='fingerprint'):authenticate_frozen(Reference.load(tmp_path))
+
+
+def test_resealed_retained_observer_cannot_claim_the_approved_script(original):
+    from tools.rust_migration.execution_profiles import verify_capture
+    from tools.rust_migration.native_json import identity
+    path=original/'alignment-observer.py';path.write_text('raise SystemExit("changed observer")\n')
+    manifest=original/'CAPTURE.json';record=json.loads(manifest.read_bytes());record['files']['alignment-observer.py']=identity(path);manifest.write_text(json.dumps(record))
+    assert verify_capture(original,ROOT)

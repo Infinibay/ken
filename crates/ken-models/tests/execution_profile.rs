@@ -32,3 +32,18 @@ fn changed_reference_bytes_are_rejected_before_parsing() {
     index["families"]["context"][0]["reference"]["sha256"] = "0".repeat(64).into();
     assert!(profiles::select(&index, "context", &descriptor, &repo()).is_err());
 }
+
+#[test]
+fn changed_runtime_registration_cannot_keep_the_old_context_profile() {
+    let mut registration: serde_json::Value =
+        serde_json::from_str(include_str!("../resources/onnx-runtime-libraries.json")).unwrap();
+    let core = registration["libraries"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .find(|r| r["os"] == "linux" && r["arch"] == "x86_64")
+        .unwrap();
+    core["sha256"] = "0".repeat(64).into();
+    let descriptor = profiles::context_descriptor_for_registration(&registration).unwrap();
+    assert!(profiles::registered("context", &descriptor, &repo()).is_err());
+}

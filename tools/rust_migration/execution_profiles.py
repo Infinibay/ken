@@ -34,15 +34,30 @@ def validate_capabilities(value):
     require(set(value['features'])==set(FEATURES)and all(type(x)is bool for x in value['features'].values()),'capability mask differs');return value
 
 def inputs(repo):return dict(context=context_cases(),alignment=definitions('alignment',repo))
-def descriptors(caps,blas):
+def native_core(repo):
+    from .context_compare import core_for_platform
+    core=core_for_platform(load(repo/'crates/ken-models/resources/onnx-runtime-libraries.json'),'Linux','x86_64')
+    require(core==dict(os='linux',arch='x86_64',version='1.25.1',api=25,bytes=22769624,sha256=CORE_SHA),'context reference native runtime registration differs')
+    return core
+
+def authenticate_frozen(reference):
+    manifest=load(reference.manifest_path)
+    actual=hashlib.sha256(json.dumps(manifest['files'],sort_keys=True).encode()).hexdigest()
+    require(actual==FP==manifest['fingerprint']==reference.fingerprint,'frozen1066 manifest fingerprint differs')
+    require(len(manifest['files'])==1066 and manifest['format']=='ken-rust-oracle/1'and manifest['scope']==['src/ken/**'],'frozen1066 inventory differs')
+    require(not verify_reference(reference.root,reference.manifest_path),'frozen1066 source drift')
+
+def descriptors(caps,blas,repo):
     validate_capabilities(caps)
+    core=native_core(repo)
     require(blas['sha256']==BLAS_SHA and blas['threads']==1 and type(blas['threads'])is int and isinstance(blas['core'],str)and blas['core'],'pinned one-thread BLAS required')
-    return dict(context=dict(format='ken-context-profile/1',target='linux-x86_64',features=caps['features'],native_core_sha256=CORE_SHA,onnxruntime='1.25.1',tokenizers='0.22.2'),alignment=dict(format='ken-alignment-profile/1',target='linux-x86_64',numpy='2.4.4',**blas))
+    return dict(context=dict(format='ken-context-profile/1',target='linux-x86_64',features=caps['features'],native_core_sha256=core['sha256'],onnxruntime=core['version'],tokenizers='0.22.2'),alignment=dict(format='ken-alignment-profile/1',target='linux-x86_64',numpy='2.4.4',**blas))
 
 def verify_capture(out:Path,repo:Path):
     try:
         record=load(out/'CAPTURE.json');fixed=inputs(repo);require(record['format']=='ken-original-execution-profile/1'and record['reference_fingerprint']==FP,'capture identity differs')
         require(record['script_sha256']==dict(context=hashlib.sha256(_CHILD.encode()).hexdigest(),alignment=hashlib.sha256(ALIGNMENT_OBSERVER.encode()).hexdigest()),'original observer source differs')
+        require((out/'alignment-observer.py').read_bytes()==ALIGNMENT_OBSERVER.encode(),'retained original observer source differs')
         require(same_value(load(out/'inputs.json'),fixed),'full original input corpus differs')
         require(record['inputs_sha256']==fingerprint(fixed),'input hash differs')
         for name,pin in record['files'].items():require(identity(out/name)==pin,'original raw transport differs: '+name)
@@ -65,13 +80,13 @@ def verify_capture(out:Path,repo:Path):
         require(alignment['format']=='ken-profile-alignment-original/1'and alignment['runtime']==dict(python='3.12.9',numpy='2.4.4',system='Linux',machine='x86_64'),'original alignment runtime differs')
         require([{k:r[k]for k in('id','kind','input')}for r in alignment['cases']]==fixed['alignment']and all(('result'in r)^('error'in r)for r in alignment['cases']),'alignment observations incomplete')
         require(record['exits']==dict(context=0,alignment=0),'original execution failed')
-        require(same_value(record['descriptors'],descriptors(record['capabilities'],alignment['blas'])),'execution descriptors differ')
+        require(same_value(record['descriptors'],descriptors(record['capabilities'],alignment['blas'],repo)),'execution descriptors differ')
         require(record['ids']=={kind:fingerprint(value)for kind,value in record['descriptors'].items()},'execution profile ids differ')
         return[]
     except(OSError,ValueError,KeyError,TypeError,IndexError)as error:return[str(error)]
 
 def capture(reference:Reference,snapshot:Path,probe:Path,out:Path,repo:Path):
-    assert_fresh(out);require(not verify_reference(reference.root,reference.manifest_path)and reference.fingerprint==FP,'frozen1066 source drift')
+    assert_fresh(out);authenticate_frozen(reference)
     reference=dataclasses.replace(reference,python=Path(sys.executable).absolute());before=capabilities(probe);probe_before=identity(probe);out.mkdir(parents=True)
     fixed=inputs(repo);save(out/'inputs.json',fixed);definition=load(reference.root/'src/ken/embedder/data/code-context-int8.json');artifacts=snapshot_state(snapshot,definition)
     env=reference_env(reference,out/'environment');env['OPENBLAS_NUM_THREADS']='1';env.pop('OPENBLAS_CORETYPE',None);env.update(TOKENIZERS_PARALLELISM='false',HF_HUB_OFFLINE='1')
@@ -83,8 +98,9 @@ def capture(reference:Reference,snapshot:Path,probe:Path,out:Path,repo:Path):
     (out/'alignment-observer.py').write_text(ALIGNMENT_OBSERVER);request=dict(root=str(reference.root),cases=fixed['alignment'],result=str((out/'alignment.json').resolve()));save(out/'alignment-inputs.json',request)
     alignment=subprocess.run([str(reference.python),'-B',str((out/'alignment-observer.py').resolve()),str((out/'alignment-inputs.json').resolve())],cwd=reference.root,env=env,capture_output=True,timeout=300)
     (out/'alignment.stdout').write_bytes(alignment.stdout);(out/'alignment.stderr').write_bytes(alignment.stderr);require(alignment.returncode==0,'original alignment process failed')
-    require(probe_before==identity(probe)and before==capabilities(probe)and not verify_reference(reference.root,reference.manifest_path)and artifacts==snapshot_state(snapshot,definition),'profile/source/artifact changed during capture')
-    ds=descriptors(before,load(out/'alignment.json')['blas'])
+    authenticate_frozen(reference)
+    require(probe_before==identity(probe)and before==capabilities(probe)and artifacts==snapshot_state(snapshot,definition),'profile/source/artifact changed during capture')
+    ds=descriptors(before,load(out/'alignment.json')['blas'],repo)
     names=['context.stdout','context.stderr','context-inputs.json','context.json','alignment.stdout','alignment.stderr','alignment-inputs.json','alignment.json','alignment-observer.py']
     record=dict(format='ken-original-execution-profile/1',reference_fingerprint=FP,inputs_sha256=fingerprint(fixed),script_sha256=dict(context=hashlib.sha256(_CHILD.encode()).hexdigest(),alignment=hashlib.sha256(ALIGNMENT_OBSERVER.encode()).hexdigest()),capabilities=before,descriptors=ds,ids={kind:fingerprint(value)for kind,value in ds.items()},exits=dict(context=context.returncode,alignment=alignment.returncode),files={name:identity(out/name)for name in names},probe=identity(probe),cpuinfo=Path('/proc/cpuinfo').read_text(),candidate=subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip())
     save(out/'CAPTURE.json',record);errors=verify_capture(out,repo);require(not errors,str(errors));return record

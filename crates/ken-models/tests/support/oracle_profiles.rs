@@ -17,9 +17,31 @@ pub struct Reference {
 }
 #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
 pub fn context_descriptor() -> Value {
+    let registration: Value =
+        serde_json::from_str(include_str!("../../resources/onnx-runtime-libraries.json"))
+            .expect("native runtime registration");
+    context_descriptor_for_registration(&registration).expect("contextual runtime profile")
+}
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+pub fn context_descriptor_for_registration(registration: &Value) -> Result<Value, String> {
+    if registration["format"] != "ken-native-onnx/1" {
+        return Err("invalid runtime registration".into());
+    }
+    let rows = registration["libraries"]
+        .as_array()
+        .ok_or("native cores missing")?
+        .iter()
+        .filter(|r| r["os"] == "linux" && r["arch"] == "x86_64")
+        .collect::<Vec<_>>();
+    if rows.len() != 1 {
+        return Err("ambiguous native contextual core".into());
+    }
+    let core = rows[0];
     let caps: Value =
         serde_json::from_str(&capabilities::json()).expect("native capability schema");
-    json!({"format":"ken-context-profile/1","target":"linux-x86_64","features":caps["features"],"native_core_sha256":"c450a686085f441803ef914fc7e68bd417452e34ba5573344dc3dd40c0c71896","onnxruntime":"1.25.1","tokenizers":"0.22.2"})
+    Ok(
+        json!({"format":"ken-context-profile/1","target":"linux-x86_64","features":caps["features"],"native_core_sha256":core["sha256"],"onnxruntime":core["version"],"tokenizers":"0.22.2"}),
+    )
 }
 fn canonical(value: &Value) -> String {
     match value {

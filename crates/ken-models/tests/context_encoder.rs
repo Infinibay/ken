@@ -318,6 +318,14 @@ fn original_for_host(os: &str, arch: &str) -> Value {
 #[test]
 fn registered_context_matches_all_twenty_local_frozen_histories() {
     let oracle = original_for_host(std::env::consts::OS, std::env::consts::ARCH);
+    let native = runtime();
+    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+    {
+        let actual = native.load().unwrap();
+        let descriptor = profiles::context_descriptor();
+        assert_eq!(descriptor["native_core_sha256"], actual.sha256);
+        assert_eq!(descriptor["onnxruntime"], actual.version);
+    }
     let definition =
         fs::read_to_string(repo().join("src/ken/embedder/data/code-context-int8.json")).unwrap();
     let model = ContextModel::from_json(&definition).unwrap();
@@ -340,7 +348,8 @@ fn registered_context_matches_all_twenty_local_frozen_histories() {
         .iter()
         .zip(oracle["results"].as_array().unwrap())
     {
-        let encoder = ContextEncoder::new(model.clone(), Arc::clone(&snapshot), runtime()).unwrap();
+        let encoder =
+            ContextEncoder::new(model.clone(), Arc::clone(&snapshot), native.clone()).unwrap();
         history(&encoder, case, result, &oracle["tolerances"]);
     }
 }

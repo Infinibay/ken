@@ -170,9 +170,9 @@ jobs:
           import json,platform
           root=Path.cwd();packet=root/'.ken/rust-migration/native-core-platform'
           packet.mkdir(parents=True,exist_ok=False)
+          (packet/'CPU-ENVIRONMENT.json').write_text(json.dumps(dict(system=platform.platform(),machine=platform.machine(),cpuinfo=Path('/proc/cpuinfo').read_text()),indent=2)+'\n')
           from tools.rust_migration.execution_host import prepare_host
           prepare_host(root,packet,Path(os.environ['KEN_X86_FEATURES_PROBE']))
-          (packet/'CPU-ENVIRONMENT.json').write_text(json.dumps(dict(system=platform.platform(),machine=platform.machine(),cpuinfo=Path('/proc/cpuinfo').read_text()),indent=2)+'\n')
           run_host(root,root/'.ken/rust-migration/native-core-sdk',packet,root/'.ken/rust-migration/native-torch-target')
           errors=verify_core_packet(packet,root);assert not errors,errors
           from tools.rust_migration.symbol_profile_sequence import run_profiles,DEPENDENCIES
