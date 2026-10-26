@@ -27,17 +27,29 @@ def context_python_commands(executable:str,out:Path):
     command=[executable,'-m','pytest','-o','addopts=','-q',TEST_FILE]
     return{'python-list':[*command,'--collect-only'],'python-tests':[*command,'--junitxml='+str(out/'gates/python.xml')]}
 
-def host_original(repo:Path,system:str,machine:str):
+def host_original(repo:Path,system:str,machine:str,*,profile:dict|None=None):
     target=native_target(system,machine)
     system,machine=('Darwin','arm64')if target[0]=='macos'else('Linux',target[1])
-    path=repo/(X86 if target==('linux','x86_64')else LEGACY)
-    require(identity(path)['sha256']==(X86_SHA if target==('linux','x86_64')else LEGACY_SHA),'preserved contextual original bytes differ')
-    document=load(path)
+    if profile is not None:
+        from .execution_registry import select
+        require(target==('linux','x86_64'),'execution profiles require Linux x86_64')
+        entry,document=select(repo,'context',profile);path=repo/entry['reference']['path']
+    else:
+        path=repo/(X86 if target==('linux','x86_64')else LEGACY)
+        require(identity(path)['sha256']==(X86_SHA if target==('linux','x86_64')else LEGACY_SHA),'preserved contextual original bytes differ')
+        document=load(path)
     if target==('linux','x86_64'):document={'platforms':{'Linux/x86_64':document}}
     original=select_oracle(document,system,machine)
     require(original['cases']==context_cases()and original['tolerances']==TOLERANCES,'fixed contextual cases/tolerances changed')
     require(original['definition']==load(repo/REGISTRATION),'contextual registration differs')
     return original,path
+
+def packet_original(repo:Path,packet:Path,host:dict):
+    profile=None
+    if native_target(host['system'],host['machine'])==('linux','x86_64'):
+        from .execution_host import recorded_reference
+        profile=recorded_reference(repo,packet,'context')[0]['descriptor']
+    return host_original(repo,host['system'],host['machine'],profile=profile)
 
 def context_request(repo:Path,original:dict,root:Path):
     return dict(registration=original['definition'],snapshot=str(root/'model'/original['definition']['revision']),runtime_registration=load(repo/RUNTIME_REGISTRATION.relative_to(Path(__file__).resolve().parents[2])),library=str(root/'runtime-core'),cases=original['cases'])
@@ -68,7 +80,10 @@ def verify_context_capture(packet:Path,repo:Path):
     try:
         errors=verify_core_packet(packet,repo);require(not errors,'parent CPU core packet: '+str(errors))
         errors=verify_context_support(packet,repo);require(not errors,str(errors))
-        host=load(packet/'HOST.json');target=native_target(host['system'],host['machine']);original,path=host_original(repo,host['system'],host['machine']);out=packet/'context';capture=out/'native'
+        if load(packet/'HOST.json')['arch']=='x86_64':
+            from .execution_host import verify_host
+            errors=verify_host(repo,packet);require(not errors,'execution-profile gates: '+str(errors))
+        host=load(packet/'HOST.json');target=native_target(host['system'],host['machine']);original,path=packet_original(repo,packet,host);out=packet/'context';capture=out/'native'
         require(identity(out/'ORIGINAL.json')==identity(path),'contextual original transport differs')
         errors=verify_native_json(capture,PREFIX,macos_confinement=True);require(not errors,str(errors))
         execution=load(capture/'execution.json');root=Path(execution['cwd']);require(not root.is_relative_to(repo.resolve()),'contextual process ran in checkout')
@@ -110,7 +125,7 @@ def verify_context_host(packet:Path,repo:Path):
     return verify_context_capture(packet,repo)or verify_context_gates(packet/'context')
 
 def run_context_host(repo:Path,sdk:Path,snapshot:Path,packet:Path):
-    host=load(packet/'HOST.json');original,path=host_original(repo,host['system'],host['machine']);ready=load(sdk/'PREPARATION.json')
+    host=load(packet/'HOST.json');original,path=packet_original(repo,packet,host);ready=load(sdk/'PREPARATION.json')
     require(snapshot_state(snapshot,original['definition'])==original['artifacts'],'prepared context weights differ')
     out=packet/'context';out.mkdir();gates=out/'gates';gates.mkdir();environment=os.environ.copy()
     records={name:identity(repo/name)for name in SUPPORT}

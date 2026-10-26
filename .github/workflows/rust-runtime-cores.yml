@@ -31,6 +31,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04]
+        replica: [1, 2]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     env:
@@ -41,6 +42,7 @@ jobs:
       CMAKE_PARALLEL: '2'
       RUST_TEST_THREADS: '1'
       CARGO_TERM_COLOR: never
+      OPENBLAS_NUM_THREADS: '1'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -146,6 +148,12 @@ jobs:
               stream.write('KEN_DENSE_BLAS_DIR='+str(dense)+'\n')
               stream.write('KEN_GRAMMAR_MANIFEST='+str(grammar/'manifest.json')+'\n')
           PY
+      - name: Prepare independent CPU capability probe
+        shell: bash
+        run: |
+          mkdir -p .ken/rust-migration/execution-profiles
+          rustc --edition=2024 crates/ken-models/tests/support/x86_features_probe.rs -o .ken/rust-migration/execution-profiles/x86-features-probe
+          echo "KEN_X86_FEATURES_PROBE=$PWD/.ken/rust-migration/execution-profiles/x86-features-probe" >> "$GITHUB_ENV"
       - name: Execute and authenticate complete x86 models and symbol policies
         shell: bash
         run: |
@@ -162,6 +170,8 @@ jobs:
           import json,platform
           root=Path.cwd();packet=root/'.ken/rust-migration/native-core-platform'
           packet.mkdir(parents=True,exist_ok=False)
+          from tools.rust_migration.execution_host import prepare_host
+          prepare_host(root,packet,Path(os.environ['KEN_X86_FEATURES_PROBE']))
           (packet/'CPU-ENVIRONMENT.json').write_text(json.dumps(dict(system=platform.platform(),machine=platform.machine(),cpuinfo=Path('/proc/cpuinfo').read_text()),indent=2)+'\n')
           run_host(root,root/'.ken/rust-migration/native-core-sdk',packet,root/'.ken/rust-migration/native-torch-target')
           errors=verify_core_packet(packet,root);assert not errors,errors
@@ -189,7 +199,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: native-cores-${{ runner.os }}-${{ runner.arch }}
+          name: native-cores-${{ runner.os }}-${{ runner.arch }}-${{ matrix.replica }}
           path: .ken/rust-migration/native-core-platform/
           include-hidden-files: true
           if-no-files-found: error

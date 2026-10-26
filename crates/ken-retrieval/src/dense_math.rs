@@ -468,3 +468,55 @@ fn product_output<T: Default + Clone>(
     out.resize(count, T::default());
     Ok(out)
 }
+
+/// Identity of the numerical backend actually retained by the process.
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct DenseRuntimeIdentity {
+    pub core: String,
+    pub threads: i32,
+    pub sha256: String,
+}
+
+/// Inspect the same byte-verified library used by dense operations, without
+/// changing its kernel selection or thread policy.
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+pub fn dense_runtime_identity() -> Result<DenseRuntimeIdentity> {
+    use std::ffi::{CStr, c_char};
+    type Core = unsafe extern "C" fn() -> *const c_char;
+    type Threads = unsafe extern "C" fn() -> i32;
+    let math = DenseMath::platform()?;
+    // SAFETY: platform() verifies the pinned bundle before loading it. These
+    // public OpenBLAS introspection signatures belong to that exact library,
+    // which stays owned by the process-wide DenseMath value.
+    let (core, threads) = unsafe {
+        let core = math
+            ._library
+            .get::<Core>(b"scipy_openblas_get_corename64_\0")
+            .map_err(|e| RetrievalError::Invalid(e.to_string()))?;
+        let threads = math
+            ._library
+            .get::<Threads>(b"scipy_openblas_get_num_threads64_\0")
+            .map_err(|e| RetrievalError::Invalid(e.to_string()))?;
+        let pointer = core();
+        if pointer.is_null() {
+            return Err(RetrievalError::Invalid("BLAS core identity missing".into()));
+        }
+        let name = CStr::from_ptr(pointer)
+            .to_str()
+            .map_err(|e| RetrievalError::Invalid(e.to_string()))?
+            .to_owned();
+        (name, threads())
+    };
+    if core.is_empty() || threads <= 0 {
+        return Err(RetrievalError::Invalid(
+            "invalid BLAS execution identity".into(),
+        ));
+    }
+    let registered = manifest();
+    Ok(DenseRuntimeIdentity {
+        core,
+        threads,
+        sha256: registered.files[&registered.library].sha256.clone(),
+    })
+}

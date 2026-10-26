@@ -46,6 +46,8 @@ pub mod dense;
 mod dense_math;
 #[cfg(target_os = "linux")]
 pub use dense_math::verify_dense_runtime;
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+pub use dense_math::{DenseRuntimeIdentity, dense_runtime_identity};
 
 pub mod candidates;
 pub mod contextual;

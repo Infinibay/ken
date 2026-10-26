@@ -1,6 +1,9 @@
 use ken_models::{ContextEncoder, ContextInput, ContextModel, ModelAssets, NativeOnnxRuntime};
 use serde_json::Value;
 use std::{fs, path::PathBuf, sync::Arc};
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+#[path = "support/oracle_profiles.rs"]
+mod profiles;
 
 fn repo() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
@@ -279,8 +282,21 @@ fn original_for_host(os: &str, arch: &str) -> Value {
         _ => panic!("prepare a separate original oracle for this OS/architecture"),
     };
     let original: Value = if (os, arch) == ("linux", "x86_64") {
-        serde_json::from_slice(&fs::read(fixtures().join("linux-x86_64-original.json")).unwrap())
+        #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+        {
+            let reference =
+                profiles::registered("context", &profiles::context_descriptor(), &repo())
+                    .expect("registered original for actual contextual execution profile");
+            assert_eq!(reference.encoding, "json");
+            serde_json::from_slice(&reference.bytes).unwrap()
+        }
+        #[cfg(not(all(target_os = "linux", target_arch = "x86_64")))]
+        {
+            serde_json::from_slice(
+                &fs::read(fixtures().join("linux-x86_64-original.json")).unwrap(),
+            )
             .unwrap()
+        }
     } else {
         let document: Value = serde_json::from_slice(
             &fs::read(

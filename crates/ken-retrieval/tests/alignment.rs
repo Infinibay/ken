@@ -5,6 +5,9 @@ use ken_retrieval::{
 };
 use serde::Deserialize;
 use serde_json::Value;
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+#[path = "../../ken-models/tests/support/oracle_profiles.rs"]
+mod profiles;
 #[derive(Deserialize)]
 struct Corpus {
     cases: Vec<Case>,
@@ -146,6 +149,32 @@ fn original_rounding_floor_and_overflow_observations() {
     observe(raw, 22);
 }
 fn platform_reference(family: &str) -> Option<String> {
+    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+    {
+        if family != "alignment" {
+            return None;
+        }
+        let runtime = ken_retrieval::dense_runtime_identity().expect("actual loaded BLAS identity");
+        let descriptor = serde_json::json!({"format":"ken-alignment-profile/1","target":"linux-x86_64","numpy":"2.4.4","core":runtime.core,"threads":runtime.threads,"sha256":runtime.sha256});
+        let repo = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let reference = profiles::registered(family, &descriptor, &repo)
+            .expect("registered original for actual alignment execution profile");
+        use std::io::Read;
+        let mut raw = String::new();
+        match reference.encoding.as_str() {
+            "gzip" => {
+                flate2::read::GzDecoder::new(reference.bytes.as_slice())
+                    .read_to_string(&mut raw)
+                    .unwrap();
+            }
+            "json" => {
+                raw = String::from_utf8(reference.bytes).unwrap();
+            }
+            _ => unreachable!("validated reference encoding"),
+        }
+        Some(raw)
+    }
+    #[cfg(not(all(target_os = "linux", target_arch = "x86_64")))]
     std::env::var_os("KEN_NUMERIC_REFERENCE_DIR").map(|directory| {
         std::fs::read_to_string(
             std::path::PathBuf::from(directory).join(format!("numeric-reference-{family}.json")),
