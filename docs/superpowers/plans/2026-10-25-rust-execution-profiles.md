@@ -26,22 +26,34 @@
 ### Task 1: Original profile captures
 Files: shared std-only CPU capability source/probe under ken-models/tests/support;
 Python profile capture tools/tests; optional profile-capture mode in existing workflow.
-- [ ] RED missing capability/capture protocol; implement effective feature probe,
+- [x] RED missing capability/capture protocol; implement effective feature probe,
   authenticated original20/245 observers, one-thread metadata, strict validation and no-overwrite; GREEN.
-- [ ] First local capture, bounded4CI captures from restored immutable1066source,
+- [x] First local capture, bounded4CI captures from restored immutable1066source,
   inspect/authenticate all, retain originals before native selector implementation.
 
 ### Task 2: Immutable profile registry and native callers
 Files: profile data/index; shared test-support registry; dense_math identity;
 context_encoder/alignment tests; Python registry/host preparation.
-- [ ] RED actual-profile/unknown/tamper/native caller tests; import original data,
+- [x] RED actual-profile/unknown/tamper/native caller tests; import original data,
   reject conflicting descriptors, add native BLAS identity and independent typed selection; GREEN.
-- [ ] Context20/alignment245 and existing edges, strict native suites/fmt/Clippy;
+- [x] Context20/alignment245 and existing edges, strict native suites/fmt/Clippy;
   no tolerance or arithmetic changes.
 
 ### Task 3: Integration and closure
 Files: context_host/workflow/source snapshots; scoped tooling tests; handoff.
-- [ ] RED profile host/packet/source tamper tests→GREEN; full pinned local and x86CI
+- [x] RED profile host/packet/source tamper tests→GREEN; full pinned local and x86CI
   chain on immutable sources, no ignored numerical failures.
-- [ ] One final review/one Important pass; Git-authenticated source and raw receipt,
+- [x] One final review/one Important pass; Git-authenticated source and raw receipt,
   sealed isolated replay, truthful scoped acceptance and remaining migration work; commit/push.
+
+## Completion evidence
+
+Code d49be5af; original CI40248728038 and bounded unknown-only discovery
+CI40251490215; final CI40251790898 both replicas PASS. Local/CI each505tooling
+and195native roots plus fmt/Clippy. One fresh review0Critical/4Important/0Minor;
+one RED→GREEN repair pass26Python/158native. Threecontext/twoalignment profiles
+registered; final native sample exercises22ec/4fd and bothalignment profiles,
+582not exercised by finalhostsample and explicitly scoped inSTATUS.
+Receipt2847members/1286Gitauthsources, sealed isolated replayPASS.
+M4/globalmigration/productionindexportability remain false.
+Raw and own workspace preserved locally per user instruction.

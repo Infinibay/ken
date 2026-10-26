@@ -1347,3 +1347,89 @@ archivados. Su estado dice `diagnosis_tooling_complete=true`,
 `model_acceptance=false`, `CST_CI_acceptance=false`, `migration_complete=false`.
 Las cuatro réplicas de ambas épocas se conservan: la segunda época corrige
 instrumentación, no repite ejecuciones buscando un gate numérico verde.
+
+## Referencias numéricas por perfil de ejecución x86_64
+
+La implementación usa un registro inmutable para elegir referencias originales
+según las capacidades efectivas expuestas al proceso y el backend BLAS realmente
+cargado. El nombre comercial del CPU y la arquitectura por sí solos no eligen la
+referencia. Contexto y alineación son ejes separados; los perfiles desconocidos,
+ambiguos, con referencias alteradas o con un runtime distinto se rechazan.
+La política de un hilo para BLAS se fija solamente en el entorno de validación.
+No cambia la aritmética de producción, los modelos ni las tolerancias.
+
+El CI original40248728038/86e6f7af capturó cuatro observaciones completas antes
+de implementar la selección nativa. Junto con la primera captura local, fueron
+20 historiales de contexto y245 casos de alineación por observación, usando las
+1066 fuentes Python congeladas con fingerprint
+`5b849bf6f01a5915aea972274dba5bd00073bf42efab6563297c2ded0e368038`.
+Los datos Haswell coinciden exactamente con las referencias anteriores: se
+mantienen sus bytes y se referencian directamente desde el registro. Las
+observaciones AVX512/SkylakeX suplementan los datos anteriores. No se reejecutaron
+las raíces pytest originales ni se generaron referencias con resultados Rust.
+
+El primer CI de integración40250394146/66a01448 tuvo una réplica completa
+aprobada y otra rechazada por un descriptor contextual desconocido. Esta última
+no conservó su descriptor debido al orden de escritura del diagnóstico; por lo
+tanto su perfil sigue siendo desconocido y no se atribuye retroactivamente a
+ninguna captura posterior. Se conserva la ejecución fallida.
+
+Una revisión independiente única encontró cuatro problemas Important, reparados
+en una sola pasada RED→GREEN: autenticar el inventario1066 recalculando su
+fingerprint; comprobar los bytes exactos del observador de alineación retenido;
+guardar capacidades/CPU antes del rechazo; y vincular el descriptor ORT al
+registro autoritativo y al runtime nativo autenticado antes de comparar números.
+No quedaron hallazgos Critical/Important/Minor abiertos. La revisión no certificó
+las ejecuciones todavía pendientes: su evidencia se verificó separadamente.
+
+Se amplió explícitamente el presupuesto con una sola tanda original adicional de
+cuatro runners, CI40251490215/ad8ec094. Dos detectaron perfiles conocidos y no
+repitieron mediciones originales. Dos encontraron el mismo perfil nuevo,
+`4fd097c7c15ded15e3459b7ae1aabe90f9d2c6d3618857ae0be8e4f51bb6a1f0`:
+AVX512/VNNI disponible, AVX_VNNI ausente. Sus20 historiales completos y245 casos
+coincidieron entre sí. Los valores contextuales coinciden exactamente con la
+referencia moderna existente, por lo que el nuevo descriptor la referencia sin
+duplicar el archivo. Quedaron tres perfiles contextuales y dos de alineación.
+El presupuesto de captura de esta etapa está consumido; no repetir buscando un
+CI verde. Conservar todas las capturas y rechazos.
+
+La versión de código final es `d49be5af60736ea8f4c2f33e4c232c437da117fc`.
+Los paquetes registran el perfil antes de los cálculos; Rust detecta sus propias
+capacidades y su BLAS independientemente. El replay usa las identidades grabadas,
+sin detectar la CPU del equipo que verifica el archivo. Los snapshots incluyen
+el registro, referencias, helpers y herramientas. La documentación de la tanda
+previa que declaraba pendiente el bloque numérico queda superada solamente en el
+alcance que confirmen los paquetes finales de esta sección.
+
+La cadena final local y el CI40251790898 aprobaron todos los bloques con la
+misma versión de código:505 raíces de herramientas y195 raíces nativas por host,
+más formato y Clippy. Las dos réplicas de CI aprobaron contexto/Ettin/vistas/
+preferencias/CST, sin ignorar errores numéricos. Los hosts finales ejercitaron
+contexto22ec (Haswell) y4fd (AVX512), y ambos perfiles de alineación. El descriptor
+582 sigue registrado por sus observaciones originales completas, pero no fue
+seleccionado por los hosts de esta última tanda nativa; STATUS lo identifica
+explícitamente y no certifica una ejecución completa adicional para ese perfil.
+
+Recibo local `docs/validation/rust-migration-2026-10-25/execution-profiles`:
+2847 miembros,1286 fuentes autenticadas por Git. FILES SHA256
+`c52c2bdb14237d4e77f822de5367613f22df337556590da5325e7c03e2e26cb4`.
+Transporte `.ken/rust-migration/archives/execution-profiles-d49be5af.tar.gz`,
+218119397 bytes, SHA256
+`b535c28b03613d7cb880efdd32d0c6056a3c6305d2e670f88e10d47024f7417c`.
+La extracción `/tmp/ken-execution-profiles-zm4pg7sk/execution-profiles` pasó
+replay aislado con sus propias fuentes y validadores, verificando los tres
+paquetes, las siete observaciones originales y todos los orígenes del registro.
+No requiere detectar la CPU del replay ni usar el checkout vivo.
+
+El estado declara `execution_profile_validation_complete=true`,
+`CST_CI_acceptance=true`, `M4_accepted=false`, `migration_complete=false`.
+La aceptación es la de los hosts y el alcance declarados; los perfiles futuros
+sin registrar siguen siendo errores. Todos los recibos y workspaces quedan
+locales y fuera de Git, como pidió el usuario.
+
+
+Siguen pendientes el backend Python AST, el router completo OperationWitnesses,
+SymbolRanker/PieceSearch completos, otros modelos y la aceptación M4/global.
+La portabilidad de índices entre perfiles y las políticas arbitrarias de hilos
+de producción no quedan aceptadas por esta validación. El trabajo sigue acotado
+a Linux x86_64; no se cambia la aplicación Python instalada ni se certifica ARM/macOS.
