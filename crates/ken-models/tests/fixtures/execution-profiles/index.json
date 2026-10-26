@@ -86,6 +86,65 @@
         ]
       },
       {
+        "id": "4fd097c7c15ded15e3459b7ae1aabe90f9d2c6d3618857ae0be8e4f51bb6a1f0",
+        "descriptor": {
+          "format": "ken-context-profile/1",
+          "target": "linux-x86_64",
+          "features": {
+            "sse41": true,
+            "avx": true,
+            "avx2": true,
+            "fma": true,
+            "f16c": true,
+            "avx512f": true,
+            "avx512bw": true,
+            "avx512dq": true,
+            "avx512vl": true,
+            "avx512vnni": true,
+            "avx_vnni": false,
+            "avx_vnni_int8": false,
+            "amx_tile_hardware": false,
+            "amx_int8_hardware": false,
+            "hybrid": false
+          },
+          "native_core_sha256": "c450a686085f441803ef914fc7e68bd417452e34ba5573344dc3dd40c0c71896",
+          "onnxruntime": "1.25.1",
+          "tokenizers": "0.22.2"
+        },
+        "reference": {
+          "path": "crates/ken-models/tests/fixtures/execution-profiles/context-582ea68be0f5ac92ce270ffb43c9b5b3c6c5298af92a62f15c9f3117ea5b7a58.json",
+          "encoding": "json",
+          "bytes": 936008,
+          "sha256": "b57107014f9ad7c6900f52849719f7b5fc1363dcfb43badf080a5bc63e9f6fd8"
+        },
+        "origins": [
+          {
+            "candidate": "ad8ec09413f90bb42426902aa8b27aa7aca30cb1",
+            "capture": {
+              "bytes": 9636,
+              "sha256": "2c4373d770ea95ec1025ddceec4e41a678f40f2fb8af1222951c2deec23987e3"
+            },
+            "original": {
+              "bytes": 936009,
+              "sha256": "81d0a5fe219ff0de8fee034c104bd8a34acc18c2e5b1b95978ef248f40a77fe0"
+            },
+            "reference_fingerprint": "5b849bf6f01a5915aea972274dba5bd00073bf42efab6563297c2ded0e368038"
+          },
+          {
+            "candidate": "ad8ec09413f90bb42426902aa8b27aa7aca30cb1",
+            "capture": {
+              "bytes": 9384,
+              "sha256": "3cfde690197b0f8dcdcd2608cf6256fcd5bdfbfd9e6b9c8dc5b0c3f6f7a20971"
+            },
+            "original": {
+              "bytes": 936011,
+              "sha256": "c7bbdaddf1f4f7b9332f9b0ef2e540ebb8432f528a2ea374c2c4f20baceab226"
+            },
+            "reference_fingerprint": "5b849bf6f01a5915aea972274dba5bd00073bf42efab6563297c2ded0e368038"
+          }
+        ]
+      },
+      {
         "id": "582ea68be0f5ac92ce270ffb43c9b5b3c6c5298af92a62f15c9f3117ea5b7a58",
         "descriptor": {
           "format": "ken-context-profile/1",
@@ -156,6 +215,30 @@
             "capture": {
               "bytes": 9754,
               "sha256": "b16ca1cf417abdef208b0ba09f219a8a27b03f9cc4b9c04c1e041d175ce1c5d5"
+            },
+            "original": {
+              "bytes": 6488254,
+              "sha256": "2787d04571ae908a65dce636202f981c1989a76bf9ecb81a67a1743df6c04ec0"
+            },
+            "reference_fingerprint": "5b849bf6f01a5915aea972274dba5bd00073bf42efab6563297c2ded0e368038"
+          },
+          {
+            "candidate": "ad8ec09413f90bb42426902aa8b27aa7aca30cb1",
+            "capture": {
+              "bytes": 9636,
+              "sha256": "2c4373d770ea95ec1025ddceec4e41a678f40f2fb8af1222951c2deec23987e3"
+            },
+            "original": {
+              "bytes": 6488254,
+              "sha256": "2787d04571ae908a65dce636202f981c1989a76bf9ecb81a67a1743df6c04ec0"
+            },
+            "reference_fingerprint": "5b849bf6f01a5915aea972274dba5bd00073bf42efab6563297c2ded0e368038"
+          },
+          {
+            "candidate": "ad8ec09413f90bb42426902aa8b27aa7aca30cb1",
+            "capture": {
+              "bytes": 9384,
+              "sha256": "3cfde690197b0f8dcdcd2608cf6256fcd5bdfbfd9e6b9c8dc5b0c3f6f7a20971"
             },
             "original": {
               "bytes": 6488254,
