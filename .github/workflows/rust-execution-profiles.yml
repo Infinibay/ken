@@ -1,0 +1,105 @@
+name: Independent original x86 execution profiles
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/rust-migration]
+    paths: ['.github/workflows/rust-execution-profiles.yml']
+permissions:
+  contents: read
+jobs:
+  diagnostic:
+    strategy:
+      fail-fast: false
+      matrix:
+        replica: [1, 2, 3, 4]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CARGO_BUILD_JOBS: '2'
+      CARGO_INCREMENTAL: '0'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+      RUST_TEST_THREADS: '1'
+      CMAKE_PARALLEL: '2'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/restore-validation-fixtures
+      - uses: astral-sh/setup-uv@v5
+      - name: Prepare the same locked environment and authenticated CPU core
+        shell: bash
+        run: |
+          uv python install 3.12.9 --no-bin
+          uv sync --locked --dev --extra torch --python 3.12.9 --managed-python
+          uv pip install --python .venv/bin/python cmake==3.31.10
+          rustup toolchain install 1.95.0 --profile minimal
+          sudo apt-get update
+          sudo apt-get install --yes build-essential pkg-config
+          mkdir -p .ken/context-x86-diagnostic
+          curl --fail --location --silent --show-error \
+            https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.26/OpenBLAS-0.3.26.tar.gz \
+            --output .ken/context-x86-diagnostic/OpenBLAS-0.3.26.tar.gz
+          .venv/bin/python -m tools.rust_migration.translation_build prepare-openblas \
+            --archive "$PWD/.ken/context-x86-diagnostic/OpenBLAS-0.3.26.tar.gz" \
+            --destination "$PWD/.ken/context-x86-diagnostic/openblas"
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import cmake,os
+          from tools.rust_migration.preparation import PreparedTranslationBuild
+          from tools.rust_migration.native_core_prepare import prepare_native_cores
+          root=Path.cwd()
+          prepare_native_cores(root,root/'.ken/context-x86-diagnostic/archives',root/'.ken/context-x86-diagnostic/sdk',target=('linux','x86_64'))
+          values=PreparedTranslationBuild(Path(cmake.__file__).parent/'data/bin/cmake',root/'.ken/context-x86-diagnostic/openblas').environment()
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              for name,value in values.items():stream.write(name+'='+value+'\n')
+          PY
+      - name: Prepare pinned numerical model and ILP64 data
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PYCODE'
+          from pathlib import Path
+          import json,numpy,os,shutil,subprocess
+          from ken.model_assets import ModelAssets
+          from tools.rust_migration.native_json import identity
+          from tools.rust_migration.retrieval_validate import runtime_files
+          from tools.rust_migration.context_reference import snapshot_state
+          root=Path.cwd();base=root/'.ken/context-x86-diagnostic'
+          definition=json.loads((root/'src/ken/embedder/data/code-context-int8.json').read_bytes())
+          snapshot=ModelAssets.from_dict(definition).resolve(cache_dir=base/'models',local_files_only=False)
+          snapshot_state(snapshot,definition)
+          dense=base/'dense-blas';dense.mkdir()
+          source=Path(numpy.__file__).parent.parent/'numpy.libs'
+          for name,pin in runtime_files(root,'x86_64').items():
+              assert identity(source/name)==pin,name
+              shutil.copyfile(source/name,dense/name)
+          (base/'build-environment.json').write_text(json.dumps(dict(candidate=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),cpuinfo=Path('/proc/cpuinfo').read_text(),note='DIAGNOSTIC ONLY: capture success is not model acceptance.'),indent=2)+'\n')
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              stream.write('KEN_CONTEXT_SNAPSHOT='+str(snapshot)+'\n')
+              stream.write('KEN_DENSE_BLAS_DIR='+str(dense)+'\n')
+          PYCODE
+      - name: Restore immutable original and capture complete execution profile
+        shell: bash
+        run: |
+          rustc --edition=2024 crates/ken-models/tests/support/x86_features_probe.rs \
+            -o .ken/context-x86-diagnostic/x86-features-probe
+          .venv/bin/python - <<'PYCODE'
+          from pathlib import Path
+          import sys
+          from tools.rust_migration.portable_reference import restore_portable
+          root=Path.cwd();base=root/'.ken/context-x86-diagnostic'
+          restore_portable(root,root/'docs/validation/rust-migration-2026-10-23/handoff',reference=base/'original',progress=base/'historical-progress',python=Path(sys.executable))
+          PYCODE
+          .venv/bin/python -B -m tools.rust_migration.execution_profiles capture \
+            --repo "$PWD" --reference "$PWD/.ken/context-x86-diagnostic/original" \
+            --snapshot "$KEN_CONTEXT_SNAPSHOT" \
+            --probe "$PWD/.ken/context-x86-diagnostic/x86-features-probe" \
+            --out "$PWD/.ken/context-x86-diagnostic/profile-original"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: execution-profile-original-${{ matrix.replica }}
+          path: .ken/context-x86-diagnostic/profile-original/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
