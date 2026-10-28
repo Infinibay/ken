@@ -150,6 +150,9 @@ impl PieceAssembler {
         if limit == 0 {
             return Err(invalid("positive piece candidate limit required"));
         }
+        if !self.descriptions.belongs_to(&self.catalog) {
+            return Err(invalid("piece descriptions belong to a different catalog"));
+        }
         let mut groups: Vec<(PieceIdentity, Vec<CodeMatch>)> = Vec::new();
         let mut lookup = HashMap::new();
         for matched in matches {

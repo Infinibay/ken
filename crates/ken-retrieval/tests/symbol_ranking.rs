@@ -202,3 +202,39 @@ fn production_ettin_symbol_ranker_matches_three_original_compositions() {
         }
     }
 }
+#[test]
+fn replaced_assembly_cache_rejects_foreign_catalog_metadata() {
+    let data = corpus()["cases"][0]["input"].clone();
+    let mut foreign = data.clone();
+    foreign["physical"]["owners"][0]["passages"][0]["fields"]["signature"] =
+        "foreign canonical signature".into();
+    let input: support::Input = serde_json::from_value(data).unwrap();
+    let foreign: support::Input = serde_json::from_value(foreign).unwrap();
+    let (_dir, catalog) = support::catalog(input.physical).unwrap();
+    let catalog = Arc::new(catalog);
+    let (_other_dir, other) = support::catalog(foreign.physical).unwrap();
+    let other = Arc::new(other);
+    let key = &input.keys[0];
+    let passages = catalog.passages(key).unwrap();
+    let matched = ken_retrieval::query::CodeMatch {
+        entity: key.clone(),
+        score: 1.,
+        evidence: passages.to_vec(),
+        source_hash: passages[0].source_hash.clone(),
+        signals: Default::default(),
+        owned_regions: vec![],
+    };
+    let mut replacement = OwnerDescriptions::new(other);
+    let description = replacement.get(key).unwrap();
+    assert_ne!(
+        description.fields["signature"],
+        ken_retrieval::description::describe_owner(passages)
+            .unwrap()
+            .fields["signature"]
+    );
+    let mut assembler = PieceAssembler::new(catalog);
+    *assembler.descriptions_mut() = replacement;
+    let error = assembler.assemble(&[matched], "symbol", 10).unwrap_err();
+    assert!(error.to_string().contains("different catalog"), "{error}");
+    assert_eq!(assembler.cache_len(), 1);
+}
