@@ -1,5 +1,15 @@
 # Continuar y terminar la migración a Rust
 
+Preferencia de ejecución vigente, indicada explícitamente por el usuario:
+implementar bloques funcionales más grandes y separar bastante más las
+validaciones. Al cerrar cada bloque, ejecutar una validación conjunta del alcance
+afectado; evitar encadenar suites completas, Clippy, CI y replay después de cada
+cambio pequeño o commit. Repetir comprobaciones puntuales cuando un fallo concreto
+o un cambio posterior lo justifique. Agrupar la matriz amplia y los archivos de
+evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de los
+planes anteriores; conserva los criterios de corrección y las referencias
+originales. Mantener el foco de implementación en Linux x86_64.
+
 Actualización posterior del 28/10: `ken-rs search-files`, `search-symbols` y
 `mcp` ya tienen implementación nativa para la búsqueda por defecto/compacta en
 Linux x86_64. Comparten `SearchApplication`, recursos explícitos y carga diferida
