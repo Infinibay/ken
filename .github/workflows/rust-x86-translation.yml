@@ -1,0 +1,200 @@
+name: Native Linux x86 query expansion
+on:
+  push:
+    branches: [codex/rust-migration]
+    paths: ['.github/workflows/rust-x86-translation.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  translation:
+    strategy:
+      fail-fast: false
+      matrix:
+        replica: [1, 2]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CARGO_BUILD_JOBS: '2'
+      CARGO_INCREMENTAL: '0'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+      CMAKE_PARALLEL: '2'
+      RUST_TEST_THREADS: '1'
+      CARGO_TERM_COLOR: never
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/restore-validation-fixtures
+      - uses: astral-sh/setup-uv@v5
+      - name: Prepare locked CPU validation tools
+        shell: bash
+        run: |
+          uv python install 3.12.9 --no-bin
+          uv sync --locked --dev --extra torch --python 3.12.9 --managed-python
+          uv pip install --python .venv/bin/python cmake==3.31.10
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          .venv/bin/python - <<'PY'
+          import cmake, os, platform, sqlite3
+          from pathlib import Path
+          assert (platform.python_version(),sqlite3.sqlite_version)==('3.12.9','3.47.1')
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              stream.write('CMAKE='+str(Path(cmake.__file__).parent/'data/bin/cmake')+'\n')
+          PY
+      - name: Prepare Linux build and process auditing
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes strace zstd build-essential pkg-config
+          mkdir -p .ken/rust-migration/native-core-build
+          curl --fail --location --silent --show-error \
+            https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.26/OpenBLAS-0.3.26.tar.gz \
+            --output .ken/rust-migration/native-core-build/OpenBLAS-0.3.26.tar.gz
+          .venv/bin/python -m tools.rust_migration.translation_build prepare-openblas \
+            --archive "$PWD/.ken/rust-migration/native-core-build/OpenBLAS-0.3.26.tar.gz" \
+            --destination "$PWD/.ken/rust-migration/native-core-build/openblas"
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import os
+          from tools.rust_migration.preparation import PreparedTranslationBuild
+          values=PreparedTranslationBuild(Path(os.environ['CMAKE']),Path.cwd()/'.ken/rust-migration/native-core-build/openblas').environment()
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              for name,value in values.items():stream.write(name+'='+value+'\n')
+          PY
+      - name: Prepare authenticated native SDK data
+        shell: bash
+        run: |
+          cargo fetch --locked
+          cargo fetch --locked --manifest-path native/ken-torch-backend/Cargo.toml
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import platform
+          from tools.rust_migration.native_core_prepare import prepare_native_cores
+          from tools.rust_migration.native_platform import native_target
+          root=Path.cwd()
+          prepare_native_cores(root,root/'.ken/rust-migration/native-core-archives',root/'.ken/rust-migration/native-core-sdk',target=native_target(platform.system(),platform.machine()))
+          PY
+      - name: Prepare pinned contextual model data
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import json, os
+          from ken.model_assets import ModelAssets
+          from tools.rust_migration.context_reference import snapshot_state
+          root=Path.cwd()
+          definition=json.loads((root/'src/ken/embedder/data/code-context-int8.json').read_bytes())
+          snapshot=ModelAssets.from_dict(definition).resolve(cache_dir=root/'.ken/rust-migration/context-data',local_files_only=False)
+          snapshot_state(snapshot,definition)
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              stream.write('KEN_CONTEXT_SNAPSHOT='+str(snapshot)+'\n')
+          PY
+      - name: Prepare pinned Ettin source data
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import json, os
+          from ken.model_assets import ModelAssets
+          from tools.rust_migration.ettin_reference import source_state
+          root=Path.cwd()
+          definition=json.loads((root/'crates/ken-models/resources/ettin-68m-fp32.json').read_bytes())
+          source=ModelAssets.from_dict(definition['source']).resolve(cache_dir=root/'.ken/rust-migration/ettin-data',local_files_only=False)
+          source_state(source,definition['source'])
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              stream.write('KEN_ETTIN_SOURCE='+str(source)+'\n')
+          PY
+      - name: Prepare pinned Potion source data
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import json, os
+          from ken.model_assets import ModelAssets
+          root=Path.cwd()
+          definition=json.loads((root/'crates/ken-models/resources/potion-code-16M-v2.json').read_bytes())
+          source=ModelAssets.from_dict(definition).resolve(cache_dir=root/'.ken/rust-migration/potion-data',local_files_only=False)
+          ModelAssets.from_dict(definition).verify(source)
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              stream.write('KEN_POTION_SOURCE='+str(source)+'\n')
+              stream.write('KEN_POTION_SNAPSHOT='+str(source)+'\n')
+          PY
+      - name: Prepare authenticated x86 retrieval libraries
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import json,numpy,os,shutil
+          from tools.rust_migration.native_json import identity
+          from tools.rust_migration.retrieval_validate import runtime_files
+          from tools.rust_migration.grammar_prepare import prepare_grammars
+          root=Path.cwd();base=root/'.ken/rust-migration/retrieval-data'
+          dense=base/'dense-blas';dense.mkdir(parents=True)
+          source=Path(numpy.__file__).parent.parent/'numpy.libs'
+          for name,record in runtime_files(root,'x86_64').items():
+              assert identity(source/name)==record,name
+              shutil.copyfile(source/name,dense/name)
+          grammar=base/'grammars'
+          prepare_grammars(json.loads((root/'crates/ken-syntax/grammars.lock.json').read_bytes()),base/'archives',grammar)
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              stream.write('KEN_DENSE_BLAS_DIR='+str(dense)+'\n')
+              stream.write('KEN_GRAMMAR_MANIFEST='+str(grammar/'manifest.json')+'\n')
+          PY
+      - name: Prepare registered CT2 module and native model test inputs
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PYTHON'
+          from pathlib import Path
+          import json,os,subprocess
+          from tools.rust_migration.translation_cpu_prepare import prepare
+          from tools.rust_migration.translation_cpu_build import build
+          from tools.rust_migration.transformer_prepare import prepare_tokenizer_sources
+          from tools.rust_migration.transformer_cores import transformer_core
+          from ken.model_assets import ModelAssets
+          root=Path.cwd();base=root/'.ken/rust-migration/x86-translation'
+          sdk=base/'ct2-sdk';backend=base/'ct2-backend'
+          prepare(root,base/'archives',sdk);build(root,sdk,backend,cmake=Path(os.environ['CMAKE']))
+          definition=json.loads((root/'src/ken/embedder/data/es-en-ct2-int8.json').read_bytes())
+          source=ModelAssets.from_dict(definition['source']).resolve(cache_dir=base/'translation-source',local_files_only=False)
+          ModelAssets.from_dict(definition['source']).verify(source)
+          ready=json.loads((root/'.ken/rust-migration/native-core-sdk/PREPARATION.json').read_bytes())
+          core=Path(ready['prepared']['torch_core']);target=base/'torch-target'
+          environment=os.environ.copy();environment.update(LIBTORCH=str(core),LIBTORCH_CXX11_ABI='1',CARGO_TARGET_DIR=str(target))
+          environment.pop('LIBTORCH_USE_PYTORCH',None);environment.pop('LIBTORCH_BYPASS_VERSION_CHECK',None)
+          with (base/'torch-build.log').open('wb')as output:
+              subprocess.run(['cargo','build','--locked','--offline','--manifest-path','native/ken-torch-backend/Cargo.toml'],env=environment,stdout=output,stderr=subprocess.STDOUT,check=True)
+          torch=transformer_core(json.loads((root/'tools/rust_migration/data/transformer-cores.json').read_bytes()),'Linux','x86_64','torch')
+          record=base/'torch-test-preparation.json';record.write_text(json.dumps(dict(libraries=[dict(name=Path(name).name,**row)for name,row in torch['libraries'].items()]),indent=2)+'\n')
+          metadata=prepare_tokenizer_sources(root/'crates/ken-models/resources/transformer-catalog.json',base/'metadata')
+          values=dict(KEN_CT2_SDK=str(sdk),KEN_CT2_PREPARATION=str(backend/'PREPARATION.json'),KEN_TRANSLATION_SOURCE=str(source),
+              KEN_ORT_LIBRARY=ready['prepared']['onnx_library'],KEN_TORCH_CORE=str(core),KEN_TORCH_MODULE=str(target/'debug/libken_torch_backend.so'),
+              KEN_TORCH_PREPARATION=str(record),KEN_TRANSFORMER_SOURCE_ROOT=str(metadata))
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              for key,value in values.items():stream.write(key+'='+value+'\n')
+          PYTHON
+      - name: Validate frozen original and complete native-only histories
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PYTHON'
+          from pathlib import Path
+          import os
+          from tools.rust_migration.x86_translation_host import run_host,verify_host
+          root=Path.cwd();base=root/'.ken/rust-migration/x86-translation';out=base/'host'
+          run_host(root,out,Path(os.environ['KEN_TRANSLATION_SOURCE']),Path(os.environ['KEN_CT2_SDK']),Path(os.environ['KEN_CT2_PREPARATION']).parent)
+          assert not verify_host(out,root)
+          PYTHON
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: x86-translation-${{ matrix.replica }}-${{ github.run_attempt }}
+          path: |
+            .ken/rust-migration/x86-translation/host/
+            .ken/rust-migration/x86-translation/ct2-backend/*.stdout
+            .ken/rust-migration/x86-translation/ct2-backend/*.stderr
+            .ken/rust-migration/x86-translation/torch-build.log
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
