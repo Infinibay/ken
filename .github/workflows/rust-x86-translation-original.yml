@@ -8,7 +8,12 @@ permissions:
   contents: read
 jobs:
   observe:
-    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-22.04]
+        replica: [1, 2]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     steps:
       - name: Admit only the previously unobserved Intel backend
@@ -22,26 +27,50 @@ jobs:
           cpu=Path('/proc/cpuinfo').read_text();vendors=set(re.findall(r'^vendor_id\s*:\s*(\S+)',cpu,re.M))
           suitable=vendors=={'GenuineIntel'}
           (out/'CPUINFO.txt').write_text(cpu)
+          (out/'CLAIM.json').write_text(json.dumps(dict(candidate=os.environ['GITHUB_SHA'],run=os.environ['GITHUB_RUN_ID'],attempt=os.environ['GITHUB_RUN_ATTEMPT'],runner=os.environ['RUNNER_NAME'],vendors=sorted(vendors)),indent=2)+'\n')
           (out/'STATUS.json').write_text(json.dumps(dict(state='new-intel-profile-awaiting-observation'if suitable else 'different-hardware-no-original-executed',vendors=sorted(vendors)),indent=2)+'\n')
           with open(os.environ['GITHUB_OUTPUT'],'a')as stream:stream.write('suitable='+str(suitable).lower()+'\n')
           PY
-      - uses: actions/checkout@v4
+      - name: Claim the one permitted Intel observation
+        id: lease
         if: steps.cpu.outputs.suitable == 'true'
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
+        with:
+          name: ct2-intel-original-observation-lease
+          path: ${{ runner.temp }}/ct2-intel-original/CLAIM.json
+          overwrite: false
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain allocations that did not acquire observation ownership
+        if: steps.cpu.outputs.suitable == 'true' && steps.lease.outcome != 'success'
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,os
+          out=Path(os.environ['RUNNER_TEMP'])/'ct2-intel-original'
+          (out/'STATUS.json').write_text(json.dumps(dict(state='no-observation-lease-no-original-executed'),indent=2)+'\n')
+          PY
+      - uses: actions/checkout@v4
+        if: steps.cpu.outputs.suitable == 'true' && steps.lease.outcome == 'success'
         with:
           fetch-depth: 0
       - uses: ./.github/actions/restore-validation-fixtures
-        if: steps.cpu.outputs.suitable == 'true'
+        if: steps.cpu.outputs.suitable == 'true' && steps.lease.outcome == 'success'
       - uses: astral-sh/setup-uv@v5
-        if: steps.cpu.outputs.suitable == 'true'
+        if: steps.cpu.outputs.suitable == 'true' && steps.lease.outcome == 'success'
       - name: Prepare locked observer and registered translation data
-        if: steps.cpu.outputs.suitable == 'true'
+        if: steps.cpu.outputs.suitable == 'true' && steps.lease.outcome == 'success'
         shell: bash
         run: |
           uv python install 3.12.9 --no-bin
           uv sync --locked --dev --python 3.12.9 --managed-python
       - name: Observe exactly the new Intel histories and retain their immediate journal
-        if: steps.cpu.outputs.suitable == 'true'
+        if: steps.cpu.outputs.suitable == 'true' && steps.lease.outcome == 'success'
         shell: bash
+        env:
+          OBSERVATION_LEASE: ${{ steps.lease.outputs.artifact-id }}
         run: |
           .venv/bin/python - <<'PY'
           from pathlib import Path
@@ -55,6 +84,10 @@ jobs:
           from tools.rust_migration.native_json import identity
           import importlib.util
           root=Path.cwd();out=Path(os.environ['RUNNER_TEMP'])/'ct2-intel-original'
+          assert not(root/'crates/ken-models/tests/fixtures/translation-linux-x86_64-mkl.json.gz').exists(),'Intel original already preserved; do not observe it again'
+          claim=json.loads((out/'CLAIM.json').read_bytes())
+          assert claim['candidate']==subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert os.environ['OBSERVATION_LEASE'].isdigit(),'one immutable observation lease required'
           restored=restore_portable(root,root/'docs/validation/rust-migration-2026-10-23/handoff',reference=root/'.ken/ct2-intel-reference',progress=root/'.ken/ct2-intel-history',python=Path(sys.executable))
           reference=restored.reference;authenticate_frozen(reference)
           package=Path(importlib.util.find_spec('ctranslate2').origin).parent.parent/'ctranslate2.libs'
@@ -72,6 +105,8 @@ jobs:
               candidate=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),observer_sha256=observed['observer_sha256'],reference_fingerprint=reference.fingerprint,
               runtime=observed['oracle']['runtime'],histories=len(observed['results']))
           binding['core_libraries']=core
+          binding['lease_artifact_id']=int(os.environ['OBSERVATION_LEASE'])
+          binding['allocation']=claim
           assert binding['histories']==29
           (out/'BINDING.json').write_text(json.dumps(binding,indent=2)+'\n')
           (out/'STATUS.json').write_text(json.dumps(dict(state='new-intel-original29-observed',accepted=False),indent=2)+'\n')
@@ -79,7 +114,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: ct2-intel-original-${{ github.run_attempt }}
+          name: ct2-intel-original-${{ matrix.os }}-${{ matrix.replica }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/ct2-intel-original/
           include-hidden-files: true
           if-no-files-found: error
