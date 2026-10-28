@@ -10,6 +10,21 @@ fuera del checkout está en curso; esto no cierra M4 ni el MCP completo de M7.
 CT2 x86 tiene implementación CPU y validación local AMD; siguen pendientes las
 observaciones originales Intel/MKL y su matriz de aceptación.
 
+Estado del código público `ccfcdb7e`: pasan localmente 239 raíces Rust y 21 de
+herramientas, formato y Clippy estricto. La copia fuera del checkout pasa 11
+pruebas con 30 procesos CLI/MCP; conserva entradas, salidas, carga de bibliotecas
+y parentesco de procesos. El replay aislado con sus validadores archivados pasa.
+Archivo local de fuentes: 21.403.196 bytes, SHA-256
+`ef46ee75697905ea3fa60a1113a37f038a0fde5b8b00439c8e53a2220b059c62`.
+La revisión independiente detectó y se corrigió la diferencia entre consultas
+Unicode literales y escapadas en MCP, conservando los sustitutos aislados.
+Queda diferida una mejora menor: el error de instalación debe indicar cómo
+reparar el manifest nativo, en lugar de sugerir sólo preparar modelos/índice.
+La matriz pública final sigue en calificación (CI `40784047558`); una réplica del
+código anterior pasó y otra reprodujo el desacuerdo numérico ya pendiente de
+SkylakeX. No relajar scores, reutilizar ese recibo para fuentes nuevas ni marcar
+este bloque como aceptado hasta completar sus contrastes y réplicas.
+
 Actualización del 28/10: `BestSearch` y la preparación contextual están implementados
 como biblioteca. La cadena completa pasa localmente y en una réplica CI Haswell;
 la réplica SkylakeX presenta una diferencia numérica pendiente de contraste con
