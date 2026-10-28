@@ -12,10 +12,17 @@ path = "src/main.rs"
 
 [dependencies]
 ken-core = { path = "../ken-core" }
+ken-search = { path = "../ken-search" }
+ken-retrieval = { path = "../ken-retrieval" }
 clap.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
 
 [dev-dependencies]
+ken-index = { path = "../ken-index" }
+ken-store = { path = "../ken-store" }
+ken-syntax = { path = "../ken-syntax" }
+flate2.workspace = true
+sha2.workspace = true
 rusqlite.workspace = true
 tempfile.workspace = true

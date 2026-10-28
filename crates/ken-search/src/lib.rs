@@ -22,3 +22,4 @@ pub use registered::RegisteredSearchResources;
 mod context_encoder;
 mod installation;
 pub use installation::{InstallationError, SearchInstallation};
+pub mod public;

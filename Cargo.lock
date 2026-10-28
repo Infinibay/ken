@@ -854,9 +854,16 @@ name = "ken-cli"
 version = "0.18.0"
 dependencies = [
  "clap",
+ "flate2",
  "ken-core",
+ "ken-index",
+ "ken-retrieval",
+ "ken-search",
+ "ken-store",
+ "ken-syntax",
  "rusqlite",
  "serde_json",
+ "sha2",
  "tempfile",
  "thiserror",
 ]
