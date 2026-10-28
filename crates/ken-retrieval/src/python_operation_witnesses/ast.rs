@@ -13,7 +13,10 @@ pub struct PythonFile {
 }
 impl PythonFile {
     pub fn parse(source: String) -> Option<Self> {
-        if source.contains('\0') {
+        if source.contains('\0')
+            || source.starts_with('\u{feff}')
+            || !super::admission::lexical_limits(&source)
+        {
             return None;
         }
         let parsed = parse_unchecked(
@@ -53,12 +56,7 @@ impl PythonFile {
         let py::Mod::Module(module) = parsed.into_syntax() else {
             return None;
         };
-        let mut admission = Admission {
-            source: &source,
-            valid: true,
-        };
-        admission.visit_body(&module.body);
-        if !admission.valid {
+        if !super::admission::syntax(&module, &source) {
             return None;
         }
         Some(Self {
@@ -81,18 +79,6 @@ impl PythonFile {
         } else {
             None
         }
-    }
-}
-struct Admission<'a> {
-    source: &'a str,
-    valid: bool,
-}
-impl<'a> Visitor<'a> for Admission<'_> {
-    fn visit_string_literal(&mut self, literal: &'a py::StringLiteral) {
-        self.valid &= ken_syntax::decode_python_string_literal(
-            &self.source[literal.range.start().to_usize()..literal.range.end().to_usize()],
-        )
-        .is_some();
     }
 }
 struct Find<'s, 'a> {

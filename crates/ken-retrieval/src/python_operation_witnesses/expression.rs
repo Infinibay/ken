@@ -98,9 +98,6 @@ fn string_kind(literal: &py::StringLiteral, s: &str) -> Option<&'static str> {
     raw(s, literal.range).starts_with('u').then_some("u")
 }
 fn append_text(out: &mut Vec<Value>, points: Vec<u32>, kind: Option<&str>) {
-    if points.is_empty() {
-        return;
-    }
     if let Some(last) = out.last_mut()
         && last[0] == "Constant"
         && last[1] == "Str"
@@ -112,6 +109,15 @@ fn append_text(out: &mut Vec<Value>, points: Vec<u32>, kind: Option<&str>) {
         return;
     }
     out.push(text_key(points, kind));
+}
+// An empty constant can carry `kind="u"` into the next contiguous text.
+// Drop it only when a formatted value or the JoinedStr end closes the run.
+fn close_text(out: &mut Vec<Value>) {
+    if out.last().is_some_and(|v| {
+        v[0] == "Constant" && v[1] == "Str" && v[2].as_array().is_some_and(Vec::is_empty)
+    }) {
+        out.pop();
+    }
 }
 fn segment(raw: &str, is_raw: bool) -> Option<Vec<u32>> {
     let raw = raw
@@ -128,7 +134,8 @@ fn segment(raw: &str, is_raw: bool) -> Option<Vec<u32>> {
         match c {
             '\\' => {
                 quoted.push(c);
-                quoted.push(chars.next()?);
+                // A backslash immediately before an interpolation is literal.
+                quoted.push(chars.next().unwrap_or('\\'));
             }
             '"' => quoted.push_str("\\\""),
             _ => quoted.push(c),
@@ -175,10 +182,12 @@ fn elements(
                 let format = if let Some(spec) = &i.format_spec {
                     let mut parts = Vec::new();
                     elements(&spec.elements, s, is_raw, &mut parts)?;
+                    close_text(&mut parts);
                     json!(["JoinedStr", parts])
                 } else {
                     Value::Null
                 };
+                close_text(out);
                 out.push(json!([
                     "FormattedValue",
                     key(&i.expression, s)?,
@@ -312,6 +321,7 @@ fn key(e: &Expr, s: &str) -> Option<Value> {
                     }
                 }
             }
+            close_text(&mut parts);
             json!(["JoinedStr", parts])
         }
         Expr::TString(_) | Expr::IpyEscapeCommand(_) => return None,

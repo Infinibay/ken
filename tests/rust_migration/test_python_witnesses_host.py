@@ -28,7 +28,7 @@ def packet(tmp_path):
 def test_actual_python_capture_is_input_only_and_native(packet):
     from tools.rust_migration.python_witnesses_host import verify_capture
     assert not verify_capture(packet,ROOT)
-@pytest.mark.parametrize('change',['input-answer','witness','owner','binary','owned','grammar','original','compat','parent'])
+@pytest.mark.parametrize('change',['input-answer','witness','owner','binary','owned','grammar','original','compat','review','parent'])
 def test_resealed_python_capture_rejects(packet,change):
     from tools.rust_migration.python_witnesses_host import verify_capture
     from tools.rust_migration.native_json import identity
@@ -47,5 +47,6 @@ def test_resealed_python_capture_rejects(packet,change):
         (out/'grammar-manifest').write_text('{}');record['owned_before']['grammar-manifest']=identity(out/'grammar-manifest');record['owned_after']['grammar-manifest']=identity(out/'grammar-manifest')
     elif change=='original':(out/'ORIGINAL.json.gz').write_bytes(b'changed')
     elif change=='compat':(out/'COMPAT.json.gz').write_bytes(b'changed')
+    elif change=='review':(out/'REVIEW.json.gz').write_bytes(b'changed')
     else:(packet/'syntax-witnesses/native/execution.json').unlink()
     execution.write_text(json.dumps(record));assert verify_capture(packet,ROOT)

@@ -7,20 +7,24 @@ from .native_binary import check_native_architecture
 from .syntax_witnesses_host import verify_host as verify_syntax
 from .python_witnesses_reference import FIXTURE,validate_reference
 from .python_witnesses_compat import FIXTURE_COMPAT
+from .python_witnesses_review import FIXTURE_REVIEW
 from .grammar_prepare import _manifest
 from .command_gates import run_command_gates,command_gate_errors,run_python_scope,python_scope_errors
 PREFIX='ken-python-witnesses-'
 REFERENCE_ID={'bytes': 16172, 'sha256': 'b9eda1f055e4f32794e70e422733fc907a2fe99b055a8e827f6e1d2d2e570782'}
 COMPAT_ID={'bytes': 3215, 'sha256': 'ddafb8d84b0454390564facc8cf9e4a35b4468393928fbc906a2902ae4a2d57f'}
+REVIEW_ID={'bytes': 4007, 'sha256': '0aa25d4d8393adc5ec72956e291991dbea126afb1dd83394f421bf992dbfc206'}
 TEST_FILES=['tests/rust_migration/test_python_witnesses_reference.py','tests/rust_migration/test_python_witnesses_host.py','tests/rust_migration/test_python_witnesses_archive.py']
-PYTHON_ROOTS=26
+PYTHON_ROOTS=27
 COMMANDS={'python-build':['cargo','build','--locked','--offline','-p','ken-retrieval','--example','python_witnesses_probe']}
 def reference(repo:Path):
     require(identity(repo/FIXTURE)==REFERENCE_ID,'preserved Python original differs')
     value=json.loads(gzip.decompress((repo/FIXTURE).read_bytes()));errors=validate_reference(value);require(not errors,str(errors))
     require(identity(repo/FIXTURE_COMPAT)==COMPAT_ID,'preserved compatibility original differs')
     compat=json.loads(gzip.decompress((repo/FIXTURE_COMPAT).read_bytes()));require(not validate_reference(compat),'compatibility contract differs')
-    return dict(cases=value['cases']+compat['cases'])
+    require(identity(repo/FIXTURE_REVIEW)==REVIEW_ID,'preserved review original differs')
+    review=json.loads(gzip.decompress((repo/FIXTURE_REVIEW).read_bytes()));require(not validate_reference(review),'review original contract differs')
+    return dict(cases=value['cases']+compat['cases']+review['cases'])
 
 def grammar_bytes(repo:Path):
     return (json.dumps(_manifest(load(repo/'crates/ken-syntax/grammars.lock.json'),'linux-x86_64'),indent=2)+'\n').encode()
@@ -39,6 +43,7 @@ def verify_capture(packet:Path,repo:Path):
         require((host['os'],host['arch'])==('linux','x86_64'),'Python witnesses require Linux x86_64')
         require(identity(out/'ORIGINAL.json.gz')==REFERENCE_ID,'Python original transport differs')
         require(identity(out/'COMPAT.json.gz')==COMPAT_ID,'compatibility original transport differs')
+        require(identity(out/'REVIEW.json.gz')==REVIEW_ID,'review original transport differs')
         require((out/'grammar-manifest').read_bytes()==grammar_bytes(repo),'Python grammar manifest differs')
         errors=verify_native_json(capture,PREFIX);require(not errors,str(errors))
         execution=load(capture/'execution.json');root=Path(execution['cwd'])
@@ -62,7 +67,7 @@ def run_host(repo:Path,packet:Path):
     try:
         os.environ['CARGO_TARGET_DIR']=str(repo/'target')
         run_command_gates(out/'gates',COMMANDS,record_name='RUST.json')
-        binary=repo/'target/debug/examples/python_witnesses_probe';(out/'bin').mkdir();shutil.copyfile(binary,out/'bin/python_witnesses_probe');shutil.copyfile(repo/FIXTURE,out/'ORIGINAL.json.gz');shutil.copyfile(repo/FIXTURE_COMPAT,out/'COMPAT.json.gz')
+        binary=repo/'target/debug/examples/python_witnesses_probe';(out/'bin').mkdir();shutil.copyfile(binary,out/'bin/python_witnesses_probe');shutil.copyfile(repo/FIXTURE,out/'ORIGINAL.json.gz');shutil.copyfile(repo/FIXTURE_COMPAT,out/'COMPAT.json.gz');shutil.copyfile(repo/FIXTURE_REVIEW,out/'REVIEW.json.gz')
         (out/'grammar-manifest').write_bytes(grammar_bytes(repo))
         with NativeJsonCapture(binary,out/'native',repo=repo,prefix=PREFIX)as capture:
             shutil.copyfile(out/'grammar-manifest',capture.root/'grammar-manifest');capture.run(request(original,capture.root))

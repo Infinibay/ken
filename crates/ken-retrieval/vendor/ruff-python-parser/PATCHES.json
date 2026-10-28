@@ -1,0 +1,16 @@
+[
+  {
+    "path": "src/lexer/indentation.rs",
+    "before": "    const TAB_SIZE: u32 = 2;",
+    "after": "    const TAB_SIZE: u32 = 8;",
+    "upstream_sha256": "79be3c355b4e6c26d64938ecacb7ef37cf9ce69d8d76f404efffa3b3e1bf17a5",
+    "local_sha256": "85bc552773f147dd52fd5972c8532ac134a24c457ced354c7c55794521bcea49"
+  },
+  {
+    "path": "src/lexer.rs",
+    "before": "                '\\n' | '\\r' if !interpolated_string.is_triple_quoted() => {",
+    "after": "                '\\n' | '\\r' if !interpolated_string.is_triple_quoted() => {\n                    // CPython3.12 ends the literal here, then lexes the newline\n                    // in interpolation mode (including whitespace/comments).\n                    if in_format_spec {\n                        break;\n                    }",
+    "upstream_sha256": "803989c722717450db8ebdf532d97dcb881a349712f5fe3fa1ee92159582a8b3",
+    "local_sha256": "415b2bd888396c23d1f03ae02bb0f512e452e04f091a384ef7d8c6262be9728b"
+  }
+]

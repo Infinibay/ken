@@ -65,6 +65,9 @@ def case_inputs(case_set):
     if case_set=="compat":
         from .python_witnesses_compat import compatibility_cases
         return compatibility_cases()
+    if case_set=="review":
+        from .python_witnesses_review import review_cases
+        return review_cases()
     raise ValueError("unknown case set")
 def validate_reference(value):
     try:

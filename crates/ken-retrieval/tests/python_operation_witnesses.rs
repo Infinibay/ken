@@ -37,6 +37,13 @@ fn all_frozen_python_observations_match_on_immutable_catalog_snapshots() {
     .read_to_string(&mut compat)
     .unwrap();
     cases.extend(serde_json::from_str::<Corpus>(&compat).unwrap().cases);
+    let mut review = String::new();
+    flate2::read::GzDecoder::new(
+        include_bytes!("fixtures/python-witnesses-review.json.gz").as_slice(),
+    )
+    .read_to_string(&mut review)
+    .unwrap();
+    cases.extend(serde_json::from_str::<Corpus>(&review).unwrap().cases);
     for case in cases {
         let (directory, catalog) =
             support::catalog(support::physical(case.input).unwrap()).unwrap();

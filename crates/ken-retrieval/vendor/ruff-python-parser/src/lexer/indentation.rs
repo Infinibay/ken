@@ -33,7 +33,7 @@ pub(super) struct Indentation {
 }
 
 impl Indentation {
-    const TAB_SIZE: u32 = 2;
+    const TAB_SIZE: u32 = 8;
 
     pub(super) const fn root() -> Self {
         Self {

@@ -867,6 +867,11 @@ impl<'src> Lexer<'src> {
                     break;
                 }
                 '\n' | '\r' if !interpolated_string.is_triple_quoted() => {
+                    // CPython3.12 ends the literal here, then lexes the newline
+                    // in interpolation mode (including whitespace/comments).
+                    if in_format_spec {
+                        break;
+                    }
                     // https://github.com/astral-sh/ruff/issues/18632
 
                     let error_type = if in_format_spec {

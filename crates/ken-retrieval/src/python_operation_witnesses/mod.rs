@@ -1,4 +1,5 @@
 //! Python3.12 body observations over immutable catalog snapshots.
+mod admission;
 mod ast;
 mod expression;
 use crate::{
