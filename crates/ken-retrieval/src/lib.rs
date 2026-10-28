@@ -53,7 +53,7 @@ pub mod candidates;
 pub mod contextual;
 pub mod description;
 pub mod intent;
-mod normalized_matrix;
+pub mod normalized_matrix;
 pub mod proposals;
 pub mod query_encoder;
 pub mod ranking;
@@ -109,3 +109,7 @@ pub mod owner_descriptions;
 pub mod symbol_ranking;
 
 pub mod piece_search;
+
+pub mod context_preparation;
+pub mod context_vector_cache;
+mod npy_matrix;

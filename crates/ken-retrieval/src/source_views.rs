@@ -61,6 +61,56 @@ impl SourceViewSnapshot {
         rows: BTreeMap<String, Vec<i64>>,
         query_model: EncoderSpec,
     ) -> Result<Self> {
+        Self::build(
+            model,
+            generation,
+            owners,
+            hashes,
+            || {
+                NormalizedMatrix::new(
+                    matrix,
+                    "nonempty source view vectors required",
+                    "source view vectors must be finite and normalized",
+                )
+            },
+            rows,
+            query_model,
+        )
+    }
+    pub(crate) fn from_mapped(
+        model: EncoderSpec,
+        generation: i64,
+        owners: Vec<EntityKey>,
+        hashes: Vec<String>,
+        matrix: crate::npy_matrix::MappedNpy,
+        rows: BTreeMap<String, Vec<i64>>,
+        query_model: EncoderSpec,
+    ) -> Result<Self> {
+        Self::build(
+            model,
+            generation,
+            owners,
+            hashes,
+            || {
+                NormalizedMatrix::mapped(
+                    matrix,
+                    "nonempty source view vectors required",
+                    "source view vectors must be finite and normalized",
+                )
+            },
+            rows,
+            query_model,
+        )
+    }
+    fn build(
+        model: EncoderSpec,
+        generation: i64,
+        owners: Vec<EntityKey>,
+        hashes: Vec<String>,
+        make_matrix: impl FnOnce() -> Result<NormalizedMatrix>,
+        rows: BTreeMap<String, Vec<i64>>,
+        query_model: EncoderSpec,
+    ) -> Result<Self> {
         if model == query_model {
             return Err(RetrievalError::Invalid(
                 "separate source views require their distinct projection identity".into(),
@@ -81,11 +131,7 @@ impl SourceViewSnapshot {
                 "source views contain mixed source versions".into(),
             ));
         }
-        let matrix = NormalizedMatrix::new(
-            matrix,
-            "nonempty source view vectors required",
-            "source view vectors must be finite and normalized",
-        )?;
+        let matrix = make_matrix()?;
         if rows.keys().map(String::as_str).collect::<BTreeSet<_>>()
             != BTreeSet::from(SOURCE_VIEW_NAMES)
         {
@@ -115,6 +161,15 @@ impl SourceViewSnapshot {
             rows: accepted,
             query_model,
         })
+    }
+    pub fn model(&self) -> &EncoderSpec {
+        &self.model
+    }
+    pub fn rows(&self) -> &BTreeMap<String, Vec<usize>> {
+        &self.rows
+    }
+    pub fn matrix(&self) -> crate::normalized_matrix::MatrixView<'_> {
+        self.matrix.view()
     }
     pub fn enrich(
         &self,

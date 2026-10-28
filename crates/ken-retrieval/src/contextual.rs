@@ -40,6 +40,45 @@ impl OwnerVectorSnapshot {
         matrix: Vec<Vec<f32>>,
         projection_version: usize,
     ) -> Result<Self> {
+        Self::build(
+            model,
+            generation,
+            owners,
+            hashes,
+            || {
+                let message = "contextual source vectors must be finite and normalized";
+                NormalizedMatrix::new(matrix, message, message)
+            },
+            projection_version,
+        )
+    }
+    pub(crate) fn from_mapped(
+        model: EncoderSpec,
+        generation: i64,
+        owners: Vec<EntityKey>,
+        hashes: Vec<String>,
+        matrix: crate::npy_matrix::MappedNpy,
+    ) -> Result<Self> {
+        Self::build(
+            model,
+            generation,
+            owners,
+            hashes,
+            || {
+                let message = "contextual source vectors must be finite and normalized";
+                NormalizedMatrix::mapped(matrix, message, message)
+            },
+            1,
+        )
+    }
+    fn build(
+        model: EncoderSpec,
+        generation: i64,
+        owners: Vec<EntityKey>,
+        hashes: Vec<String>,
+        make_matrix: impl FnOnce() -> Result<NormalizedMatrix>,
+        projection_version: usize,
+    ) -> Result<Self> {
         if owners.iter().collect::<BTreeSet<_>>().len() != owners.len()
             || hashes.len() != owners.len()
         {
@@ -58,7 +97,7 @@ impl OwnerVectorSnapshot {
             ));
         }
         let message = "contextual source vectors must be finite and normalized";
-        let matrix = NormalizedMatrix::new(matrix, message, message)?;
+        let matrix = make_matrix()?;
         if matrix.rows() != owners.len() {
             return Err(RetrievalError::Invalid(message.into()));
         }
@@ -72,6 +111,24 @@ impl OwnerVectorSnapshot {
         })
     }
 }
+impl OwnerVectorSnapshot {
+    pub fn model(&self) -> &EncoderSpec {
+        &self.model
+    }
+    pub fn generation(&self) -> i64 {
+        self.generation
+    }
+    pub fn owners(&self) -> &[EntityKey] {
+        &self.owners
+    }
+    pub fn source_hashes(&self) -> &[String] {
+        &self.hashes
+    }
+    pub fn matrix(&self) -> crate::normalized_matrix::MatrixView<'_> {
+        self.matrix.view()
+    }
+}
+
 pub struct ContextualRetriever {
     encoder: Rc<dyn QueryEncoder>,
     encoder_spec: EncoderSpec,
@@ -107,6 +164,12 @@ impl ContextualRetriever {
             source: Arc::new(vectors),
             views: source_views.map(Arc::new),
         })
+    }
+    pub fn source_snapshot(&self) -> &OwnerVectorSnapshot {
+        &self.source
+    }
+    pub fn source_views(&self) -> Option<&SourceViewSnapshot> {
+        self.views.as_deref()
     }
     pub fn score(
         &self,

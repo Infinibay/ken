@@ -94,8 +94,19 @@ impl LegacyRuntimeIdentity {
 
 impl EncoderSpec {
     pub fn key(&self, legacy: &LegacyRuntimeIdentity) -> Result<String, ModelError> {
+        self.key_with_runtime(legacy.backend(self.backend)?)
+    }
+
+    /// Provided source policies have no external package runtime in their key.
+    pub fn provided_key(&self) -> Result<String, ModelError> {
+        if self.backend != EncoderBackend::Provided {
+            return Err(invalid("provided encoder policy required"));
+        }
+        self.key_with_runtime(&[])
+    }
+    fn key_with_runtime(&self, versions: &[(String, String)]) -> Result<String, ModelError> {
         self.validate()?;
-        let options = digest(&json!({"config":self,"runtime":legacy.backend(self.backend)?}));
+        let options = digest(&json!({"config":self,"runtime":versions}));
         Ok(format!(
             "{}@{}:{}",
             self.model_id,
