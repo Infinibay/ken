@@ -21,7 +21,7 @@ fn diagnostic_json(value: &Value) -> String {
         ),
         Value::Object(items) => {
             let mut entries: Vec<_> = items.iter().collect();
-            entries.sort_by(|(a, _), (b, _)| a.cmp(b));
+            entries.sort_by_key(|(key, _)| *key);
             format!(
                 "{{{}}}",
                 entries
