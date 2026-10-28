@@ -1428,8 +1428,94 @@ sin registrar siguen siendo errores. Todos los recibos y workspaces quedan
 locales y fuera de Git, como pidió el usuario.
 
 
-Siguen pendientes el backend Python AST, el router completo OperationWitnesses,
-SymbolRanker/PieceSearch completos, otros modelos y la aceptación M4/global.
+La siguiente etapa de este documento incorpora el backend Python AST y el
+router de operaciones. Siguen pendientes SymbolRanker/PieceSearch completos,
+otros modelos y la aceptación M4/global.
 La portabilidad de índices entre perfiles y las políticas arbitrarias de hilos
 de producción no quedan aceptadas por esta validación. El trabajo sigue acotado
 a Linux x86_64; no se cambia la aplicación Python instalada ni se certifica ARM/macOS.
+
+## Backend Python AST y router de operaciones
+
+Rust incorpora PythonOperationWitnesses sobre las instantáneas inmutables del
+catálogo y OperationWitnesses como selector de Python, CST y archivos sin backend.
+La implementación observa invocaciones, causas de excepciones, escrituras con
+snapshot de clave y renovación de flags devueltos; conserva la pertenencia de los
+owners, los límites de funciones/clases/lambdas, la adyacencia AST y las cachés.
+
+Se conservaron tres tandas originales independientes de Python 3.12.9:
+154 casos iniciales/166 entidades, 31 casos adicionales y 33 casos de revisión.
+Los 218 casos/230 entidades coinciden, incluyendo las equivalencias ast.dump,
+NFKC/Unicode15, cadenas/bytes/surrogates, f-strings, decoradores, admisión y límites.
+El router también conserva los 120 casos CST anteriores. No se repitieron las
+raíces pytest originales ni se reemplazaron sus resultados con salidas Rust.
+Las 1066 fuentes originales mantienen el fingerprint
+`5b849bf6f01a5915aea972274dba5bd00073bf42efab6563297c2ded0e368038`.
+
+Una única revisión independiente encontró seis diferencias Important; se
+corrigieron en una sola pasada RED→GREEN: backslash antes de interpolación,
+propagación del kind Unicode desde literales vacíos, newline en format spec de
+comillas simples, BOM, tabs de ocho columnas y límites de enteros/anidamiento.
+No quedaron hallazgos Critical/Important/Minor de esa revisión pendientes.
+Ruff 0.15.8 usa los pins Unicode existentes; dos parches de lexer son explícitos y
+reversibles. Las pruebas reconstruyen y autentican todos los bytes upstream,
+además de verificar licencia, requests sin respuestas y procedencia Git.
+La suite afectada local pasó 182 pruebas, formato y Clippy estricto.
+
+La versión `d3a47eb38018cb9a9d8ceb855c743490337eed70` pasó la cadena local
+completa, y las dos réplicas del
+[CI 40611631533](https://github.com/Infinibay/ken/actions/runs/40611631533)
+aprobaron la misma versión: 532 pruebas de herramientas y 198 nativas por host,
+con formato y Clippy. Se verificaron los paquetes descargados, sus inventarios
+y su vínculo con las fuentes, además del estado del workflow. La primera época 7bacb189
+(local y CI 40610175928) se conserva separadamente y queda superada por la
+reparación semántica; no prueba los nuevos 33 casos.
+
+Recibo local `docs/validation/rust-migration-2026-10-27/python-operation-witnesses`:
+3136 entradas verificadas, más `FILES.json`. El snapshot contiene 1324 archivos
+de código/herramientas autenticados por Git; otros cinco archivos de diseño y
+soporte tienen sus pruebas Git separadas. Se incluyen las 1066 fuentes originales,
+las tres tandas de observaciones, los dos paquetes CI, el paquete local y los
+logs RED→GREEN. El soporte contextual heredado se incorpora desde su snapshot
+propio; su referencia histórica conserva el SHA fijado por el verificador.
+FILES SHA256 `f87db4e0e01e4f347ec6b082114d0702b618b3c8e1c94161bbfe9b6d2c8e9eb1`.
+
+Transporte `.ken/rust-migration/archives/python-operation-witnesses-d3a47eb3.tar.gz`,
+246281910 bytes, SHA256
+`232f4979e8599c6a2dbd4bbd8122969fbc69f3f463ff3a8707402cb93d8b6de7`.
+La extracción `/tmp/ken-python-witnesses-375rlrf1/python-operation-witnesses` pasó el replay con Python `-I -B`,
+sin importar validadores del checkout vivo ni detectar la CPU del replay.
+Se validan los tres hosts, ambos perfiles efectivamente observados (22ec/4fd),
+las referencias originales, fuentes Git, inputs sin respuestas, binarios,
+resultados y gates completos. El descriptor 582 permanece registrado; no fue
+seleccionado por los hosts de esta tanda.
+
+El estado declara `python_operation_witnesses_accepted=true`,
+`M4_accepted=false`, `migration_complete=false`.
+
+Decisiones y límites de esta etapa:
+- Se eligió una proyección explícita de AST CPython sobre Ruff, porque CST y
+  ComparableExpr no preservan esa identidad; la aceptación depende de la
+  conformidad observada, sin certificar todo input o condición extrema.
+- Se capturaron solo casos originales nuevos, sin repetir pytest original;
+  esta etapa no constituye una ejecución nueva de esas suites históricas.
+- Se mantuvieron los pins Unicode existentes al vendorizar el parser; las
+  diferencias con su paquete publicado requieren comprobación de compatibilidad.
+  Sus snapshots no usados y el archivo original se conservan localmente.
+- El probe transforma únicamente campos de presentación sintéticos vacíos en
+  cinco strings vacíos; no certifica presentación de esos catálogos sintéticos.
+- Tres lints de estilo upstream se permiten solo en el manifiesto vendorizado;
+  el Clippy estricto del código propio permanece activo.
+- Dos parches reversibles de lexer corrigen tabs y formatos multilínea; se
+  mantiene un fork que exige revisar esos parches al actualizar el parser.
+
+La revisión no certificó ejecuciones todavía pendientes: su cierre se comprobó
+separadamente con los paquetes y el replay. No se ejecutó la suite upstream del
+parser ni pruebas arbitrarias de agotamiento de pila. La decisión de integración
+sigue siendo conservar y subir la rama de migración autorizada.
+
+Siguen pendientes SymbolRanker/PieceSearch completos, otros modelos y la
+aceptación M4/global. No se declara completada la migración ni certificación
+ARM/macOS, configuración arbitraria del parser/hilos o agotamiento extremo de
+pila. La aplicación Python instalada permanece como estaba. Todos los crudos,
+recibos y workspaces se mantienen locales y fuera de Git.

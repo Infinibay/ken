@@ -984,3 +984,20 @@ una mejora de consulta indexada al clasificar tests. El
 [handoff](rust-migration-handoff.md#preferencias-explícitas-de-símbolos-linux-x86_64)
 registra originales inmutables, decisiones, límites, recibo y replay archivado.
 Los observadores, la búsqueda completa, M4/global y otras plataformas siguen pendientes.
+
+## Observadores de operaciones Python y selector nativo x86_64
+
+`d3a47eb3` implementa `PythonOperationWitnesses` y el selector completo
+`OperationWitnesses`, sobre catálogos inmutables. Coinciden 218 casos originales
+Python/230 entidades y los 120 casos CST anteriores. Una revisión independiente
+identificó seis diferencias semánticas, reparadas en una pasada RED→GREEN;
+las 182 pruebas nativas afectadas, formato y Clippy estricto pasaron.
+
+La cadena local y las dos réplicas del
+[CI final](https://github.com/Infinibay/ken/actions/runs/40611631533) pasaron
+532 pruebas de herramientas y 198 nativas por host. El recibo sellado pasó
+replay desde una extracción aislada, con fuentes y validadores archivados. El
+[handoff](rust-migration-handoff.md#backend-python-ast-y-router-de-operaciones)
+registra procedencia, parches reversibles del parser y alcance. Siguen pendientes
+SymbolRanker/PieceSearch completos, otros modelos y M4/global; el foco permanece
+en Linux x86_64 y los recibos quedan locales, fuera de Git.
