@@ -11,11 +11,12 @@ from .ettin_host import generated_files,REGISTRATION,RUNTIME
 from .ettin_reference import source_state
 from .ettin_compare import _score_errors,TOLERANCES
 from .context_compare import core_for_platform
+from .retrieval_validate import prepare_runtime,runtime_files,runtime_manifest
 from .command_gates import run_command_gates,command_gate_errors,run_python_scope,python_scope_errors
 PREFIX='ken-piece-search-'
 REFERENCE_ID={'bytes': 84765, 'sha256': 'd9c9a401154054153b555b347486a84cd81d94a4eebac25c23864e4a850efcfd'}
 TEST_FILES=['tests/rust_migration/test_piece_search_reference.py','tests/rust_migration/test_piece_search_host.py']
-PYTHON_ROOTS=27
+PYTHON_ROOTS=29
 COMMANDS={'piece-build':['cargo','build','--locked','--offline','-p','ken-retrieval','--example','piece_search_probe']}
 def reference(repo):
     require(identity(repo/FIXTURE)==REFERENCE_ID,'preserved piece search original differs')
@@ -69,6 +70,9 @@ def verify_capture(packet,repo):
         binary=out/'bin/piece_search_probe';check_native_architecture(binary,('linux','x86_64'));wanted=request(repo,original,root)
         require(same_value(load(capture/'inputs.json'),wanted),'piece request contains answers or foreign inputs')
         core=core_for_platform(wanted['runtime_registration'],'Linux','x86_64');resources={'native-probe':identity(binary),'runtime-core':{k:core[k]for k in('bytes','sha256')},'grammar-manifest':identity(out/'grammar-manifest')}
+        resources.update({'dense-blas/'+name:record for name,record in runtime_files(repo,'x86_64').items()})
+        manifest=runtime_manifest(repo,'x86_64')
+        require(str(root/'dense-blas'/manifest['library'])in(capture/'stderr.log').read_text(),'isolated pinned piece BLAS not loaded')
         resources.update({'source/'+wanted['registration']['source']['revision']+'/'+name:row for name,row in original['definition']['source']['artifacts'].items()})
         require(execution['native_sha256']==identity(binary)['sha256']and same_value(execution['owned_before'],resources),'piece native resources differ')
         require(not (errors:=compare(original,load(capture/'stdout.json'),core)),str(errors));return[]
@@ -80,6 +84,18 @@ def verify_host(packet,repo):
         return command_gate_errors(out/'gates',COMMANDS,record_name='RUST.json')or python_scope_errors(out,TEST_FILES,PYTHON_ROOTS)
     except(OSError,ValueError,KeyError,TypeError,IndexError)as error:return[str(error)]
 
+def capture_native(repo,original,out,binary,library,source):
+    definition=load(repo/REGISTRATION)
+    require(source_state(source,definition['source'])==definition['source']['artifacts'],'piece source differs')
+    (out/'grammar-manifest').write_bytes(grammar_bytes(repo))
+    with NativeJsonCapture(binary,out/'native',repo=repo,prefix=PREFIX,generated_files=generated_files(original))as capture:
+        inputs=request(repo,original,capture.root)
+        prepare_runtime(capture)
+        shutil.copyfile(out/'grammar-manifest',inputs['grammar_manifest']);shutil.copyfile(library,inputs['library'])
+        for name in definition['source']['artifacts']:
+            target=Path(inputs['source'])/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source/name,target)
+        capture.run(inputs)
+
 def run_host(repo,packet):
     original=reference(repo);out=packet/'piece-search';out.mkdir();(out/'gates').mkdir();environment=os.environ.copy()
     try:
@@ -87,11 +103,7 @@ def run_host(repo,packet):
         binary=repo/'target/debug/examples/piece_search_probe';(out/'bin').mkdir();shutil.copyfile(binary,out/'bin/piece_search_probe');shutil.copyfile(repo/FIXTURE,out/'ORIGINAL.json.gz');(out/'grammar-manifest').write_bytes(grammar_bytes(repo))
         definition=load(repo/REGISTRATION);source=Path(os.environ['KEN_ETTIN_SOURCE']);require(source_state(source,definition['source'])==definition['source']['artifacts'],'piece source differs')
         library=Path(load(packet/'SDK.json')['prepared']['onnx_library']);os.environ['KEN_ORT_LIBRARY']=str(library)
-        with NativeJsonCapture(binary,out/'native',repo=repo,prefix=PREFIX,generated_files=generated_files(original))as capture:
-            inputs=request(repo,original,capture.root);shutil.copyfile(out/'grammar-manifest',inputs['grammar_manifest']);shutil.copyfile(library,inputs['library'])
-            for name in definition['source']['artifacts']:
-                target=Path(inputs['source'])/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source/name,target)
-            capture.run(inputs)
+        capture_native(repo,original,out,binary,library,source)
         require(not (errors:=verify_capture(packet,repo)),str(errors));os.environ['KEN_PIECE_SEARCH_PACKET']=str(packet);run_python_scope(out,TEST_FILES)
         require(not (errors:=verify_host(packet,repo)),str(errors))
     finally:os.environ.clear();os.environ.update(environment)
