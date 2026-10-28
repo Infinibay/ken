@@ -1,8 +1,11 @@
 # Continuar y terminar la migración a Rust
 
-Actualización del 28/10: `PieceSearch` completo está aceptado sobre Linux x86_64.
-El siguiente bloque es `BestSearch`; otros modelos, M4/global y M5–M8 siguen
-pendientes. El cierre y el transporte verificable están al final del documento.
+Actualización del 28/10: `BestSearch` y la preparación contextual están implementados
+como biblioteca. La cadena completa pasa localmente y en una réplica CI Haswell;
+la réplica SkylakeX presenta una diferencia numérica pendiente de contraste con
+el original sobre ese mismo perfil. Este bloque todavía no está aceptado.
+`PieceSearch` conserva su aceptación anterior; otros modelos, M4/global y M5–M8
+siguen pendientes. El diagnóstico actual está al final del documento.
 
 Actualización del 24/10: los directorios de evidencia se retiraron del seguimiento
 de Git por pedido del usuario; sus archivos locales se conservaron. Para un clon
@@ -55,7 +58,7 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | Gramáticas Linux x86_64 | Aceptadas; requisito local de M4d | 33 raíces Rust/doc, 87 de tooling y 249 comparaciones en tres hosts; no equivale a aceptación completa de indexación/modelos x86 |
 | Runtimes CPU Linux x86_64 | Aceptados | ONNX/Torch autenticados; 6 raíces ONNX/protocolo, 15/16 Torch y 364 de tooling por host en tres hosts; modelos e índice completos x86 siguen pendientes |
 | Búsqueda por piezas Linux x86_64 | PieceSearch aceptado | 45 observaciones originales, 3 frames Ettin reales; cadena completa local y dos réplicas CI, 586 pruebas de herramientas y 206 nativas por host; replay aislado |
-| M4d | En curso: PieceSearch y SymbolRanker migrados | BestSearch, recursos/caché por generación, canales y modelos restantes, pools preparados y aceptación CLI/MCP |
+| M4d | En curso: BestSearch y preparación contextual implementados; aceptación pendiente | Cadena local y CI Haswell pasan; contrastar el score de SkylakeX con el original en ese perfil. CT2/expansión x86, modelos/canales restantes, preparación registrada y CLI/MCP siguen pendientes |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
 | M7 | Pendiente | Daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
@@ -1661,3 +1664,66 @@ preparación y caché por generación, camino exacto y recuperación contextual.
 Continúan pendientes otros modelos y la aceptación M4/global, además de M5–M8.
 La aplicación instalada sigue en Python. Todos los crudos, recibos y workspaces
 se conservan localmente y fuera de Git.
+
+
+## BestSearch implementado: diagnóstico SkylakeX pendiente
+
+El código `7dc69841679df405ed938091d1b5855a37472603` incorpora `ken-search`,
+recursos diferidos, bootstrap/ruta exacta, recuperación contextual y una caché
+LRU de dos proyectos vinculada a base, raíz, generación y perfil. Las conexiones
+SQLite sin nombre no reutilizan el estado de otra base en memoria. La preparación
+contextual conserva el caché SQLite, las identidades ASCII del original y matrices
+NPY de solo lectura. El header se admite antes de construir dtypes o calcular
+productos que puedan desbordarse. Las escrituras preceden al snapshot de consulta.
+
+Las referencias nuevas conservan 29 historias de preparación y 37 de BestSearch,
+34 controladas y tres composiciones reales Potion/contexto/Ettin en inglés.
+La primera captura aportó 16 historias válidas; solo se corrigieron y observaron
+las 21 controladas que fallaron por un contador de tokens inexistente. Ambos
+observadores y sus journals permanecen intactos. No se repitieron originales
+aceptados ni se cambiaron modelos o tolerancias anteriores.
+
+La cadena local completa y la réplica 2 del
+[CI 40716215155](https://github.com/Infinibay/ken/actions/runs/40716215155)
+pasaron 640 pruebas de herramientas y 272 nativas por host, formato y Clippy.
+Ambos paquetes se verificaron de nuevo contra las fuentes de ese commit.
+Seleccionan contexto `22ec4aa2...` y alineamiento `66669ec8...` (Haswell).
+El primer intento local falló por enlaces duros entre filesystems; se conservó
+como `packet-cross-device-7dc69841` y la repetición completa usa un TMPDIR privado
+fuera del checkout, en el mismo filesystem. Las mutaciones reemplazan archivos
+atómicamente y no pueden modificar el paquete fuente por un enlace compartido.
+
+La réplica 1 selecciona contexto `4fd097c7...` y alineamiento `1f613df1...`
+(SkylakeX). Pasó los ocho perfiles padres, pero falla la comparación exacta de
+`piece_score`: Rust devuelve `-2.3249518584644573` y la referencia observada en
+Haswell contiene `-2.3288574266118545`. Esto no establece todavía si hay un fallo
+nativo o una diferencia del original por perfil. No se amplían tolerancias ni se
+reemplaza el fixture para convertir el gate en verde.
+
+`8941b1abfbe400ce201935430f89a3ee63e9d554` añade el
+[diagnóstico 40722479532](https://github.com/Infinibay/ken/actions/runs/40722479532):
+solo permite observar las tres composiciones completas todavía no observadas en
+ese par exacto de perfiles SkylakeX. Otro hardware termina antes de ejecutar
+originales o preparar modelos; los dos primeros intentos omitieron correctamente
+Haswell. El tercero recibió SkylakeX con contexto `582ea68b...` (AVX-VNNI distinto)
+y también omitió la observación: sigue sin ser el par exacto que falló. Los tres
+intentos terminaron sin ejecutar originales. Se agotó el límite de tres intentos
+de asignación; no hubo nuevas observaciones que comparar. La próxima reanudación
+necesita el perfil exacto `4fd097c7...`/`1f613df1...` antes de cambiar expectativas.
+La evidencia independiente debe decidir entre reparar la implementación y añadir
+expectativas separadas por perfil. El workflow no declara aceptación.
+
+Los paquetes y ZIPs con digests de GitHub verificados están en
+`.ken/rust-migration/best-search/`: `packet`, `ci-7dc-attempt-1`,
+`ci-7dc-attempt-2` y `profile-diagnostic-attempt-*`. El ledger completo y los
+scripts de cierre todavía condicionales están en
+`.superpowers/sdd/2026-10-28-rust-best-search/`. No ejecutar el sellado como si
+las tres plataformas hubieran pasado: la aceptación y el transporte final siguen
+pendientes del diagnóstico. Las épocas fallidas anteriores también se conservan.
+
+La única revisión encontró dos Important (admisión NPY y filtros CI), reparados
+con RED→GREEN dentro de la única pasada de corrección; no hubo re-review.
+La preparación registrada en español sigue sin aceptar: dos pruebas CT2 exigen
+una plataforma ARM registrada. Pasaron 42/42 pruebas elegibles de modelos, no
+44/44. CT2/expansión x86 es el siguiente bloque después de resolver BestSearch.
+M4/global y M5–M8 permanecen pendientes; la aplicación instalada continúa en Python.

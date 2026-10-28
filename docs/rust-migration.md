@@ -8,6 +8,11 @@ ensamblado, ranking, tarjetas, selección de evidencia y presentación nativos.
 La aplicación completa todavía no está migrada. Los recibos y capturas se
 [conservan localmente y se recuperan del historial](validation-artifacts.md).
 
+Actualización del 28/10: `BestSearch` y preparación contextual están implementados
+como biblioteca x86_64. La cadena local y una réplica CI Haswell pasan, pero el
+score de la réplica SkylakeX sigue bajo diagnóstico; este bloque no está aceptado.
+Ver el [estado actual](rust-migration-handoff.md#bestsearch-implementado-diagnóstico-skylakex-pendiente).
+
 La rama `codex/rust-migration` añade un ejecutable temporal, `ken-rs`.
 La implementación Python, sus datos y sus integraciones siguen activos.
 La primera entrega implementa exclusivamente `status`; las siguientes etapas
