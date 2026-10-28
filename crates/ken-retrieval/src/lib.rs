@@ -83,6 +83,7 @@ pub mod word_encoder;
 pub mod json_transport;
 pub mod rank_models;
 
+pub mod compact;
 pub mod evidence;
 pub mod piece_candidates;
 pub mod piece_cards;
