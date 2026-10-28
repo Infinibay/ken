@@ -102,7 +102,7 @@ def compare_scenarios(original:dict,native:dict)->list[str]:
 def source_identity(repo:Path)->dict:
     from .native_json import identity
     files=[repo/name for name in ('Cargo.toml','Cargo.lock','rust-toolchain.toml')]
-    for crate in ('ken-index','ken-retrieval','ken-core','ken-syntax','ken-text','ken-program','ken-store','ken-models','ken-native-model-api'):
+    for crate in ('ken-index','ken-retrieval','ken-core','ken-syntax','ken-text','ken-program','ken-store','ken-models','ken-native-model-api','ken-search'):
         files.extend(p for p in sorted((repo/'crates'/crate).rglob('*'))if p.is_file())
     return {str(p.relative_to(repo)):identity(p)for p in files}
 

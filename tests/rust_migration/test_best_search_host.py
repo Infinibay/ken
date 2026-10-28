@@ -78,3 +78,10 @@ def test_confined_complete_probes_authenticate_their_dense_runtime(tmp_path):
     assert not compare(best,load(tmp_path/'native/stdout.json'),core)
     assert not compare_preparation(prep,load(tmp_path/'preparation/stdout.json'))
     assert not verify_endpoints(tmp_path,ROOT)
+
+def test_source_snapshot_changes_when_the_best_search_coordinator_changes(tmp_path):
+    from tools.rust_migration.index_validate import source_identity
+    for name in('Cargo.toml','Cargo.lock','rust-toolchain.toml'):shutil.copyfile(ROOT/name,tmp_path/name)
+    path=tmp_path/'crates/ken-search/src/best_search.rs';path.parent.mkdir(parents=True);path.write_text('pub fn policy() -> u8 { 1 }\n')
+    before=source_identity(tmp_path);path.write_text('pub fn policy() -> u8 { 2 }\n')
+    assert source_identity(tmp_path)!=before,'receipts must bind the coordinator code that produced their answers'
