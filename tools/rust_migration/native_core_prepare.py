@@ -17,8 +17,8 @@ def _verified(path:Path,record:dict,label:str):
     with path.open('rb')as stream:digest=hashlib.file_digest(stream,'sha256').hexdigest()
     if digest!=record['sha256']:raise ValueError(label+' hash differs')
 
-def _archive(row:dict,cache:Path)->Path:
-    wheel=row['wheel'];name=wheel['filename']
+def verified_archive(source:dict,cache:Path)->Path:
+    wheel=source;name=wheel['filename']
     if not isinstance(name,str)or Path(name).name!=name or name in('.','..'):raise ValueError('unsafe native SDK source name')
     path=cache/name
     if not path.exists()and not path.is_symlink():
@@ -34,6 +34,9 @@ def _archive(row:dict,cache:Path)->Path:
         os.link(temporary,path);temporary.unlink()
     _verified(path,wheel,'native SDK source')
     return path
+
+def _archive(row:dict,cache:Path)->Path:
+    return verified_archive(row['wheel'],cache)
 
 def _relative(value:str)->Path:
     path=PurePosixPath(value)

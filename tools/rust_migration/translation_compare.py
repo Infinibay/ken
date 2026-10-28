@@ -33,12 +33,18 @@ def select_oracle(document:dict,system:str,architecture:str)->dict:
     return rows[0]
 
 
-def native_identity(system:str)->dict:
+def native_identity(system:str,architecture:str='aarch64',*,backend:str|None=None)->dict:
     if system not in ('Darwin','Linux'):raise ValueError('registered native translation platform required')
-    return {'ct2rs_crate':'0.10.1','ctranslate2_source':'4.8.2','sentencepiece_crate':'0.13.2',
+    result={'ct2rs_crate':'0.10.1','ctranslate2_source':'4.8.2','sentencepiece_crate':'0.13.2',
         'sentencepiece_source':'0.2.1','float_backend':'Accelerate' if system=='Darwin' else 'OpenBLAS0.3.26',
         'int8_backend':'Ruy','configured_device':'cpu','configured_compute_type':'int8','intra_threads':2,
         'inter_threads':1,'observed_replicas':1,'beam_size':1,'max_input_length':1024,'max_decoding_length':256}
+    if architecture=='x86_64':
+        if system!='Linux'or backend not in('DNNL','MKL'):raise ValueError('explicit registered x86 CPU backend required')
+        del result['ct2rs_crate']
+        result.update(native_binding='ken-translation/1',float_backend=backend,int8_backend=backend)
+    elif architecture not in('aarch64','arm64'):raise ValueError('registered native translation architecture required')
+    return result
 
 
 def _positive(value:object)->bool:
@@ -80,7 +86,7 @@ def _native_error(case:dict,wanted:dict)->dict:
     raise ValueError('unregistered original translation failure')
 
 
-def _history_errors(expected:dict,actual:object,*,native:bool)->list[str]:
+def _history_errors(expected:dict,actual:object,*,native:bool,backend:str|None=None)->list[str]:
     cases=expected['cases'];wanted=expected['results'];ids=[c['id'] for c in cases]
     if (not isinstance(actual,list) or [r.get('id') if isinstance(r,dict) else None for r in actual]!=ids
             or [r.get('id') for r in wanted]!=ids):return ['missing, duplicated, reordered or unexpected translation histories']
@@ -92,7 +98,7 @@ def _history_errors(expected:dict,actual:object,*,native:bool)->list[str]:
         if not _positive(row.get('constructor_ns')):errors.append(name+': invalid constructor measurement')
         for key in ['identity','revision']:
             errors.extend(_differences(want[key],row.get(key),name+'.'+key))
-        runtime=(native_identity(expected['platform']) if want['calls'][-1]['runtime_loaded'] else None) if native else want['actual_runtime']
+        runtime=(native_identity(expected['platform'],expected['architecture'],backend=backend) if want['calls'][-1]['runtime_loaded'] else None) if native else want['actual_runtime']
         errors.extend(_differences(runtime,row.get('actual_runtime'),name+'.actual_runtime'))
         calls=row.get('calls')
         if not isinstance(calls,list) or len(calls)!=len(want['calls']) or len(calls)!=len(case['queries']):
@@ -107,7 +113,7 @@ def _history_errors(expected:dict,actual:object,*,native:bool)->list[str]:
     return errors
 
 
-def compare_output(expected:dict,actual:object)->list[str]:
+def compare_output(expected:dict,actual:object,*,backend:str|None=None)->list[str]:
     if not isinstance(actual,dict):return ['native translation output must be an object']
     if set(actual)!={'format','preparation','prepare_ns','runtime','memory_samples','results'}:
         return ['missing or unexpected native translation output fields']
@@ -117,7 +123,7 @@ def compare_output(expected:dict,actual:object)->list[str]:
         errors.extend(_differences(RUNTIME,actual['runtime'],'runtime'))
         if not _positive(actual['prepare_ns']):errors.append('invalid native preparation measurement')
         errors.extend(_memory_errors(expected,actual['memory_samples']))
-        return errors+_history_errors(expected,actual['results'],native=True)
+        return errors+_history_errors(expected,actual['results'],native=True,backend=backend)
     except (ValueError,TypeError,KeyError,IndexError,AttributeError) as error:
         return [f'malformed native translation history: {error}']
 

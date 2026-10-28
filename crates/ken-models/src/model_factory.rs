@@ -215,14 +215,22 @@ impl ModelFactory {
     pub fn expansion(&self) -> Result<Arc<LocalQueryExpansion>, ModelError> {
         match self.cached("role:expansion".into(), || {
             let model = self.catalog.translation.clone();
+            let native = self.sources.resources.translation.clone();
             let cache = model.cache_path(&self.sources.resources.private_parent);
             let provider = self.sources.preparation_provider(
                 crate::model_sources::asset_bytes(&model.prepared_assets())?,
-                0,
+                native
+                    .as_ref()
+                    .map(|v| v.private_copy_bytes())
+                    .transpose()?
+                    .unwrap_or(0),
             );
-            Ok(Cached::Expansion(Arc::new(
-                LocalQueryExpansion::with_source_provider(model, provider, cache)?,
-            )))
+            let owner = LocalQueryExpansion::with_source_provider(model, provider, cache)?;
+            let owner = match native {
+                Some(runtime) => owner.with_native_runtime(runtime),
+                None => owner,
+            };
+            Ok(Cached::Expansion(Arc::new(owner)))
         })? {
             Cached::Expansion(owner) => Ok(owner),
             _ => Err(crate::profile::invalid(

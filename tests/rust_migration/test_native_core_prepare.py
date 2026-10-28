@@ -4,6 +4,17 @@ import json,struct
 import pytest
 ROOT=Path(__file__).resolve().parents[2]
 
+def test_generic_pinned_archive_reuse_authenticates_existing_non_wheel_sources(tmp_path):
+    from tools.rust_migration.native_core_prepare import verified_archive
+    path=tmp_path/'headers.crate';path.write_bytes(b'abc')
+    source=dict(filename='headers.crate',url='https://unused.invalid/headers.crate',bytes=3,
+                sha256='ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad')
+    assert verified_archive(source,tmp_path)==path
+    path.write_bytes(b'def')
+    with pytest.raises(ValueError,match='hash'):
+        verified_archive(source,tmp_path)
+    assert path.read_bytes()==b'def'
+
 def test_existing_sdk_is_never_overwritten_or_used_as_another_target(tmp_path):
     from tools.rust_migration.native_core_prepare import prepare_native_cores
     out=tmp_path/'sdk';out.mkdir();sentinel=out/'foreign';sentinel.write_bytes(b'keep')

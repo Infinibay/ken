@@ -1,7 +1,7 @@
 //! One lazy, authenticated native CPU translator; every call owns its diagnostics.
 use crate::{
-    ModelError, PreparedTranslation, QueryExpansionPlan, TranslationModel, plan_query,
-    translation_model::TRANSLATION_FILES,
+    ModelError, NativeTranslationRuntime, PreparedTranslation, QueryExpansionPlan,
+    TranslationModel, plan_query, translation_model::TRANSLATION_FILES,
 };
 use ct2rs::{
     ComputeType, Config, Device,
@@ -46,7 +46,10 @@ pub struct ExpansionAttempt {
 
 #[derive(Clone, Debug, Serialize)]
 pub struct TranslationRuntimeIdentity {
+    #[serde(skip_serializing_if = "str::is_empty")]
     pub ct2rs_crate: &'static str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub native_binding: Option<&'static str>,
     pub ctranslate2_source: &'static str,
     pub sentencepiece_crate: &'static str,
     pub sentencepiece_source: &'static str,
@@ -64,22 +67,63 @@ pub struct TranslationRuntimeIdentity {
 
 struct NativeSession {
     // C++ model/workers are destroyed before the retained private data directory.
-    translator: Translator,
+    translator: SessionTranslator,
     source: SentencePieceProcessor,
     target: SentencePieceProcessor,
-    options: TranslationOptions<String, String>,
     identity: TranslationRuntimeIdentity,
     _materialized: tempfile::TempDir,
 }
 
+enum SessionTranslator {
+    Static(Translator, TranslationOptions<String, String>),
+    Registered(crate::translation_runtime::NativeTranslator),
+}
+impl SessionTranslator {
+    fn replicas(&self) -> Result<usize, ModelError> {
+        match self {
+            Self::Static(translator, _) => translator
+                .num_replicas()
+                .map_err(|v| ModelError::Runtime(v.to_string())),
+            Self::Registered(translator) => Ok(translator.replicas()),
+        }
+    }
+    fn translate(&self, tokens: &[String]) -> Result<Vec<Vec<String>>, ModelError> {
+        match self {
+            Self::Registered(translator) => {
+                translator.translate(tokens).map_err(|error| match error {
+                    ModelError::Runtime(message) => ModelError::Inference(message),
+                    other => other,
+                })
+            }
+            Self::Static(translator, options) => {
+                let rows = translator
+                    .translate_batch(&[tokens.to_vec()], options, None)
+                    .map_err(|v| ModelError::Inference(v.to_string()))?;
+                if rows.len() != 1 {
+                    return Err(ModelError::Inference(
+                        "native translator returned an invalid row count".into(),
+                    ));
+                }
+                Ok(rows.into_iter().next().expect("one result").hypotheses)
+            }
+        }
+    }
+}
+
 impl NativeSession {
-    fn load(prepared: PreparedTranslation) -> Result<Self, ModelError> {
-        if !cfg!(all(
-            target_arch = "aarch64",
-            any(target_os = "macos", target_os = "linux")
-        )) {
+    fn load(
+        prepared: PreparedTranslation,
+        native: Option<&NativeTranslationRuntime>,
+    ) -> Result<Self, ModelError> {
+        if native.is_none()
+            && !cfg!(all(
+                target_arch = "aarch64",
+                any(target_os = "macos", target_os = "linux")
+            ))
+        {
             return Err(ModelError::Runtime(
-                "translation profile requires a registered ARM platform".into(),
+                "translation profile requires an explicit registered CPU runtime on this platform"
+                    .into(),
             ));
         }
         let materialized = tempfile::Builder::new()
@@ -97,45 +141,60 @@ impl NativeSession {
                 },
             )?;
         }
+        let policy = &crate::translation_abi::POLICY;
         let config = Config {
             device: Device::CPU,
             compute_type: ComputeType::INT8,
-            num_threads_per_replica: 2,
+            num_threads_per_replica: policy.intra_threads as usize,
             device_indices: vec![0],
             ..Default::default()
         };
-        let translator = Translator::new(materialized.path(), &config)
-            .map_err(|error| ModelError::Runtime(error.to_string()))?;
+        let options = TranslationOptions {
+            beam_size: policy.beam_size as usize,
+            max_input_length: policy.max_input_length as usize,
+            max_decoding_length: policy.max_decoding_length as usize,
+            ..Default::default()
+        };
+        let translator = if let Some(native) = native {
+            SessionTranslator::Registered(native.session(materialized.path())?)
+        } else {
+            SessionTranslator::Static(
+                Translator::new(materialized.path(), &config)
+                    .map_err(|error| ModelError::Runtime(error.to_string()))?,
+                options,
+            )
+        };
         let source =
             SentencePieceProcessor::from_serialized_proto(prepared.artifact("source.spm")?)
                 .map_err(|error| ModelError::Tokenizer(error.to_string()))?;
         let target =
             SentencePieceProcessor::from_serialized_proto(prepared.artifact("target.spm")?)
                 .map_err(|error| ModelError::Tokenizer(error.to_string()))?;
-        let replicas = translator
-            .num_replicas()
-            .map_err(|error| ModelError::Runtime(error.to_string()))?;
+        let replicas = translator.replicas()?;
         if replicas != 1 {
             return Err(ModelError::Runtime(
                 "translation requires one native replica".into(),
             ));
         }
-        let options = TranslationOptions {
-            beam_size: 1,
-            max_decoding_length: 256,
-            ..Default::default()
+        let (float_backend, int8_backend) = match &translator {
+            SessionTranslator::Registered(value) => value.backends()?,
+            SessionTranslator::Static(..) => (
+                if cfg!(target_os = "macos") {
+                    "Accelerate"
+                } else {
+                    "OpenBLAS0.3.26"
+                },
+                "Ruy",
+            ),
         };
         let identity = TranslationRuntimeIdentity {
-            ct2rs_crate: "0.10.1",
+            ct2rs_crate: if native.is_some() { "" } else { "0.10.1" },
+            native_binding: native.map(|_| "ken-translation/1"),
             ctranslate2_source: "4.8.2",
             sentencepiece_crate: "0.13.2",
             sentencepiece_source: "0.2.1",
-            float_backend: if cfg!(target_os = "macos") {
-                "Accelerate"
-            } else {
-                "OpenBLAS0.3.26"
-            },
-            int8_backend: "Ruy",
+            float_backend,
+            int8_backend,
             configured_device: match config.device {
                 Device::CPU => "cpu",
                 _ => "unsupported",
@@ -147,15 +206,14 @@ impl NativeSession {
             intra_threads: config.num_threads_per_replica,
             inter_threads: config.device_indices.len(),
             observed_replicas: replicas,
-            beam_size: options.beam_size,
-            max_input_length: options.max_input_length,
-            max_decoding_length: options.max_decoding_length,
+            beam_size: policy.beam_size as usize,
+            max_input_length: policy.max_input_length as usize,
+            max_decoding_length: policy.max_decoding_length as usize,
         };
         Ok(Self {
             translator,
             source,
             target,
-            options,
             identity,
             _materialized: materialized,
         })
@@ -185,24 +243,7 @@ impl NativeSession {
             prepared: prepared.into(),
             tokens: tokens.clone(),
         });
-        let rows = self
-            .translator
-            .translate_batch(
-                std::slice::from_ref(&tokens.pieces_with_eos),
-                &self.options,
-                None,
-            )
-            .map_err(|error| ModelError::Inference(error.to_string()))?;
-        if rows.len() != 1 {
-            return Err(ModelError::Inference(
-                "native translator returned an invalid row count".into(),
-            ));
-        }
-        let hypotheses = rows
-            .into_iter()
-            .next()
-            .expect("one result checked")
-            .hypotheses;
+        let hypotheses = self.translator.translate(&tokens.pieces_with_eos)?;
         if hypotheses.len() != 1 {
             return Err(ModelError::Inference(
                 "native translator returned an invalid hypothesis count".into(),
@@ -226,6 +267,7 @@ pub struct LocalQueryExpansion {
     source: crate::model_sources::PreparationSource,
     cache: PathBuf,
     runtime: Mutex<Option<NativeSession>>,
+    native: Option<NativeTranslationRuntime>,
 }
 
 impl LocalQueryExpansion {
@@ -247,7 +289,14 @@ impl LocalQueryExpansion {
             ),
             cache: absolute(cache)?,
             runtime: Mutex::new(None),
+            native: None,
         })
+    }
+
+    pub fn with_native_runtime(mut self, runtime: NativeTranslationRuntime) -> Self {
+        self.runtime = Mutex::new(None);
+        self.native = Some(runtime);
+        self
     }
 
     pub(crate) fn with_source_provider(
@@ -273,7 +322,7 @@ impl LocalQueryExpansion {
                 .source
                 .for_preparation(self.model.source_assets(), &self.cache)?;
             let prepared = self.model.prepare(source.as_deref(), &self.cache)?;
-            *guard = Some(NativeSession::load(prepared)?);
+            *guard = Some(NativeSession::load(prepared, self.native.as_ref())?);
         }
         action(
             guard
@@ -328,28 +377,17 @@ impl LocalQueryExpansion {
 }
 
 #[cfg(test)]
+#[path = "../tests/support/translation_oracle.rs"]
+pub(crate) mod oracle;
+
+#[cfg(test)]
 mod tests {
     use crate::{ModelError, TranslationModel};
-    use serde_json::Value;
     use std::path::PathBuf;
 
     #[test]
     fn actual_native_core_matches_all_pre_product_original_raw_histories() {
-        let document: Value = serde_json::from_str(include_str!(
-            "../../../docs/validation/rust-migration-2026-10-19/m2-translation/raw-reference.json"
-        ))
-        .unwrap();
-        let platform = if cfg!(target_os = "macos") {
-            "Darwin"
-        } else {
-            "Linux"
-        };
-        let original = &document["oracles"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .find(|row| row["platform"] == platform)
-            .unwrap()["original"];
+        let original = super::oracle::raw_histories(std::env::consts::OS, std::env::consts::ARCH);
         let source = PathBuf::from(
             std::env::var_os("KEN_TRANSLATION_SOURCE")
                 .expect("prepare KEN_TRANSLATION_SOURCE for actual native CT2 core parity"),
@@ -365,9 +403,12 @@ mod tests {
                 &root.path().join("c96e2c5399ebfae4fc43d9669556b9afa74bb69d"),
             )
             .unwrap();
-        let session = super::NativeSession::load(prepared).unwrap();
+        let native = super::oracle::native_declaration().map(|(registration, module, core)| {
+            crate::NativeTranslationRuntime::from_json(&registration, &module, &core).unwrap()
+        });
+        let session = super::NativeSession::load(prepared, native.as_ref()).unwrap();
         assert_eq!(session.identity.observed_replicas, 1);
-        for row in original["results"].as_array().unwrap() {
+        for row in original {
             let query = row["input"].as_str().unwrap();
             let tokens = session.tokenize(query).unwrap();
             assert_eq!(serde_json::to_value(tokens.ids).unwrap(), row["source_ids"]);

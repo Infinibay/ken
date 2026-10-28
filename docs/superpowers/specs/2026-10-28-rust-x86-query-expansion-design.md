@@ -62,3 +62,31 @@ ambiguous expectations. Existing ARM fixtures remain byte-identical.
 
 These are executor choices under the user's explicit autonomy instruction; the
 global migration contract remains the authority for public compatibility.
+
+## Evidence-based x86 core adjustment
+
+The independent x86 original produced `Look for the class...`; the first native
+Ruy implementation produced `Find the class...` with identical prepared tokens.
+An original constructor-only trace reports oneDNN for both CPU GEMMs on AMD.
+A standalone C++ executable using the pinned original CT2 4.8.2 core reproduces
+the frozen hypotheses exactly without Python. Preserve that independent fixture.
+
+Use that registered pure-native CPU core for x86 through a small versioned C ABI
+module, following the existing explicit lazy native-runtime ownership pattern.
+The module forwards the policy owned by Rust and reports the actual selected
+oneDNN/MKL backend; it never calls a Python interpreter. Authenticate module,
+CT2 core and OpenMP sidecar before loading private immutable copies. Session
+handles retain the module/files until after native destruction. Token spans and
+owned output buffers preserve lengths, embedded NUL and UTF8 across the boundary.
+
+Add `NativeTranslationRuntime` and an explicit `with_native_runtime` collaborator
+to LocalQueryExpansion; ModelFactory obtains it from PreparedModelResources.
+Parsing remains cold and failed acquisition remains retryable. ARM keeps its
+existing CT2RS/Ruy implementation and serialized identity. x86 diagnostics name
+the actual native binding/core/backend instead of claiming CT2RS/Ruy.
+
+Prepare the core from the already pinned CT2 4.8.2 wheel and headers from the
+already pinned CT2RS 0.10.1 source archive, preserving licenses. No external
+version changes are required. Extend Task2 with SDK/ABI/owner tests before
+production wiring. The earlier Ruy/OpenBLAS-only x86 assumption is superseded by
+this experimentally justified correction; it remains the ARM contract.

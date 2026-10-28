@@ -22,7 +22,7 @@ pub struct TransformerNativeArtifact {
 }
 
 impl TransformerNativeArtifact {
-    fn validate(&self) -> bool {
+    pub(crate) fn validate(&self) -> bool {
         self.bytes > 0
             && self.bytes.checked_add(1).is_some()
             && self.sha256.len() == 64
@@ -44,7 +44,7 @@ struct Platform {
     libraries: BTreeMap<String, TransformerNativeArtifact>,
 }
 
-fn distinct_libraries<'de, D: Deserializer<'de>>(
+pub(crate) fn distinct_libraries<'de, D: Deserializer<'de>>(
     deserializer: D,
 ) -> Result<BTreeMap<String, TransformerNativeArtifact>, D::Error> {
     struct Libraries;

@@ -39,9 +39,11 @@ mod transformer_client;
 mod transformer_model;
 mod transformer_runtime;
 mod transformer_session;
+mod translation_abi;
 mod translation_json;
 mod translation_model;
 mod translation_preparation;
+mod translation_runtime;
 mod verified_file;
 
 pub use artifact_cache::{AcquisitionPolicy, ArtifactCache, ArtifactRequest, ArtifactTransport};
@@ -94,6 +96,7 @@ pub use transformer_runtime::{
 };
 pub use transformer_session::{TransformerBatchResult, TransformerSession, TransformerTrace};
 pub use translation_model::{FrozenTranslationRuntime, PreparedTranslation, TranslationModel};
+pub use translation_runtime::{NativeTranslationRuntime, NativeTranslationRuntimeIdentity};
 
 #[derive(Debug, thiserror::Error)]
 pub enum ModelError {

@@ -25,7 +25,15 @@ struct Request {
     registration: Box<RawValue>,
     source: Option<PathBuf>,
     cache: PathBuf,
+    native_runtime: Option<NativeRuntime>,
     cases: Vec<Case>,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NativeRuntime {
+    registration: Box<RawValue>,
+    module_path: PathBuf,
+    core_root: PathBuf,
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -99,12 +107,25 @@ fn run() -> Result<Value, Box<dyn std::error::Error>> {
     }
     let profile = if cfg!(all(target_os = "macos", target_arch = "aarch64")) {
         FrozenTranslationRuntime::MacOS483
-    } else if cfg!(all(target_os = "linux", target_arch = "aarch64")) {
+    } else if cfg!(all(
+        target_os = "linux",
+        any(target_arch = "aarch64", target_arch = "x86_64")
+    )) {
         FrozenTranslationRuntime::Linux482
     } else {
         return Err("registered native translation platform required".into());
     };
     let model = TranslationModel::from_json(request.registration.get())?;
+    let native = request
+        .native_runtime
+        .map(|value| {
+            ken_models::NativeTranslationRuntime::from_json(
+                value.registration.get(),
+                &value.module_path,
+                &value.core_root,
+            )
+        })
+        .transpose()?;
     let mut peaks = observed_peak::ObservedPeak::default();
     let mut memory = Vec::new();
     sample(&mut peaks, &mut memory, "before-prepare".into())?;
@@ -172,6 +193,10 @@ fn run() -> Result<Value, Box<dyn std::error::Error>> {
         };
         let started = Instant::now();
         let engine = LocalQueryExpansion::new(model.clone(), None, cache)?;
+        let engine = match &native {
+            Some(runtime) => engine.with_native_runtime(runtime.clone()),
+            None => engine,
+        };
         let constructor_ns = started.elapsed().as_nanos();
         let mut calls = Vec::new();
         sample(&mut peaks, &mut memory, format!("{}.before-calls", case.id))?;

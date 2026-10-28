@@ -5,6 +5,8 @@ use std::{
     path::{Path, PathBuf},
     sync::{Arc, Barrier, OnceLock},
 };
+#[path = "support/translation_oracle.rs"]
+mod translation_oracle;
 
 const REVISION: &str = "c96e2c5399ebfae4fc43d9669556b9afa74bb69d";
 const QUESTION: &str = "¿Dónde está la función que elimina archivos?";
@@ -16,6 +18,43 @@ const FILES: [&str; 5] = [
     "target.spm",
 ];
 
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+#[test]
+fn registered_linux_x86_translates_spanish_and_reuses_its_native_replica() {
+    let declaration: Value = serde_json::from_slice(
+        &fs::read(std::env::var_os("KEN_CT2_PREPARATION").unwrap()).unwrap(),
+    )
+    .unwrap();
+    let runtime = ken_models::NativeTranslationRuntime::from_json(
+        &declaration["registration"].to_string(),
+        &PathBuf::from(declaration["module_path"].as_str().unwrap()),
+        &PathBuf::from(declaration["core_root"].as_str().unwrap()),
+    )
+    .unwrap();
+    let engine = LocalQueryExpansion::new(model(), None, fixture().cache.clone())
+        .unwrap()
+        .with_native_runtime(runtime);
+    assert_eq!(
+        engine.expand("find the input parser").unwrap(),
+        "find the input parser"
+    );
+    assert!(!engine.is_loaded());
+    let first = engine.expand_detailed(QUESTION).unwrap();
+    assert_eq!(first.text, "Where is the function that deletes files?");
+    assert!(first.trace.is_some());
+    let second = engine.expand_detailed(QUESTION).unwrap();
+    assert_eq!(second.text, first.text);
+    assert_eq!(second.trace.unwrap().tokens, first.trace.unwrap().tokens);
+    assert_eq!(
+        engine
+            .runtime_identity()
+            .unwrap()
+            .unwrap()
+            .observed_replicas,
+        1
+    );
+}
+
 fn model() -> TranslationModel {
     TranslationModel::from_json(include_str!(
         "../../../src/ken/embedder/data/es-en-ct2-int8.json"
@@ -23,29 +62,16 @@ fn model() -> TranslationModel {
     .unwrap()
 }
 fn oracle() -> Value {
-    assert_eq!(
-        std::env::consts::ARCH,
-        "aarch64",
-        "prepare an original oracle for this architecture"
-    );
-    let value: Value = serde_json::from_str(include_str!(
-        "../../../docs/validation/rust-migration-2026-10-19/m2-translation/reference.json"
-    ))
-    .unwrap();
-    value["oracles"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|row| {
-            row["platform"]
-                == if cfg!(target_os = "macos") {
-                    "Darwin"
-                } else {
-                    "Linux"
-                }
-        })
-        .unwrap()
-        .clone()
+    translation_oracle::for_host(std::env::consts::OS, std::env::consts::ARCH)
+}
+fn engine(cache: PathBuf) -> LocalQueryExpansion {
+    let engine = LocalQueryExpansion::new(model(), None, cache).unwrap();
+    match translation_oracle::native_declaration() {
+        Some((registration, module, core)) => engine.with_native_runtime(
+            ken_models::NativeTranslationRuntime::from_json(&registration, &module, &core).unwrap(),
+        ),
+        None => engine,
+    }
 }
 struct Fixture {
     _root: tempfile::TempDir,
@@ -126,7 +152,7 @@ fn all_original_histories_preserve_actual_tokens_hypotheses_text_errors_and_lazy
         } else {
             fixture().cache.clone()
         };
-        let engine = LocalQueryExpansion::new(model(), None, cache).unwrap();
+        let engine = engine(cache);
         assert!(!engine.is_loaded());
         for (query, call) in case["queries"]
             .as_array()
@@ -199,14 +225,24 @@ fn all_original_histories_preserve_actual_tokens_hypotheses_text_errors_and_lazy
             assert_eq!(identity["max_decoding_length"], 256);
             assert_eq!(identity["ctranslate2_source"], "4.8.2");
             assert_eq!(identity["sentencepiece_source"], "0.2.1");
-            assert_eq!(
-                identity["float_backend"],
-                if cfg!(target_os = "macos") {
-                    "Accelerate"
-                } else {
-                    "OpenBLAS0.3.26"
-                }
-            );
+            if cfg!(target_arch = "x86_64") {
+                assert!(matches!(
+                    identity["float_backend"].as_str(),
+                    Some("DNNL" | "MKL")
+                ));
+                assert_eq!(identity["float_backend"], identity["int8_backend"]);
+                assert_eq!(identity["native_binding"], "ken-translation/1");
+                assert!(identity.get("ct2rs_crate").is_none());
+            } else {
+                assert_eq!(
+                    identity["float_backend"],
+                    if cfg!(target_os = "macos") {
+                        "Accelerate"
+                    } else {
+                        "OpenBLAS0.3.26"
+                    }
+                );
+            }
         }
     }
 }
@@ -216,7 +252,7 @@ fn failed_loading_is_retryable_and_english_remains_lazy_after_failure() {
     let temp = tempfile::tempdir().unwrap();
     let cache = temp.path().join(REVISION);
     fs::create_dir(&cache).unwrap();
-    let engine = LocalQueryExpansion::new(model(), None, cache.clone()).unwrap();
+    let engine = engine(cache.clone());
     assert!(engine.expand(QUESTION).is_err());
     assert!(!engine.is_loaded());
     assert_eq!(
@@ -247,7 +283,7 @@ fn long_unmatched_identifier_attempt_reaches_normal_error_and_english_recovery()
 fn loaded_native_data_and_returned_traces_are_owned_after_cache_replacement() {
     let temp = tempfile::tempdir().unwrap();
     let cache = copy_cache(temp.path());
-    let engine = LocalQueryExpansion::new(model(), None, cache.clone()).unwrap();
+    let engine = engine(cache.clone());
     let mut first = engine.expand_detailed(QUESTION).unwrap();
     let token_ids = first.trace.as_ref().unwrap().tokens.ids.clone();
     first.trace.as_mut().unwrap().tokens.ids.fill(999);
@@ -262,8 +298,7 @@ fn loaded_native_data_and_returned_traces_are_owned_after_cache_replacement() {
 
 #[test]
 fn simultaneous_first_calls_use_one_replica_without_crossing_queries_or_results() {
-    let engine =
-        Arc::new(LocalQueryExpansion::new(model(), None, fixture().cache.clone()).unwrap());
+    let engine = Arc::new(engine(fixture().cache.clone()));
     let barrier = Arc::new(Barrier::new(8));
     let queries = [
         (QUESTION, wanted("spanish")),
@@ -297,7 +332,7 @@ fn simultaneous_first_calls_use_one_replica_without_crossing_queries_or_results(
 
 #[test]
 fn failed_inference_attempt_owns_the_actual_input_before_error_and_keeps_lazy_recovery() {
-    let engine = LocalQueryExpansion::new(model(), None, fixture().cache.clone()).unwrap();
+    let engine = engine(fixture().cache.clone());
     let query = "¿ ".to_owned() + &"hola ".repeat(511);
     let attempt = engine.expand_attempt(&query);
     let input = attempt.input.unwrap();

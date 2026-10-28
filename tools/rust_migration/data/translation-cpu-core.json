@@ -1,0 +1,578 @@
+{
+  "format": "ken-translation-cpu-core/1",
+  "os": "linux",
+  "arch": "x86_64",
+  "version": "4.8.2",
+  "abi": 1,
+  "wheel": {
+    "filename": "ctranslate2-4.8.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+    "url": "https://files.pythonhosted.org/packages/01/23/d72e70cac2b7c5c832a629c380235b53b20fac8c0921856bcf625b08ba44/ctranslate2-4.8.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+    "bytes": 39555908,
+    "sha256": "554a0b2abf098a11c66ef7930c0a05b3de683a455e8ea3f2e6ab6966aaabc136"
+  },
+  "headers": {
+    "filename": "ct2rs-0.10.1.crate",
+    "url": "https://static.crates.io/crates/ct2rs/ct2rs-0.10.1.crate",
+    "bytes": 6469956,
+    "sha256": "b68f8baf9feaac18f4380e1079ed2c633f7703cee391d34521f5dded6c005725"
+  },
+  "header_prefix": "ct2rs-0.10.1/CTranslate2/include/",
+  "backend_header": "ct2rs-0.10.1/CTranslate2/src/cpu/backend.h",
+  "source_licenses": [
+    "ct2rs-0.10.1/LICENSE",
+    "ct2rs-0.10.1/CTranslate2/LICENSE"
+  ],
+  "header_files": {
+    "licenses/CTranslate2-LICENSE": {
+      "member": "ct2rs-0.10.1/CTranslate2/LICENSE",
+      "bytes": 1115,
+      "sha256": "54aa79d9fe3c09e67a16dcd95b9e88676405a6ec174efda31036983cf7672ecb"
+    },
+    "include/ctranslate2/allocator.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/allocator.h",
+      "bytes": 515,
+      "sha256": "eb4d3982c632d4d59c894c251c16c2c501cd0824a0067e71584b14806f8cb90f"
+    },
+    "include/ctranslate2/batch_reader.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/batch_reader.h",
+      "bytes": 3976,
+      "sha256": "18b191db94097ab6ec627641c5aa9048bc7cfad6d309f72d7e2982ea2825adc1"
+    },
+    "include/ctranslate2/bfloat16.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/bfloat16.h",
+      "bytes": 1710,
+      "sha256": "916af543a4a9447987e49c5d423ae2182a33a2ec552d98b1b493b704bed17edc"
+    },
+    "include/ctranslate2/buffered_translation_wrapper.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/buffered_translation_wrapper.h",
+      "bytes": 1769,
+      "sha256": "98324a56b51ded6f073ff4606163647c3dfc88680ba1c9f70885ae05906661fd"
+    },
+    "include/ctranslate2/decoding.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/decoding.h",
+      "bytes": 5967,
+      "sha256": "28e715bd0d82c9db8f323cd3f0e23682e79fbefe7c2f99f54d7aeb99a9012f43"
+    },
+    "include/ctranslate2/decoding_utils.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/decoding_utils.h",
+      "bytes": 5783,
+      "sha256": "3e06d0471f2119c9f8633b5005c56ea99537d2e2d59018f61789a0d52213d823"
+    },
+    "include/ctranslate2/devices.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/devices.h",
+      "bytes": 1718,
+      "sha256": "d0e62731752e5da3499aef8145a61a2adbdc32cc73da00408ca966ec15c9ca06"
+    },
+    "include/ctranslate2/encoder.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/encoder.h",
+      "bytes": 886,
+      "sha256": "af2b87562f7764b4c3c2b4b973f70fd4c803b2700b4b35706b2ebbb3423d3240"
+    },
+    "include/ctranslate2/encoding.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/encoding.h",
+      "bytes": 209,
+      "sha256": "035e0dd22c0444343fd67c0dc7a05639e1c8e3bf5b579598f052f531c9b57581"
+    },
+    "include/ctranslate2/filesystem.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/filesystem.h",
+      "bytes": 461,
+      "sha256": "b1f57b9297dbc6bb702d1763834236e8899952c459287af1ea4f4d045987aff5"
+    },
+    "include/ctranslate2/generation.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/generation.h",
+      "bytes": 5362,
+      "sha256": "0ad1f72e2d35706eef8ae13417ce28e4de2bc4fe91e981b25fd5dd98b979af27"
+    },
+    "include/ctranslate2/generator.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/generator.h",
+      "bytes": 1506,
+      "sha256": "25b90a2c81885ba6a1e1def909f0ccb11ee63f706dc1ccb0b622fcc5c5708f7e"
+    },
+    "include/ctranslate2/layers/attention.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/layers/attention.h",
+      "bytes": 4946,
+      "sha256": "f3d9fef313b85fdd97f9a1e64714d75805ddea80250bb76f4872150126f2d34a"
+    },
+    "include/ctranslate2/layers/attention_layer.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/layers/attention_layer.h",
+      "bytes": 5242,
+      "sha256": "88621014512a079efca659ddf2fb61b4c3c22e7354663256e310109b89a18973"
+    },
+    "include/ctranslate2/layers/common.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/layers/common.h",
+      "bytes": 6686,
+      "sha256": "0337bf74ed41c6d0c742c70bafdb7f29cfef5fc44ede29e2b69b44b43a3b9dc3"
+    },
+    "include/ctranslate2/layers/decoder.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/layers/decoder.h",
+      "bytes": 3738,
+      "sha256": "8ac459d3109e07818e88c924013955379fe8f6f48e10b4838c04f192143ecc70"
+    },
+    "include/ctranslate2/layers/encoder.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/layers/encoder.h",
+      "bytes": 1113,
+      "sha256": "9ce34eb83e1248931f03fcc1dc778095c0e2084de67c90c57d59b316b2a9fa66"
+    },
+    "include/ctranslate2/layers/flash_attention.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/layers/flash_attention.h",
+      "bytes": 1912,
+      "sha256": "2f804210dc62cc3a6ee4096514d30439db871507b1499b9f93661509324c6715"
+    },
+    "include/ctranslate2/layers/layers.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/layers/layers.h",
+      "bytes": 111,
+      "sha256": "90966ae139ff9e6c3bf15ee8e68821c7e49b91e2c7ed68acf81a6925eaf6b13d"
+    },
+    "include/ctranslate2/layers/transformer.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/layers/transformer.h",
+      "bytes": 8833,
+      "sha256": "e521b7023638d877eedb7e03ed83228210c31dcf5d59fdb94b7c76089cd73661"
+    },
+    "include/ctranslate2/layers/wav2vec2.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/layers/wav2vec2.h",
+      "bytes": 2703,
+      "sha256": "d4da522535b0dff8a39b252768addd203935a56f5517be26f643b78ba61e1cb1"
+    },
+    "include/ctranslate2/layers/wav2vec2bert.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/layers/wav2vec2bert.h",
+      "bytes": 4163,
+      "sha256": "76660566144201ab1dd1d5f270b8dc7267bd39806011205f3d07ace148799e1c"
+    },
+    "include/ctranslate2/layers/whisper.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/layers/whisper.h",
+      "bytes": 2106,
+      "sha256": "d6f265b4c61f8425d98dbdc069496f2e71a0829411f263e8368d5883a4bff76d"
+    },
+    "include/ctranslate2/logging.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/logging.h",
+      "bytes": 276,
+      "sha256": "2100dbe1389dcf39940cbaed56b528f536ef553eb9b4391179d90b5da8567739"
+    },
+    "include/ctranslate2/models/language_model.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/models/language_model.h",
+      "bytes": 5785,
+      "sha256": "f35e5941ecabc73c9cae274182426464402ff0c5b89ff1f6f2d8ad77c263c625"
+    },
+    "include/ctranslate2/models/model.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/models/model.h",
+      "bytes": 8743,
+      "sha256": "1e12b138057d619a6a7f87ad387cad2016039903ffe59e5d9a897124c328647a"
+    },
+    "include/ctranslate2/models/model_factory.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/models/model_factory.h",
+      "bytes": 1244,
+      "sha256": "8d184658945381dcc0e7327f53043ff3e8d478c71030639c1f9278fd45846453"
+    },
+    "include/ctranslate2/models/model_reader.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/models/model_reader.h",
+      "bytes": 2066,
+      "sha256": "76c948f71ce4a0aee278aae38dd8f2d81ae56fb748ae2db6ff194c27172a8f68"
+    },
+    "include/ctranslate2/models/sequence_to_sequence.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/models/sequence_to_sequence.h",
+      "bytes": 5895,
+      "sha256": "fb946f6d37dbad2be7faf4224e2d5f7d28a5eb76af940d9a5a10ce9a26cf95bb"
+    },
+    "include/ctranslate2/models/transformer.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/models/transformer.h",
+      "bytes": 1630,
+      "sha256": "3d734f4b4ec9f50ed121662a59dfba17c120a16f48aa948818892c76e805245e"
+    },
+    "include/ctranslate2/models/wav2vec2.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/models/wav2vec2.h",
+      "bytes": 2076,
+      "sha256": "a970cbae39413006f28ddd5af44ac9c068e738476e3b4077cd08633f46ecfdda"
+    },
+    "include/ctranslate2/models/wav2vec2bert.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/models/wav2vec2bert.h",
+      "bytes": 2137,
+      "sha256": "05634c30d52735af5899d6de46d3b34ae33268e646ff140396dee8c5758c4193"
+    },
+    "include/ctranslate2/models/whisper.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/models/whisper.h",
+      "bytes": 6025,
+      "sha256": "ee3ae7a77c107fa8a6756dfa32340f3d4e1cc1d6e247786580d40dd810058312"
+    },
+    "include/ctranslate2/ops/activation.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/activation.h",
+      "bytes": 323,
+      "sha256": "d2e6c71d736fb94377db64eebae0c43291c612afaaa1f5f86e4d0c7370c0da57"
+    },
+    "include/ctranslate2/ops/add.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/add.h",
+      "bytes": 620,
+      "sha256": "dde2095e5db935560676ac87afa8a340d2b4b4296431be52a44418baab30e0b6"
+    },
+    "include/ctranslate2/ops/alibi_add.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/alibi_add.h",
+      "bytes": 631,
+      "sha256": "2ad200c85fa45124b5887361ad00f5a0b9b76a66bab7d1587d78913b92fdd72c"
+    },
+    "include/ctranslate2/ops/awq/dequantize_awq.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/awq/dequantize_awq.h",
+      "bytes": 622,
+      "sha256": "85bb01a56f87553e4475e41bc8495d02060cbac9af265446a84add6188bcc0d7"
+    },
+    "include/ctranslate2/ops/awq/gemm.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/awq/gemm.h",
+      "bytes": 813,
+      "sha256": "0f7172fc05f20c49226220fa7cfa971968d628790a694c62f3018db7fd6eeed9"
+    },
+    "include/ctranslate2/ops/awq/gemv.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/awq/gemv.h",
+      "bytes": 1110,
+      "sha256": "e34ce528b4eda37bdb7c2d6137e01ddf3a689d47f348646e3435b5002e6737c5"
+    },
+    "include/ctranslate2/ops/bias_add.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/bias_add.h",
+      "bytes": 775,
+      "sha256": "eeffdb2b8a224d1137e633e337ba5222731eb5e1896544f7417ec3ff387f15c5"
+    },
+    "include/ctranslate2/ops/concat.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/concat.h",
+      "bytes": 438,
+      "sha256": "6f70151adbc9866fbce92ae759047b6b05cf9a1b566cdd851371f5bb92ce296a"
+    },
+    "include/ctranslate2/ops/conv1d.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/conv1d.h",
+      "bytes": 1744,
+      "sha256": "8e45561d32114b4f297d1b6a470fcdbe6fe64d6ee661d0d64c2339028f6bf58b"
+    },
+    "include/ctranslate2/ops/cos.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/cos.h",
+      "bytes": 200,
+      "sha256": "0cc164bdb34ebd6211a9ce50d59a3d2cd99df5874900b16f537bdc09ec80b2cb"
+    },
+    "include/ctranslate2/ops/dequantize.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/dequantize.h",
+      "bytes": 1501,
+      "sha256": "c20e3562236992ba1ae5f736a8bb2b9456072a290421dc2a9a95e727db2233d5"
+    },
+    "include/ctranslate2/ops/flash-attention/alibi.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/flash-attention/alibi.h",
+      "bytes": 2824,
+      "sha256": "04b6a655480162fa7a067e32c1f824b8c7ad94cacb6665eceb933fb3e496238a"
+    },
+    "include/ctranslate2/ops/flash-attention/block_info.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/flash-attention/block_info.h",
+      "bytes": 2260,
+      "sha256": "dc4173a0b55fadfb7f386fb8f8b5c2722c3d425b28e034756c312ce84d72f413"
+    },
+    "include/ctranslate2/ops/flash-attention/flash.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/flash-attention/flash.h",
+      "bytes": 5387,
+      "sha256": "b276445ef706aadff38ad11794236b27b22da7022ca3d69f974cb53122c6e984"
+    },
+    "include/ctranslate2/ops/flash-attention/flash_fwd_kernel.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/flash-attention/flash_fwd_kernel.h",
+      "bytes": 69684,
+      "sha256": "bd01f8e5003a69c766be9ed06d20a62dca61da4bb6894a842f4333a025c494a9"
+    },
+    "include/ctranslate2/ops/flash-attention/flash_fwd_launch_template.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/flash-attention/flash_fwd_launch_template.h",
+      "bytes": 19449,
+      "sha256": "61b60b428d3846b99a7cb0564dea72e5bb41640a531408be911a0dd36416da0e"
+    },
+    "include/ctranslate2/ops/flash-attention/kernel_traits.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/flash-attention/kernel_traits.h",
+      "bytes": 7617,
+      "sha256": "e0812fffe2cec2904ab7d80cc9c4673bc8a7f9c466f8078aefeddccfe960e3f7"
+    },
+    "include/ctranslate2/ops/flash-attention/mask.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/flash-attention/mask.h",
+      "bytes": 11224,
+      "sha256": "a5ba3f2b8ea12e659bd7d3c602d32b99b0f1572e44f8326868c609839ad3505d"
+    },
+    "include/ctranslate2/ops/flash-attention/rotary.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/flash-attention/rotary.h",
+      "bytes": 8960,
+      "sha256": "3bf75a787d85b7ea5768a03a3d8b59d2acc7a519c7cc314b883191e218b67a53"
+    },
+    "include/ctranslate2/ops/flash-attention/softmax.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/flash-attention/softmax.h",
+      "bytes": 8929,
+      "sha256": "d2afbed701fa6ed910732bf7296eb2755bff07c5f590862b111578a8da87cc78"
+    },
+    "include/ctranslate2/ops/flash-attention/static_switch.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/flash-attention/static_switch.h",
+      "bytes": 3802,
+      "sha256": "0d7ad441a1c3fe872958d331391fe0aa2c6492783b6e38acead11be0e3681eec"
+    },
+    "include/ctranslate2/ops/flash-attention/utils.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/flash-attention/utils.h",
+      "bytes": 17699,
+      "sha256": "6f4ffdecf2ed14a881020407409820ee5d54676d8f663d11a0c238865bc9aba0"
+    },
+    "include/ctranslate2/ops/flash_attention.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/flash_attention.h",
+      "bytes": 1529,
+      "sha256": "3764eedf25e7474ec156630b868f1341938aab87f1373a765aca2f164f2fcb38"
+    },
+    "include/ctranslate2/ops/gather.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/gather.h",
+      "bytes": 789,
+      "sha256": "9cf296741919e88aa961ae9a6763c44cfccb12f27f1dec855ae3813c65d95cf1"
+    },
+    "include/ctranslate2/ops/gelu.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/gelu.h",
+      "bytes": 950,
+      "sha256": "4f9930cae91cae767e0b8a9ccc1d0dde840b0b22633e2111dafc1208be9d9eae"
+    },
+    "include/ctranslate2/ops/gemm.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/gemm.h",
+      "bytes": 2266,
+      "sha256": "74608b4637528ef49af7c59426410865abe5ea8967cca6c1bd2874cc5eab651f"
+    },
+    "include/ctranslate2/ops/gumbel_max.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/gumbel_max.h",
+      "bytes": 525,
+      "sha256": "f4e83d756f32fcebae6e44c373dd8915d4eaa77baa4189650709fd9b9fefb6d9"
+    },
+    "include/ctranslate2/ops/identity.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/identity.h",
+      "bytes": 267,
+      "sha256": "1cd6a3e43d9ad1a9b1c593e021e8996d9938e3702084aa4c6e49a76bf000ade6"
+    },
+    "include/ctranslate2/ops/layer_norm.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/layer_norm.h",
+      "bytes": 1210,
+      "sha256": "cbbc1e72173a803fd557591f0ca5eecfbd7576293305ebbd5a3548b4d80847c5"
+    },
+    "include/ctranslate2/ops/log.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/log.h",
+      "bytes": 413,
+      "sha256": "6b0fbd55b808a5e1477692ee2edd059b606773728582739334ddb3a9e2a7ec5d"
+    },
+    "include/ctranslate2/ops/matmul.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/matmul.h",
+      "bytes": 502,
+      "sha256": "902953c4dcfa78302bc8fd4122bd5a138f957ee52d20b763f2b55c720ef38696"
+    },
+    "include/ctranslate2/ops/mean.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/mean.h",
+      "bytes": 589,
+      "sha256": "199cffd08c3e2a7b6f87821a241d730e53561beea51e3f4136ce25608b4d311a"
+    },
+    "include/ctranslate2/ops/median_filter.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/median_filter.h",
+      "bytes": 426,
+      "sha256": "995eb633a43d1036637462872efab253990518e99b548845320dfb2b3c9586c4"
+    },
+    "include/ctranslate2/ops/min_max.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/min_max.h",
+      "bytes": 1160,
+      "sha256": "b0ffde868f330d134ffe9928515fcb23a69c4b265ec0714f0b5eba92d8821dc0"
+    },
+    "include/ctranslate2/ops/mul.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/mul.h",
+      "bytes": 620,
+      "sha256": "40200ac9947bd3bd5c7aff3dc843e8c76319ce88a4c8f4277fcaae19bea87fab"
+    },
+    "include/ctranslate2/ops/multinomial.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/multinomial.h",
+      "bytes": 552,
+      "sha256": "f5722fa184a358e3d0c584ee71989e3a58e706f611bd1710576cb6896076a147"
+    },
+    "include/ctranslate2/ops/nccl_ops.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/nccl_ops.h",
+      "bytes": 791,
+      "sha256": "9f5e06f1d4db0e358d771aa73285a8f068b9b02770754cca7fc0845c3a9a902d"
+    },
+    "include/ctranslate2/ops/op.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/op.h",
+      "bytes": 892,
+      "sha256": "8ed29ae08d16dcbbad5ed2e46de5671480b6e659f2d959625fd1a9e908b0622b"
+    },
+    "include/ctranslate2/ops/ops.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/ops.h",
+      "bytes": 958,
+      "sha256": "136e8052be024c1b2eccae4184abdb134518647aa670c1e2b955da102c8fc8c8"
+    },
+    "include/ctranslate2/ops/quantize.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/quantize.h",
+      "bytes": 898,
+      "sha256": "575bbbd6d42cf7f558d08e9a76238d3c515bfc64188fd489a624875aff8bc7a4"
+    },
+    "include/ctranslate2/ops/relu.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/relu.h",
+      "bytes": 424,
+      "sha256": "8bb8568493edcda8c4be81ac37b1e9bb565cf8d7bb803058b46396e0edf79da0"
+    },
+    "include/ctranslate2/ops/rms_norm.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/rms_norm.h",
+      "bytes": 605,
+      "sha256": "08fd2631bcdbda73a47088bd08b3e3e8e82a90449b3e249fb97b04268dc3b4f8"
+    },
+    "include/ctranslate2/ops/rotary.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/rotary.h",
+      "bytes": 749,
+      "sha256": "d135717a72bd7320673527075dc13f83779930df1799a024771d984416b25c6e"
+    },
+    "include/ctranslate2/ops/sigmoid.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/sigmoid.h",
+      "bytes": 430,
+      "sha256": "997f63fd0f50c85e24ecf6d653a3e1a9da0bd73d94ad2ceca195ce12edef56fc"
+    },
+    "include/ctranslate2/ops/sin.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/sin.h",
+      "bytes": 200,
+      "sha256": "3df60e97f7d135601f88dd3825ff0452549c2a7df4fc73865a1ecd23eda790af"
+    },
+    "include/ctranslate2/ops/slide.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/slide.h",
+      "bytes": 554,
+      "sha256": "d8b648d04fa68b7fe1750e8d3922d3324799fd12ee37085a4622c257e29a6402"
+    },
+    "include/ctranslate2/ops/softmax.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/softmax.h",
+      "bytes": 767,
+      "sha256": "b6d6a3278d32f2ce6145d69a0fdf0eb61b6d971ed49451832204e34d629d2412"
+    },
+    "include/ctranslate2/ops/split.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/split.h",
+      "bytes": 907,
+      "sha256": "34d9141d37c1109d68cf81e2655cf6eb97035f4512d6359dabb16a289741452b"
+    },
+    "include/ctranslate2/ops/squeeze.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/squeeze.h",
+      "bytes": 1312,
+      "sha256": "0453efa29f013c8d3b98c130493ddc5595d63c6d579365716be571827e72d9c0"
+    },
+    "include/ctranslate2/ops/sub.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/sub.h",
+      "bytes": 620,
+      "sha256": "041033542fb635c4d91b88e350171a98e0087080eaf9941b1f625d0c0756cdb5"
+    },
+    "include/ctranslate2/ops/sum.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/sum.h",
+      "bytes": 263,
+      "sha256": "b8dc087d039dd0c42999959c202c0b249a523ab99d75b08ffd412340d2508b8f"
+    },
+    "include/ctranslate2/ops/swish.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/swish.h",
+      "bytes": 426,
+      "sha256": "74efdf88153c3b73c726251d28298964453330fdf2e1745128d61da788f2e66e"
+    },
+    "include/ctranslate2/ops/tanh.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/tanh.h",
+      "bytes": 201,
+      "sha256": "8c6daaadb3ee96f36c1aae5cafe89b28d4d106c5e8cf8b2835bf383028ba7934"
+    },
+    "include/ctranslate2/ops/tile.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/tile.h",
+      "bytes": 608,
+      "sha256": "05da08be345dfcef5b764889e5a2b79b30cf375b6d6a653b90a734f6c47d4d5a"
+    },
+    "include/ctranslate2/ops/topk.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/topk.h",
+      "bytes": 487,
+      "sha256": "e1e032aec83ecb9cada04b40c8dad574cf90709f73adbb926738cd073900ca44"
+    },
+    "include/ctranslate2/ops/topp_mask.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/topp_mask.h",
+      "bytes": 654,
+      "sha256": "0a95452f0dfbc3a923c5b1bca2040f1c2cea810d3b5c9c78be8164b3a6957860"
+    },
+    "include/ctranslate2/ops/transpose.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/transpose.h",
+      "bytes": 1260,
+      "sha256": "4506bca19ffb2204261cedb5b2f5a4c3bc6497d0e192adb992049df427294743"
+    },
+    "include/ctranslate2/ops/unsqueeze.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/ops/unsqueeze.h",
+      "bytes": 1064,
+      "sha256": "6c2081c4b4411bbd09e6a344779984dfe1d2411df55dce447816f84563e9e61b"
+    },
+    "include/ctranslate2/padder.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/padder.h",
+      "bytes": 1073,
+      "sha256": "4eb8306753a9832dc1b97dce3733e1cd096ed4c18fb185543af61e863173cae9"
+    },
+    "include/ctranslate2/primitives.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/primitives.h",
+      "bytes": 8039,
+      "sha256": "7e43dcb0ff4a7276632913c4571b0e31aa295dea11ec3e5db46aabebb994ad12"
+    },
+    "include/ctranslate2/profiler.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/profiler.h",
+      "bytes": 840,
+      "sha256": "ef4284f20791bfbddf4cc828f3afd8d9b9d9d3f397a37cc99916c768ba264917"
+    },
+    "include/ctranslate2/random.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/random.h",
+      "bytes": 184,
+      "sha256": "308921a948388ccad09d1ec42ebf587e302210a5761571f17622e0ad3efdabad"
+    },
+    "include/ctranslate2/replica_pool.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/replica_pool.h",
+      "bytes": 12352,
+      "sha256": "496073f9d648a843cbe38bc27becab05866c5c49fc63f0d9699c09d930e869f2"
+    },
+    "include/ctranslate2/sampling.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/sampling.h",
+      "bytes": 1307,
+      "sha256": "c133c30329490274a6a4de29adfad75f6b27d4b2d0bcfdebbcdbca30d2c0abee"
+    },
+    "include/ctranslate2/scoring.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/scoring.h",
+      "bytes": 1287,
+      "sha256": "1d03471a039c5d792d65c1f4663470b642e3613d068b857c6e79b0c2f45e208b"
+    },
+    "include/ctranslate2/storage_view.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/storage_view.h",
+      "bytes": 7560,
+      "sha256": "0f36d7f935cdc5a98318722a098a6f6193c698966026410b3099485732248613"
+    },
+    "include/ctranslate2/thread_pool.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/thread_pool.h",
+      "bytes": 2851,
+      "sha256": "8a11c1257afda711e10a6489b8d16521110ec5732cb1798c89d4fe54c30ec9a1"
+    },
+    "include/ctranslate2/translation.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/translation.h",
+      "bytes": 5481,
+      "sha256": "051a4709eb7ba27f0477bd7acfd02e39edf3f6d1eeebbbbc97d7b99d02d00a5b"
+    },
+    "include/ctranslate2/translator.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/translator.h",
+      "bytes": 17151,
+      "sha256": "448a1270d5e190bd4ee6c5b01dc41c378dcfd05d2817ddef3134c15a091c9ea4"
+    },
+    "include/ctranslate2/types.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/types.h",
+      "bytes": 2093,
+      "sha256": "80fda2a3736d8936b4829c5c8e44ed7cbc465a1ade3808671037dda6e81ef02e"
+    },
+    "include/ctranslate2/utils.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/utils.h",
+      "bytes": 3843,
+      "sha256": "bc5fd5a3c703340b245bbb2c7ce7697e0002187b97dd3b09f916c7399bee4a18"
+    },
+    "include/ctranslate2/vocabulary.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/vocabulary.h",
+      "bytes": 2151,
+      "sha256": "514235a50052d1a9850f33a87233a0bb36efe50256c621b8295ba37942d3b468"
+    },
+    "include/ctranslate2/vocabulary_map.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/ctranslate2/vocabulary_map.h",
+      "bytes": 940,
+      "sha256": "7a894ac185ad8340f6a2b9dd140c7a640131e3869b2579ea380318f2fd2be23e"
+    },
+    "include/half_float/half.hpp": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/half_float/half.hpp",
+      "bytes": 211605,
+      "sha256": "8f37fbc82d45c141e3c068c83893e7fc2b3696b8f4dbb863ff8a61ab779abf4b"
+    },
+    "include/nlohmann/json.hpp": {
+      "member": "ct2rs-0.10.1/CTranslate2/include/nlohmann/json.hpp",
+      "bytes": 907858,
+      "sha256": "665fa14b8af3837966949e8eb0052d583e2ac105d3438baba9951785512cf921"
+    },
+    "include/ken-ct2/backend.h": {
+      "member": "ct2rs-0.10.1/CTranslate2/src/cpu/backend.h",
+      "bytes": 631,
+      "sha256": "847f4f1098c5bf8895333c725c38eafcfbbe7b864b4909a045f897db8032c772"
+    }
+  },
+  "runtime_registration": "crates/ken-models/resources/ct2-runtime-libraries.json"
+}

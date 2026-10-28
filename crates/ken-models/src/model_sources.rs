@@ -1,8 +1,8 @@
 //! Resolve declared data and bound disk preparation, independently of inference.
 use crate::{
     AcquisitionPolicy, ArtifactCache, ArtifactRequest, ArtifactTransport, FastEmbedDeviceRequest,
-    ModelAssets, ModelError, NativeOnnxRuntime, NativeTransformerRuntime, PublicModelTransport,
-    TransformerDeviceRequest,
+    ModelAssets, ModelError, NativeOnnxRuntime, NativeTransformerRuntime, NativeTranslationRuntime,
+    PublicModelTransport, TransformerDeviceRequest,
 };
 use std::{
     collections::BTreeMap,
@@ -19,6 +19,7 @@ pub struct PreparedModelResources {
     pub onnx: Option<NativeOnnxRuntime>,
     pub torch: Option<NativeTransformerRuntime>,
     pub mlx: Option<NativeTransformerRuntime>,
+    pub translation: Option<NativeTranslationRuntime>,
     pub fastembed_device: FastEmbedDeviceRequest,
     pub transformer_device: TransformerDeviceRequest,
 }
@@ -47,6 +48,7 @@ impl PreparedModelResources {
             onnx: None,
             torch: None,
             mlx: None,
+            translation: None,
             fastembed_device: FastEmbedDeviceRequest::from_inputs(None, None),
             transformer_device: TransformerDeviceRequest::Auto,
         })

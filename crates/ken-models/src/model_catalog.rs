@@ -715,6 +715,16 @@ mod tests {
             catalog.translation.cache_path(&root.path().join("direct")),
         )
         .unwrap();
+        let direct = if let Some((registration, module, core)) =
+            crate::query_expansion::oracle::native_declaration()
+        {
+            let runtime =
+                crate::NativeTranslationRuntime::from_json(&registration, &module, &core).unwrap();
+            prepared.translation = Some(runtime.clone());
+            direct.with_native_runtime(runtime)
+        } else {
+            direct
+        };
         let query = "¿Dónde está la función que elimina archivos?";
         let expected = direct.expand_detailed(query).unwrap();
         let factory = factory(catalog, prepared, root.path());

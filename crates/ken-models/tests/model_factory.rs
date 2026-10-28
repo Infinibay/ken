@@ -6,6 +6,51 @@ use ken_models::{
 use serde_json::{Value, json};
 use std::{path::Path, sync::Arc};
 
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+#[test]
+fn factory_expansion_defers_then_uses_its_registered_x86_runtime() {
+    let temp = tempfile::tempdir().unwrap();
+    let mut resources =
+        PreparedModelResources::new(&temp.path().join("owned"), &temp.path().join("absent.npz"))
+            .unwrap();
+    let path = std::env::var_os("KEN_CT2_PREPARATION").expect("prepare CT2 CPU backend");
+    let value: Value = serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();
+    let runtime = ken_models::NativeTranslationRuntime::from_json(
+        &value["registration"].to_string(),
+        Path::new(value["module_path"].as_str().unwrap()),
+        Path::new(value["core_root"].as_str().unwrap()),
+    )
+    .unwrap();
+    resources.translation = Some(runtime.clone());
+    let catalog = ModelCatalog::built_in().unwrap();
+    resources.source_overrides.insert(
+        "Prukario/opus-mt-es-en-ct2-int8".into(),
+        std::env::var_os("KEN_TRANSLATION_SOURCE").unwrap().into(),
+    );
+    let factory = ModelFactory::new(
+        catalog,
+        ArtifactCache::new(&temp.path().join("cache")).unwrap(),
+        resources,
+        AcquisitionPolicy::Offline,
+    );
+    let expansion = factory.expansion().unwrap();
+    assert!(Arc::ptr_eq(&expansion, &factory.expansion().unwrap()));
+    assert_eq!(
+        expansion.expand("find the parser").unwrap(),
+        "find the parser"
+    );
+    assert!(runtime.loaded_identity().unwrap().is_none());
+    assert!(!temp.path().join("owned").exists());
+    assert_eq!(
+        expansion
+            .expand("¿Dónde está la función que elimina archivos?")
+            .unwrap(),
+        "Where is the function that deletes files?"
+    );
+    assert!(expansion.is_loaded());
+    assert!(runtime.loaded_identity().unwrap().is_some());
+}
+
 fn original_runtime() -> LegacyRuntimeIdentity {
     let capture: Value =
         serde_json::from_str(include_str!("fixtures/profile-identity/macos.json")).unwrap();
