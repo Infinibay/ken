@@ -18,6 +18,13 @@ pub enum Command {
     SearchFiles(SearchArgs),
     /// Search indexed symbols using the complete native search engine
     SearchSymbols(SearchArgs),
+    /// Run native file and symbol search over MCP stdio
+    Mcp(McpArgs),
+}
+#[derive(Debug, Args)]
+pub struct McpArgs {
+    #[arg(default_value = ".")]
+    pub path: PathBuf,
 }
 #[derive(Debug, Args)]
 pub struct StatusArgs {

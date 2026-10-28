@@ -229,11 +229,7 @@ fn default_compact_and_json_search_quote_current_source_without_model_resources(
 
 #[path = "../../ken-search/tests/support/search_response.rs"]
 mod response;
-#[test]
-fn actual_registered_cli_runs_native_models_and_matches_original_response() {
-    let fixture = Fixture::new();
-    let reference = original();
-    fixture.index(&reference["input"]["projects"][0]["files"]);
+fn configure_registered(fixture: &Fixture) {
     let mut config: Value =
         serde_json::from_slice(&fs::read(&fixture.installation).unwrap()).unwrap();
     config["ranking_directory"] =
@@ -253,6 +249,13 @@ fn actual_registered_cli_runs_native_models_and_matches_original_response() {
         config["sources"][model] = json!(PathBuf::from(std::env::var_os(variable).unwrap()));
     }
     fs::write(&fixture.installation, config.to_string()).unwrap();
+}
+#[test]
+fn actual_registered_cli_runs_native_models_and_matches_original_response() {
+    let fixture = Fixture::new();
+    let reference = original();
+    fixture.index(&reference["input"]["projects"][0]["files"]);
+    configure_registered(&fixture);
     let args = [
         "search-symbols",
         "Preserve",
@@ -277,3 +280,6 @@ fn actual_registered_cli_runs_native_models_and_matches_original_response() {
     response::real_response(&actual, &reference["events"][1]["result"], "CLI original");
     assert!(fixture.directory.path().join("owned").is_dir());
 }
+
+#[path = "support/mcp_cases.rs"]
+mod mcp;

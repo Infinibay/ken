@@ -36,6 +36,14 @@ fn run(invocation: Invocation) -> Result<CommandOutput, Box<dyn std::error::Erro
         Command::SearchSymbols(args) => {
             ken_cli::search::run(args, "symbol", installation, &context)
         }
+        Command::Mcp(args) => {
+            ken_cli::mcp::run(&args.path, installation, &context)?;
+            Ok(CommandOutput {
+                code: 0,
+                stdout: String::new(),
+                stderr: String::new(),
+            })
+        }
         Command::Status(_) => unreachable!("status handled above"),
     }
 }
@@ -55,6 +63,7 @@ fn main() -> ExitCode {
         Command::Status(_) => "status",
         Command::SearchFiles(_) => "search-files",
         Command::SearchSymbols(_) => "search-symbols",
+        Command::Mcp(_) => "mcp",
     };
     let output = run(args).unwrap_or_else(|error| CommandOutput {
         code: 1,

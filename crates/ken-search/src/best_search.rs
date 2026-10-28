@@ -32,6 +32,10 @@ fn files(conn: &Connection) -> Result<Vec<PathBuf>> {
 }
 fn quiet(_: &str, _: &str) {}
 impl BestSearch {
+    pub(crate) fn invalidate_projects(&mut self) {
+        self.projects.clear();
+    }
+
     pub fn new(grammars: Arc<GrammarCatalog>, provider: Rc<dyn SearchResourceProvider>) -> Self {
         Self {
             grammars,

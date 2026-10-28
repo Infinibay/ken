@@ -14,8 +14,10 @@ path = "src/main.rs"
 ken-core = { path = "../ken-core" }
 ken-search = { path = "../ken-search" }
 ken-retrieval = { path = "../ken-retrieval" }
+ken-text = { path = "../ken-text" }
 clap.workspace = true
-serde_json.workspace = true
+serde.workspace = true
+serde_json = { workspace = true, features = ["raw_value"] }
 thiserror.workspace = true
 
 [dev-dependencies]
