@@ -50,6 +50,8 @@ pub struct PieceResult {
     pub piece_kind: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub module_name: Option<Option<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub signals: Option<Value>,
 }
 #[derive(Clone, Debug, Serialize)]
 #[serde(untagged)]
@@ -509,6 +511,7 @@ pub fn present_cards(
             source: result,
             piece_kind: kind.into(),
             module_name: (kind == "module").then(|| unit.module_name.clone()),
+            signals: None,
         }));
     }
     response.omitted_count = cards.len().saturating_sub(response.results.len());

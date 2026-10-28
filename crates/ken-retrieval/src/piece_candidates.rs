@@ -135,6 +135,9 @@ impl PieceAssembler {
             catalog,
         }
     }
+    pub fn descriptions(&self) -> &OwnerDescriptions {
+        &self.descriptions
+    }
     pub fn descriptions_mut(&mut self) -> &mut OwnerDescriptions {
         &mut self.descriptions
     }
