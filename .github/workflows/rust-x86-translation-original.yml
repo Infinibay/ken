@@ -95,7 +95,7 @@ jobs:
           assert {name:identity(package/name)for name in core}==core,'registered original CT2/OpenMP bytes required'
           definition=json.loads((reference.root/'src/ken/embedder/data/es-en-ct2-int8.json').read_bytes())
           assets=ModelAssets.from_dict(definition['source']);source=assets.resolve(cache_dir=root/'.ken/ct2-intel-model',local_files_only=False);assets.verify(source)
-          diagnostic='import ctranslate2,sys; t=ctranslate2.Translator(sys.argv[1],device="cpu",compute_type="int8",intra_threads=2,inter_threads=1); print(ctranslate2.__version__,t.compute_type,t.num_replicas)'
+          diagnostic='import ctranslate2,sys; t=ctranslate2.Translator(sys.argv[1],device="cpu",compute_type="int8",intra_threads=2,inter_threads=1); print(ctranslate2.__version__,t.compute_type,t.num_translators)'
           environment=reference_env(reference,root/'.ken/ct2-intel-constructor-environment');environment['CT2_VERBOSE']='1'
           result=subprocess.run([str(Path(sys.executable).absolute()),'-c',diagnostic,str(source)],env=environment,cwd=reference.root,capture_output=True,timeout=120)
           (out/'constructor.py').write_text(diagnostic+'\n');(out/'constructor.stdout').write_bytes(result.stdout);(out/'constructor.stderr').write_bytes(result.stderr)
