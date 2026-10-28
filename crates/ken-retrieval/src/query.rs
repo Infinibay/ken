@@ -118,6 +118,11 @@ impl SearchRequest {
         options.query = query;
         options.try_into()
     }
+    pub fn with_piece_kind(&self, kind: &str) -> Result<Self> {
+        let mut options = self.0.clone();
+        options.piece_kind = Some(kind.into());
+        options.try_into()
+    }
     pub fn target(&self) -> &str {
         &self.0.target
     }

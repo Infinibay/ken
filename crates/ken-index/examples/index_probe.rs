@@ -118,7 +118,7 @@ fn retrieval_kind(error: &RetrievalError) -> &'static str {
         RetrievalError::Numeric(e) => e.kind(),
         RetrievalError::Version(_) => "index_version",
         RetrievalError::Model(_) => "model",
-        RetrievalError::Invalid(_) => "invalid",
+        RetrievalError::Invalid(_) | RetrievalError::MissingField(_) => "invalid",
         RetrievalError::Sql(_) => "sqlite",
         RetrievalError::Store(_) => "store",
         RetrievalError::Json(_) => "invalid",

@@ -83,7 +83,7 @@ pub struct SearchResponse {
     pub omitted_count: usize,
 }
 impl SearchResponse {
-    fn new(request: &SearchRequest, profile_version: &str) -> Self {
+    pub fn new(request: &SearchRequest, profile_version: &str) -> Self {
         Self {
             query: request.query().clone(),
             results: Vec::new(),

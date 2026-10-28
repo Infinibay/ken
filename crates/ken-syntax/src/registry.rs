@@ -7,10 +7,13 @@ use crate::{
 };
 
 pub struct ParserRegistry {
-    catalog: GrammarCatalog,
+    catalog: std::sync::Arc<GrammarCatalog>,
 }
 impl ParserRegistry {
     pub fn new(catalog: GrammarCatalog) -> Self {
+        Self::with_shared_catalog(std::sync::Arc::new(catalog))
+    }
+    pub fn with_shared_catalog(catalog: std::sync::Arc<GrammarCatalog>) -> Self {
         Self { catalog }
     }
     pub fn detect(

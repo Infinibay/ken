@@ -977,6 +977,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "ken-search"
+version = "0.18.0"
+dependencies = [
+ "flate2",
+ "ken-core",
+ "ken-index",
+ "ken-models",
+ "ken-retrieval",
+ "ken-store",
+ "ken-syntax",
+ "ken-text",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
 name = "ken-store"
 version = "0.18.0"
 dependencies = [

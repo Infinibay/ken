@@ -47,10 +47,13 @@ pub struct SourceCatalog {
 fn callable(kind: &str) -> bool {
     matches!(kind, "function" | "method" | "constructor" | "destructor")
 }
+pub fn symbol_entity_kind(kind: &str) -> bool {
+    callable(kind) || matches!(kind, "const" | "constant")
+}
 pub(crate) fn piece_entity_kind(kind: &str, entity_kind: &str) -> bool {
     match kind {
         "class" => entity_kind == "class",
-        "symbol" => callable(entity_kind) || matches!(entity_kind, "const" | "constant"),
+        "symbol" => symbol_entity_kind(entity_kind),
         _ => false,
     }
 }

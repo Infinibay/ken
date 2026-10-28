@@ -59,6 +59,25 @@ impl ManagedEncoder {
         }
     }
 
+    /// Registered feature identity of the prepared static model, distinct from
+    /// the profile selecting its indexing adapter.
+    pub fn registered_static_spec(
+        &self,
+        legacy: &crate::LegacyRuntimeIdentity,
+    ) -> Result<crate::EncoderSpec, ModelError> {
+        let EncoderDefinition::Potion(assets) = &self.definition else {
+            return Err(crate::profile::invalid(
+                "registered static identity requires a static model",
+            ));
+        };
+        let adapter = self.adapter()?;
+        let Adapter::Potion(encoder) = adapter.as_ref() else {
+            return Err(crate::profile::invalid(
+                "managed static definition/adapter mismatch",
+            ));
+        };
+        encoder.registered_spec(assets, legacy)
+    }
     pub fn family(&self) -> EncoderFamily {
         self.definition.family()
     }

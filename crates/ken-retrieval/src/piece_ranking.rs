@@ -20,6 +20,7 @@ pub struct PieceMatch {
     pub proposal_index: usize,
 }
 
+#[derive(Clone)]
 pub struct PieceReranker {
     model: Arc<NumericRanker>,
     encoder: Rc<dyn WordEncoder>,

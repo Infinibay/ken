@@ -71,6 +71,25 @@ impl Model2VecEncoder {
         })
     }
 
+    pub(crate) fn registered_spec(
+        &self,
+        assets: &crate::ModelAssets,
+        legacy: &crate::LegacyRuntimeIdentity,
+    ) -> Result<crate::EncoderSpec, ModelError> {
+        use sha2::{Digest, Sha256};
+        let registration = serde_json::to_value(assets)?;
+        let runtime = legacy
+            .backend(crate::EncoderBackend::Model2Vec)?
+            .iter()
+            .cloned()
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let identity = serde_json::json!({"model_id":assets.model_id(),"hf_revision":assets.revision(),"artifacts":registration["artifacts"],"dtype":self.weight_dtype(),"dimension":self.dimension,"runtime":runtime,"pooling":"model2vec-native-mean-L2-v1","sequence_length":512,"tokenizer_policy":"no-padding-no-hidden-truncation-v1","multiprocessing":false,"batch_size":1024,"device":"cpu"});
+        let revision = format!(
+            "{:x}",
+            Sha256::digest(crate::assets::python_json(&identity).as_bytes())
+        );
+        crate::EncoderSpec::from_json(&serde_json::json!({"model_id":assets.model_id(),"revision":revision,"backend":"provided","dtype":self.weight_dtype()}).to_string())
+    }
     pub fn dim(&self) -> usize {
         self.dimension
     }
@@ -192,5 +211,44 @@ impl Model2VecEncoder {
             return Err(ModelError::Inference("nonfinite output vector".into()));
         }
         Ok(mean)
+    }
+}
+
+#[cfg(test)]
+mod identity_tests {
+    use super::*;
+    #[test]
+    fn registered_feature_identity_preserves_original_weight_dtype_and_dimension() {
+        let legacy: serde_json::Value = serde_json::from_str(include_str!(
+            "../tests/fixtures/profile-identity/linux.json"
+        ))
+        .unwrap();
+        let legacy =
+            crate::LegacyRuntimeIdentity::from_json(&legacy["legacy_runtime"].to_string()).unwrap();
+        for (dtype, revision) in [
+            (
+                "float16",
+                "5bee4004a18ac24200b4d2fb18e1befdb18387d62105865cebb0fa4bec33458e",
+            ),
+            (
+                "float32",
+                "7aea17312505101e854462906792eb38aa09ac80afc84e6697f620375ef750a5",
+            ),
+        ] {
+            let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("tests/fixtures")
+                .join(dtype);
+            let raw = std::fs::read_to_string(root.join("registration.json")).unwrap();
+            let data: serde_json::Value = serde_json::from_str(&raw).unwrap();
+            let assets = crate::ModelAssets::from_json(&raw).unwrap();
+            let snapshot = assets
+                .verify(&root.join(data["revision"].as_str().unwrap()))
+                .unwrap();
+            let encoder = Model2VecEncoder::load(&snapshot).unwrap();
+            let spec = encoder.registered_spec(&assets, &legacy).unwrap();
+            assert_eq!(spec.revision, revision);
+            assert_eq!(spec.backend, crate::EncoderBackend::Provided);
+            assert_eq!(spec.batch_size, 16);
+        }
     }
 }
