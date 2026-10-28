@@ -1,8 +1,9 @@
 //! Complete requested units and description reuse owned by one source catalog.
 use crate::{
     EntityKey, Result, RetrievalError,
-    description::{OwnerDescription, describe_owner},
+    description::OwnerDescription,
     model::evidence_matches,
+    owner_descriptions::OwnerDescriptions,
     query::CodeMatch,
     source_catalog::{PieceIdentity, SourceCatalog, piece_entity_kind},
 };
@@ -125,14 +126,17 @@ impl PieceCandidate {
 }
 pub struct PieceAssembler {
     catalog: Arc<SourceCatalog>,
-    descriptions: HashMap<EntityKey, Arc<OwnerDescription>>,
+    descriptions: OwnerDescriptions,
 }
 impl PieceAssembler {
     pub fn new(catalog: Arc<SourceCatalog>) -> Self {
         Self {
+            descriptions: OwnerDescriptions::new(catalog.clone()),
             catalog,
-            descriptions: HashMap::new(),
         }
+    }
+    pub fn descriptions_mut(&mut self) -> &mut OwnerDescriptions {
+        &mut self.descriptions
     }
     pub fn cache_len(&self) -> usize {
         self.descriptions.len()
@@ -185,12 +189,7 @@ impl PieceAssembler {
                 .collect();
             let mut members = Vec::new();
             for key in keys {
-                if !self.descriptions.contains_key(&key) {
-                    let description =
-                        describe_owner(self.catalog.passages(&key).expect("catalog-owned key"))?;
-                    self.descriptions.insert(key.clone(), Arc::new(description));
-                }
-                members.push(self.descriptions[&key].clone());
+                members.push(self.descriptions.get(&key)?);
             }
             supporting.sort_by(|a, b| {
                 b.score

@@ -51,13 +51,8 @@ pub fn complete_code_view(description: &OwnerDescription) -> Result<Option<Pytho
         PythonText::from_codepoints(points).expect("owned Python text points"),
     ))
 }
-pub fn rank_symbol_views(
-    query: &PythonText,
-    descriptions: &[OwnerDescription],
-    original_scores: &[f64],
-    neural: &dyn PairedReranker,
-) -> Result<SymbolRelevance> {
-    if descriptions.len() != original_scores.len() || descriptions.len() > 10 {
+pub(crate) fn validate_symbol_scores(count: usize, original_scores: &[f64]) -> Result<()> {
+    if count != original_scores.len() || count > 10 {
         return Err(RetrievalError::Invalid(
             "one original score per native top10 symbol required".into(),
         ));
@@ -67,6 +62,24 @@ pub fn rank_symbol_views(
             "finite original symbol scores required".into(),
         ));
     }
+    Ok(())
+}
+pub fn rank_symbol_views(
+    query: &PythonText,
+    descriptions: &[OwnerDescription],
+    original_scores: &[f64],
+    neural: &dyn PairedReranker,
+) -> Result<SymbolRelevance> {
+    let borrowed = descriptions.iter().collect::<Vec<_>>();
+    rank_symbol_references(query, &borrowed, original_scores, neural)
+}
+pub(crate) fn rank_symbol_references(
+    query: &PythonText,
+    descriptions: &[&OwnerDescription],
+    original_scores: &[f64],
+    neural: &dyn PairedReranker,
+) -> Result<SymbolRelevance> {
+    validate_symbol_scores(descriptions.len(), original_scores)?;
     let mut fresh = Vec::new();
     let mut accepted = Vec::new();
     for description in descriptions {
