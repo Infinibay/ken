@@ -41,11 +41,12 @@ Interface: `compact::render(&SearchResponse, diagnostics: bool) -> String`.
   commit. Expected: byte-identical scalar UTF-8 text and no mutated evidence.
 
 ### Task 2: Explicit native installation and search application
-Files: new crates/ken-search/src/installation.rs and public.rs, integration tests;
+Files: new crates/ken-search/src/installation.rs, integration tests;
 existing src/lib.rs export only as needed.
 Interfaces: `SearchInstallation::open(&Path) -> Result<Self>` resolves a bounded
-version1 manifest relative to its directory; `SearchApplication::new(installation)`
-owns lazy BestSearch. `find(db,paths,request)` returns success/preparation response.
+version1 manifest relative to its directory; `into_search()` returns the configured
+lazy `BestSearch`. The shared public application/response policy joins Task3 when
+it owns project discovery and transport-facing failures, rather than a wrapper.
 - [ ] RED relocation, unknown fields/version, relative runtime sources, missing
   resources, cold exact/empty, actual registered non-exact and retry after failure.
 - [ ] Assemble existing ModelFactory/RegisteredSearchResources from explicit paths,

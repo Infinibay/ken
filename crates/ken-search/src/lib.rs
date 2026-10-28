@@ -20,3 +20,5 @@ pub type Result<T> = std::result::Result<T, SearchError>;
 mod registered;
 pub use registered::RegisteredSearchResources;
 mod context_encoder;
+mod installation;
+pub use installation::{InstallationError, SearchInstallation};
