@@ -1019,3 +1019,30 @@ replay desde una extracción aislada, usando sus fuentes y validadores archivado
 registra la procedencia de originales, decisiones y límites. Siguen pendientes
 PieceSearch completo, otros modelos y M4/global. Los artefactos quedan locales
 y fuera de Git; el foco sigue siendo Linux x86_64.
+
+
+## PieceSearch completo sobre Linux x86_64
+
+`PieceSearch` compone tarjetas, ensamblado, ranking de piezas y símbolos, fusión
+ordinal y presentación. Conserva el top 10 antes de los límites de visualización,
+el ranking numérico en modo exacto y la promoción final de rutas explícitas.
+Las señales de explicación se agregan por identidad después del recorte, como
+en el original; por eso `explain` puede superar `max_chars` al incluir diagnósticos.
+
+Se comparan 45 casos nuevos del API Python congelado, incluidos 42 con modelos controlados
+y tres con Ettin real, fríos y calientes. No se repitieron originales
+aceptados ni se cambiaron modelos o tolerancias. El primer probe aislado omitía
+los tres sidecars BLAS del ranking numérico; una regresión reprodujo el fallo y
+pasó tras incorporar su preparación, autenticación y comprobación de carga real.
+
+La versión `4d88c8379b61c3570ff1cea5bcc31ac924d84619` pasó la cadena completa
+local y las dos réplicas del [CI final](https://github.com/Infinibay/ken/actions/runs/40628141649):
+586 pruebas de herramientas y 206 nativas por host, formato y Clippy estricto.
+El transporte sellado pasó el replay fuera del checkout con sus fuentes y
+validadores archivados. El [traspaso](rust-migration-handoff.md#piecesearch-completo-en-rust-sobre-linux-x86_64)
+registra las identidades, la revisión, la reparación y los límites de aceptación.
+
+El próximo bloque es `BestSearch`: recursos, preparación y caché por generación,
+búsqueda exacta y recuperación contextual. Continúan pendientes otros modelos,
+M4/global y M5–M8. Los crudos y recibos quedan locales, fuera de Git; la aplicación
+instalada sigue en Python.

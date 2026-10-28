@@ -1,5 +1,9 @@
 # Continuar y terminar la migración a Rust
 
+Actualización del 28/10: `PieceSearch` completo está aceptado sobre Linux x86_64.
+El siguiente bloque es `BestSearch`; otros modelos, M4/global y M5–M8 siguen
+pendientes. El cierre y el transporte verificable están al final del documento.
+
 Actualización del 24/10: los directorios de evidencia se retiraron del seguimiento
 de Git por pedido del usuario; sus archivos locales se conservaron. Para un clon
 nuevo, [recuperar los artefactos necesarios](validation-artifacts.md) antes de
@@ -50,7 +54,8 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | M4c2 | Aceptado tras una revisión y una pasada de corrección | Catálogo, piezas, ranking, cards, evidencia y presentación; 446 observaciones por ARM, 126/125 raíces Rust y 174 de tooling; recibo `m4-source-pieces` |
 | Gramáticas Linux x86_64 | Aceptadas; requisito local de M4d | 33 raíces Rust/doc, 87 de tooling y 249 comparaciones en tres hosts; no equivale a aceptación completa de indexación/modelos x86 |
 | Runtimes CPU Linux x86_64 | Aceptados | ONNX/Torch autenticados; 6 raíces ONNX/protocolo, 15/16 Torch y 364 de tooling por host en tres hosts; modelos e índice completos x86 siguen pendientes |
-| M4d | En curso: fusión ordinal migrada; composición completa pendiente | Requisitos y observaciones de fuente/símbolos, composición de piezas, canales restantes, pools preparados, modelos y aceptación CLI/MCP |
+| Búsqueda por piezas Linux x86_64 | PieceSearch aceptado | 45 observaciones originales, 3 frames Ettin reales; cadena completa local y dos réplicas CI, 586 pruebas de herramientas y 206 nativas por host; replay aislado |
+| M4d | En curso: PieceSearch y SymbolRanker migrados | BestSearch, recursos/caché por generación, canales y modelos restantes, pools preparados y aceptación CLI/MCP |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
 | M7 | Pendiente | Daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
@@ -1588,3 +1593,71 @@ benchmarks ni paridad con los comportamientos inseguros de caché/NaN del origin
 Siguen pendientes PieceSearch completo, otros modelos y la aceptación M4/global.
 El foco sigue siendo Linux x86_64; la aplicación instalada continúa en Python.
 Todos los datos crudos, recibos y workspaces se conservan localmente y fuera de Git.
+
+## PieceSearch completo en Rust sobre Linux x86_64
+
+`PieceSearch` compone tarjetas, ensamblado y descripciones compartidas,
+`PieceReranker`, `SymbolRanker`, fusión y presentación. Conserva los diez
+candidatos nativos antes de aplicar límites de visualización, el ranking numérico
+en modo exacto sin llamadas neuronales y la promoción estable final de la ruta
+solicitada. Las señales de explicación se asignan por identidad a los resultados
+que sobreviven al recorte. El accessor de descripciones es de solo lectura;
+los guards de procedencia de catálogo de ambos consumidores permanecen activos.
+
+La referencia comprende 45 casos nuevos del API Python original congelado:
+42 con modelos controlados y tres con Ettin real, cada uno frío/caliente,
+con respuesta, llamadas y caché. Se observaron primero 41 casos y luego cuatro
+consultas nuevas que comienzan con `Find ruta`, para cubrir la sintaxis real de
+ruta explícita; no se repitieron las 41 observaciones ni pytest original.
+Cada fila está guardada en su journal y la referencia combina ambos grupos.
+Las referencias anteriores, modelos y tolerancias no cambiaron.
+
+Se conserva una particularidad del original: `present_cards` recorta antes de
+agregar las señales de `explain`. La observación con presupuesto de 650 devuelve
+una respuesta final de 847 caracteres; la de 1400 llega a 2908. Esta etapa conserva
+ese contrato, no redefine el presupuesto. Los scores neuronales incompletos o
+no finitos se rechazan antes de indexar.
+
+La revisión independiente de f41ca7ed no encontró Critical/Important/Minor ni
+conductas declinadas. El gate completo posterior detectó una omisión de recursos
+del probe: el ranking numérico aislado requería los tres sidecars BLAS, ausentes
+en la primera captura. Se agregó la preparación existente y la autenticación de
+las tres identidades y la ruta de carga real. Una regresión falló sin los recursos
+y pasó con la corrección; el preflight corregido coincidió en los 45 casos.
+No hubo cambios Rust, numéricos o de originales en esa reparación ni re-review.
+La época local f41ca7ed queda fallida; CI 40627223040 fue cancelado y ambos
+artefactos parciales se conservaron. Ninguno establece aceptación.
+
+El código 4d88c8379b61c3570ff1cea5bcc31ac924d84619 pasó la cadena local completa y las dos réplicas del
+[CI 40628141649](https://github.com/Infinibay/ken/actions/runs/40628141649):
+586 pruebas de herramientas y 206 nativas por host, con formato y
+Clippy estricto. La suite de core/búsqueda contiene157 raíces únicas descubiertas;
+no se suman summaries retransmitidos por subprocesos. Los paquetes descargados
+pasaron la verificación independiente de fuentes, recursos, respuestas y gates.
+
+Recibo local `docs/validation/rust-migration-2026-10-28/piece-search`:
+3195 entradas más `FILES.json`, 1343 fuentes de código/herramientas
+vinculadas al commit por pruebas Git, cinco archivos adicionales de diseño/soporte
+autenticados y las 1066 fuentes originales. FILES SHA256 `0ef733373775722bf63bc39aa187e0bbaebf7bd61e2bc211e824fbf3082dc3e1`.
+Los modelos originales preparados y las cachés de sus entornos permanecen en
+sus directorios locales; el recibo conserva identidades y observaciones, sin
+reejecutar esos modelos. Incluye ambos journals, el fallo aislado inicial y los
+paquetes parciales de CI.
+
+Transporte `.ken/rust-migration/archives/piece-search-4d88c837.tar.gz`,
+239142622 bytes, SHA256 `28e439eb5954eb101f727cb2108ffc7089e171b2f1eafe75cf34542ba1d79d0a`.
+La extracción `/tmp/ken-piece-search-final-b7rbt9mo/piece-search` pasó el replay con Python `-I -B`, usando únicamente
+los validadores y las fuentes archivados. Verifica los tres hosts, las 45
+composiciones, los tres frames reales y todos los prerrequisitos; elige perfiles
+por sus registros y no por la CPU del equipo del replay.
+
+Esta tanda seleccionó los perfiles contextuales `22ec` y `4fd`, y los de
+alineamiento `66669` y `1f613`. El perfil registrado `582` no fue seleccionado
+por estos hosts; `4fd` reutiliza su referencia según el registro aceptado.
+
+Estado: `piece_search_accepted=true`, `M4_accepted=false`,
+`migration_complete=false`. La siguiente integración es `BestSearch`: recursos,
+preparación y caché por generación, camino exacto y recuperación contextual.
+Continúan pendientes otros modelos y la aceptación M4/global, además de M5–M8.
+La aplicación instalada sigue en Python. Todos los crudos, recibos y workspaces
+se conservan localmente y fuera de Git.
