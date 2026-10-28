@@ -101,4 +101,6 @@ pub mod symbol_views;
 pub mod symbol_preferences;
 pub mod symbol_requirements;
 
+pub mod operation_witnesses;
+pub mod python_operation_witnesses;
 pub mod syntax_operation_witnesses;

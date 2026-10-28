@@ -27,3 +27,26 @@ def test_changed_or_resealed_original_contract_rejects(change):
     else:value['runtime']['python']='3.14.0'
     value['observations_sha256']=digest(value)
     assert validate_reference(value)
+
+def test_compatibility_corpus_is_independent_and_validated():
+    from tools.rust_migration.python_witnesses_reference import validate_reference,cases
+    from tools.rust_migration.python_witnesses_compat import FIXTURE_COMPAT,compatibility_cases
+    value=json.loads(gzip.decompress((ROOT/FIXTURE_COMPAT).read_bytes()))
+    assert len(compatibility_cases())>=30 and not validate_reference(value)
+    assert not ({c['id']for c in cases()} & {c['id']for c in compatibility_cases()})
+
+def test_vendored_parser_runtime_sources_and_license_match_upstream():
+    import hashlib
+    root=ROOT/'crates/ken-retrieval/vendor/ruff-python-parser'
+    record=json.loads((root/'UPSTREAM.json').read_bytes())
+    assert record['archive_sha256']=='01e6ee78bd9671fb5766664b2695fe1f2a92a961f4d9101646c570d8acdb1e0b'
+    expected={name:row for name,row in record['source_files'].items()if name!='Cargo.toml'}
+    for name,row in expected.items():
+        raw=(root/name).read_bytes();assert len(raw)==row['bytes'] and hashlib.sha256(raw).hexdigest()==row['sha256']
+    assert {p.relative_to(root).as_posix()for p in root.rglob('*.rs')}=={n for n in expected if n.endswith('.rs')}
+    assert hashlib.sha256((root/'LICENSE').read_bytes()).hexdigest()==record['additional_license']['sha256']
+    import tomllib
+    manifest=tomllib.loads((root/'Cargo.toml').read_text())
+    assert manifest['dependencies']['unicode_names2']['version']=='=1.2.0'
+    assert manifest['dependencies']['unicode-normalization']['version']=='=0.1.22'
+    assert not manifest.get('dev-dependencies') and not manifest.get('test')

@@ -1,4 +1,5 @@
 [workspace]
+exclude = ["crates/ken-retrieval/vendor/ruff-python-parser"]
 members = ["crates/ken-core", "crates/ken-cli", "crates/ken-models", "crates/ken-store", "crates/ken-native-model-api", "crates/ken-syntax", "crates/ken-text", "crates/ken-program", "crates/ken-retrieval", "crates/ken-index"]
 resolver = "3"
 
@@ -10,6 +11,9 @@ publish = false
 license = "MIT"
 
 [workspace.dependencies]
+ruff_python_parser = { package = "rustpython-ruff_python_parser", path = "crates/ken-retrieval/vendor/ruff-python-parser", version = "=0.15.8" }
+ruff_python_ast = { package = "rustpython-ruff_python_ast", version = "=0.15.8" }
+ruff_text_size = { package = "rustpython-ruff_text_size", version = "=0.15.8" }
 flate2 = "=1.1.10"
 blake2 = "=0.10.6"
 unicode-normalization = "=0.1.22"

@@ -31,6 +31,7 @@ mod php;
 mod powershell;
 mod python_literal;
 pub use ken_text::PythonText;
+pub use python_literal::decode as decode_python_string_literal;
 mod python_unicode;
 mod ruby;
 mod sql;

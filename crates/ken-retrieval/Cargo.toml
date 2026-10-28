@@ -7,6 +7,10 @@ publish.workspace = true
 license = "MIT AND Unicode-DFS-2016 AND BSD-3-Clause"
 
 [dependencies]
+py_literal.workspace = true
+ruff_python_parser.workspace = true
+ruff_python_ast.workspace = true
+ruff_text_size.workspace = true
 flate2.workspace = true
 ken-core = { path = "../ken-core" }
 ken-models = { path = "../ken-models" }

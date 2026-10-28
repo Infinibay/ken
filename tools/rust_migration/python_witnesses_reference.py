@@ -60,34 +60,42 @@ value=dict(format='ken-python-witnesses-reference/1',cases=records,runtime=dict(
 pathlib.Path(request['result']).write_text(json.dumps(value,ensure_ascii=True)+'\n')
 '''
 def digest(value):return hashlib.sha256(json.dumps(value['cases'],sort_keys=True,ensure_ascii=True).encode()).hexdigest()
+def case_inputs(case_set):
+    if case_set=="main":return cases()
+    if case_set=="compat":
+        from .python_witnesses_compat import compatibility_cases
+        return compatibility_cases()
+    raise ValueError("unknown case set")
 def validate_reference(value):
     try:
         def require(ok,message):
             if not ok:raise ValueError(message)
+        inputs=case_inputs(value.get('case_set','main'))
         require(value['format']=='ken-python-witnesses-reference/1','format differs')
         require(value['script_sha256']==hashlib.sha256(SCRIPT.encode()).hexdigest(),'observer differs')
         require(value['reference_fingerprint']==FP,'frozen source differs')
         require(value['original_source_sha256']=='5c0317d362d15902e66663cfac66764a94f7bbd6526c0a9ee367cfd7d0c8ef15','original implementation differs')
         require(value['runtime']==dict(system='Linux',machine='x86_64',python='3.12.9'),'runtime differs')
-        require(value['inputs_sha256']==hashlib.sha256(json.dumps(cases(),sort_keys=True).encode()).hexdigest(),'inputs differ')
-        require([c['id']for c in value['cases']]==[c['id']for c in cases()],'cases differ')
-        for record,case in zip(value['cases'],cases(),strict=True):
+        require(value['inputs_sha256']==hashlib.sha256(json.dumps(inputs,sort_keys=True).encode()).hexdigest(),'inputs differ')
+        require([c['id']for c in value['cases']]==[c['id']for c in inputs],'cases differ')
+        for record,case in zip(value['cases'],inputs,strict=True):
             require(set(record)=={'id','input','result'}and set(record['input'])=={'files','owners'},'physical input contains foreign fields')
             require(record['input']['files']=={p:list(s.encode())for p,s in case['files'].items()},'source bytes differ')
             require([r['key']for r in record['result']]==[o['key']for o in record['input']['owners']]and all(r['cold']==r['warm']for r in record['result']),'membership/cache differs')
         require(value['observations_sha256']==digest(value),'observation bytes differ')
         return[]
     except(KeyError,TypeError,ValueError)as e:return[str(e)]
-def capture(reference:Reference,out:Path):
+def capture(reference:Reference,out:Path,*,case_set="main"):
     if out.exists():raise FileExistsError(out)
+    inputs=case_inputs(case_set)
     authenticate_frozen(reference);out.mkdir(parents=True);(out/'capture.py').write_text(SCRIPT)
-    request=dict(reference=str(reference.root),cases=cases(),catalog_root=str(out/'catalogs'),result=str(out/'observations.json'))
+    request=dict(reference=str(reference.root),cases=inputs,catalog_root=str(out/'catalogs'),result=str(out/'observations.json'))
     (out/'inputs.json').write_text(json.dumps(request,ensure_ascii=True)+'\n')
     python=Path(sys.executable).absolute()
     child=subprocess.run([str(python),'-B',str(out/'capture.py'),str(out/'inputs.json')],cwd=reference.root,env=reference_env(reference,out/'environment'),capture_output=True,timeout=180)
     (out/'stdout.log').write_bytes(child.stdout);(out/'stderr.log').write_bytes(child.stderr)
     if child.returncode:raise ValueError('original observation failed: '+child.stderr.decode(errors='replace'))
     authenticate_frozen(reference)
-    value=load(out/'observations.json');value.update(script_sha256=hashlib.sha256(SCRIPT.encode()).hexdigest(),reference_fingerprint=FP,inputs_sha256=hashlib.sha256(json.dumps(cases(),sort_keys=True).encode()).hexdigest());value['observations_sha256']=digest(value)
+    value=load(out/'observations.json');value.update(case_set=case_set,script_sha256=hashlib.sha256(SCRIPT.encode()).hexdigest(),reference_fingerprint=FP,inputs_sha256=hashlib.sha256(json.dumps(inputs,sort_keys=True).encode()).hexdigest());value['observations_sha256']=digest(value)
     if validate_reference(value):raise ValueError(validate_reference(value))
     (out/'reference.json').write_text(json.dumps(value,ensure_ascii=True)+'\n');return value

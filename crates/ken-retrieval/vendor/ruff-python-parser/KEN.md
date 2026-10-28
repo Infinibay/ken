@@ -1,0 +1,3 @@
+Pinned RustPython Ruff parser0.15.8, MIT. Source files are byte-for-byte from the crates.io archive authenticated by UPSTREAM.json. Only the two Unicode dependency requirements are lowered to the existing fixed repository versions; native conformance is checked against Python3.12.9. Upstream tests/benchmarks are not included or claimed executed. Original package archive is retained locally.
+
+Local manifest-only packaging also removes unused upstream dev targets/dependencies and permits three upstream style lints (doc_markdown, unnecessary_trailing_comma, collapsible_match) under Rust1.95. First-party strict Clippy and every upstream runtime source byte remain unchanged.

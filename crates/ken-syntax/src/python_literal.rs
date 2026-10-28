@@ -2,7 +2,7 @@
 use crate::PythonText;
 use crate::python_unicode::named_character;
 
-pub(crate) fn decode(raw: &str) -> Option<PythonText> {
+pub fn decode(raw: &str) -> Option<PythonText> {
     if raw.contains('\0') {
         return None;
     }

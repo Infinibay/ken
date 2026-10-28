@@ -167,6 +167,7 @@ jobs:
           from tools.rust_migration.symbol_views_host import run_host as run_symbol_views, verify_host as verify_symbol_views
           from tools.rust_migration.symbol_preferences_host import run_host as run_preferences, verify_host as verify_preferences
           from tools.rust_migration.syntax_witnesses_host import run_host as run_syntax, verify_host as verify_syntax
+          from tools.rust_migration.python_witnesses_host import run_host as run_python, verify_host as verify_python
           import json,platform
           root=Path.cwd();packet=root/'.ken/rust-migration/native-core-platform'
           packet.mkdir(parents=True,exist_ok=False)
@@ -191,7 +192,10 @@ jobs:
           def syntax():
               run_syntax(root,packet)
               errors=verify_syntax(packet,root);assert not errors,errors
-          states=run_profiles(dict(context=context,ettin=ettin,views=views,preferences=preferences,syntax=syntax),dependencies=DEPENDENCIES|dict(syntax=('preferences',)))
+          def python():
+              run_python(root,packet)
+              errors=verify_python(packet,root);assert not errors,errors
+          states=run_profiles(dict(context=context,ettin=ettin,views=views,preferences=preferences,syntax=syntax,python=python),dependencies=DEPENDENCIES|dict(syntax=('preferences',),python=('syntax',)))
           (packet/'PROFILE-STATES.json').write_text(json.dumps(states,indent=2)+'\n')
           print(json.dumps(states,indent=2))
           if any(row['state']!='passed'for row in states.values()):raise SystemExit(1)
