@@ -17,6 +17,24 @@ def test_request_contains_only_registered_inputs_and_physical_resources(tmp_path
     assert 'results'not in request and len(request['cases'])==29
     assert Path(request['native_runtime']['module_path']).parent==tmp_path/'runtime'
 
+def test_selected_cargo_probe_comes_from_supplied_checkout_and_explicit_target(tmp_path):
+    from tools.rust_migration.x86_translation_host import probe_artifact
+    repo=tmp_path/'checkout';target=tmp_path/'explicit-target';binary=target/'debug/examples/translation_probe'
+    row=dict(reason='compiler-artifact',manifest_path=str(repo/'crates/ken-models/Cargo.toml'),
+        target=dict(name='translation_probe',kind=['example'],crate_types=['bin'],src_path=str(repo/'crates/ken-models/examples/translation_probe.rs')),
+        executable=str(binary))
+    log=tmp_path/'cargo.log'
+    def save(rows):log.write_text('\n'.join(json.dumps(v)for v in rows)+'\n')
+    finish=dict(reason='build-finished',success=True)
+    save([row,finish]);assert probe_artifact(log,repo,target)==binary
+    for changes in ({'manifest_path':str(tmp_path/'other/Cargo.toml')},{'executable':str(tmp_path/'stale/translation_probe')}):
+        save([row|changes,finish])
+        with pytest.raises(ValueError):probe_artifact(log,repo,target)
+    save([row,row,finish])
+    with pytest.raises(ValueError):probe_artifact(log,repo,target)
+    save([row,dict(reason='build-finished',success=False)])
+    with pytest.raises(ValueError):probe_artifact(log,repo,target)
+
 def packet():
     return Path(os.environ['KEN_X86_TRANSLATION_PACKET'])
 
@@ -38,3 +56,22 @@ def test_changed_source_build_binary_request_or_observation_is_rejected(tmp_path
         path.write_text(json.dumps(value))
     else:path.write_bytes(b'changed executable')
     assert verify_capture(target,ROOT),member
+
+@pytest.mark.parametrize('change',['cache','compiler','link'])
+def test_resealed_native_host_compiler_proof_cannot_contradict_its_registered_inputs(tmp_path,change):
+    from tools.rust_migration.x86_translation_host import verify_capture
+    from tools.rust_migration.native_json import identity
+    target=tmp_path/'packet';shutil.copytree(packet(),target)
+    report=json.loads((target/'BACKEND-BUILD.json').read_bytes())
+    if change=='cache':
+        member='build/CMakeCache.txt';before=(target/'backend-proof'/member).read_text()
+        after=before.replace('CMAKE_BUILD_TYPE:STRING=Release','CMAKE_BUILD_TYPE:STRING=Debug')
+    elif change=='compiler':
+        member='build/CMakeFiles/3.31.10/CMakeCXXCompiler.cmake';before=(target/'backend-proof'/member).read_text()
+        after=before.replace('set(CMAKE_CXX_COMPILER_ABI "ELF")','set(CMAKE_CXX_COMPILER_ABI "Foreign")')
+    else:
+        member='build/CMakeFiles/ken_ct2_backend.dir/link.txt';before=(target/'backend-proof'/member).read_text();after=before.replace('$ORIGIN','/foreign')
+    assert before!=after
+    path=target/'backend-proof'/member;path.write_text(after);report['proof_files'][member]=identity(path)
+    (target/'BACKEND-BUILD.json').write_text(json.dumps(report))
+    assert verify_capture(target,ROOT),change

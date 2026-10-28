@@ -30,3 +30,14 @@ def test_actual_general_command_gate_records_scoped_output_and_rejects_empty_wor
     assert(tmp_path/'discovery.log').read_text()=='observed discovery\n'
     assert not command_gate_errors(tmp_path,expected)
     with pytest.raises(ValueError):run_command_gates(tmp_path,{})
+
+def test_supplied_checkout_is_the_actual_recorded_subprocess_directory(tmp_path,monkeypatch):
+    from tools.rust_migration.command_gates import run_command_gates,command_gate_errors
+    repo=tmp_path/'checkout';repo.mkdir();elsewhere=tmp_path/'elsewhere';elsewhere.mkdir();gates=tmp_path/'gates';gates.mkdir()
+    monkeypatch.chdir(elsewhere)
+    expected={'cwd':[sys.executable,'-c','from pathlib import Path; print(Path.cwd())']}
+    run_command_gates(gates,expected,cwd=repo)
+    assert(gates/'cwd.log').read_text()==str(repo)+'\n'
+    assert json.loads((gates/'COMMANDS.json').read_bytes())['cwd']['cwd']==str(repo)
+    assert not command_gate_errors(gates,expected,cwd=repo)
+    assert command_gate_errors(gates,expected,cwd=elsewhere)

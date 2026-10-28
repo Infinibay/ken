@@ -50,6 +50,8 @@ Interfaces: run_host(repo,out,source), verify_host(out,repo), using Task1 load a
 - [ ] RED missing/partial/resealed input/output/source/recipe/runtime/build-proof tampering; no repeated original calls in run/verify.
 - [ ] Implement confined native histories, same-inode ownership, actual registered CT2 module/compiler/SDK build proof and complete roots/fmt/Clippy. Preflight complete29histories before full host qualification.
 - [ ] Run complete local and two independent x86 CI hosts on exact committed sources; verify downloaded ZIP digests and each packet. Preserve failed epochs.
+- [ ] Preserve the first AMD/MKL-crossed CI epoch; obtain only the previously unobserved Intel/MKL original histories, guarded by actual CPU/core/backend and a single immutable observation lease. Select whole immutable references by actual backend and keep the original AMD fixture unchanged.
+- [ ] Complete the single review repair pass: reject resealed contradictory compiler proofs, bind every gate to the supplied checkout and actual Cargo artifact, and authenticate mapped dependencies against preloaded same-SONAME conflicts. Requalify repaired committed sources; no re-review.
 Expected: source-bound native parity and runtime preparation without attribution from old/partial executions.
 
 ### Task 4: Review and portable closure

@@ -146,6 +146,22 @@ jobs:
               stream.write('KEN_POTION_SOURCE='+str(source)+'\n')
               stream.write('KEN_POTION_SNAPSHOT='+str(source)+'\n')
           PY
+      - name: Prepare registered native query expansion data
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import json,os
+          from ken.model_assets import ModelAssets
+          from tools.rust_migration.translation_cpu_prepare import prepare
+          from tools.rust_migration.translation_cpu_build import build
+          root=Path.cwd();base=root/'.ken/rust-migration/translation-cpu';sdk=base/'sdk';backend=base/'backend'
+          prepare(root,base/'archives',sdk);build(root,sdk,backend,cmake=Path(os.environ['CMAKE']))
+          definition=json.loads((root/'src/ken/embedder/data/es-en-ct2-int8.json').read_bytes())
+          assets=ModelAssets.from_dict(definition['source']);source=assets.resolve(cache_dir=base/'model',local_files_only=False);assets.verify(source)
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              for name,value in dict(KEN_CT2_SDK=str(sdk),KEN_CT2_PREPARATION=str(backend/'PREPARATION.json'),KEN_TRANSLATION_SOURCE=str(source)).items():stream.write(name+'='+value+'\n')
+          PY
       - name: Prepare authenticated x86 retrieval libraries
         shell: bash
         run: |

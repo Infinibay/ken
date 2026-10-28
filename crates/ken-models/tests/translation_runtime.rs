@@ -149,3 +149,57 @@ fn changing_the_explicit_runtime_invalidates_an_already_loaded_session() {
     assert!(engine.expand("¿Dónde está la función?").is_err());
     assert!(!engine.is_loaded());
 }
+
+#[test]
+fn a_preloaded_different_same_soname_core_cannot_impersonate_the_registered_copy() {
+    const CHILD: &str = "KEN_CT2_PRELOAD_PROBE";
+    let (value, module, core) = prepared();
+    if let Some(path) = std::env::var_os(CHILD) {
+        // The test changes only trailing ELF bytes: native exports still work,
+        // but this object is not the authenticated registered file.
+        let gomp = unsafe {
+            libloading::os::unix::Library::open(
+                Some(core.join("libgomp-e985bcbb.so.1.0.0")),
+                libc::RTLD_NOW | libc::RTLD_GLOBAL,
+            )
+        }
+        .unwrap();
+        let foreign = unsafe {
+            libloading::os::unix::Library::open(
+                Some(PathBuf::from(path)),
+                libc::RTLD_NOW | libc::RTLD_GLOBAL,
+            )
+        }
+        .unwrap();
+        let runtime = NativeTranslationRuntime::from_json(&value, &module, &core).unwrap();
+        let error = runtime
+            .load()
+            .expect_err("a foreign same-SONAME core must not be reported as authenticated");
+        assert!(
+            error.to_string().contains("mapped translation dependency"),
+            "{error}"
+        );
+        drop((foreign, gomp));
+        return;
+    }
+    let root = tempfile::tempdir().unwrap();
+    let foreign = root.path().join("foreign-core.so");
+    let mut bytes = fs::read(core.join("libctranslate2-fd146744.so.4.8.2")).unwrap();
+    bytes.push(0);
+    fs::write(&foreign, bytes).unwrap();
+    let output = std::process::Command::new(std::env::current_exe().unwrap())
+        .args([
+            "--exact",
+            "a_preloaded_different_same_soname_core_cannot_impersonate_the_registered_copy",
+            "--nocapture",
+        ])
+        .env(CHILD, &foreign)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}\n{}",
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
+}

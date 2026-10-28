@@ -7,7 +7,7 @@ use std::{
     ffi::c_void,
     fs::File,
     path::{Path, PathBuf},
-    sync::{Arc, Mutex, Weak},
+    sync::{Arc, Mutex},
 };
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
@@ -58,7 +58,78 @@ struct Module {
     _library: libloading::Library,
     _files: tempfile::TempDir,
 }
-static LIVE: Mutex<Weak<Module>> = Mutex::new(Weak::new());
+// ELF/OpenMP may keep dependency mappings alive after a session is dropped.
+// Keep their authenticated owner and files alive for this process too. Every
+// fresh declaration is still authenticated before reusing this registration.
+static LIVE: Mutex<Option<Arc<Module>>> = Mutex::new(None);
+
+extern "C" fn cleanup_private_files() {
+    // Do not unload code during process teardown or wait on another loader.
+    // Unlinking these owned private files is safe for remaining mapped code;
+    // the kernel reclaims the mappings when the process exits.
+    if let Ok(live) = LIVE.try_lock()
+        && let Some(owner) = live.as_ref()
+    {
+        let _ = std::fs::remove_dir_all(owner._files.path());
+    }
+}
+
+#[cfg(unix)]
+fn verify_mapping(
+    library: &libloading::Library,
+    symbol: &[u8],
+    expected: &Path,
+    artifact: &Artifact,
+) -> Result<(), ModelError> {
+    use std::{
+        ffi::CStr,
+        os::unix::{ffi::OsStrExt, fs::MetadataExt},
+    };
+    let failure =
+        |error: &dyn std::fmt::Display| invalid(format!("mapped translation dependency: {error}"));
+    // SAFETY: dlsym/dladdr inspect a function in the authenticated module's
+    // actual dependency scope. The pointer is never called with a guessed ABI.
+    let mut info: libc::Dl_info = unsafe { std::mem::zeroed() };
+    unsafe {
+        let address: libloading::Symbol<*const c_void> =
+            library.get(symbol).map_err(|v| failure(&v))?;
+        if libc::dladdr(*address, &mut info) == 0 || info.dli_fname.is_null() {
+            return Err(invalid(
+                "mapped translation dependency has no loader identity",
+            ));
+        }
+    }
+    let mapped = Path::new(std::ffi::OsStr::from_bytes(
+        unsafe { CStr::from_ptr(info.dli_fname) }.to_bytes(),
+    ));
+    let actual = std::fs::metadata(mapped).map_err(|v| failure(&v))?;
+    let private = std::fs::metadata(expected).map_err(|v| failure(&v))?;
+    if actual.dev() != private.dev() || actual.ino() != private.ino() {
+        return Err(invalid(
+            "mapped translation dependency is not the authenticated private file",
+        ));
+    }
+    verified_file::copy(
+        mapped,
+        artifact.bytes,
+        &artifact.sha256,
+        &mut std::io::sink(),
+    )
+    .map_err(|v| failure(&v))?;
+    Ok(())
+}
+
+#[cfg(not(unix))]
+fn verify_mapping(
+    _: &libloading::Library,
+    _: &[u8],
+    _: &Path,
+    _: &Artifact,
+) -> Result<(), ModelError> {
+    Err(invalid(
+        "mapped translation dependency verification requires Unix",
+    ))
+}
 struct Declaration {
     platform: Platform,
     module_path: PathBuf,
@@ -162,11 +233,11 @@ impl NativeTranslationRuntime {
         let mut live = LIVE
             .lock()
             .map_err(|_| invalid("translation module lock poisoned"))?;
-        let owner = if let Some(owner) = live.upgrade() {
+        let owner = if let Some(owner) = live.as_ref() {
             if owner.declaration != self.0.platform {
                 return Err(invalid("conflicting live translation module registration"));
             }
-            owner
+            Arc::clone(owner)
         } else {
             // SAFETY: all mapped code and dependencies were copied from the
             // explicit authenticated declaration. Deep binding keeps this core
@@ -182,6 +253,14 @@ impl NativeTranslationRuntime {
             .into();
             #[cfg(not(all(target_os = "linux", target_env = "gnu")))]
             let library = unsafe { libloading::Library::new(&module_path) }.map_err(invalid)?;
+            for (name, artifact) in &self.0.platform.libraries {
+                let symbol: &[u8] = if name.starts_with("libctranslate2-") {
+                    b"_ZN11ctranslate23cpu16get_gemm_backendENS_11ComputeTypeE\0"
+                } else {
+                    b"omp_get_max_threads\0"
+                };
+                verify_mapping(&library, symbol, &files.path().join(name), artifact)?;
+            }
             let api = unsafe {
                 let getter: libloading::Symbol<abi::Getter> =
                     library.get(b"ken_translation_api_v1\0").map_err(invalid)?;
@@ -210,7 +289,11 @@ impl NativeTranslationRuntime {
                 _library: library,
                 _files: files,
             });
-            *live = Arc::downgrade(&owner);
+            // SAFETY: callback has process lifetime and never unloads code.
+            if unsafe { libc::atexit(cleanup_private_files) } != 0 {
+                return Err(invalid("translation process cleanup registration failed"));
+            }
+            *live = Some(Arc::clone(&owner));
             owner
         };
         *loaded = Some(Arc::clone(&owner));
