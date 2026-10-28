@@ -6,7 +6,7 @@ from .native_binary import check_native_architecture
 from .public_search_resources import stage,relative
 
 PREFIX='ken-public-search-'
-APPLICATIONS=29
+APPLICATIONS=30
 TRACE='trace=execve,execveat,connect,clone,clone3,fork,vfork'
 
 def require(condition,message):
@@ -198,7 +198,7 @@ def verify_execution(out,repo,inputs,*,caller,application):
         require(caller_pid is not None and b'calling init:'in(out/'evidence'/f'loader.{caller_pid}').read_bytes(),'caller loader missing')
         from .integration_validate import rust_gate_errors
         names=re.findall(r'^test (\S+) \.\.\. ok$',(out/'stdout').read_text(),re.M)
-        require(len(names)==10 and len(set(names))==10
+        require(len(names)==11 and len(set(names))==11
             and not rust_gate_errors('\n'.join(name+': test'for name in names),(out/'stdout').read_text()),'complete native public caller assertions required')
         return[]
     except(OSError,ValueError,KeyError,TypeError,UnicodeError,IndexError,StopIteration)as error:return[str(error)]

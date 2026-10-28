@@ -316,6 +316,28 @@ fn missing_installation_retries_and_exact_source_remains_cold_in_the_same_proces
     assert!(!fixture.directory.path().join("owned").exists());
 }
 
+#[test]
+fn unicode_json_spellings_share_the_exact_cold_mcp_route() {
+    let fixture = Fixture::new();
+    fixture.index(&json!({"source.py":"def 𐐀(value):\n    return value + 3\n"}));
+    let mut client = Client::new(&fixture);
+    client.initialize();
+    let literal = client.call(1, json!({"scope":"symbols","query":"source.py::𐐀"}));
+    assert!(text(&literal).contains("def 𐐀(value)"));
+    client.raw(br#"{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"ken_find","arguments":{"scope":"symbols","query":"source.py::\ud801\udc00"}}}"#);
+    let escaped = client.receive();
+    assert_eq!(text(&escaped), text(&literal));
+    client.raw(br#"{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"ken_find","arguments":{"scope":"symbols","query":"source.py::\ud801\udc00","output_format":"json"}}}"#);
+    let reply = client.receive();
+    let result: Value = serde_json::from_str(text(&reply)).unwrap();
+    assert_eq!(result["query"], "source.py::𐐀");
+    assert_eq!(result["profile_version"], "best-exact-source-v1");
+    assert_eq!(result["results"][0]["entity"]["qualname"], "𐐀");
+    client.finish();
+    assert!(!fixture.directory.path().join("cache").exists());
+    assert!(!fixture.directory.path().join("owned").exists());
+}
+
 fn link_tree(source: &Path, target: &Path) {
     fs::create_dir_all(target).unwrap();
     for entry in fs::read_dir(source).unwrap() {

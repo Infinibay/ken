@@ -10,6 +10,7 @@ use std::path::PathBuf;
 #[derive(Deserialize)]
 #[serde(default, deny_unknown_fields)]
 struct Arguments {
+    #[serde(deserialize_with = "ken_retrieval::query::deserialize_query_text")]
     query: PythonText,
     scope: String,
     limit: Option<isize>,

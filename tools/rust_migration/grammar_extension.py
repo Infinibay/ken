@@ -19,7 +19,7 @@ RUST_COMMANDS={
  'doc-tests':['cargo','test','--locked','--offline','-p','ken-syntax','--doc'],
  'probe-build':['cargo','build','--locked','--offline','-p','ken-syntax','--example','parser_probe'],
 }
-PYTHON_ROOTS=87
+PYTHON_ROOTS=88
 ORIGINAL_FILES=("reference.json","request.json","stdout.log","stderr.log","original-observations.json","original-tests.xml")
 PREDECESSOR_FILES_SHA="c1541177be2a0716ff52276d7cfe042ae4ff5acea75d3f4c90d4a3452ab48ff8"
 

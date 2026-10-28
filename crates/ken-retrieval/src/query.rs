@@ -7,7 +7,7 @@ pub type Signals = BTreeMap<String, f64>;
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct SearchOptions {
-    #[serde(deserialize_with = "query_text")]
+    #[serde(deserialize_with = "deserialize_query_text")]
     pub query: PythonText,
     pub target: String,
     pub purpose: String,
@@ -30,7 +30,7 @@ impl Default for SearchOptions {
     }
 }
 /// Unlike the legacy text codec, public JSON strings join valid escape pairs.
-fn query_text<'de, D: Deserializer<'de>>(
+pub fn deserialize_query_text<'de, D: Deserializer<'de>>(
     deserializer: D,
 ) -> std::result::Result<PythonText, D::Error> {
     let text = PythonText::deserialize(deserializer)?;
