@@ -16,7 +16,7 @@ def test_files(repo:Path):
     files=sorted(str(path.relative_to(repo))for path in(repo/'tests/rust_migration').glob('test_*.py')if any(path.name.startswith('test_'+prefix+'_')for prefix in('context','ettin','fastembed','transformer','integration')))
     return files+['tests/rust_migration/test_native_platform.py','tests/rust_migration/test_native_core_prepare.py','tests/rust_migration/test_native_core_evidence.py']
 
-PYTHON_ROOTS=364
+PYTHON_ROOTS=376
 
 def native_test_roots(system:str):
     if system not in('linux','macos'):raise ValueError('unknown native core gate platform')

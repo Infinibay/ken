@@ -127,6 +127,21 @@ jobs:
           with open(os.environ['GITHUB_ENV'],'a')as stream:
               stream.write('KEN_ETTIN_SOURCE='+str(source)+'\n')
           PY
+      - name: Prepare pinned Potion source data
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          import json, os
+          from ken.model_assets import ModelAssets
+          root=Path.cwd()
+          definition=json.loads((root/'crates/ken-models/resources/potion-code-16M-v2.json').read_bytes())
+          source=ModelAssets.from_dict(definition).resolve(cache_dir=root/'.ken/rust-migration/potion-data',local_files_only=False)
+          ModelAssets.from_dict(definition).verify(source)
+          with open(os.environ['GITHUB_ENV'],'a')as stream:
+              stream.write('KEN_POTION_SOURCE='+str(source)+'\n')
+              stream.write('KEN_POTION_SNAPSHOT='+str(source)+'\n')
+          PY
       - name: Prepare authenticated x86 retrieval libraries
         shell: bash
         run: |
@@ -170,6 +185,7 @@ jobs:
           from tools.rust_migration.python_witnesses_host import run_host as run_python, verify_host as verify_python
           from tools.rust_migration.symbol_ranking_host import run_host as run_symbol_ranking, verify_host as verify_symbol_ranking
           from tools.rust_migration.piece_search_host import run_host as run_piece_search, verify_host as verify_piece_search
+          from tools.rust_migration.best_search_host import run_host as run_best_search, verify_host as verify_best_search
           import json,platform
           root=Path.cwd();packet=root/'.ken/rust-migration/native-core-platform'
           packet.mkdir(parents=True,exist_ok=False)
@@ -203,7 +219,10 @@ jobs:
           def pieces():
               run_piece_search(root,packet)
               errors=verify_piece_search(packet,root);assert not errors,errors
-          states=run_profiles(dict(context=context,ettin=ettin,views=views,preferences=preferences,syntax=syntax,python=python,symbols=symbols,pieces=pieces),dependencies=DEPENDENCIES|dict(syntax=('preferences',),python=('syntax',),symbols=('python',),pieces=('symbols',)))
+          def best():
+              run_best_search(root,packet)
+              errors=verify_best_search(packet,root);assert not errors,errors
+          states=run_profiles(dict(context=context,ettin=ettin,views=views,preferences=preferences,syntax=syntax,python=python,symbols=symbols,pieces=pieces,best=best),dependencies=DEPENDENCIES|dict(syntax=('preferences',),python=('syntax',),symbols=('python',),pieces=('symbols',),best=('pieces',)))
           (packet/'PROFILE-STATES.json').write_text(json.dumps(states,indent=2)+'\n')
           print(json.dumps(states,indent=2))
           if any(row['state']!='passed'for row in states.values()):raise SystemExit(1)
