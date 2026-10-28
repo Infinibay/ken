@@ -20,10 +20,12 @@ La revisión independiente detectó y se corrigió la diferencia entre consultas
 Unicode literales y escapadas en MCP, conservando los sustitutos aislados.
 Queda diferida una mejora menor: el error de instalación debe indicar cómo
 reparar el manifest nativo, en lugar de sugerir sólo preparar modelos/índice.
-La matriz pública final sigue en calificación (CI `40784047558`); una réplica del
-código anterior pasó y otra reprodujo el desacuerdo numérico ya pendiente de
-SkylakeX. No relajar scores, reutilizar ese recibo para fuentes nuevas ni marcar
-este bloque como aceptado hasta completar sus contrastes y réplicas.
+La matriz pública final (CI `40784047558`) no está aceptada: ambas réplicas pasan
+10 pruebas y difieren en el `piece_score` de una composición registrada:
+`-2.3249518584644573` frente a `-2.3288574266118545`. Es el desacuerdo ya observado
+en la investigación de SkylakeX; falta contrastar su original por perfil. Una
+réplica del código anterior sí pasó. No relajar scores, reutilizar ese recibo para
+fuentes nuevas ni marcar este bloque como aceptado hasta completar los contrastes.
 
 Actualización del 28/10: `BestSearch` y la preparación contextual están implementados
 como biblioteca. La cadena completa pasa localmente y en una réplica CI Haswell;
