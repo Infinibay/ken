@@ -10,7 +10,7 @@ from .translation_cpu_prepare import registration, expected_files, verify_sdk
 from .translation_cpu_build import verify_build, proof_errors, PROOF_FILES
 from .translation_compare import compare_output
 from .x86_translation_reference import load as original, FIXTURE
-from .command_gates import run_command_gates, command_gate_errors, run_python_scope, python_scope_errors
+from .command_gates import run_command_gates, command_gate_errors, run_python_scope, python_scope_errors, cargo_artifact
 
 PREFIX='ken-x86-translation-'
 MODEL='src/ken/embedder/data/es-en-ct2-int8.json'
@@ -31,19 +31,8 @@ COMMANDS={
 }
 
 def probe_artifact(log,repo,target):
-    rows=[];finished=[]
-    for line in Path(log).read_text().splitlines():
-        try:row=json.loads(line)
-        except ValueError:continue
-        if not isinstance(row,dict):continue
-        if row.get('reason')=='build-finished':finished.append(row)
-        if row.get('reason')=='compiler-artifact'and row.get('target',{}).get('name')=='translation_probe':rows.append(row)
-    require(len(rows)==1 and len(finished)==1 and finished[0].get('success')is True,'one successful Cargo-selected translation probe required')
-    row=rows[0];source=Path(repo)/'crates/ken-models';declared=row['target'];binary=Path(row['executable'])
-    require(row['manifest_path']==str(source/'Cargo.toml')and declared.get('src_path')==str(source/'examples/translation_probe.rs')
-        and declared.get('kind')==['example']and declared.get('crate_types')==['bin'],'Cargo probe belongs to another checkout or target')
-    require(binary.is_absolute()and'..'not in binary.parts and binary.is_relative_to(Path(target))and binary.name=='translation_probe','Cargo executable is outside the selected target directory')
-    return binary
+    return cargo_artifact(log,repo,target,package='ken-models',name='translation_probe',kind='example',
+        source='examples/translation_probe.rs',binary_pattern='translation_probe')
 
 def sources(repo):
     result=core_source_identity(repo)|tooling_identity(repo)

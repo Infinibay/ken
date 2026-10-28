@@ -11,8 +11,11 @@ use std::{
     fs,
     io::Read,
     path::{Path, PathBuf},
-    process::{Command, Output},
+    process::{Command, Output, Stdio},
 };
+
+#[path = "support/public_evidence.rs"]
+mod evidence;
 
 fn original() -> Value {
     let mut raw = String::new();
@@ -63,21 +66,29 @@ impl Fixture {
         }
     }
     fn invoke(&self, path: &Path, args: &[String]) -> Output {
-        Command::new(env!("CARGO_BIN_EXE_ken-rs"))
+        let mut command = Command::new(evidence::native());
+        evidence::application_environment(&mut command);
+        command
             .arg("--resources")
             .arg(&self.installation)
             .args(args)
             .arg("--path")
             .arg(path)
             .current_dir(self.directory.path())
-            .env_remove("KEN_PROJECT_ROOT")
-            .env_remove("KEN_NATIVE_RESOURCES")
-            .env_remove("KEN_ORT_LIBRARY")
-            .env_remove("KEN_GRAMMAR_MANIFEST")
-            .env_remove("KEN_TRANSLATION_SOURCE")
             .env("HOME", self.directory.path().join("home"))
-            .output()
-            .unwrap()
+            .stdin(Stdio::null())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped());
+        let child = command.spawn().unwrap();
+        let retained = evidence::start(child.id(), &command, &self.installation, path);
+        let output = child.wait_with_output().unwrap();
+        if let Some(root) = retained {
+            fs::write(root.join("stdout"), &output.stdout).unwrap();
+            fs::write(root.join("stderr"), &output.stderr).unwrap();
+            fs::write(root.join("exit"), output.status.code().unwrap().to_string()).unwrap();
+            fs::write(root.join("stdin"), b"").unwrap();
+        }
+        output
     }
     fn index(&self, files: &Value) {
         let paths = ProjectPaths::at(
@@ -232,8 +243,13 @@ mod response;
 fn configure_registered(fixture: &Fixture) {
     let mut config: Value =
         serde_json::from_slice(&fs::read(&fixture.installation).unwrap()).unwrap();
-    config["ranking_directory"] =
-        json!(Path::new(env!("CARGO_MANIFEST_DIR")).join("../ken-retrieval/resources/ranking"));
+    config["ranking_directory"] = json!(
+        std::env::var_os("KEN_PUBLIC_RANKS")
+            .map(PathBuf::from)
+            .unwrap_or_else(
+                || Path::new(env!("CARGO_MANIFEST_DIR")).join("../ken-retrieval/resources/ranking")
+            )
+    );
     config["onnx_library"] = json!(PathBuf::from(std::env::var_os("KEN_ORT_LIBRARY").unwrap()));
     let runtime: Value = serde_json::from_slice(
         &fs::read(std::env::var_os("KEN_CT2_PREPARATION").unwrap()).unwrap(),

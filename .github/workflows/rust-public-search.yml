@@ -1,0 +1,13 @@
+name: Native Linux x86 public search
+on:
+  push:
+    branches: [codex/rust-migration]
+    paths: ['.github/workflows/rust-public-search.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-search:
+    uses: ./.github/workflows/rust-x86-translation.yml
+    with:
+      capability: public-search

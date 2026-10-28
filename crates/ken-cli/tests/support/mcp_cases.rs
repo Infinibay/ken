@@ -1,11 +1,11 @@
-use super::{Fixture, configure_registered, original, response};
+use super::{Fixture, configure_registered, evidence, original, response};
 use flate2::read::GzDecoder;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use std::{
     fs,
     io::{BufRead, BufReader, Read, Write},
-    path::Path,
+    path::{Path, PathBuf},
     process::{Child, ChildStdin, Command, Stdio},
     sync::mpsc::{self, Receiver},
     thread,
@@ -15,40 +15,55 @@ use std::{
 struct Client {
     child: Child,
     input: Option<ChildStdin>,
-    frames: Receiver<String>,
+    frames: Receiver<Vec<u8>>,
+    reader: Option<thread::JoinHandle<()>>,
+    retained: Option<PathBuf>,
+    stderr: PathBuf,
 }
 impl Client {
     fn new(fixture: &Fixture) -> Self {
-        let mut child = Command::new(env!("CARGO_BIN_EXE_ken-rs"))
+        let stderr = fixture.directory.path().join("mcp.stderr");
+        let mut command = Command::new(evidence::native());
+        evidence::application_environment(&mut command);
+        command
             .arg("--resources")
             .arg(&fixture.installation)
             .arg("mcp")
             .arg(&fixture.project)
             .current_dir(fixture.directory.path())
-            .env_remove("KEN_PROJECT_ROOT")
-            .env_remove("KEN_NATIVE_RESOURCES")
-            .env_remove("KEN_ORT_LIBRARY")
-            .env_remove("KEN_GRAMMAR_MANIFEST")
-            .env_remove("KEN_TRANSLATION_SOURCE")
-            .env_remove("CT2_VERBOSE")
             .env("HOME", fixture.directory.path().join("home"))
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(fs::File::create(fixture.directory.path().join("mcp.stderr")).unwrap())
-            .spawn()
-            .unwrap();
+            .stderr(fs::File::create(&stderr).unwrap());
+        let mut child = command.spawn().unwrap();
+        let retained = evidence::start(
+            child.id(),
+            &command,
+            &fixture.installation,
+            &fixture.project,
+        );
+        if let Some(root) = &retained {
+            fs::write(root.join("stdin"), b"").unwrap();
+        }
         let input = child.stdin.take();
         let output = child.stdout.take().unwrap();
         let (tx, frames) = mpsc::channel();
-        thread::spawn(move || {
-            for line in BufReader::new(output).lines() {
-                match line {
-                    Ok(line) => {
-                        if tx.send(line).is_err() {
-                            break;
-                        }
-                    }
-                    Err(_) => break,
+        let stdout = retained
+            .as_ref()
+            .map(|root| fs::File::create(root.join("stdout")).unwrap());
+        let reader = thread::spawn(move || {
+            let mut output = BufReader::new(output);
+            let mut stdout = stdout;
+            loop {
+                let mut line = Vec::new();
+                if output.read_until(b'\n', &mut line).unwrap() == 0 {
+                    break;
+                }
+                if let Some(stream) = &mut stdout {
+                    stream.write_all(&line).unwrap();
+                }
+                if tx.send(line).is_err() {
+                    break;
                 }
             }
         });
@@ -56,9 +71,20 @@ impl Client {
             child,
             input,
             frames,
+            reader: Some(reader),
+            retained,
+            stderr,
         }
     }
     fn raw(&mut self, frame: &[u8]) {
+        if let Some(root) = &self.retained {
+            let mut stream = fs::OpenOptions::new()
+                .append(true)
+                .open(root.join("stdin"))
+                .unwrap();
+            stream.write_all(frame).unwrap();
+            stream.write_all(b"\n").unwrap();
+        }
         let input = self.input.as_mut().unwrap();
         input.write_all(frame).unwrap();
         input.write_all(b"\n").unwrap();
@@ -72,7 +98,8 @@ impl Client {
             .frames
             .recv_timeout(Duration::from_secs(120))
             .expect("one framed MCP response before the process deadline");
-        serde_json::from_str(&line).unwrap_or_else(|e| panic!("nonprotocol stdout: {e}: {line}"))
+        serde_json::from_slice(&line)
+            .unwrap_or_else(|e| panic!("nonprotocol stdout: {e}: {line:?}"))
     }
     fn call(&mut self, id: i64, args: Value) -> Value {
         self.send(&json!({"jsonrpc":"2.0","id":id,"method":"tools/call","params":{"name":"ken_find","arguments":args}}));
@@ -94,12 +121,17 @@ impl Client {
         let deadline = Instant::now() + Duration::from_secs(30);
         loop {
             if let Some(status) = self.child.try_wait().unwrap() {
+                if let Some(root) = &self.retained {
+                    fs::copy(&self.stderr, root.join("stderr")).unwrap();
+                    fs::write(root.join("exit"), status.code().unwrap().to_string()).unwrap();
+                }
                 assert!(status.success(), "MCP did not exit successfully: {status}");
                 break;
             }
             assert!(Instant::now() < deadline, "MCP did not close after EOF");
             thread::sleep(Duration::from_millis(5));
         }
+        self.reader.take().unwrap().join().unwrap();
         assert!(
             self.frames.try_recv().is_err(),
             "unsolicited or unframed stdout at EOF"
@@ -111,6 +143,12 @@ impl Drop for Client {
         if self.child.try_wait().ok().flatten().is_none() {
             let _ = self.child.kill();
             let _ = self.child.wait();
+        }
+        if let Some(reader) = self.reader.take() {
+            let _ = reader.join();
+        }
+        if let Some(root) = &self.retained {
+            let _ = fs::copy(&self.stderr, root.join("stderr"));
         }
     }
 }

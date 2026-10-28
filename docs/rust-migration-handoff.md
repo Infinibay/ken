@@ -1,5 +1,15 @@
 # Continuar y terminar la migración a Rust
 
+Actualización posterior del 28/10: `ken-rs search-files`, `search-symbols` y
+`mcp` ya tienen implementación nativa para la búsqueda por defecto/compacta en
+Linux x86_64. Comparten `SearchApplication`, recursos explícitos y carga diferida
+de los modelos. Las pruebas de procesos verifican CLI, sesiones MCP, recuperación
+de errores y reemplazo de la base durante una sesión. La calificación con copias
+fuera del checkout está en curso; esto no cierra M4 ni el MCP completo de M7.
+`evidence`/`legacy` se rechazan explícitamente hasta migrar su orquestación.
+CT2 x86 tiene implementación CPU y validación local AMD; siguen pendientes las
+observaciones originales Intel/MKL y su matriz de aceptación.
+
 Actualización del 28/10: `BestSearch` y la preparación contextual están implementados
 como biblioteca. La cadena completa pasa localmente y en una réplica CI Haswell;
 la réplica SkylakeX presenta una diferencia numérica pendiente de contraste con
@@ -58,7 +68,8 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | Gramáticas Linux x86_64 | Aceptadas; requisito local de M4d | 33 raíces Rust/doc, 87 de tooling y 249 comparaciones en tres hosts; no equivale a aceptación completa de indexación/modelos x86 |
 | Runtimes CPU Linux x86_64 | Aceptados | ONNX/Torch autenticados; 6 raíces ONNX/protocolo, 15/16 Torch y 364 de tooling por host en tres hosts; modelos e índice completos x86 siguen pendientes |
 | Búsqueda por piezas Linux x86_64 | PieceSearch aceptado | 45 observaciones originales, 3 frames Ettin reales; cadena completa local y dos réplicas CI, 586 pruebas de herramientas y 206 nativas por host; replay aislado |
-| M4d | En curso: BestSearch y preparación contextual implementados; aceptación pendiente | Cadena local y CI Haswell pasan; contrastar el score de SkylakeX con el original en ese perfil. CT2/expansión x86, modelos/canales restantes, preparación registrada y CLI/MCP siguen pendientes |
+| M4d | En curso: BestSearch, preparación contextual y expansión CT2 x86 implementados; aceptación pendiente | Cadena local y CI Haswell pasan; contrastar SkylakeX con su original y completar Intel/MKL. Quedan modos de compatibilidad, modelos/canales y calidad global |
+| Búsqueda pública por defecto x86_64 | CLI y MCP stdio implementados; calificación en curso | Manifest de instalación reubicable, recursos diferidos, texto/JSON y sesiones recuperables. MCP negocia el protocolo 2025-11-25; otros scopes/modos y el protocolo moderno quedan pendientes |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
 | M7 | Pendiente | Daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |

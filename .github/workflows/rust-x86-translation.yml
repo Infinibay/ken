@@ -4,6 +4,11 @@ on:
     branches: [codex/rust-migration]
     paths: ['.github/workflows/rust-x86-translation.yml']
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      capability:
+        type: string
+        default: x86-translation
 permissions:
   contents: read
 jobs:
@@ -176,6 +181,7 @@ jobs:
               for key,value in values.items():stream.write(key+'='+value+'\n')
           PYTHON
       - name: Validate frozen original and complete native-only histories
+        if: inputs.capability != 'public-search'
         shell: bash
         run: |
           .venv/bin/python - <<'PYTHON'
@@ -186,15 +192,27 @@ jobs:
           run_host(root,out,Path(os.environ['KEN_TRANSLATION_SOURCE']),Path(os.environ['KEN_CT2_SDK']),Path(os.environ['KEN_CT2_PREPARATION']).parent)
           assert not verify_host(out,root)
           PYTHON
+      - name: Validate copied native public CLI and MCP
+        if: inputs.capability == 'public-search'
+        shell: bash
+        run: |
+          .venv/bin/python - <<'PYTHON'
+          from pathlib import Path
+          from tools.rust_migration.public_search_host import run_host,verify_host
+          root=Path.cwd();out=root/'.ken/rust-migration/public-search/host'
+          run_host(root,out)
+          assert not verify_host(out,root)
+          PYTHON
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: x86-translation-${{ matrix.replica }}-${{ github.run_attempt }}
+          name: ${{ inputs.capability || 'x86-translation' }}-${{ matrix.replica }}-${{ github.run_attempt }}
           path: |
             .ken/rust-migration/x86-translation/host/
             .ken/rust-migration/x86-translation/ct2-backend/*.stdout
             .ken/rust-migration/x86-translation/ct2-backend/*.stderr
             .ken/rust-migration/x86-translation/torch-build.log
+            .ken/rust-migration/public-search/host/
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 30

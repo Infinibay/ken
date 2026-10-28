@@ -4,6 +4,28 @@ import json,re,subprocess
 from pathlib import Path
 from .native_json import identity,load
 
+def cargo_artifact(log,repo,target,*,package,name,kind,source,binary_pattern):
+    """Bind a Cargo-selected executable to its checkout, target and public caller."""
+    def require(condition,message):
+        if not condition:raise ValueError(message)
+    rows=[];finished=[]
+    for line in Path(log).read_text().splitlines():
+        try:row=json.loads(line)
+        except ValueError:continue
+        if not isinstance(row,dict):continue
+        if row.get('reason')=='build-finished':finished.append(row)
+        declared=row.get('target')
+        if row.get('reason')=='compiler-artifact'and isinstance(declared,dict)and declared.get('name')==name:rows.append(row)
+    require(len(rows)==1 and len(finished)==1 and finished[0].get('success')is True,'one successful Cargo-selected executable required')
+    row=rows[0];crate=Path(repo)/'crates'/package;declared=row['target']
+    require(row.get('manifest_path')==str(crate/'Cargo.toml')and declared.get('src_path')==str(crate/source)
+        and declared.get('kind')==[kind]and declared.get('crate_types')==['bin'],'Cargo executable belongs to another checkout or target')
+    require(isinstance(row.get('executable'),str),'Cargo executable path required')
+    binary=Path(row['executable'])
+    require(binary.is_absolute()and'..'not in binary.parts and binary.is_relative_to(Path(target))
+        and re.fullmatch(binary_pattern,binary.name)is not None,'Cargo executable is outside the selected target directory')
+    return binary
+
 def run_command_gates(gates:Path,commands:dict[str,list[str]],*,record_name:str="COMMANDS.json",cwd:Path|None=None):
     """Preserve actual command exits and log identities before propagating failure."""
     if not commands:raise ValueError("nonempty command gates required")
