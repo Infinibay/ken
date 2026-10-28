@@ -59,6 +59,7 @@ Files:tools/rust_migration/best_search_host.py; tests/rust_migration/test_best_s
 Interfaces:run_host(repo,packet),verify_host(packet,repo); complete PieceSearch host chain is parent; include native syntax/index/search roots and both new reference/protocol scopes.
 - [ ] RED missing captures, answer injection, source/generation/order/cache/mapped-artifact/resource/BLAS tampering; then implement confined native captures and strict verification.
 - [ ] Preflight complete new captures before the expensive full source-bound chain. Run complete local and two-replica x86CI on final source, preserve every failed epoch without counting it as acceptance.
+- [ ] If a new complete registered composition differs on another registered numerical profile, first run the unchanged original observer for only those three previously unobserved profile compositions. Guard the exact descriptor pair before original execution; retain all raw data. Do not widen tolerances or replace the frozen corpus. Decide between an implementation repair and additive profile-bound expectations only after that independent comparison.
 Expected: complete named profile states and actual command discovery match; no summary-only or partial acceptance.
 
 ### Task 6: Review and portable closure

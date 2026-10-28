@@ -99,3 +99,18 @@ design/frozen inputs with Git proofs; replay outside checkout from archived vali
 Keep raw attempts, receipts and workspaces local/untracked. Commit/push codex/rust-migration
 is authorized. No main merge, release, tags, app installation, global quality/performance or
 M4 completion claim. Remaining model coverage, public CLI/MCP wiring and M4/global stay explicit.
+
+### Registered-profile diagnostic after complete host qualification
+
+The local Haswell chain and one CI replica pass, but the independently registered
+SkylakeX replica produces a different exact owner/piece forest score for a new
+registered BestSearch composition. Do not loosen score tolerances or overwrite
+the frozen 37-history corpus. First observe only the three new complete registered
+compositions on that previously unobserved BestSearch execution-profile pair
+(`context=4fd097c7...`, `alignment=1f613df1...`). Reuse the unchanged observer,
+frozen1066sources, model registrations and immediate journal. The workflow must
+refuse other hardware before invoking the original, so it never repeats the
+already captured Haswell compositions or any accepted model/kernel reference.
+This is diagnostic evidence, not acceptance. Only independently observed behavior
+can justify a supplemental, profile-bound expectation; a native mismatch against
+the original on the same profile still requires an implementation correction.
