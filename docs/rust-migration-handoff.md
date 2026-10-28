@@ -1514,8 +1514,77 @@ separadamente con los paquetes y el replay. No se ejecutó la suite upstream del
 parser ni pruebas arbitrarias de agotamiento de pila. La decisión de integración
 sigue siendo conservar y subir la rama de migración autorizada.
 
-Siguen pendientes SymbolRanker/PieceSearch completos, otros modelos y la
-aceptación M4/global. No se declara completada la migración ni certificación
+La siguiente etapa incorpora SymbolRanker. Siguen pendientes PieceSearch completo,
+otros modelos y la aceptación M4/global. No se declara completada la migración ni certificación
 ARM/macOS, configuración arbitraria del parser/hilos o agotamiento extremo de
 pila. La aplicación Python instalada permanece como estaba. Todos los crudos,
 recibos y workspaces se mantienen locales y fuera de Git.
+
+## SymbolRanker completo y descripciones compartidas en Rust
+
+Rust incorpora `SymbolRanker` para componer las vistas neuronales, la evidencia
+operacional y las preferencias estables de símbolos. Conserva el top 10, los
+scores, el fallback de código completo, las llamadas al modelo y las prioridades
+operación/test/operador. Los requisitos interpretan el request original y el
+modelo recibe la consulta expandida. `OwnerDescriptions` vincula síntesis y
+caché a un catálogo; el ensamblador y el ranker reutilizan las mismas instancias.
+
+Se capturaron 36 casos nuevos del SymbolRanker Python congelado antes de la
+implementación: 33 con un modelo controlado y tres con Ettin real, cada uno frío
+y caliente, con resultados, llamadas y descripciones. No se repitió pytest
+original ni se modificaron referencias previas. La primera captura falló por un
+selector Java de un método sin región exclusiva en una clase de una línea; se
+conservó completa como intento fallido. La captura corregida usa cuerpos en
+líneas separadas y guarda cada observación en un journal antes de seguir.
+
+Una revisión independiente encontró un Important: el accessor mutable de caché
+permitía reemplazarla por la de otro catálogo con iguales keys/hashes y distinta
+metadata. La regresión pública reprodujo el problema y pasó tras añadir el guard
+al ensamblador, conservando la prioridad del error de límite inválido. No quedaron
+hallazgos Critical/Important/Minor de esta revisión pendientes. Se hizo una sola
+pasada de reparación, sin re-review. La suite completa de core/búsqueda pasó
+153 raíces descubiertas, formato y Clippy estricto. No se suman summaries de
+subprocesos para contar raíces.
+
+La versión `d78d83138595177920dc430e0e543e91b044fc5b` pasó la cadena local
+completa: 557 pruebas de herramientas y 202 nativas, formato y Clippy. El
+[CI 40620639879](https://github.com/Infinibay/ken/actions/runs/40620639879)
+aprobó sus dos réplicas sobre la misma versión: 557 pruebas de herramientas y
+202 nativas por host. Los paquetes descargados también pasaron la verificación
+independiente de fuentes, resultados, llamadas y gates completos. La primera
+época bd8c81da/local y CI40619691674 quedó interrumpida tras el hallazgo de revisión;
+sus artefactos parciales y metadata se conservan y no establecen aceptación.
+
+Recibo local `docs/validation/rust-migration-2026-10-27/symbol-ranking`:
+2989 entradas verificadas, más `FILES.json`, con 1334 archivos de código y
+herramientas autenticados por Git, cinco archivos adicionales de diseño/soporte
+con pruebas Git separadas y las 1066 fuentes originales. Se conserva la captura
+completa, su journal, el intento fallido y los logs de la regresión. Los binarios
+de modelos preparados y las cachés de los originales permanecen en sus directorios
+locales originales; el recibo conserva sus identidades y verifica las
+observaciones, sin reejecutar esos modelos.
+FILES SHA256 `9f84ee4c57452af33aebfaf9f28b11a189cf55c4883730de113ea8a6d33b547a`.
+
+Transporte `.ken/rust-migration/archives/symbol-ranking-d78d8313.tar.gz`,
+204296848 bytes, SHA256
+`1f1b2ae25a776961f2e07dd8483e258e6a3742e82bfcb11c70e83a30dee76124`.
+La extracción `/tmp/ken-symbol-ranker-rqw6536e/symbol-ranking` pasó el replay con Python `-I -B`,
+usando únicamente sus validadores y fuentes archivados. Comprueba los tres
+hosts, las 36 composiciones, los tres frames reales, los originales, los recursos
+nativos y todos los prerrequisitos. Los perfiles se eligen por sus registros,
+sin detectar la CPU del equipo del replay.
+
+El estado declara `symbol_ranker_accepted=true`, `M4_accepted=false`,
+`migration_complete=false`.
+
+Decisiones: composición reutilizando los componentes aceptados; keys canónicas
+como entrada en lugar de tarjetas de presentación; una caché con procedencia
+estricta, no un diccionario externamente sembrado; un modelo compartido con Rc
+sobre el hilo actual, sin ampliar el contrato Send/Sync; capturas previas
+inmutables y ningún cambio numérico. La validación de formas de tarjeta y
+presentación corresponde al futuro PieceSearch. No se acepta concurrencia,
+benchmarks ni paridad con los comportamientos inseguros de caché/NaN del original.
+
+Siguen pendientes PieceSearch completo, otros modelos y la aceptación M4/global.
+El foco sigue siendo Linux x86_64; la aplicación instalada continúa en Python.
+Todos los datos crudos, recibos y workspaces se conservan localmente y fuera de Git.

@@ -1001,3 +1001,21 @@ replay desde una extracción aislada, con fuentes y validadores archivados. El
 registra procedencia, parches reversibles del parser y alcance. Siguen pendientes
 SymbolRanker/PieceSearch completos, otros modelos y M4/global; el foco permanece
 en Linux x86_64 y los recibos quedan locales, fuera de Git.
+
+## SymbolRanker completo en Rust para x86_64
+
+`d78d8313` compone vistas neuronales, observaciones de operaciones y preferencias
+estables, con una caché de descripciones compartida y vinculada al catálogo.
+Coinciden 36 casos originales nuevos, incluidos tres con Ettin real, tanto en
+frío como en caliente. La revisión encontró y corrigió un acceso a una caché de
+otro catálogo; pasaron la regresión, las 153 pruebas nativas de core/búsqueda,
+formato y Clippy estricto.
+
+La cadena local y las dos réplicas del
+[CI final](https://github.com/Infinibay/ken/actions/runs/40620639879) pasaron
+557 pruebas de herramientas y 202 nativas por host. El recibo sellado pasó el
+replay desde una extracción aislada, usando sus fuentes y validadores archivados. El
+[handoff](rust-migration-handoff.md#symbolranker-completo-y-descripciones-compartidas-en-rust)
+registra la procedencia de originales, decisiones y límites. Siguen pendientes
+PieceSearch completo, otros modelos y M4/global. Los artefactos quedan locales
+y fuera de Git; el foco sigue siendo Linux x86_64.
