@@ -4,7 +4,7 @@ from collections import Counter
 import re
 
 
-def rust_gate_errors(discovery:str,output:str)->list[str]:
+def rust_gate_errors(discovery:str,output:str,*,allow_filtered:bool=False)->list[str]:
     expected=Counter(re.findall(r'^([^\n]+): test$',discovery,re.M))
     actual=Counter();errors=[];pending=None;children=0;counts=[]
     for line in output.splitlines():
@@ -14,7 +14,7 @@ def rust_gate_errors(discovery:str,output:str)->list[str]:
             match=re.match(r'test result: ok\. (\d+) passed; 0 failed; 0 ignored;',line)
             if match:counts.append(int(match[1]))
             else:errors.append('failed or ignored Rust root suite')
-            if re.search(r'\b[1-9]\d* filtered out\b',line):errors.append('filtered Rust root suite')
+            if not allow_filtered and re.search(r'\b[1-9]\d* filtered out\b',line):errors.append('filtered Rust root suite')
             continue
         if children:continue
         match=re.match(r'^test (.+) \.\.\. (.*)$',line)

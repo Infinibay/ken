@@ -120,3 +120,12 @@ def test_best_host_binds_the_packet_sdk_before_running_native_commands(tmp_path,
     monkeypatch.setattr(host,'run_command_gates',observe)
     with pytest.raises(ObservedCommand):host.run_host(ROOT,packet)
     assert 'KEN_ORT_LIBRARY'not in os.environ
+
+def test_declared_static_identity_filter_preserves_complete_root_accounting():
+    from tools.rust_migration.integration_validate import rust_gate_errors
+    discovery='model2vec::identity_tests::registered_feature_identity: test\n'
+    output='running 1 test\ntest model2vec::identity_tests::registered_feature_identity ... ok\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 43 filtered out; finished in 0.1s\n'
+    assert rust_gate_errors(discovery,output), 'unfiltered scopes must still reject omitted roots'
+    assert not rust_gate_errors(discovery,output,allow_filtered=True)
+    assert rust_gate_errors(discovery,output.replace(' ... ok',' ... FAILED'),allow_filtered=True)
+    assert rust_gate_errors(discovery,output.replace('1 passed','0 passed'),allow_filtered=True)
