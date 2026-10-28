@@ -8,7 +8,7 @@ permissions:
   contents: read
 jobs:
   observe:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 25
     steps:
       - name: Admit only the previously unobserved Intel backend
@@ -51,9 +51,15 @@ jobs:
           from tools.rust_migration.x86_translation_reference import capture
           from tools.rust_migration.reference import reference_env
           from tools.rust_migration.execution_profiles import authenticate_frozen
+          from tools.rust_migration.translation_cpu_prepare import registration
+          from tools.rust_migration.native_json import identity
+          import importlib.util
           root=Path.cwd();out=Path(os.environ['RUNNER_TEMP'])/'ct2-intel-original'
           restored=restore_portable(root,root/'docs/validation/rust-migration-2026-10-23/handoff',reference=root/'.ken/ct2-intel-reference',progress=root/'.ken/ct2-intel-history',python=Path(sys.executable))
           reference=restored.reference;authenticate_frozen(reference)
+          package=Path(importlib.util.find_spec('ctranslate2').origin).parent.parent/'ctranslate2.libs'
+          core=registration(root)['libraries']
+          assert {name:identity(package/name)for name in core}==core,'registered original CT2/OpenMP bytes required'
           definition=json.loads((reference.root/'src/ken/embedder/data/es-en-ct2-int8.json').read_bytes())
           assets=ModelAssets.from_dict(definition['source']);source=assets.resolve(cache_dir=root/'.ken/ct2-intel-model',local_files_only=False);assets.verify(source)
           diagnostic='import ctranslate2,sys; t=ctranslate2.Translator(sys.argv[1],device="cpu",compute_type="int8",intra_threads=2,inter_threads=1); print(ctranslate2.__version__,t.compute_type,t.num_replicas)'
@@ -65,6 +71,7 @@ jobs:
           binding=dict(format='ken-x86-translation-backend-observation/1',backend='MKL',cpu_vendor='GenuineIntel',cpuinfo_sha256=hashlib.sha256((out/'CPUINFO.txt').read_bytes()).hexdigest(),
               candidate=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),observer_sha256=observed['observer_sha256'],reference_fingerprint=reference.fingerprint,
               runtime=observed['oracle']['runtime'],histories=len(observed['results']))
+          binding['core_libraries']=core
           assert binding['histories']==29
           (out/'BINDING.json').write_text(json.dumps(binding,indent=2)+'\n')
           (out/'STATUS.json').write_text(json.dumps(dict(state='new-intel-original29-observed',accepted=False),indent=2)+'\n')
