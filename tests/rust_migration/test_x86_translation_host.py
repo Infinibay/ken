@@ -40,6 +40,9 @@ def packet():
 
 def test_actual_confined_native_histories_match_all_29_originals():
     from tools.rust_migration.x86_translation_host import verify_capture
+    host=json.loads((packet()/'HOST.json').read_bytes())
+    probe=json.loads((packet()/'PROBE.json').read_bytes())
+    assert Path(probe['path']).is_relative_to(Path(host['target']))
     assert not verify_capture(packet(),ROOT)
 
 @pytest.mark.parametrize('member', ['SOURCES.json','BACKEND-BUILD.json','SDK.json','bin/translation_probe',

@@ -140,7 +140,7 @@ def _capture_into(repo,out,source,sdk,backend,*,binary=None,target=None):
     module=Path(ready['module_path']);shutil.copy2(module,out/'bin/libken_ct2_backend.so')
     shutil.copyfile(sdk/'PREPARATION.json',out/'SDK.json');shutil.copyfile(backend/'PREPARATION.json',out/'BACKEND-BUILD.json')
     for name in PROOF_FILES:
-        target=out/'backend-proof'/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(backend/name,target)
+        proof=out/'backend-proof'/name;proof.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(backend/name,proof)
     cpu=Path('/proc/cpuinfo').read_text();(out/'CPUINFO.txt').write_text(cpu)
     vendors=set(re.findall(r'^vendor_id\s*:\s*(\S+)',cpu,re.M));require(len(vendors)==1,'one CPU vendor required');vendor=vendors.pop()
     host=dict(format='ken-x86-translation-host/1',os='linux',arch='x86_64',python=platform.python_version(),
