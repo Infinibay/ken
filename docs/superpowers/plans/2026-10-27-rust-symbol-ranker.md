@@ -31,7 +31,7 @@ Expected: original observation/protocol tests pass, previous bytes unchanged.
 
 ### Task 2: Shared descriptions and native SymbolRanker
 Files:crates/ken-retrieval/src/{owner_descriptions,symbol_ranking}.rs, piece_candidates.rs/lib.rs; tests/symbol_ranking.rs; native probe/support.
-Interfaces:OwnerDescriptions::new(Arc<SourceCatalog>),get(&mut self,&EntityKey)->Result<Arc<OwnerDescription>>,len(),is_empty(),belongs_to(&SourceCatalog); PieceAssembler::descriptions_mut(); SymbolRanker::new(catalog,Arc<dyn PairedReranker>,Arc<GrammarCatalog>),rank(request,keys,expanded,originals,&mut OwnerDescriptions)->Result<SymbolRanking>.
+Interfaces:OwnerDescriptions::new(Arc<SourceCatalog>),get(&mut self,&EntityKey)->Result<Arc<OwnerDescription>>,len(),is_empty(),belongs_to(&SourceCatalog); PieceAssembler::descriptions_mut(); SymbolRanker::new(catalog,Rc<dyn PairedReranker>,Arc<GrammarCatalog>),rank(request,keys,expanded,originals,&mut OwnerDescriptions)->Result<SymbolRanking>.
 - [ ] RED missing API/corpus and public shared-cache/foreign-cache/canonical-owner/empty/error callers; reuse existing components and extract cache without changing PieceCandidate behavior.
 - [ ] Implement composition, compare all new observations and calls cold/warm; prove shared Arc identity/cache counts and explicit query separation.
 - [ ] Build input-only confined probe; run affected native suites, fmt and strict Clippy.
