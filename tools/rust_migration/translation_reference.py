@@ -111,6 +111,9 @@ for case in request['cases']:
   calls.append(call);sample(case['id']+f'.after-call{index}')
  rows.append({'id':case['id'],'calls':calls,'constructor_ns':constructor_ns,
   'identity':encoder.identity,'revision':encoder.revision,'actual_runtime':dict(actual)})
+ if 'journal' in request:
+  with Path(request['journal']).open('a') as stream:
+   stream.write(json.dumps(rows[-1],ensure_ascii=True,allow_nan=False)+'\n')
 result={'format':'ken-translation-oracle/1','platform':platform.system(),'architecture':platform.machine(),
  'oracle':{'frozen_import':True,'runtime':{name:version(name) for name in ('ctranslate2','sentencepiece')},
   'unicode':unicodedata.unidata_version,
@@ -123,7 +126,7 @@ print(json.dumps(result,ensure_ascii=True,allow_nan=False))
 
 
 def capture(reference: Reference, source: Path, output: Path, *, cases: list[dict] | None = None,
-            definition: dict | None = None) -> dict:
+            definition: dict | None = None, journal: Path | None = None) -> dict:
     if verify_reference(reference.root, reference.manifest_path):
         raise ValueError('frozen source drift')
     if definition is None:
@@ -135,13 +138,30 @@ def capture(reference: Reference, source: Path, output: Path, *, cases: list[dic
         raise ValueError('distinct nonempty translation histories required')
     output = output.resolve()
     output.parent.mkdir(parents=True, exist_ok=True)
+    if journal is not None:
+        journal = journal.absolute()
+        if journal in (output, output.with_suffix('.stdout.log'), output.with_suffix('.stderr.log')):
+            raise ValueError('journal must be separate from capture output and logs')
+        journal.parent.mkdir(parents=True, exist_ok=True)
+        with journal.open('x'):
+            pass
     with tempfile.TemporaryDirectory(prefix='ken-translation-original-') as directory:
         root = Path(directory)
         request = {'reference': str(reference.root), 'definition': definition, 'source': str(source),
                    'destination': str(root / 'prepared' / definition['derived']['revision']), 'cases': cases}
-        child = subprocess.run([str(reference.python), '-c', _CHILD], cwd=root,
-                               env=reference_env(reference, root / 'environment'), input=json.dumps(request),
-                               text=True, capture_output=True, timeout=600)
+        if journal is not None:
+            request['journal'] = str(journal)
+        try:
+            child = subprocess.run([str(reference.python), '-c', _CHILD], cwd=root,
+                                   env=reference_env(reference, root / 'environment'), input=json.dumps(request),
+                                   text=True, capture_output=True, timeout=600)
+        except subprocess.TimeoutExpired as error:
+            if journal is not None:
+                for suffix, value in [('.stdout.log', error.stdout), ('.stderr.log', error.stderr)]:
+                    output.with_suffix(suffix).write_bytes(value.encode() if isinstance(value, str) else value or b'')
+            raise
+    if journal is not None:
+        output.with_suffix('.stdout.log').write_text(child.stdout)
     output.with_suffix('.stderr.log').write_text(child.stderr)
     if child.returncode or child.stderr:
         raise ValueError(f'frozen translation capture failed: {child.stderr}')

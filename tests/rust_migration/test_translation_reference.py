@@ -120,3 +120,75 @@ def test_real_case_registry_contains_translated_position_boundaries_and_recovery
         assert by_id[f'source-boundary{count}']['source_pieces_with_eos'] == count
     assert by_id['error-then-english']['queries'][-1] == 'find the input parser'
     assert by_id['missing-assets-lazy']['missing_assets'] is True
+
+
+def test_original_capture_journals_completed_histories_before_a_later_failure(original, tmp_path):
+    from tools.rust_migration.translation_fixtures import generate_preparation
+    from tools.rust_migration.translation_reference import capture
+    fixture = generate_preparation(original, tmp_path / 'fixtures')
+    journal = tmp_path / 'records.jsonl'
+    output = tmp_path / 'oracle.json'
+    cases = [{'id': 'completed', 'queries': ['find the input parser']},
+             {'id': 'invalid-tokenizer', 'queries': ['¿hola?'], 'source_pieces_with_eos': 1}]
+    with pytest.raises(ValueError, match='frozen translation capture failed'):
+        capture(original, Path(fixture['source']), output, cases=cases,
+                definition=fixture['definition'], journal=journal)
+    rows = [json.loads(line) for line in journal.read_text().splitlines()]
+    assert [row['id'] for row in rows] == ['completed']
+    assert rows[0]['calls'][0]['output'] == 'find the input parser'
+    assert rows[0]['calls'][0]['runtime_loaded'] is False
+    assert output.with_suffix('.stderr.log').read_text()
+    assert output.with_suffix('.stdout.log').exists()
+    assert not output.exists()
+
+
+def test_complete_original_capture_journal_matches_the_saved_histories(original, tmp_path):
+    from tools.rust_migration.translation_fixtures import generate_preparation
+    from tools.rust_migration.translation_reference import capture
+    fixture = generate_preparation(original, tmp_path / 'fixtures')
+    journal = tmp_path / 'records.jsonl'
+    result = capture(original, Path(fixture['source']), tmp_path / 'oracle.json',
+                     cases=[{'id': 'cold', 'queries': ['', 'find the input parser']}],
+                     definition=fixture['definition'], journal=journal)
+    assert [json.loads(line) for line in journal.read_text().splitlines()] == result['results']
+    assert result['results'][0]['calls'][1]['output'] == 'find the input parser'
+
+
+def test_original_capture_refuses_an_existing_journal_without_replacing_it(original, tmp_path):
+    from tools.rust_migration.translation_fixtures import generate_preparation
+    from tools.rust_migration.translation_reference import capture
+    fixture = generate_preparation(original, tmp_path / 'fixtures')
+    journal = tmp_path / 'records.jsonl'
+    journal.write_bytes(b'previous evidence\n')
+    output = tmp_path / 'oracle.json'
+    with pytest.raises(FileExistsError):
+        capture(original, Path(fixture['source']), output,
+                cases=[{'id': 'cold', 'queries': ['find the input parser']}],
+                definition=fixture['definition'], journal=journal)
+    assert journal.read_bytes() == b'previous evidence\n'
+    assert not output.exists()
+
+
+def test_original_capture_preserves_partial_stdout_and_stderr_on_timeout(original, tmp_path, monkeypatch):
+    from tools.rust_migration.translation_fixtures import generate_preparation
+    from tools.rust_migration import translation_reference as observer
+    import subprocess
+    fixture = generate_preparation(original, tmp_path / 'fixtures')
+    execute = subprocess.run
+
+    def time_out_child(command, **kwargs):
+        if 'input' in kwargs and 'destination' in json.loads(kwargs['input']):
+            raise subprocess.TimeoutExpired(command, 600, output=b'partial stdout', stderr=b'partial stderr')
+        return execute(command, **kwargs)
+
+    monkeypatch.setattr(observer.subprocess, 'run', time_out_child)
+    output = tmp_path / 'oracle.json'
+    journal = tmp_path / 'records.jsonl'
+    with pytest.raises(subprocess.TimeoutExpired):
+        observer.capture(original, Path(fixture['source']), output,
+                         cases=[{'id': 'cold', 'queries': ['find the input parser']}],
+                         definition=fixture['definition'], journal=journal)
+    assert output.with_suffix('.stdout.log').read_bytes() == b'partial stdout'
+    assert output.with_suffix('.stderr.log').read_bytes() == b'partial stderr'
+    assert journal.read_bytes() == b''
+    assert not output.exists()
