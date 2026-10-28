@@ -25,7 +25,7 @@ def test_input_only_endpoint_and_preparation_probes_reject_answers(tmp_path):
 @pytest.fixture
 def packet(tmp_path):
     source=Path(os.environ.get('KEN_BEST_SEARCH_PACKET',ROOT/'.ken/rust-migration/best-search/packet'))
-    out=tmp_path/'packet';shutil.copytree(source,out);return out
+    out=tmp_path/'packet';clone_capture(source,out);return out
 
 def test_complete_best_search_packet_is_native_and_source_bound(packet):
     from tools.rust_migration.best_search_host import verify_capture
@@ -38,12 +38,12 @@ def test_resealed_best_search_and_preparation_capture_rejects_tampering(packet,c
     assert not verify_capture(packet,ROOT)
     out=packet/'best-search';capture=out/('preparation'if change in('artifact','mapped','readonly','cache')else'native');record=json.loads((capture/'execution.json').read_bytes())
     if change=='answer':
-        p=capture/'inputs.json';v=json.loads(p.read_bytes());v['cases'][0]['input']['expected']={};p.write_text(json.dumps(v));record['request_sha256']=identity(p)['sha256']
+        p=capture/'inputs.json';v=json.loads(p.read_bytes());v['cases'][0]['input']['expected']={};replace_capture_file(p,json.dumps(v).encode());record['request_sha256']=identity(p)['sha256']
     elif change in('blas','source-resource','rank-resource'):
         prefix={'blas':'dense-blas/','source-resource':'sources/','rank-resource':'ranking/'}[change]
         name=next(n for n in record['owned_before']if n.startswith(prefix));del record['owned_before'][name];del record['owned_after'][name]
     elif change in('grammar','binary','original'):
-        path={'grammar':out/'grammar-manifest','binary':out/'bin/best_search_probe','original':out/'ORIGINAL.json.gz'}[change];path.write_bytes(b'changed')
+        path={'grammar':out/'grammar-manifest','binary':out/'bin/best_search_probe','original':out/'ORIGINAL.json.gz'}[change];replace_capture_file(path,b'changed')
     elif change=='parent':(packet/'piece-search/native/execution.json').unlink()
     else:
         p=capture/'stdout.json';v=json.loads(p.read_bytes());rows={r['id']:r for r in v['cases']}
@@ -63,8 +63,8 @@ def test_resealed_best_search_and_preparation_capture_rejects_tampering(packet,c
             elif change=='word-profile':rows['registered-symbol']['events'][0]['result']['profile_version']='0'*64
             elif change=='real-score':rows['registered-symbol']['events'][0]['result']['results'][0]['signals']['neural_score']+=100
             else:rows['registered-symbol']['events'][0]['result']['results'][0]['signals']['reranker']=None
-        p.write_text(json.dumps(v));record['stdout_sha256']=identity(p)['sha256']
-    (capture/'execution.json').write_text(json.dumps(record));assert verify_capture(packet,ROOT)
+        replace_capture_file(p,json.dumps(v).encode());record['stdout_sha256']=identity(p)['sha256']
+    replace_capture_file(capture/'execution.json',json.dumps(record).encode());assert verify_capture(packet,ROOT)
 
 def test_confined_complete_probes_authenticate_their_dense_runtime(tmp_path):
     from tools.rust_migration.best_search_host import capture_native,originals,compare,compare_preparation,verify_endpoints
@@ -85,3 +85,38 @@ def test_source_snapshot_changes_when_the_best_search_coordinator_changes(tmp_pa
     path=tmp_path/'crates/ken-search/src/best_search.rs';path.parent.mkdir(parents=True);path.write_text('pub fn policy() -> u8 { 1 }\n')
     before=source_identity(tmp_path);path.write_text('pub fn policy() -> u8 { 2 }\n')
     assert source_identity(tmp_path)!=before,'receipts must bind the coordinator code that produced their answers'
+
+def clone_capture(source,target):
+    shutil.copytree(source,target,copy_function=os.link)
+
+def replace_capture_file(path,raw):
+    staging=path.with_name(path.name+'.mutation')
+    with staging.open('xb')as stream:stream.write(raw)
+    staging.replace(path)
+
+def test_tampering_a_linked_capture_does_not_modify_the_preserved_source(tmp_path):
+    source=tmp_path/'source';source.mkdir();(source/'record.json').write_bytes(b'preserved')
+    target=tmp_path/'copy';clone_capture(source,target);replace_capture_file(target/'record.json',b'tampered')
+    assert (source/'record.json').read_bytes()==b'preserved'
+    assert (target/'record.json').read_bytes()==b'tampered'
+
+def test_workflow_selects_changes_to_the_qualified_crate_sources():
+    import fnmatch,yaml
+    workflow=yaml.load((ROOT/'.github/workflows/rust-runtime-cores.yml').read_bytes(),Loader=yaml.BaseLoader)
+    filters=workflow['on']['push']['paths']
+    for crate in('ken-search','ken-index','ken-store','ken-program'):
+        path=f'crates/{crate}/src/lib.rs'
+        assert any(fnmatch.fnmatchcase(path,pattern)for pattern in filters),path
+
+def test_best_host_binds_the_packet_sdk_before_running_native_commands(tmp_path,monkeypatch):
+    from tools.rust_migration import best_search_host as host
+    packet=tmp_path/'packet';packet.mkdir();library=str(tmp_path/'prepared-runtime.so')
+    (packet/'SDK.json').write_text(json.dumps(dict(prepared=dict(onnx_library=library))))
+    monkeypatch.delenv('KEN_ORT_LIBRARY',raising=False)
+    class ObservedCommand(Exception):pass
+    def observe(*args,**kwargs):
+        assert os.environ.get('KEN_ORT_LIBRARY')==library,'native tests must use the packet SDK without inherited shell state'
+        raise ObservedCommand
+    monkeypatch.setattr(host,'run_command_gates',observe)
+    with pytest.raises(ObservedCommand):host.run_host(ROOT,packet)
+    assert 'KEN_ORT_LIBRARY'not in os.environ

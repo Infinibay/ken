@@ -13,6 +13,81 @@ const MAX_HEADER: usize = 1024 * 1024;
 fn io(error: impl std::fmt::Display) -> crate::RetrievalError {
     invalid(format!("context matrix artifact: {error}"))
 }
+// Admit only the flat matrix envelope before npyz computes products/strides or
+// constructs recursive dtypes. Byte and lexical-depth bounds precede literal
+// parsing, so malformed headers never depend on the parser's stack budget.
+fn validate_header(header: &[u8], rows: usize, width: usize) -> Result<()> {
+    // NumPy's scalar-matrix header uses ordinary quoted keys and dtype text.
+    // Exclude long-string syntax before the short-string lexical depth scan.
+    if header.windows(3).any(|w| w == b"'''" || w == b"\"\"\"") {
+        return Err(io("NPY matrix header requires ordinary string literals"));
+    }
+    let mut depth = 0usize;
+    let mut quote = None;
+    let mut escaped = false;
+    for &byte in header {
+        if let Some(delimiter) = quote {
+            if escaped {
+                escaped = false;
+            } else if byte == b'\\' {
+                escaped = true;
+            } else if byte == delimiter {
+                quote = None;
+            }
+            continue;
+        }
+        match byte {
+            b'\'' | b'"' => quote = Some(byte),
+            b'(' | b'[' | b'{' => {
+                depth += 1;
+                // The dictionary and its flat shape tuple are the only
+                // container levels in an admitted scalar matrix header.
+                if depth > 2 {
+                    return Err(io("NPY matrix header nesting exceeds limit"));
+                }
+            }
+            b')' | b']' | b'}' => {
+                depth = depth
+                    .checked_sub(1)
+                    .ok_or_else(|| io("invalid NPY matrix header"))?;
+            }
+            _ => {}
+        }
+    }
+    if depth != 0 || quote.is_some() {
+        return Err(io("invalid NPY matrix header"));
+    }
+    let text = std::str::from_utf8(header).map_err(io)?.trim_end();
+    let py_literal::Value::Dict(fields) = text.parse::<py_literal::Value>().map_err(io)? else {
+        return Err(io("NPY matrix header dictionary required"));
+    };
+    let mut values = std::collections::BTreeMap::new();
+    for (key, value) in fields {
+        let py_literal::Value::String(key) = key else {
+            return Err(io("NPY matrix header keys must be strings"));
+        };
+        if values.insert(key, value).is_some() {
+            return Err(io("duplicate NPY matrix header field"));
+        }
+    }
+    if values.len() != 3 {
+        return Err(io("NPY matrix header fields differ"));
+    }
+    if !matches!(values.get("descr"),Some(py_literal::Value::String(dtype)) if dtype=="<f4") {
+        return Err(io("little-endian float32 NPY required"));
+    }
+    let expected = [rows, width];
+    let shape_matches = match values.get("shape") {
+        Some(py_literal::Value::Tuple(shape)) if shape.len()==2 => shape.iter().zip(expected).all(|(value,expected)| {
+            matches!(value,py_literal::Value::Integer(n) if n.to_string().parse::<usize>().ok()==Some(expected))
+        }),
+        _ => false,
+    };
+    if !shape_matches || values.get("fortran_order") != Some(&py_literal::Value::Boolean(false)) {
+        return Err(io("NPY matrix shape/order differs"));
+    }
+    Ok(())
+}
 fn digest(file: &mut File) -> Result<String> {
     file.seek(SeekFrom::Start(0)).map_err(io)?;
     let mut h = Sha256::new();
@@ -92,6 +167,9 @@ impl MappedNpy {
         {
             return Err(io("NPY header exceeds artifact"));
         }
+        let mut header = vec![0; header_length];
+        file.read_exact(&mut header).map_err(io)?;
+        validate_header(&header, rows, width)?;
         file.seek(SeekFrom::Start(0)).map_err(io)?;
         let npy = NpyFile::new(&mut file).map_err(io)?;
         if npy.shape() != [rows as u64, width as u64] || npy.order() != Order::C {

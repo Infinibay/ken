@@ -17,7 +17,7 @@ PREPARATION_PREFIX='ken-source-preparation-'
 REFERENCE_ID={'bytes':37286,'sha256':'73ec863b28c5e9473c8e8826dce943a5c44e13d30dac51d2a47b87d217402aeb'}
 PREPARATION_ID={'bytes':13811,'sha256':'8daeb0d83b3ef2c34df17357e13f3740484b3bfa7e895218f51505df1cf62710'}
 TEST_FILES=['tests/rust_migration/test_context_preparation_reference.py','tests/rust_migration/test_best_search_reference.py','tests/rust_migration/test_best_search_host.py']
-PYTHON_ROOTS=50
+PYTHON_ROOTS=53
 NATIVE_TEST=['cargo','test','--locked','--offline','-p','ken-core','-p','ken-retrieval','-p','ken-index','-p','ken-syntax','-p','ken-search','--all-targets']
 STATIC_TEST=['cargo','test','--locked','--offline','-p','ken-models','--lib','registered_feature_identity']
 IDENTITY_TEST=['cargo','test','--locked','--offline','-p','ken-models','--test','profile_identity']
@@ -104,7 +104,7 @@ def verify_host(packet,repo):
     try:
         require(not(errors:=verify_capture(packet,repo)),str(errors));out=packet/'best-search'
         require(not(errors:=command_gate_errors(out/'gates',COMMANDS,record_name='RUST.json')),str(errors))
-        for prefix,count in [('best',216),('static',1),('identity',5)]:
+        for prefix,count in [('best',218),('static',1),('identity',5)]:
             listed=(out/f'gates/{prefix}-list.log').read_text();output=(out/f'gates/{prefix}-tests.log').read_text()
             require(not rust_gate_errors(listed,output)and len(re.findall(r'^([^\n]+): test$',listed,re.M))==count,'all native roots required: '+prefix)
         return lint_gate_errors(out/'gates',LINT)or python_scope_errors(out,TEST_FILES,PYTHON_ROOTS)
@@ -130,7 +130,7 @@ def capture_native(repo,best,prep,out):
 def run_host(repo,packet):
     best,prep=originals(repo);out=packet/'best-search';out.mkdir();(out/'gates').mkdir();environment=os.environ.copy()
     try:
-        os.environ['CARGO_TARGET_DIR']=str(repo/'target');run_command_gates(out/'gates',COMMANDS,record_name='RUST.json');run_lint_gates(out/'gates',LINT)
+        os.environ['CARGO_TARGET_DIR']=str(repo/'target');os.environ['KEN_ORT_LIBRARY']=load(packet/'SDK.json')['prepared']['onnx_library'];run_command_gates(out/'gates',COMMANDS,record_name='RUST.json');run_lint_gates(out/'gates',LINT)
         (out/'bin').mkdir()
         for name in('best_search_probe','context_preparation_probe'):shutil.copyfile(repo/'target/debug/examples'/name,out/'bin'/name)
         shutil.copyfile(repo/FIXTURE,out/'ORIGINAL.json.gz');shutil.copyfile(repo/PREPARATION_FIXTURE,out/'PREPARATION-ORIGINAL.json.gz')

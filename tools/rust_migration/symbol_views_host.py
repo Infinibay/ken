@@ -77,7 +77,7 @@ def verify_host(packet:Path,repo:Path):
         errors=verify_capture(packet,repo);require(not errors,str(errors));out=packet/'symbol-views'
         errors=command_gate_errors(out/'gates',COMMANDS,record_name='RUST.json');require(not errors,str(errors))
         listed=(out/'gates/native-list.log').read_text();output=(out/'gates/native-tests.log').read_text()
-        require(not rust_gate_errors(listed,output)and len(re.findall(r'^([^\n]+): test$',listed,re.M))==162,'all162native retrieval/core roots required')
+        require(not rust_gate_errors(listed,output)and len(re.findall(r'^([^\n]+): test$',listed,re.M))==164,'all164native retrieval/core roots required')
         return lint_gate_errors(out/'gates',LINT)or python_scope_errors(out,TEST_FILES,PYTHON_ROOTS)
     except(OSError,ValueError,KeyError,TypeError,IndexError)as e:return[str(e)]
 

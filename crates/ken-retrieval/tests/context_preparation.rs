@@ -239,3 +239,65 @@ fn source_policy_mismatch_and_invalid_generation_cannot_be_used() {
     );
     assert!(encoder.calls.borrow().is_empty());
 }
+
+// Admission must reject malformed, reauthenticated cache bytes before general
+// NPY parsing can perform arithmetic or recursively construct unbounded types.
+fn reject_resealed_header(header: &str) {
+    use ken_retrieval::context_preparation::prepare_context;
+    use sha2::{Digest, Sha256};
+    use std::{fs, rc::Rc};
+    let input = first_input();
+    let (_source, catalog) =
+        support::catalog(serde_json::from_value(input["physical"].clone()).unwrap()).unwrap();
+    let cache = tempfile::tempdir().unwrap();
+    let encoder = Rc::new(support::Source::new(&input["model_registration"]).unwrap());
+    drop(prepare_context(&catalog, 7, encoder.clone(), cache.path()).unwrap());
+    let published = snapshot(cache.path());
+    let path = published.join("full.npy");
+    let original = fs::read(&path).unwrap();
+    let mut header = header.trim_end().as_bytes().to_vec();
+    let padded = (12 + header.len() + 1).div_ceil(64) * 64 - 12;
+    header.resize(padded - 1, b' ');
+    header.push(b'\n');
+    let mut data = b"\x93NUMPY\x02\x00".to_vec();
+    data.extend(u32::try_from(header.len()).unwrap().to_le_bytes());
+    data.extend(header);
+    data.extend_from_slice(&original[128..]);
+    fs::write(&path, &data).unwrap();
+    let manifest_path = published.join("manifest.json");
+    let mut manifest: Value = serde_json::from_slice(&fs::read(&manifest_path).unwrap()).unwrap();
+    manifest["artifacts"]["full.npy"] = format!("{:x}", Sha256::digest(&data)).into();
+    fs::write(manifest_path, serde_json::to_vec(&manifest).unwrap()).unwrap();
+    encoder.calls.borrow_mut().clear();
+    *encoder.mode.borrow_mut() = "error".into();
+    assert!(
+        prepare_context(&catalog, 8, encoder.clone(), cache.path()).is_err(),
+        "malformed header admitted"
+    );
+    assert!(encoder.calls.borrow().is_empty());
+}
+#[test]
+fn resealed_declared_shape_cannot_overflow_record_or_stride_products() {
+    let nested = format!("{}3{}", "[".repeat(10000), "]".repeat(10000));
+    // A long-string key containing an ordinary quote must not disguise nested
+    // containers from the lexical budget preceding literal conversion.
+    reject_resealed_header(&format!(
+        "{{'''padding'key''': {nested}, 'descr': '<f4', 'fortran_order': False, 'shape': (3, 768), }}"
+    ));
+    for shape in [
+        "(18446744073709551615, 768)",
+        "(0, 18446744073709551615, 18446744073709551615)",
+        &nested,
+    ] {
+        reject_resealed_header(&format!(
+            "{{'descr': '<f4', 'fortran_order': False, 'shape': {shape}, }}"
+        ));
+    }
+}
+#[test]
+fn resealed_flat_subarray_rank_is_rejected_before_recursive_dtype_construction() {
+    reject_resealed_header(&format!(
+        "{{'descr': [('field', '<f4', ({}))], 'fortran_order': False, 'shape': (3, 768), }}",
+        "1,".repeat(100000)
+    ));
+}
