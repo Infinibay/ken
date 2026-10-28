@@ -210,11 +210,17 @@ fn malformed_frames_invalid_calls_and_notifications_do_not_poison_the_stdio_sess
     client.send(&json!({"jsonrpc":"2.0","id":2,"method":"tools/list"}));
     let listed = client.receive();
     let tools = listed["result"]["tools"].as_array().unwrap();
-    assert_eq!(tools.len(), 1);
+    assert_eq!(
+        tools
+            .iter()
+            .map(|tool| tool["name"].as_str().unwrap())
+            .collect::<Vec<_>>(),
+        vec!["ken_find", "ken_read", "ken_related"]
+    );
     assert_eq!(tools[0]["name"], "ken_find");
     assert_eq!(
         tools[0]["inputSchema"]["properties"]["scope"]["enum"],
-        json!(["files", "symbols"])
+        json!(["files", "symbols", "tests"])
     );
     let invalid = client.call(3, json!({"query":"find value","scope":"text"}));
     assert_eq!(invalid["result"]["isError"], true);

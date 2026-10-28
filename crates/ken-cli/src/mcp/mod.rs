@@ -1,7 +1,6 @@
 //! MCP 2025-11-25 stdio lifecycle; domain search and framing have separate owners.
-mod find;
 mod framing;
-use find::FindService;
+use crate::tools::{ToolService, definitions};
 use framing::Frame;
 use ken_core::project::{DiscoveryContext, ProjectPaths, locate_project};
 use serde::Deserialize;
@@ -51,7 +50,7 @@ struct Call {
 }
 struct Server {
     phase: Phase,
-    find: FindService,
+    tools: ToolService,
 }
 impl Server {
     fn handle(&mut self, bytes: &[u8]) -> Option<Value> {
@@ -149,13 +148,13 @@ impl Server {
             if list.get("cursor").is_some_and(|v| !v.is_null()) {
                 return Some(error(id_value, -32602, "no pagination cursor is available"));
             }
-            return Some(result(id_value, json!({"tools":[find::definition()]})));
+            return Some(result(id_value, json!({"tools":definitions()})));
         }
         let input: Call = match serde_json::from_str(params) {
             Ok(input) => input,
             Err(e) => return Some(error(id_value, -32602, e)),
         };
-        if input.name != "ken_find" {
+        if !ToolService::known(&input.name) {
             return Some(error(
                 id_value,
                 -32602,
@@ -170,7 +169,10 @@ impl Server {
             return Some(error(id_value, -32602, "tool arguments must be an object"));
         }
         let empty = RawValue::from_string("{}".into()).expect("empty argument object");
-        let output = match self.find.call(input.arguments.as_deref().unwrap_or(&empty)) {
+        let output = match self
+            .tools
+            .call(&input.name, input.arguments.as_deref().unwrap_or(&empty))
+        {
             Ok(text) => tool_result(text, false),
             Err(error) => tool_result(error, true),
         };
@@ -208,7 +210,7 @@ pub fn run(
     }
     let mut server = Server {
         phase: Phase::New,
-        find: FindService::new(paths, installation),
+        tools: ToolService::new(paths, installation),
     };
     server.serve(&mut io::stdin().lock(), &mut io::stdout().lock())?;
     Ok(())

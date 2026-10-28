@@ -18,8 +18,86 @@ pub enum Command {
     SearchFiles(SearchArgs),
     /// Search indexed symbols using the complete native search engine
     SearchSymbols(SearchArgs),
-    /// Run native file and symbol search over MCP stdio
+    /// Run native search and index navigation over MCP stdio
     Mcp(McpArgs),
+    /// Read indexed code and relationships through the native tool surface
+    Tools(ToolsArgs),
+}
+#[derive(Debug, Args)]
+pub struct ToolsArgs {
+    #[arg(long, default_value = ".", global = true)]
+    pub path: PathBuf,
+    #[arg(long, global = true)]
+    pub json: bool,
+    #[arg(long, global = true)]
+    pub compact: bool,
+    #[arg(long)]
+    pub list: bool,
+    #[command(subcommand)]
+    pub command: Option<ToolCommand>,
+}
+#[derive(Debug, Subcommand)]
+pub enum ToolCommand {
+    #[command(alias = "ken_read")]
+    Read(ReadArgs),
+    #[command(alias = "ken_related")]
+    Related(RelatedArgs),
+    #[command(alias = "ken_find")]
+    Find(ToolFindArgs),
+}
+#[derive(Debug, Args)]
+pub struct ReadArgs {
+    pub file: String,
+    #[arg(long,num_args=1..)]
+    pub include: Option<Vec<String>>,
+    #[arg(long, default_value = "")]
+    pub qualname: String,
+    #[arg(long, default_value_t = 0, allow_hyphen_values = true)]
+    pub start_line: i64,
+    #[arg(long, default_value_t = 0, allow_hyphen_values = true)]
+    pub end_line: i64,
+    #[arg(long, default_value_t = 0, allow_hyphen_values = true)]
+    pub max_chars: i64,
+    #[arg(long, default_value = "compact")]
+    pub output_format: String,
+}
+#[derive(Debug, Args)]
+pub struct RelatedArgs {
+    pub target: String,
+    pub relation: String,
+    #[arg(long, default_value_t = 10, allow_hyphen_values = true)]
+    pub limit: i64,
+    #[arg(long, default_value_t = 1, allow_hyphen_values = true)]
+    pub depth: i64,
+    #[arg(long)]
+    pub full: bool,
+    #[arg(long, default_value = "compact")]
+    pub output_format: String,
+}
+#[derive(Debug, Args)]
+pub struct ToolFindArgs {
+    #[arg(default_value = "")]
+    pub query: String,
+    #[arg(long, default_value = "files")]
+    pub scope: String,
+    #[arg(long, allow_hyphen_values = true)]
+    pub limit: Option<isize>,
+    #[arg(long)]
+    pub literal: bool,
+    #[arg(long)]
+    pub full: bool,
+    #[arg(long, default_value = "auto")]
+    pub purpose: String,
+    #[arg(long, default_value_t = 12000, allow_hyphen_values = true)]
+    pub max_chars: isize,
+    #[arg(long, default_value = "auto")]
+    pub piece_kind: String,
+    #[arg(long, default_value = "auto")]
+    pub response_format: String,
+    #[arg(long, default_value = "kenql/1")]
+    pub query_language: String,
+    #[arg(long, default_value = "compact")]
+    pub output_format: String,
 }
 #[derive(Debug, Args)]
 pub struct McpArgs {

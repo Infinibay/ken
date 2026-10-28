@@ -44,6 +44,7 @@ fn run(invocation: Invocation) -> Result<CommandOutput, Box<dyn std::error::Erro
                 stderr: String::new(),
             })
         }
+        Command::Tools(args) => ken_cli::tools::run(args, installation, &context),
         Command::Status(_) => unreachable!("status handled above"),
     }
 }
@@ -64,6 +65,7 @@ fn main() -> ExitCode {
         Command::SearchFiles(_) => "search-files",
         Command::SearchSymbols(_) => "search-symbols",
         Command::Mcp(_) => "mcp",
+        Command::Tools(_) => "tools",
     };
     let output = run(args).unwrap_or_else(|error| CommandOutput {
         code: 1,

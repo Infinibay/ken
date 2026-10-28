@@ -21,6 +21,7 @@ serde_json = { workspace = true, features = ["raw_value"] }
 thiserror.workspace = true
 
 [dev-dependencies]
+base64 = "0.23.1"
 ken-index = { path = "../ken-index" }
 ken-store = { path = "../ken-store" }
 ken-syntax = { path = "../ken-syntax" }

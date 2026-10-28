@@ -3,3 +3,4 @@ pub mod args;
 pub mod mcp;
 pub mod search;
 pub mod status;
+pub mod tools;

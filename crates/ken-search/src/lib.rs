@@ -1,4 +1,4 @@
-//! Best-search coordination composes source indexing and retrieval policies.
+//! Native search and navigation over the indexed project.
 mod best_search;
 pub use best_search::{BestSearch, PreparationReport, PreparedProjectInfo};
 mod resources;
@@ -22,4 +22,5 @@ pub use registered::RegisteredSearchResources;
 mod context_encoder;
 mod installation;
 pub use installation::{InstallationError, SearchInstallation};
+pub mod navigation;
 pub mod public;

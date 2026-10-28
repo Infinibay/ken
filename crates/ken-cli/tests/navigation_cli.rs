@@ -1,0 +1,251 @@
+#[path = "support/public_evidence.rs"]
+#[allow(dead_code)]
+mod evidence;
+#[path = "../../ken-search/tests/support/navigation.rs"]
+#[allow(dead_code)]
+mod support;
+use serde_json::{Value, json};
+use std::{
+    fs,
+    io::{BufRead, BufReader, Write},
+    process::{Child, ChildStdin, Command, Stdio},
+    sync::mpsc::{self, Receiver},
+    thread,
+    time::{Duration, Instant},
+};
+use support::*;
+
+fn command(fixture: &Fixture) -> Command {
+    let mut command = Command::new(evidence::native());
+    command
+        .arg("--resources")
+        .arg(fixture.paths.root().join("missing-installation.json"))
+        .current_dir(fixture.paths.root())
+        .env_clear()
+        .env("HOME", fixture.paths.root().join("home"))
+        .env("PATH", "")
+        .env("LANG", "C.UTF-8");
+    command
+}
+#[test]
+fn actual_cli_tools_match_original_json_and_compact_without_model_installation() {
+    let fixture = Fixture::new();
+    let hash = fixture.database_hash();
+    for row in reference()["public"].as_array().unwrap() {
+        for json_output in [false, true] {
+            let mut args = cli_args(row, json_output);
+            args.splice(
+                1..1,
+                [
+                    "--path".into(),
+                    fixture.paths.root().to_string_lossy().into_owned(),
+                ],
+            );
+            let got = command(&fixture).args(args).output().unwrap();
+            assert!(
+                got.status.success(),
+                "{}: {}",
+                row["request"],
+                String::from_utf8_lossy(&got.stderr)
+            );
+            assert!(got.stderr.is_empty());
+            if json_output {
+                assert_eq!(
+                    serde_json::from_slice::<Value>(&got.stdout).unwrap(),
+                    row["result"],
+                    "{}",
+                    row["request"]
+                );
+            } else {
+                assert_eq!(
+                    String::from_utf8(got.stdout).unwrap(),
+                    row["compact"].as_str().unwrap().to_owned() + "\n",
+                    "{}",
+                    row["request"]
+                );
+            }
+        }
+    }
+    let listed = command(&fixture)
+        .args(["tools", "--list"])
+        .output()
+        .unwrap();
+    assert!(listed.status.success());
+    let text = String::from_utf8(listed.stdout).unwrap();
+    assert!(text.contains("ken_read") && text.contains("ken_related"));
+    let denied = command(&fixture)
+        .args(["tools", "read", "src/service.py", "--include", "profile"])
+        .output()
+        .unwrap();
+    assert_eq!(denied.status.code(), Some(1));
+    assert!(denied.stdout.is_empty());
+    assert!(
+        String::from_utf8(denied.stderr)
+            .unwrap()
+            .contains("not available")
+    );
+    assert_eq!(fixture.database_hash(), hash);
+    assert!(!fixture.paths.root().join("cache").exists());
+    assert!(!fixture.paths.root().join("owned").exists());
+}
+
+struct Mcp {
+    child: Child,
+    input: Option<ChildStdin>,
+    frames: Receiver<String>,
+    reader: Option<thread::JoinHandle<()>>,
+}
+impl Mcp {
+    fn new(fixture: &Fixture) -> Self {
+        let mut child = command(fixture)
+            .arg("mcp")
+            .arg(fixture.paths.root())
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .unwrap();
+        let input = child.stdin.take();
+        let output = child.stdout.take().unwrap();
+        let (tx, frames) = mpsc::channel();
+        let reader = thread::spawn(move || {
+            for line in BufReader::new(output).lines() {
+                if tx.send(line.unwrap()).is_err() {
+                    break;
+                }
+            }
+        });
+        Self {
+            child,
+            input,
+            frames,
+            reader: Some(reader),
+        }
+    }
+    fn send(&mut self, value: &Value) {
+        writeln!(self.input.as_mut().unwrap(), "{value}").unwrap();
+        self.input.as_mut().unwrap().flush().unwrap();
+    }
+    fn receive(&self) -> Value {
+        serde_json::from_str(
+            &self
+                .frames
+                .recv_timeout(Duration::from_secs(30))
+                .expect("native navigation MCP response deadline"),
+        )
+        .unwrap()
+    }
+    fn initialize(&mut self) {
+        self.send(&json!({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"navigation-test","version":"1"}}}));
+        assert_eq!(self.receive()["result"]["protocolVersion"], "2025-11-25");
+        self.send(&json!({"jsonrpc":"2.0","method":"notifications/initialized"}));
+    }
+    fn call(&mut self, id: i64, tool: &str, args: Value) -> Value {
+        self.send(&json!({"jsonrpc":"2.0","id":id,"method":"tools/call","params":{"name":tool,"arguments":args}}));
+        self.receive()
+    }
+    fn finish(mut self) {
+        self.input.take();
+        let deadline = Instant::now() + Duration::from_secs(30);
+        loop {
+            if let Some(status) = self.child.try_wait().unwrap() {
+                assert!(status.success());
+                break;
+            }
+            assert!(Instant::now() < deadline);
+            thread::sleep(Duration::from_millis(5));
+        }
+        self.reader.take().unwrap().join().unwrap();
+        assert!(self.frames.try_recv().is_err());
+    }
+}
+impl Drop for Mcp {
+    fn drop(&mut self) {
+        if self.child.try_wait().ok().flatten().is_none() {
+            let _ = self.child.kill();
+            let _ = self.child.wait();
+        }
+        if let Some(reader) = self.reader.take() {
+            let _ = reader.join();
+        }
+    }
+}
+fn text(reply: &Value) -> &str {
+    assert_eq!(reply["result"]["isError"], false, "{reply}");
+    reply["result"]["content"][0]["text"].as_str().unwrap()
+}
+#[test]
+fn actual_stdio_navigation_matches_original_and_observes_replaced_database() {
+    let fixture = Fixture::new();
+    let hash = fixture.database_hash();
+    let mut client = Mcp::new(&fixture);
+    client.initialize();
+    client.send(&json!({"jsonrpc":"2.0","id":2,"method":"tools/list"}));
+    let listed = client.receive();
+    let names = listed["result"]["tools"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v["name"].as_str().unwrap())
+        .collect::<Vec<_>>();
+    assert_eq!(names, vec!["ken_find", "ken_read", "ken_related"]);
+    let mut id = 3;
+    for row in reference()["public"].as_array().unwrap() {
+        for json_output in [false, true] {
+            let mut args = row["request"]["args"].clone();
+            if json_output {
+                args["output_format"] = json!("json");
+            }
+            let reply = client.call(id, row["request"]["tool"].as_str().unwrap(), args);
+            id += 1;
+            if json_output {
+                assert_eq!(
+                    serde_json::from_str::<Value>(text(&reply)).unwrap(),
+                    row["result"],
+                    "{}",
+                    row["request"]
+                );
+            } else {
+                assert_eq!(
+                    text(&reply),
+                    row["compact"].as_str().unwrap(),
+                    "{}",
+                    row["request"]
+                );
+            }
+        }
+    }
+    let failure = client.call(
+        id,
+        "ken_related",
+        json!({"target":"src/service.py","relation":"callers"}),
+    );
+    assert_eq!(failure["result"]["isError"], true);
+    id += 1;
+    let confined = client.call(
+        id,
+        "ken_read",
+        json!({"path":"../outside.py","include":["source"]}),
+    );
+    assert_eq!(confined["result"]["isError"], true);
+    id += 1;
+    assert_eq!(fixture.database_hash(), hash);
+    let replacement = Fixture::new();
+    let conn = rusqlite::Connection::open(replacement.paths.db()).unwrap();
+    conn.execute(
+        "UPDATE ci_symbols SET docstring='new navigation database' WHERE qualname='Service'",
+        [],
+    )
+    .unwrap();
+    drop(conn);
+    fs::rename(replacement.paths.db(), fixture.paths.db()).unwrap();
+    let result=client.call(id,"ken_read",json!({"path":"src/service.py","qualname":"Service","include":["symbols","docstrings"],"output_format":"json"}));
+    let value: Value = serde_json::from_str(text(&result)).unwrap();
+    assert_eq!(
+        value["symbol"]["symbol"]["docstring"],
+        "new navigation database"
+    );
+    client.finish();
+    assert!(!fixture.paths.root().join("cache").exists());
+    assert!(!fixture.paths.root().join("owned").exists());
+}

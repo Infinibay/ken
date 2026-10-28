@@ -44,8 +44,8 @@ impl Default for Arguments {
     }
 }
 pub(super) fn definition() -> Value {
-    json!({"name":"ken_find","description":"Find source files or symbols using the complete native search engine. Search the configured project; compact text is the default. Other Ken scopes are not available in this native binding yet.","inputSchema":{"type":"object","additionalProperties":false,"properties":{
-        "query":{"type":"string","default":""},"scope":{"type":"string","enum":["files","symbols"],"default":"files"},
+    json!({"name":"ken_find","description":"Find source files or symbols using the native search engine, or likely tests using the index. Search the configured project; compact text is the default. Other Ken scopes are not available in this native binding yet.","inputSchema":{"type":"object","additionalProperties":false,"properties":{
+        "query":{"type":"string","default":""},"scope":{"type":"string","enum":["files","symbols","tests"],"default":"files"},
         "limit":{"anyOf":[{"type":"integer","minimum":1},{"type":"null"}],"default":null},
         "literal":{"type":"boolean","default":false},"query_language":{"type":"string","enum":["kenql/1"],"default":"kenql/1"},
         "path":{"type":"string","default":".","description":"Compatibility parameter for other scopes; file/symbol search covers the configured project."},
@@ -68,6 +68,25 @@ impl FindService {
     }
     pub(super) fn call(&mut self, raw: &RawValue) -> Result<String, String> {
         let args: Arguments = serde_json::from_str(raw.get()).map_err(|e| e.to_string())?;
+        if args.scope == "tests" {
+            if args.piece_kind != "auto"
+                || args.purpose != "auto"
+                || args.response_format != "auto"
+                || args.query_language != "kenql/1"
+            {
+                return Err("native test discovery requires the default response, purpose and piece kind and query_language=kenql/1".into());
+            }
+            let query = args
+                .query
+                .to_utf8()
+                .ok_or("test target contains non-scalar Unicode")?;
+            let navigation = ken_search::navigation::IndexNavigation::open(&self.paths)
+                .map_err(|e| e.to_string())?;
+            let result = navigation
+                .test_search(&query, args.limit.unwrap_or(10) as i64)
+                .map_err(|e| e.to_string())?;
+            return super::present(&result, "ken_find", &args.output_format, args.full);
+        }
         if !matches!(args.scope.as_str(), "files" | "symbols") {
             return Err("native ken_find currently supports scope=files or symbols".into());
         }
