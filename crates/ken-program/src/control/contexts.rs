@@ -4,7 +4,10 @@ use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 // Locations compare Python dictionary keys, not integer coercions. A null/text
 // offset cannot match a syntax span; equal integral floats and booleans can.
-fn coordinate(graph: &crate::Attributes, key: &str) -> Result<Option<i64>, ProgramError> {
+pub(super) fn coordinate(
+    graph: &crate::Attributes,
+    key: &str,
+) -> Result<Option<i64>, ProgramError> {
     Ok(match attributes::get(graph, key)? {
         None => Some(-1),
         Some(Value::Bool(value)) => Some(i64::from(value)),

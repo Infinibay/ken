@@ -5,10 +5,14 @@ mod contexts;
 mod exceptions;
 mod execution;
 mod index;
+mod normal;
+mod origins;
 use crate::{Attributes, Fact, StructuralIr};
 pub use cfg::structured_control;
 pub use contexts::syntax_contexts;
 pub use execution::lexical_execution;
+pub use normal::normal_completion;
+pub use origins::{ReturnOrigins, sequential_returns};
 use serde_json::{Value, value::to_raw_value};
 fn attrs(value: Value) -> Attributes {
     value

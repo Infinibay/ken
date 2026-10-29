@@ -111,3 +111,75 @@ pub fn decimal_digit(c: char) -> Option<u32> {
         .filter(|r| r[0] <= code)
         .map(|r| (code - r[0]) % 10)
 }
+
+#[derive(Deserialize)]
+struct StringProperties {
+    printable_ranges: Vec<[u32; 2]>,
+    uppercase_ranges: Vec<[u32; 2]>,
+}
+fn string_properties() -> &'static StringProperties {
+    static DATA: OnceLock<StringProperties> = OnceLock::new();
+    DATA.get_or_init(|| {
+        serde_json::from_str(include_str!("string-properties15.json"))
+            .expect("frozen Unicode15 string properties")
+    })
+}
+/// Python3.12 Unicode15 printable property used by stable source evidence IDs.
+pub fn printable(c: char) -> bool {
+    contains(&string_properties().printable_ranges, c)
+}
+/// Python3.12 Unicode15 single-character str.isupper property.
+pub fn uppercase(c: char) -> bool {
+    contains(&string_properties().uppercase_ranges, c)
+}
+
+/// Expand the Python character classes used by pinned source regexes.
+/// Rust's current Unicode word table includes marks/newer letters that Python15
+/// does not admit; the source-language boundary must not silently broaden.
+pub fn source_pattern(pattern: &str) -> String {
+    static WORD: OnceLock<String> = OnceLock::new();
+    let word = WORD.get_or_init(word_class_content);
+    pattern
+        .replace(r"\w", &format!("[{word}]"))
+        .replace(r"\W", &format!("[^{word}]"))
+        .replace(r"\s", r"[\s\x1c-\x1f]")
+}
+/// Python word-boundary lookup for a literal keyword.
+pub fn contains_word(text: &str, keyword: &str) -> bool {
+    text.match_indices(keyword).any(|(start, _)| {
+        text[..start].chars().next_back().is_none_or(|c| !word(c))
+            && text[start + keyword.len()..]
+                .chars()
+                .next()
+                .is_none_or(|c| !word(c))
+    })
+}
+/// Replace whole Python words, preserving every non-word character.
+pub fn replace_words(text: &str, words: &[&str], replacement: &str) -> String {
+    let mut out = String::new();
+    let mut pending = None;
+    for (index, c) in text.char_indices() {
+        if word(c) {
+            pending.get_or_insert(index);
+        } else {
+            if let Some(start) = pending.take() {
+                let token = &text[start..index];
+                out.push_str(if words.contains(&token) {
+                    replacement
+                } else {
+                    token
+                });
+            }
+            out.push(c);
+        }
+    }
+    if let Some(start) = pending {
+        let token = &text[start..];
+        out.push_str(if words.contains(&token) {
+            replacement
+        } else {
+            token
+        });
+    }
+    out
+}

@@ -1,10 +1,11 @@
 //! Source-operation producer stage. Full declaration and semantic projection are separate.
+mod frontend;
 mod operations;
 mod ownership;
 mod source;
 mod vocabulary;
 use crate::{GrammarCatalog, Language, ParseError};
-use ken_program::{Attributes, IR_VERSION, ProgramError, StructuralIr, control::lexical_execution};
+use ken_program::{Attributes, ProgramError, StructuralIr};
 use serde_json::{Value, value::to_raw_value};
 
 #[derive(Debug, thiserror::Error)]
@@ -38,7 +39,20 @@ pub fn lower_operations(
     source: &[u8],
     path: &str,
 ) -> Result<StructuralIr, LoweringError> {
-    if !matches!(
+    frontend::syntax_view(catalog, language, source, path)
+}
+/// Lower complete source-local declarations, bindings, expressions and semantic facts.
+/// Project-wide import/type/call resolution and interprocedural analysis are separate.
+pub fn lower_source(
+    catalog: &GrammarCatalog,
+    language: Language,
+    source: &[u8],
+    path: &str,
+) -> Result<StructuralIr, LoweringError> {
+    frontend::lower(catalog, language, source, path)
+}
+fn admit(language: Language) -> Result<(), LoweringError> {
+    if matches!(
         language,
         Language::Python
             | Language::JavaScript
@@ -50,31 +64,8 @@ pub fn lower_operations(
             | Language::Rust
             | Language::Ruby
     ) {
-        return Err(LoweringError::UnsupportedLanguage(language.as_str()));
+        Ok(())
+    } else {
+        Err(LoweringError::UnsupportedLanguage(language.as_str()))
     }
-    let tree = catalog.syntax(language, source, path)?;
-    let root = tree.root();
-    let owners = ownership::Ownership::collect(root, language, source, path);
-    let mut ir = StructuralIr {
-        path: path.into(),
-        language: language.as_str().into(),
-        entities: Vec::new(),
-        operations: Vec::new(),
-        facts: Vec::new(),
-        capabilities: ["syntax".into()].into_iter().collect(),
-        diagnostics: Vec::new(),
-        version: IR_VERSION.into(),
-        relations: Default::default(),
-        view: "source".into(),
-    };
-    for (node, role) in source::descendants_with_roles(root) {
-        operations::project(&mut ir, node, role, &owners, source, language);
-    }
-    ir.entities = owners.owner_entities();
-    if root.has_error() {
-        ir.diagnostics
-            .push("parse errors: semantic absence is unknown".into());
-    }
-    lexical_execution(&mut ir, root.has_error())?;
-    Ok(ir)
 }

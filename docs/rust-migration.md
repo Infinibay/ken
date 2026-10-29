@@ -34,8 +34,8 @@ No se instala ni reemplaza el comando `ken` para ensayar esta entrega.
 El primer bloque M5a está implementado en `ken_store::structural`, reutilizando
 el IR y el AST común de `ken-program`. Trabaja directamente en Rust, con el
 esquema estructural existente de 15 versiones, separado de la base del índice
-y sus vectores. Todavía no produce el IR/CFG completo desde archivos ni ejecuta
-KQL: son los siguientes consumidores de este núcleo.
+y sus vectores. El frontend nativo descrito abajo ya produce IR desde archivos;
+el ejecutor KQL y la publicación del grafo semántico completo siguen pendientes.
 
 La API `StructuralStore` guarda unidades IR inmutables, proyecta operaciones y
 AST, publica snapshots mediante comparación del padre esperado y ofrece
@@ -63,7 +63,7 @@ del modelo común, junto con Clippy estricto. Incluyen una base SQLite original,
 las 15 versiones del esquema, fallos de DDL, rollback por presupuesto,
 publicaciones en paralelo, expiración de leases y una unidad de 7.500 entidades.
 El grafo semántico persistente completo, sus publicaciones, cachés de artefactos,
-el productor IR desde archivos y el motor KQL siguen pendientes; este bloque no cierra M5.
+las fases restantes del linker y el motor KQL siguen pendientes; este bloque no cierra M5.
 Ver el [plan del núcleo](superpowers/plans/2026-10-28-rust-structural-store.md).
 
 ## Núcleo estructural: rutas de control
@@ -139,10 +139,10 @@ async/delegación, descartes Rust y roles de modificadores Ruby. La ejecución
 léxica se aplica dentro del productor; una fuente con errores queda desconocida.
 
 Este bloque completa la etapa de operaciones. Sus entidades propietarias llevan
-identidad y coordenadas, con la capability `syntax`: los metadatos completos de
-declaraciones/parámetros y los hechos semánticos de llamadas/tipos todavía se
-agregan en etapas pendientes. No se ofrece como reemplazo de `lower_source`
-completo ni como evidencia de resolución semántica. El CFG sigue conservando
+identidad y coordenadas, con la capability `syntax`. El nuevo `lower_source`
+descrito a continuación agrega los metadatos completos y hechos locales mediante
+el mismo colector de declaraciones; `lower_operations` conserva su contrato
+limitado y no acredita resolución semántica. El CFG sigue conservando
 sus límites estructurales; publicar un snapshot no acredita cobertura completa.
 
 La captura nueva contiene 42 casos en los nueve lenguajes, incluidos TSX,
@@ -155,6 +155,73 @@ intervienen como owners de un `impl` Rust; una regresión con 20.000 sentencias
 asegura que el recorrido de roles no reconstruye cada lista de hermanos.
 Pasaron 56 pruebas del alcance afectado, Clippy estricto y formato.
 Ver [plan](superpowers/plans/2026-10-29-rust-source-operations.md).
+
+## Frontend completo, enlace nominal y flujo local
+
+Actualización del 29/10: `ken_syntax::structural::lower_source` implementa el
+frontend local completo de los nueve lenguajes estructurales. Conserva entidades,
+metadatos de declaraciones/parámetros, scopes y shadowing, valores y operadores,
+llamadas/argumentos/receptores, asignaciones, retornos, iteraciones/condiciones,
+imports/exports, constructores e inicializadores C++, visibilidad y hazards.
+`lower_operations` reutiliza su colector y devuelve la proyección compatible.
+
+El siguiente concepto es el proyecto: `ken_program::project::link_nominal` une
+unidades inmutables, resuelve imports explícitos, nombres/tipos/bases nominales,
+firmas virtuales C++, construcciones, propagación de tipos posibles, capturas y
+llamadas léxicas/estáticas/con receptor. Incluye los contratos Java auditados de
+IntSupplier/IntUnaryOperator. La variante `_owned` evita copiar unidades; ambas
+ofrecen `_with_check`, con cancelación antes de copiar o construir el proyecto.
+Los atributos opacos se conservan sin parsearlos si la fase no los interpreta.
+
+```rust
+use ken_syntax::{Language, structural::lower_source};
+use ken_program::{project::link_nominal, control::{
+    sequential_returns, structured_control, syntax_contexts, normal_completion,
+}};
+
+let unit = lower_source(&catalog, Language::Python, source_bytes, "app.py")?;
+let mut graph = link_nominal(&[unit])?;
+let origins = sequential_returns(&mut graph, None)?;
+structured_control(&mut graph, None)?;
+syntax_contexts(&mut graph)?;
+normal_completion(&mut graph)?;
+```
+
+`sequential_returns` conserva orígenes locales de retornos, aliases, parámetros,
+receptores, escapes y estados de campos, con los límites y evidencia parcial del
+original (profundidad32 y presupuesto256 estados). Incluye los orígenes estrechos
+de iteraciones admitidas. `normal_completion` añade terminación normal, tails de
+bucles, fallthrough de handlers y salidas de finalizadores; conserva explícitos
+los casos `unsupported`, con profundidad64. No demuestran viabilidad runtime.
+Los hashes de estados respetan Python repr/Unicode15; regexes y nombres exportados
+usan las propiedades congeladas pertinentes en lugar de ampliar su cobertura.
+
+La validación conserva 88 observaciones nuevas del frontend, 41 límites nominales,
+53 casos de flujo/terminación y dos regresiones Unicode observadas una vez. El IR
+local y su orden se comparan completos. Sólo dos atributos `block_scope` contienen
+direcciones Node.id efímeras: se comprueba que sean direcciones válidas y se
+comparan mediante la identidad estable de bloque ya codificada en el ID. Los
+hechos nuevos nominales se comparan como multiconjunto con atributos/proveniencia
+completos porque Python itera sets; el prefijo fuente conserva su orden exacto.
+La implementación produce orden determinista. Las pruebas nativas no ejecutan Python.
+
+Hay integración desde bytes hasta enlace nominal, desde fuente a AST/snapshots
+persistentes y desde IR nominal a orígenes/CFG/contextos/terminación. Una revisión
+final produjo regresiones para stack profundo, trabajo cuadrático C++, atributos
+opacos, rutas mixtas y cancelación previa a copias. El recorrido de valores es
+iterativo y los índices léxicos/declarativos evitan repetir búsquedas de ancestros
+o escaneos completos de hechos. No se introdujo un límite nuevo de sintaxis.
+
+Pasaron 47 pruebas de syntax, 21 de program y seis de store/pipeline (74),
+Clippy estricto y formato. Los inventarios de futuras calificaciones quedan en
+público270/Best246; no son recibos globales nuevos.
+
+Este enlace llega hasta el punto anterior a `sequential_returns` del linker
+original. Sus fases posteriores de valores/efectos interprocedurales, la
+publicación/caché del grafo semántico y el compilador/ejecutor KQL1/2 siguen
+pendientes. M5 no está cerrado; M6 y el resto de M7/M8 tampoco. No se repitieron
+modelos, matrices CPU/CI ni originales ya aceptados. Ver el
+[plan de esta etapa](superpowers/plans/2026-10-29-rust-source-frontend.md).
 
 ## Navegación nativa del índice
 

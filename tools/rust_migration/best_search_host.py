@@ -103,7 +103,7 @@ def verify_capture(packet,repo):
 def verify_rust_gates(out):
     try:
         require(not(errors:=command_gate_errors(out/'gates',COMMANDS,record_name='RUST.json')),str(errors))
-        for prefix,count in [('best',237),('static',1),('identity',5)]:
+        for prefix,count in [('best',246),('static',1),('identity',5)]:
             listed=(out/f'gates/{prefix}-list.log').read_text();output=(out/f'gates/{prefix}-tests.log').read_text()
             require(not rust_gate_errors(listed,output,allow_filtered=prefix=='static')and len(re.findall(r'^([^\n]+): test$',listed,re.M))==count,'all native roots required: '+prefix)
         return []

@@ -34,19 +34,7 @@ pub(super) fn parameters(node: SyntaxNode<'_>) -> Option<SyntaxNode<'_>> {
     }
     None
 }
-pub(super) fn parameter_name(node: SyntaxNode<'_>, source: &[u8]) -> String {
-    let name = field(Some(node), &["name", "pattern", "declarator"])
-        .or_else(|| {
-            descendants_with_roles(node)
-                .into_iter()
-                .map(|(node, _)| node)
-                .find(|node| matches!(node.kind(), "identifier" | "self"))
-        })
-        .unwrap_or(node);
-    text(Some(name), source)
-        .trim_start_matches(['*', '&', '.'])
-        .into()
-}
+
 pub(super) fn declarator(node: Option<SyntaxNode<'_>>) -> Option<SyntaxNode<'_>> {
     field(node, &["declarator"]).or_else(|| {
         node.filter(|n| n.kind() == "reference_declarator")
@@ -107,7 +95,7 @@ pub(super) fn declaration_parts(
 }
 // These follow only the structural declaration chain. The indexing parser's
 // qualified-name helper has a different admission contract and cannot replace it.
-fn nested(node: SyntaxNode<'_>) -> Option<SyntaxNode<'_>> {
+pub(super) fn nested(node: SyntaxNode<'_>) -> Option<SyntaxNode<'_>> {
     node.field("declarator").or_else(|| {
         matches!(
             node.kind(),

@@ -10,6 +10,82 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Etapa grande del 29/10 (inicio13:18:19UTC): frontend local completo de nueve
+lenguajes, enlace nominal del proyecto y orígenes/terminación local implementados
+en un mismo bloque. `ken_syntax::structural::lower_source` es ahora el frontend
+completo; `lower_operations` conserva su proyección anterior y comparte el
+colector, sin duplicar reglas de ownership. Nuevos módulos separados por
+responsabilidad: declaraciones, valores, llamadas, sentencias, condiciones,
+inventarios y C++. `ken-program` sigue sin depender del parser/tree-sitter.
+
+`project::link_nominal`, `_owned` y variantes `_with_check` cubren la fase exacta
+del linker Python anterior a sequential_returns: merge, imports/ambigüedad,
+tipos/bases, firmas C++, asignación/propagación de tipos posibles (16 pasadas),
+capturas y resolución de llamadas, incluidos contratos Java estrechos auditados.
+Preservar el quirk de relations: el proyecto empieza su inventario vacío y
+registra sólo relaciones derivadas nuevas, sin unir las de fuente. Prefijo de
+hechos de entrada exacto; hechos derivados comparados como multiconjunto completo
+porque el original itera sets. Rust emite un orden determinista.
+Cancelación ocurre antes de clonar unidades; las rutas mixtas abs/rel sólo fallan
+cuando la resolución Rust crate realmente necesita commonpath. Atributos de
+hechos no interpretados permanecen RawValue opacos, incluidos surrogates y números
+fuera de f64. No volver a parsear indiscriminadamente todo el payload.
+
+`control::sequential_returns` implementa el return_flow local completo, incluida
+iteration_origins. Devuelve ReturnOrigins tipado y agrega evidencia al IR, con
+límites originales32/256 y estado de campos por hash Python repr/Unicode15.
+`normal_completion` agrega evidencia con cobertura parcial explícita y límite64.
+La suite de integración recorre nominalIR→orígenes→CFG→contextos→terminación;
+otras suites recorre bytes→nominal y bytes→AST→snapshot/reapertura. No afirmar
+que el ensamblado final del linker/publicación del grafo completo esté migrado.
+
+Capturas nuevas, observadas una vez contra el árbol congelado autenticado:
+
+| Recurso | Casos | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| source-frontend-reference.json.gz | 88 | 318911 | `6eb76c8f73bfc3602c5d28810032d72366543184c531b8b5b936fccf7f72366f` |
+| nominal-project-reference.json.gz | 41 | 423530 | `104c44a62672857cd9d0dc9c059f26703a29364be95def90fc8bce116ec5ab37` |
+| local-origins-reference.json.gz | 53 | 1079881 | `0647b1a8794c317dc898439516c0339cfe7cb97f72e7d4d98be10b66d2a15730` |
+| source-unicode-reference.json | 2 | 30079 | `20c129b60a71e20c455112ca1463641ae9b3a25aeb50ac2209d9789fa4051987` |
+| string-properties15.json (producción) | — | 17857 | `2f3ee56b7044637f98cd6dbb15c97458bfa34655919943c067191c470cff9152` |
+
+Los casos nominales/de flujo que parten de IR congelado no reejecutan el frontend
+original. Sólo dos block_scope de JS/Go llevan Node.id/dirección efímera: se
+normalizan al ID estable @block-start en la comparación, comprobando antes una
+dirección positiva; producción conserva el atributo. No excluir otros atributos.
+
+Una revisión final independiente encontró cuatro Important y dos Minor; ambos
+Minor se regraduaron Important por coste cuadrático de subárboles y copias grandes
+antes de cancelación. Todos corregidos en una pasada, sin re-review: valores con
+máquina iterativa, texto de imports diferido, índices de declaraciones y argumentos
+C++, grupos de parámetros de tipo cacheados, atributos opacos por relación y
+commonpath Rust diferido. El caso profundo dejó de abortar y expuso un segundo
+coste: parent() de tree-sitter busca desde la raíz. Un índice léxico construido
+una vez eliminó los recorridos de ancestros por cada operando. Pasan expresiones
+Python de1500 operadores,16000 campos C++ y4500 inicializadores con un plazo de10s
+por proceso. Una captura adicional de dos casos expuso diferencias Python/Rust
+regex en marcas combinantes; las clases de palabras/espacios y límites de palabras
+relevantes usan Unicode15 congelado. No se amplían tolerancias ni se recorta sintaxis.
+
+Pasaron 47 raíces syntax, 21 program y seis store/pipeline (74), Clippy estricto
+y formato. La compilación Python de los dos inventarios también pasó. Próximos
+inventarios público270/Best246 (nueve nuevas raíces syntax); program/store no se
+cuentan en las suites de búsqueda. Los recibos globales anteriores no se repiten
+ni acreditan el nuevo código.
+
+Próximo trabajo core: fases posteriores de semantic.link_project (resúmenes de
+retornos y binding de argumentos, campos/transferencias, dispatch y contratos,
+colecciones/lifecycle y enriquecimientos de efectos/valores), luego ensamblado y
+publicación/caches del grafo, compilador/operadores/sesiones KQL1/2. M6 y resto de
+M7/M8 siguen abiertos. SkylakeX/Intel conserva su pendiente anterior; no repetir
+matrices ni recibos globales para cerrar este bloque. Python instalado y fuentes,
+crudos `.ken/rust-migration/source-frontend` y workspace `.superpowers/sdd/2026-10-29-rust-source-frontend`
+siguen locales. Ver [plan](superpowers/plans/2026-10-29-rust-source-frontend.md) y
+[API/alcance](rust-migration.md#frontend-completo-enlace-nominal-y-flujo-local).
+
+Los registros siguientes describen etapas anteriores; sus pendientes y contadores
+son históricos cuando la actualización anterior los sustituye.
+
 Actualización de fuente del 29/10: `ken_syntax::structural::lower_operations`
 produce el IR de operaciones desde bytes/GrammarCatalog para los nueve lenguajes
 estructurales. Ownership separado, visita de tipos antes de usos, Rust impl y
