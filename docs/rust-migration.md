@@ -29,6 +29,54 @@ Rust 1.95.0 y los componentes rustfmt/clippy quedan fijados en
 `rust-toolchain.toml`. Cargo fija las dependencias directas y transitivas.
 No se instala ni reemplaza el comando `ken` para ensayar esta entrega.
 
+## KQL2: sintaxis y preparación nativas
+
+`ken-query` implementa el frontend KQL2 en Rust: declaraciones, cláusulas,
+expresiones de consulta y de fuente, y sintaxis BODY. Mantiene sus tipos separados,
+spans en bytes UTF-8 y representación Python para identidades del compilador.
+La preparación recibe una captura explícita de bibliotecas y no abre proyectos:
+
+```rust
+use ken_query::{parse, ParseLimits, resolve_libraries, specialize_models,
+                expand_indexed_alternatives};
+use std::collections::BTreeMap;
+
+let tree = parse(kql_source, "query.kql", ParseLimits::default())?;
+let libraries = BTreeMap::new(); // módulo -> File ya parseado
+let resolved = resolve_libraries(&tree, &libraries)?;
+let prepared = specialize_models(&resolved)?;
+let indexed_branches = expand_indexed_alternatives(&prepared, None)?;
+```
+
+La resolución conserva orden, cualificación y ciclos de importación; la
+especialización comprueba firmas y genera instancias higiénicas `@model` en orden
+de uso. La expansión `@variant` conserva el máximo de128 alternativas y pertenece
+sólo a la ruta indexada. `predicate_components` calcula componentes y rechaza
+recursión no estratificada. La ruta relacional consumirá el árbol preparado sin
+pasar por esa expansión. Estas APIs producen sintaxis preparada; los dos backends
+del compilador, operadores, sesiones y evaluación BODY siguen pendientes.
+
+Los límites normales siguen en2MB de entrada,4KB por regex, anidamiento96 e
+instancias de modelo128. El validador regex comprueba la gramática restringida
+original sin construir un autómata ni expandir repeticiones grandes. Las
+propiedades Unicode15 están congeladas. Se añaden techos nativos de512 para AST
+y ayudantes recursivos; con límites personalizados también se aplica ese techo.
+Los argumentos de tipos de fuente y cadenas `else` usan pilas explícitas. Los
+recorridos recursivos protegen pilas pequeñas con `stacker` ya fijado en el lock.
+Un caso extremo de tipos conserva código/mensaje de recurso y un span válido,
+pero no el token incidental donde CPython agota su pila.
+
+La referencia nueva cubre574 entradas de sintaxis, nueve capturas de bibliotecas y
+modelos,890 regex y227 observaciones de expansión/componentes. Se comparan AST
+con tags, representación y diagnósticos. Los originales se observaron una vez;
+las pruebas nativas consumen fixtures. Doce pruebas cubren además profundidad,
+bytes inválidos, entradas inmutables,2000 bibliotecas y10000 dependencias de
+predicados. La revisión detectó copias cuadráticas de prefijos en expansión;
+la construcción ahora mueve prefijos y copia sólo al bifurcar. La regresión de512
+cláusulas bajó de531997 a3102 asignaciones (5174 con dos alternativas), sin usar
+umbrales de tiempo. Clippy estricto y formato también pasan. Ver el [plan](superpowers/plans/2026-10-29-rust-kql-frontend.md).
+M5 continúa abierto; KQL1 y las superficies públicas también quedan pendientes.
+
 ## Núcleo estructural: almacén de snapshots
 
 El primer bloque M5a está implementado en `ken_store::structural`, reutilizando

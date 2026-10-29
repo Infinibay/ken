@@ -10,6 +10,59 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización KQL2 del29/10: `ken-query` implementa sintaxis y preparación puras.
+Leer primero la [API](rust-migration.md#kql2-sintaxis-y-preparación-nativas) y el
+[plan](superpowers/plans/2026-10-29-rust-kql-frontend.md). El recorrido público
+original es `compile` → validación de profundidad compilable96 → bibliotecas →
+modelos → selección de backend. La ruta relacional/graph conserva el árbol;
+solamente la indexada expande alternativas128 antes de `_compile`. No confundir
+`compile` con `_compile` ni aplicar expansión a ambas rutas.
+
+`parse`/`parse_bytes` producen AST tipado; `resolve_libraries` recibe un mapa
+inmutable módulo→File; `specialize_models` comprueba firmas y genera `@model` en
+orden de primer uso; `expand_indexed_alternatives` genera `@variant` y detecta
+recursión; `predicate_components` calcula SCC/estratificación iterativamente.
+No hay compilador completo ni ejecución BODY todavía. Próximo bloque core:
+ambos backends de comprobación/lowering y los operadores sobre QueryView/GraphIndex;
+después sesiones, runtime BODY y conexión KQL1/2 con CLI/MCP/config.
+
+Trampas observadas: `dataclasses.asdict` pierde Expr frente a SourceExpr;
+conservar `__class__` recursivo. Las identidades usan repr de dataclass/tuple,
+no JSON. `dataclasses.replace` es superficial: evitar `..clone()` de árboles
+recursivos que luego se descartan. Preservar orden de declaraciones/modelos y
+los spans originales antes/después de consumir cada producción; `not in` tiene
+un inicio de span original particular. Los argumentos de tipos y cadenas `else`
+son iterativos; la recursión restante protege pilas pequeñas con stacker0.1.25,
+ya presente en el lock. AST/ayudantes tienen techo512 además del anidamiento
+configurado96. La única diferencia de diagnóstico aceptada es el token de corte
+del agotamiento de pila original en `depth/type/600`: código/mensaje conservados,
+span nativo válido. No extender esa excepción a casos normales.
+
+Referencias nuevas contra original1066 autenticado antes/después; ninguna suite
+original repetida. Las observaciones de expansión consumen AST ya capturado.
+El adaptador de captura reanudó el journal tras fallar decodificando un AST profundo;
+saltó todos los nombres ya observados y elevó recursión sólo para decodificar,
+restaurando el valor original antes de observar. Crudos/scripts/workspace locales.
+
+| Recurso en ken-query | Casos | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| frontend-reference.json.gz |574 +9 snapshots|141735|`4657e2d18f5bd423240353b877f8e9bfc3137aaaf255fe195b59e68fbf3d2b82`|
+| regex-reference.json.gz |890|45453|`a6d503b427c339717c31b6754551c155fcf2ef2783ba91cc72f9c5fe7d1c7d1b`|
+| expansion-reference.json.gz |227|85658|`b996a940cd6727775494fa26a62c3f37991bc722caa9f4293cc742a3504f470c`|
+| unicode15.json |alpha/digit/assigned|19704|`19bd21e319937a520714e296186015a40332bad3965add40365224b710407d23`|
+
+Validación del bloque:12 raíces nativas, Clippy estricto y formato. La revisión
+final detectó un Important: copia profunda de todos los prefijos por cada cláusula
+plana. Regresión primero roja:512 cláusulas, una alternativa,531997 asignaciones.
+La reparación mueve prefijos y duplica sólo en bifurcaciones;3102 asignaciones
+con una alternativa y5174 con dos. Un test allocator separado cuenta sólo durante
+la API pública de expansión; no depende del reloj. Suite afectada12/12 tras la
+única pasada de reparación; sin Critical/Minor ni segunda revisión.
+Las pruebas de pila real se ejecutan en el hilo normal; sólo la lectura/comparación
+de fixtures JSON profundas usa un hilo de prueba amplio. Público271/Best247 no
+cambian; sin replay CPU/CI/modelos ni aceptación global. M5/M6 y resto de M7/M8
+siguen abiertos, igual que SkylakeX/Intel. El Python instalado no se reemplaza.
+
 Actualización de grafos ejecutables del29/10: se implementaron QueryView y
 GraphValue en ken-program; publicación READY, diccionarios/valores por columnas,
 overlays OPERATION, scans perezosos y vistas de fuente en ken-store; adquisición

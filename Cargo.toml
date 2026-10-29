@@ -1,6 +1,6 @@
 [workspace]
 exclude = ["crates/ken-retrieval/vendor/ruff-python-parser"]
-members = ["crates/ken-core", "crates/ken-cli", "crates/ken-models", "crates/ken-store", "crates/ken-native-model-api", "crates/ken-syntax", "crates/ken-text", "crates/ken-program", "crates/ken-retrieval", "crates/ken-index", "crates/ken-search", "crates/ken-structural"]
+members = ["crates/ken-core", "crates/ken-cli", "crates/ken-models", "crates/ken-store", "crates/ken-native-model-api", "crates/ken-syntax", "crates/ken-text", "crates/ken-program", "crates/ken-retrieval", "crates/ken-index", "crates/ken-search", "crates/ken-structural", "crates/ken-query"]
 resolver = "3"
 
 [workspace.package]
@@ -53,6 +53,7 @@ tree-sitter-rust = "=0.24.2"
 tree-sitter-typescript = "=0.23.2"
 
 unicode_names2 = "=1.2.0"
+stacker = "=0.1.25"
 
 # Keep the native numerical core in Release even during Rust development/tests.
 # CTranslate2's Debug floating-point path changes long greedy translations.

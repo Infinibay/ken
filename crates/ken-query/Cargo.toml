@@ -1,0 +1,21 @@
+[package]
+name = "ken-query"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+ken-program = { path = "../ken-program" }
+ken-text = { path = "../ken-text" }
+serde = { workspace = true, features = ["rc"] }
+serde_json.workspace = true
+thiserror.workspace = true
+unicode_names2.workspace = true
+stacker.workspace = true
+
+[dev-dependencies]
+serde_json = { workspace = true, features = ["unbounded_depth"] }
+flate2.workspace = true
+sha2.workspace = true
