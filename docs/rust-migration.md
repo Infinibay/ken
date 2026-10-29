@@ -113,6 +113,49 @@ una sola vez; las pruebas Rust consumen la captura y no ejecutan Python.
 Pasaron las 18 pruebas del alcance afectado y Clippy estricto tras la revisión.
 Ver el [plan de control](superpowers/plans/2026-10-29-rust-control-core.md).
 
+## Núcleo estructural: operaciones desde fuente
+
+`ken_syntax::structural::lower_operations` produce ahora el IR de operaciones
+directamente desde bytes y las gramáticas fijadas. Admite los nueve lenguajes del
+frontend estructural: Python, JavaScript, TypeScript/TSX, Java, C#, C++, Go, Rust
+y Ruby. Los lenguajes adicionales del indexador mantienen su contrato separado.
+
+```rust
+use ken_syntax::{GrammarCatalog, Language, structural::lower_operations};
+use ken_program::control::{structured_control, syntax_contexts};
+
+let catalog = GrammarCatalog::prepared(grammar_manifest)?;
+let mut ir = lower_operations(&catalog, Language::Rust, source_bytes, "src/lib.rs")?;
+structured_control(&mut ir, None)?;
+syntax_contexts(&mut ir)?;
+```
+
+La identidad conserva ruta, span en bytes y tipo nativo de cada nodo nombrado,
+incluidos errores del parser. El propietario se calcula con declaraciones de tipos
+antes de usos, scopes anidados, `impl` Rust, receptores Go y prototipos C++.
+Los callbacks C++ y nombres cualificados conservan las distinciones del original.
+La proyección mantiene campos, texto, tokens, operadores/operandos con orden,
+async/delegación, descartes Rust y roles de modificadores Ruby. La ejecución
+léxica se aplica dentro del productor; una fuente con errores queda desconocida.
+
+Este bloque completa la etapa de operaciones. Sus entidades propietarias llevan
+identidad y coordenadas, con la capability `syntax`: los metadatos completos de
+declaraciones/parámetros y los hechos semánticos de llamadas/tipos todavía se
+agregan en etapas pendientes. No se ofrece como reemplazo de `lower_source`
+completo ni como evidencia de resolución semántica. El CFG sigue conservando
+sus límites estructurales; publicar un snapshot no acredita cobertura completa.
+
+La captura nueva contiene 42 casos en los nueve lenguajes, incluidos TSX,
+receptores/impl anteriores al tipo, callbacks y prototipos, clases expresiones,
+closures, Unicode, bytes inválidos y recuperación sintáctica. Se comparan el IR
+completo de esta etapa y su CFG/contextos; el recorrido nativo normaliza el AST,
+publica snapshots y los reabre sin perder operaciones. No ejecuta Python durante
+las pruebas. Una observación adicional de revisión conserva parámetros que
+intervienen como owners de un `impl` Rust; una regresión con 20.000 sentencias
+asegura que el recorrido de roles no reconstruye cada lista de hermanos.
+Pasaron 56 pruebas del alcance afectado, Clippy estricto y formato.
+Ver [plan](superpowers/plans/2026-10-29-rust-source-operations.md).
+
 ## Navegación nativa del índice
 
 Con una base `.ken/ken.db` ya indexada, estos comandos leen símbolos, imports,

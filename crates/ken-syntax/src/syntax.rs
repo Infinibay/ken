@@ -111,6 +111,16 @@ impl<'tree> SyntaxNode<'tree> {
     pub fn is_missing(self) -> bool {
         self.raw.is_missing()
     }
+    /// Opaque identity within this tree; source spans need not be unique during recovery.
+    pub fn id(self) -> usize {
+        self.raw.id()
+    }
+    pub fn is_error(self) -> bool {
+        self.raw.is_error()
+    }
+    pub fn field_name_for_child(self, index: usize) -> Option<&'tree str> {
+        self.raw.field_name_for_child(index as u32)
+    }
     pub fn has_error(self) -> bool {
         self.raw.has_error()
     }
@@ -119,6 +129,20 @@ impl<'tree> SyntaxNode<'tree> {
             .filter_map(|i| self.raw.child(i))
             .map(|n| self.wrap(n))
             .collect()
+    }
+    /// Read siblings and their field roles in one cursor traversal.
+    pub fn children_with_fields(self) -> Vec<(Self, Option<&'tree str>)> {
+        let mut cursor = self.raw.walk();
+        let mut children = Vec::new();
+        if cursor.goto_first_child() {
+            loop {
+                children.push((self.wrap(cursor.node()), cursor.field_name()));
+                if !cursor.goto_next_sibling() {
+                    break;
+                }
+            }
+        }
+        children
     }
     pub fn named_children(self) -> Vec<Self> {
         (0..self.raw.named_child_count())

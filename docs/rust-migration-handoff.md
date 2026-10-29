@@ -10,6 +10,42 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización de fuente del 29/10: `ken_syntax::structural::lower_operations`
+produce el IR de operaciones desde bytes/GrammarCatalog para los nueve lenguajes
+estructurales. Ownership separado, visita de tipos antes de usos, Rust impl y
+receptores Go, prototipos C++ frente a callbacks/definiciones cualificadas,
+clases expresiones/nested/closures, IDs/spans, roles, tokens, operadores/operandos,
+async/delegación/descartes Rust y modificadores Ruby. La ejecución léxica usa el
+kernel ya migrado; errores de parseo conservan sintaxis y estado unknown.
+El adapter depende de ken-program; el dominio no depende de tree-sitter.
+Contrato deliberado de etapa: entidades propietarias con identidad/coordenadas y
+capability `syntax` solamente. No son metadatos completos de declaraciones ni
+hechos semánticos de llamadas/tipos; no exponer esto como `lower_source` completo.
+El CFG/normalizador/store consume esta salida explícita, sin prometer análisis
+semántico completo. La siguiente etapa debe conservar los bindings/declaraciones
+antes de ofrecer las garantías de cierre del frontend o linker.
+42 casos originales nuevos: referencia de 72.907 bytes, SHA-256
+`ad1ff86907c7ab717fe00c2d7e2db8996aa2ba9691da076f7512efd48e51cfbc`.
+Vocabulario de producción de 3.460 bytes, SHA-256
+`c6c73c28ae52496baf2f118e149c817703b90975ea38d073accdf0ea39d89ab0`,
+extraído de los literales del original congelado y autenticado por su fuente.
+Una revisión encontró parámetros que afectan ownership de un impl Rust y lookup
+cuadrático de roles. Ambos se reprodujeron RED→GREEN en una pasada: una única
+observación adicional original (no los 42 aceptados), de 1.909 bytes, SHA-256
+`f72b663a53a4faf339f2939530a4c9b56af84a556aa810a55a6433d3f373d63a`,
+y 20.000 sentencias con presupuesto de proceso generoso de10s. El recorrido
+transporta roles desde un cursor por padre; el mapa de nombres conserva los
+parámetros Rust relevantes para ownership. Sin re-review ni hallazgos pendientes.
+Pasaron 38 pruebas syntax, 12 program y seis store/pipeline (56), Clippy estricto
+y formato. Integración source→CFG/contexts→AST→snapshot/reapertura sin Python.
+Una compilación Python de los dos inventarios actualizados también pasó.
+Próximos inventarios público261/Best237 (seis raíces syntax nuevas sí se incluyen
+en sus comandos); esto no representa nuevos recibos globales ni matrices CPU/CI.
+Los contadores anteriores son históricos. Ningún original aceptado fue repetido;
+crudos y workspaces siguen locales, sin seguimiento. M5/M6/resto de M7/M8 abiertos.
+Ver [plan](superpowers/plans/2026-10-29-rust-source-operations.md) y
+[API/alcance](rust-migration.md#núcleo-estructural-operaciones-desde-fuente).
+
 Actualización de control del 29/10: `ken_program::control` implementa sobre IR
 suministrado los kernels `lexical_execution`, `structured_control` y
 `syntax_contexts`. Índices de operaciones separan parentesco léxico de ownership;

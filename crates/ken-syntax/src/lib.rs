@@ -4,6 +4,7 @@ mod syntax;
 pub use grammar::{GrammarCatalog, Language, ParseError};
 pub use syntax::{SyntaxNode, SyntaxRecord, SyntaxTree};
 pub mod signals;
+pub mod structural;
 
 mod helpers;
 mod model;

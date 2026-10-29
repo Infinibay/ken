@@ -30,7 +30,7 @@ COMMANDS={
 PYTHON_FILES=['tests/rust_migration/test_public_search_host.py',
     'tests/rust_migration/test_public_search_packet.py','tests/rust_migration/test_command_gates.py']
 PYTHON_ROOTS=21
-NATIVE_ROOTS=255
+NATIVE_ROOTS=261
 
 
 def sources(repo):
