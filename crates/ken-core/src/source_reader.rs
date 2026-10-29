@@ -44,6 +44,15 @@ impl SourceFile {
     pub fn metadata(&self) -> io::Result<Metadata> {
         self.file.metadata()
     }
+    /// Bound bytes from the same source handle, including growth after stat.
+    /// None means the file exceeded the caller's explicit limit.
+    pub fn read_bounded(self, limit: u64) -> io::Result<Option<Vec<u8>>> {
+        let mut bytes = Vec::new();
+        self.file
+            .take(limit.saturating_add(1))
+            .read_to_end(&mut bytes)?;
+        Ok((bytes.len() as u64 <= limit).then_some(bytes))
+    }
     pub fn read(mut self) -> io::Result<Vec<u8>> {
         let mut bytes = Vec::new();
         self.file.read_to_end(&mut bytes)?;

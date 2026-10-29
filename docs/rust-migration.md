@@ -279,10 +279,76 @@ Clippy estricto y formato después de las correcciones. Los dos inventarios
 actualizados también compilan en Python.
 
 Esto completa la implementación del ensamblado semántico en biblioteca. El
-servicio que descubre archivos, construye/invalida manifest y administra cachés
-semánticas, así como el compilador y ejecutor KQL1/2, siguen pendientes. Tampoco
+builder descrito a continuación ya captura archivos y administra cachés de IR.
+La conexión de configuración/transporte, publicación del índice ejecutable y el
+compilador/ejecutor KQL1/2 siguen pendientes. Tampoco
 cierra M5 ni reemplaza los comandos Python instalados. Ver el
 [plan](superpowers/plans/2026-10-29-rust-project-semantics.md).
+
+## Construcción desde archivos y caché de IR
+
+`ken-structural` reúne el descubrimiento confinado, el frontend y el linker en una
+biblioteca de construcción de proyectos. Depende de core/program/syntax/store;
+no necesita modelos de embeddings ni el motor de búsqueda.
+
+```rust
+use ken_core::project::{DiscoveryContext, ProjectPaths};
+use ken_store::artifact_cache::ArtifactCache;
+use ken_structural::{NativeFrontend, ProjectBuilder, ScanLimits};
+
+let context = DiscoveryContext::from_process()?;
+let paths = ProjectPaths::at(root, &context)?;
+let frontend = NativeFrontend::new(&catalog);
+let cache = ArtifactCache::open(&paths.root().join(".ken/rust-structural-cache.sqlite"), 500.0)?;
+let mut builder = ProjectBuilder::new(paths, context, &frontend, cache);
+let report = builder.build(std::path::Path::new("src"), ScanLimits::default(), || Ok(()))?;
+```
+
+`ScanLimits` conserva el límite por archivo de2MB y ninguna cantidad máxima
+implícita. Los límites opcionales, lenguajes sin frontend, errores de lectura,
+symlinks fuera del proyecto y fallos del frontend producen omisiones explícitas;
+`coverage_complete` queda falso. Una fuente con diagnósticos conserva su grafo y
+cobertura parcial. La lectura usa un mismo handle y un límite durante la lectura,
+por lo que un crecimiento posterior al stat no excede silenciosamente el límite.
+Un archivo solicitado explícitamente puede analizarse aunque esté ignorado en un
+recorrido de directorio.
+
+`manifest` captura bytes y claves una sola vez; `build_manifest` consume esa
+revisión sin volver a leer el worktree. Un fallo de un archivo permite analizar
+los demás, pero impide cachear ese proyecto parcial bajo la clave de la manifest
+completa. Los hits de proyecto conservan las omisiones actuales y vuelven a
+comprobar cancelación después de la adquisición y antes de devolver el informe.
+El frontend propio usa una identidad compilada desde código, recursos, manifiestos,
+lockfiles y el parser local Ruff. La clave del grafo incluye siempre la identidad
+del linker nativo, incluso si se usa un frontend externo con su propia revisión.
+
+`ArtifactCache` conserva claves SHA256 con longitudes de ocho bytes y el formato
+SQLite entries/JSON-zlib del original. Los artefactos opacos conservan surrogates,
+números grandes y metadatos anidados. Los hits IR se validan también por identidad
+esperada; una unidad de otra ruta/lenguaje o una unidad bajo una clave de proyecto
+se considera miss. Errores de este memo opcional permiten reconstruir desde fuente;
+no se convierten en un resultado vacío. La retención LRU usa transacciones y limita
+páginas físicas. Un presupuesto diminuto no crea el archivo; esquemas ajenos y bases
+existentes sin FULL auto-vacuum quedan deshabilitados e intactos.
+
+Once escenarios originales nuevos comparan grafos, resolución, archivos/omisiones y
+contadores de caché, incluidos edición, agregado, borrado, límites y fallo/recuperación.
+También se comparan cuatro manifests, seis claves y una base SQLite original real.
+Sólo la clave de proyecto tiene un namespace nativo explícito adicional para la
+revisión del linker; el test deriva ese campo desde la clave original capturada.
+Las pruebas del programa de build usan árboles aislados para probar invalidación
+por recursos/parser/manifiestos, sin recompilar Cargo ni repetir originales.
+Se eliminó además el parser de tipos duplicado del materializador: usa el modelo
+compartido de ken-program, validado con los639 descriptores y los79 grafos completos.
+
+Validación de cierre:43 raíces del alcance afectado (12 de la biblioteca nueva,
+ocho program/model,16 de lectura/recorrido/filtros,una integración de fuente
+y seis de snapshots), Clippy estricto y formato pasaron tras las correcciones.
+No equivalen a recibos globales de búsqueda.
+
+La configuración/env y los transports públicos, la publicación del grafo ejecutable
+y KQL continúan pendientes. Esta biblioteca no reemplaza el Ken Python instalado
+ni cierra M5/M6/M7/M8. Ver el [plan](superpowers/plans/2026-10-29-rust-project-build.md).
 
 ## Navegación nativa del índice
 

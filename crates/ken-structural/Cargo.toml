@@ -1,0 +1,25 @@
+[package]
+name = "ken-structural"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+ken-core = { path = "../ken-core" }
+ken-program = { path = "../ken-program" }
+ken-syntax = { path = "../ken-syntax" }
+ken-store = { path = "../ken-store" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[build-dependencies]
+sha2.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+flate2.workspace = true
+sha2.workspace = true
+rusqlite.workspace = true

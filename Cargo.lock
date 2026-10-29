@@ -1032,6 +1032,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "ken-structural"
+version = "0.18.0"
+dependencies = [
+ "flate2",
+ "ken-core",
+ "ken-program",
+ "ken-store",
+ "ken-syntax",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
 name = "ken-syntax"
 version = "0.18.0"
 dependencies = [

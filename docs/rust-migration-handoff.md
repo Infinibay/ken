@@ -10,6 +10,72 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización de construcción del 29/10: nueva biblioteca `ken-structural` para
+manifest de fuente confinada, unidades reutilizables y ensamblado completo con
+`ProjectBuilder::{manifest,build,build_manifest}`. `ScanLimits` conserva2MB por
+archivo y ningún límite implícito de cantidad. Usa core SourceFile/ProjectSources,
+syntax lower_source, program link_project y store ArtifactCache, sin modelos.
+Read_bounded controla crecimiento después de stat. El reporte mantiene archivos,
+omisiones, diagnósticos, resolución, coverage_complete, graph_key y caché.
+Manifest es una captura de bytes; build_manifest no vuelve a leerlos. Fallos de
+frontend no cachean un proyecto parcial bajo la clave completa. Omisiones actuales
+se conservan incluso con hit de grafo; cancelación se comprueba tras adquirirlo y
+al completar. Las entradas IR cacheadas deben coincidir en ruta/lenguaje/view.
+
+ArtifactCache es un memo JSON-zlib opcional y portable, con claves SHA256 de
+longitudes big-endian de8bytes y tabla entries compatible con Python. Retención
+LRU transaccional, cuota de páginas, errores→miss y presupuestos diminutos sin
+crear archivos. Bases ajenas, page_size distinto o auto_vacuum no FULL quedan
+intactas/deshabilitadas; FULL admite reducción de presupuesto. No usar esta cuota
+como presupuesto del índice ejecutable ni como garantía global de memoria decoded.
+El constructor recibe el cache/budget explícito: la conexión de configuración/env
+Python y transport público sigue pendiente junto con el ejecutor KQL.
+
+La identidad compilada cubre src/resources de los componentes nativos, manifiestos,
+Cargo.lock, toolchain, gramáticas y el Ruff parser local. Paths relativos mantienen
+identidad entre raíces equivalentes; nuevos inputs invalidan. El frontend externo
+posee su revisión de unidades; el linker nativo posee independientemente la clave
+de proyecto: key(native-project-graph/1,IMPLEMENTATION_FINGERPRINT,original_graph_key).
+Esta es la única transformación explícita en la comparación de análisis original;
+no se omiten campos. Las claves de unidades y el codec entries/JSON siguen iguales.
+
+Referencia nueva observada una vez contra el original1066 autenticado:
+
+| Recurso | Casos | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| project-build-reference.json.gz | 11 builds,4 manifests,6 claves | 70425 | `e925a0072a30650ecc99ad275a9fc7caa3d1a84ff6e819ade4fc5eacd3ef9997` |
+| original-cache.sqlite | base interoperable | 20480 | `f01935d7c0cb70d02289b7b5ad87b819278933352c967dec5327985b988651db` |
+
+La revisión dejó cinco Important y se corrigieron en una pasada con RED→GREEN:
+recursos/parser/manifiestos omitidos del fingerprint; dependencia indebida de
+frontend para invalidar resultados del linker; IR cacheado con identidad ajena;
+check faltante tras hit de grafo y cuota incumplible con auto_vacuum NONE.
+Doce raíces nuevas cubren esas regresiones y los escenarios funcionales. El test
+del fingerprint ejecuta el verdadero programa de build en árboles temporales;
+no modifica recursos de producción ni ejecuta Cargo dentro del test.
+El materializador semántico se consolidó con el TypeRef/parse_type público ya
+existente, que pasó639casos nuevos; se eliminaron315líneas duplicadas y los79
+grafos completos siguen coincidiendo. No se agregó ninguna versión externa:
+Cargo.lock sólo añade el paquete local y dependencias ya fijadas.
+
+Validación de cierre:43 raíces del alcance afectado (12 de la biblioteca nueva,
+ocho program/model,16 de lectura/recorrido/filtros,una integración de fuente
+y seis de snapshots), Clippy estricto y formato pasaron tras las correcciones.
+No equivalen a recibos globales de búsqueda.
+
+Próximo núcleo: índice/publicación ejecutable y compilador/operadores/sesiones
+KQL1/2; luego configuración/transports de estas bibliotecas. M5 sigue abierto,
+igual que M6 y resto de M7/M8. Los inventarios público271/Best247 no cambian: no
+seleccionan ken-structural y este bloque no agrega raíces a los paquetes que sí
+seleccionan. Sus recibos antiguos no acreditan el nuevo servicio. Sin nuevas
+matrices CPU/CI/modelos ni replay de originales aceptados; SkylakeX/Intel conserva
+su pendiente anterior. Crudos `.ken/rust-migration/project-build` y workspace
+`.superpowers/sdd/2026-10-29-rust-project-build` quedan locales sin seguimiento.
+Ver [plan](superpowers/plans/2026-10-29-rust-project-build.md) y
+[API](rust-migration.md#construcción-desde-archivos-y-caché-de-ir).
+
+Los apartados siguientes registran etapas anteriores y sus pendientes históricos.
+
 Actualización posterior del 29/10: `ken_program::project::link_project`,
 `link_project_with_check`, `link_project_owned` y
 `link_project_owned_with_check` implementan el ensamblado semántico completo del

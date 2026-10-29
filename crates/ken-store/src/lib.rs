@@ -24,3 +24,5 @@ pub use project::ProjectStore;
 pub use slots::{VectorSpace, allocate, high_water, release};
 pub use transaction::WriteTransaction;
 pub use vectors::{LiveScores, VectorStore, VerificationReport, live_scores, verify};
+
+pub mod artifact_cache;

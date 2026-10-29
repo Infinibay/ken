@@ -20,7 +20,7 @@ pub struct TypeRef {
     pub qualifiers: Vec<String>,
 }
 impl TypeRef {
-    fn new(kind: &str, native: &str) -> Self {
+    pub(crate) fn new(kind: &str, native: &str) -> Self {
         Self {
             kind: kind.into(),
             native: native.into(),
