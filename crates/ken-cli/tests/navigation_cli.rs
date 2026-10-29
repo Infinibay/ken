@@ -1,6 +1,8 @@
 #[path = "support/public_evidence.rs"]
 #[allow(dead_code)]
 mod evidence;
+#[path = "../../ken-search/tests/support/live_codeflow.rs"]
+mod live_codeflow;
 #[path = "../../ken-search/tests/support/project_orientation.rs"]
 mod project_orientation;
 #[path = "../../ken-search/tests/support/responsibility_profile.rs"]
@@ -227,7 +229,7 @@ fn actual_stdio_navigation_matches_original_and_observes_replaced_database() {
     let failure = client.call(
         id,
         "ken_related",
-        json!({"target":"src/service.py","relation":"callers"}),
+        json!({"target":"src/service.py","relation":"cochange"}),
     );
     assert_eq!(failure["result"]["isError"], true);
     id += 1;
@@ -503,4 +505,102 @@ fn actual_rank_cli_and_stdio_match_original_project_architecture_and_changes() {
         reference["changes"].as_array().unwrap(),
         true,
     );
+}
+
+#[test]
+fn actual_live_codeflow_cli_and_stdio_match_original_with_grammar_only_resources() {
+    let fixture = live_codeflow::fixture();
+    let hash = fixture.database_hash();
+    let mut client = Mcp::new(&fixture);
+    client.initialize();
+    let failed = client.call(
+        2,
+        "ken_related",
+        json!({"target":"run","relation":"callees"}),
+    );
+    assert_eq!(failed["result"]["isError"], true);
+    live_codeflow::installation(&fixture);
+    for (i, row) in live_codeflow::reference()["public"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .enumerate()
+    {
+        for json_output in [false, true] {
+            let mut args = row["request"]["args"].clone();
+            if json_output {
+                args["output_format"] = json!("json");
+            }
+            let reply = client.call(
+                i as i64 * 2 + if json_output { 4 } else { 3 },
+                row["request"]["tool"].as_str().unwrap(),
+                args,
+            );
+            let got = command(&fixture)
+                .args(live_codeflow::cli_args(row, json_output))
+                .output()
+                .unwrap();
+            assert!(
+                got.status.success(),
+                "{}",
+                String::from_utf8_lossy(&got.stderr)
+            );
+            assert!(got.stderr.is_empty());
+            if json_output {
+                assert_eq!(
+                    serde_json::from_str::<Value>(text(&reply)).unwrap(),
+                    row["result"],
+                    "{}",
+                    row["request"]
+                );
+                assert_eq!(
+                    serde_json::from_slice::<Value>(&got.stdout).unwrap(),
+                    row["result"],
+                    "{}",
+                    row["request"]
+                );
+            } else {
+                assert_eq!(
+                    text(&reply),
+                    row["compact"].as_str().unwrap(),
+                    "{}",
+                    row["request"]
+                );
+                assert_eq!(
+                    String::from_utf8(got.stdout).unwrap(),
+                    row["compact"].as_str().unwrap().to_owned() + "\n",
+                    "{}",
+                    row["request"]
+                );
+            }
+        }
+    }
+    let api = fixture.paths.root().join("api.py");
+    let source = fs::read_to_string(&api)
+        .unwrap()
+        .replace("process()", "helper()");
+    fs::write(api, source).unwrap();
+    let reply = client.call(
+        100,
+        "ken_related",
+        json!({"target":"run","relation":"callees","output_format":"json"}),
+    );
+    let changed: Value = serde_json::from_str(text(&reply)).unwrap();
+    assert_eq!(changed["callees"].as_array().unwrap().len(), 2);
+    assert!(
+        changed["callees"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|edge| edge["to_qualname"] == "helper")
+    );
+    let legacy = client.call(
+        101,
+        "ken_find",
+        json!({"query":"env","scope":"wiring","response_format":"legacy"}),
+    );
+    assert!(serde_json::from_str::<Value>(text(&legacy)).unwrap()["wiring"].is_array());
+    client.finish();
+    assert_eq!(fixture.database_hash(), hash);
+    assert!(!fixture.paths.root().join("cache").exists());
 }

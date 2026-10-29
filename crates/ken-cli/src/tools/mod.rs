@@ -1,5 +1,6 @@
 //! A shared native tool boundary used by the command line and MCP.
 mod find;
+mod live;
 use crate::{
     args::{ToolCommand, ToolsArgs},
     status::CommandOutput,
@@ -20,8 +21,8 @@ pub(crate) fn definitions() -> Vec<Value> {
             "path":{"type":"string"},"include":{"anyOf":[{"type":"array","items":{"type":"string","enum":["symbols","imports","docstrings","source","profile"]}},{"type":"null"}],"default":null},
             "qualname":{"type":"string","default":""},"start_line":{"type":"integer","default":0},"end_line":{"type":"integer","default":0},"max_chars":{"type":"integer","default":0},"output_format":{"type":"string","enum":["compact","json"],"default":"compact"}
         }}}),
-        json!({"name":"ken_related","description":"Explore indexed neighbors or a bounded import graph. Other relationships are not available in the native binding yet.","inputSchema":{"type":"object","additionalProperties":false,"required":["target","relation"],"properties":{
-            "target":{"type":"string"},"relation":{"type":"string","enum":["neighbors","imports"]},"limit":{"type":"integer","default":10},"depth":{"type":"integer","default":1},"full":{"type":"boolean","default":false},"output_format":{"type":"string","enum":["compact","json"],"default":"compact"}
+        json!({"name":"ken_related","description":"Explore index neighbors/imports or live callers, callees and type relationships using prepared grammars without models. Subtypes and supertypes currently both return descendants, matching existing Ken behavior. Other relationships are pending.","inputSchema":{"type":"object","additionalProperties":false,"required":["target","relation"],"properties":{
+            "target":{"type":"string"},"relation":{"type":"string","enum":["neighbors","imports","callers","callees","subtypes","supertypes"]},"limit":{"type":"integer","default":10},"depth":{"type":"integer","default":1},"min_confidence":{"type":"number","default":0.0},"full":{"type":"boolean","default":false},"output_format":{"type":"string","enum":["compact","json"],"default":"compact"}
         }}}),
         json!({"name":"ken_rank","description":"Orient in the indexed project: scopes project, architecture and changes run without model resources. Session ranking is not available in this native binding yet; choose an implemented scope explicitly.","inputSchema":{"type":"object","additionalProperties":false,"properties":{
             "scope":{"type":"string","enum":["session","changes","project","architecture"],"default":"session"},"query":{"type":"string","default":""},"verbose":{"type":"integer","default":1},"explain":{"type":"boolean","default":false},"max_chars":{"type":"integer","default":0},"output_format":{"type":"string","enum":["compact","json"],"default":"compact"}
@@ -55,6 +56,7 @@ pub(crate) fn present(
 }
 pub(crate) struct ToolService {
     find: find::FindService,
+    live: live::LiveTools,
     paths: ProjectPaths,
 }
 #[derive(Deserialize)]
@@ -68,6 +70,8 @@ struct Related {
     depth: i64,
     #[serde(default)]
     full: bool,
+    #[serde(default)]
+    min_confidence: f64,
 }
 #[derive(Deserialize)]
 #[serde(default, deny_unknown_fields)]
@@ -103,7 +107,8 @@ fn one() -> i64 {
 impl ToolService {
     pub(crate) fn new(paths: ProjectPaths, installation: PathBuf) -> Self {
         Self {
-            find: find::FindService::new(paths.clone(), installation),
+            find: find::FindService::new(paths.clone(), installation.clone()),
+            live: live::LiveTools::new(installation),
             paths,
         }
     }
@@ -112,7 +117,7 @@ impl ToolService {
     }
     pub(crate) fn call(&mut self, name: &str, raw: &RawValue) -> Result<ToolReply, String> {
         if name == "ken_find" {
-            return self.find.call(raw);
+            return self.find.call(raw, &mut self.live);
         }
         let mut args: Value = serde_json::from_str(raw.get()).map_err(|e| e.to_string())?;
         let object = args
@@ -138,6 +143,19 @@ impl ToolService {
             }
             "ken_related" => {
                 let request: Related = serde_json::from_value(args).map_err(|e| e.to_string())?;
+                if matches!(
+                    request.relation.as_str(),
+                    "callers" | "callees" | "subtypes" | "supertypes"
+                ) {
+                    let result = self.live.related(
+                        &navigation,
+                        &request.target,
+                        &request.relation,
+                        request.min_confidence,
+                        request.limit,
+                    )?;
+                    return present(&result, name, &format, request.full);
+                }
                 (
                     navigation
                         .related(
@@ -207,7 +225,7 @@ pub fn run(
         ),
         ToolCommand::Related(a) => (
             "ken_related",
-            json!({"target":a.target,"relation":a.relation,"depth":a.depth,"limit":a.limit,"full":a.full,"output_format":a.output_format}),
+            json!({"target":a.target,"relation":a.relation,"depth":a.depth,"limit":a.limit,"min_confidence":a.min_confidence,"full":a.full,"output_format":a.output_format}),
         ),
         ToolCommand::Find(a) => (
             "ken_find",

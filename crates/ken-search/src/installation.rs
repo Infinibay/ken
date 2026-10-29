@@ -109,24 +109,28 @@ pub struct SearchInstallation {
     resources: Rc<InstalledResources>,
 }
 impl SearchInstallation {
-    pub fn open(path: &Path) -> std::result::Result<Self, InstallationError> {
-        let io_error = |source| InstallationError::Io {
-            path: path.into(),
-            source,
-        };
-        let canonical = path.canonicalize().map_err(io_error)?;
-        let base = canonical
-            .parent()
-            .ok_or_else(|| InstallationError::Invalid("installation directory required".into()))?;
-        let mut raw = Vec::new();
-        File::open(&canonical)
-            .map_err(io_error)?
-            .take(1024 * 1024 + 1)
-            .read_to_end(&mut raw)
-            .map_err(io_error)?;
-        if raw.len() > 1024 * 1024 {
-            return Err(InstallationError::Invalid("manifest exceeds1MiB".into()));
+    /// Read only grammar configuration; syntax tools never prepare model assets.
+    pub fn open_grammars(path: &Path) -> std::result::Result<GrammarCatalog, InstallationError> {
+        #[derive(Deserialize)]
+        struct GrammarManifest {
+            format: String,
+            grammar_manifest: PathBuf,
         }
+        let (base, raw) = read_manifest(path)?;
+        let manifest: GrammarManifest = serde_json::from_slice(&raw)?;
+        if manifest.format != "ken-search-installation/1" {
+            return Err(InstallationError::Invalid(
+                "unsupported installation format".into(),
+            ));
+        }
+        Ok(GrammarCatalog::prepared(&resolve(
+            &base,
+            &manifest.grammar_manifest,
+        )?)?)
+    }
+    pub fn open(path: &Path) -> std::result::Result<Self, InstallationError> {
+        let (base, raw) = read_manifest(path)?;
+        let base = base.as_path();
         let manifest: Manifest = serde_json::from_slice(&raw)?;
         if manifest.format != "ken-search-installation/1" {
             return Err(InstallationError::Invalid(
@@ -178,4 +182,25 @@ impl SearchInstallation {
     pub fn into_search(self) -> BestSearch {
         BestSearch::new(self.grammars, self.resources)
     }
+}
+fn read_manifest(path: &Path) -> std::result::Result<(PathBuf, Vec<u8>), InstallationError> {
+    let io_error = |source| InstallationError::Io {
+        path: path.into(),
+        source,
+    };
+    let canonical = path.canonicalize().map_err(io_error)?;
+    let base = canonical
+        .parent()
+        .ok_or_else(|| InstallationError::Invalid("installation directory required".into()))?
+        .to_path_buf();
+    let mut raw = Vec::new();
+    File::open(&canonical)
+        .map_err(io_error)?
+        .take(1024 * 1024 + 1)
+        .read_to_end(&mut raw)
+        .map_err(io_error)?;
+    if raw.len() > 1024 * 1024 {
+        return Err(InstallationError::Invalid("manifest exceeds1MiB".into()));
+    }
+    Ok((base, raw))
 }

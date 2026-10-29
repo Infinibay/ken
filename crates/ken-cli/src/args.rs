@@ -83,6 +83,8 @@ pub struct ReadArgs {
 pub struct RelatedArgs {
     pub target: String,
     pub relation: String,
+    #[arg(long, default_value_t = 0.0, allow_hyphen_values = true)]
+    pub min_confidence: f64,
     #[arg(long, default_value_t = 10, allow_hyphen_values = true)]
     pub limit: i64,
     #[arg(long, default_value_t = 1, allow_hyphen_values = true)]

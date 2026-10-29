@@ -47,8 +47,8 @@ impl Default for Arguments {
     }
 }
 pub(super) fn definition() -> Value {
-    json!({"name":"ken_find","description":"Find source files or symbols using the native search engine, live text using literal or BM25 search, or likely tests using the index. Text and test search need no model resources. Compact text is the default.","inputSchema":{"type":"object","additionalProperties":false,"properties":{
-        "query":{"type":"string","default":""},"scope":{"type":"string","enum":["files","symbols","text","tests"],"default":"files"},
+    json!({"name":"ken_find","description":"Find source files/symbols using native search, live text using literal/BM25, likely tests using the index, or route/CLI/environment wiring using prepared grammars. Text, tests and wiring need no model resources. Compact text is the default.","inputSchema":{"type":"object","additionalProperties":false,"properties":{
+        "query":{"type":"string","default":""},"scope":{"type":"string","enum":["files","symbols","text","tests","wiring"],"default":"files"},
         "limit":{"anyOf":[{"type":"integer","minimum":1},{"type":"null"}],"default":null},
         "literal":{"type":"boolean","default":false},"query_language":{"type":"string","enum":["kenql/1"],"default":"kenql/1"},
         "language":{"type":"string","default":"","description":"Language filter for scope=text."},
@@ -70,10 +70,40 @@ impl FindService {
             application: SearchApplication::new(installation),
         }
     }
-    pub(super) fn call(&mut self, raw: &RawValue) -> Result<ToolReply, String> {
+    pub(super) fn call(
+        &mut self,
+        raw: &RawValue,
+        live: &mut super::live::LiveTools,
+    ) -> Result<ToolReply, String> {
         let args: Arguments = serde_json::from_str(raw.get()).map_err(|e| e.to_string())?;
         if !matches!(args.output_format.as_str(), "compact" | "json") {
             return Err("output_format must be compact or json".into());
+        }
+        if args.scope == "wiring" {
+            if args.piece_kind != "auto"
+                || args.purpose != "auto"
+                || args.query_language != "kenql/1"
+                || !matches!(args.response_format.as_str(), "auto" | "legacy")
+            {
+                return Err("native wiring search requires default purpose, piece kind and query_language=kenql/1, with response_format=auto or legacy".into());
+            }
+            let query = args
+                .query
+                .to_utf8()
+                .ok_or("wiring query contains non-scalar Unicode")?;
+            let nav = ken_search::navigation::IndexNavigation::open(&self.paths)
+                .map_err(|e| e.to_string())?;
+            let result = live.wiring(&nav, &query, args.limit.unwrap_or(10) as i64)?;
+            return super::present(
+                &result,
+                "ken_find",
+                if args.response_format == "legacy" {
+                    "json"
+                } else {
+                    &args.output_format
+                },
+                args.full,
+            );
         }
         if args.scope == "text" {
             if args.piece_kind != "auto"

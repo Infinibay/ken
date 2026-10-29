@@ -15,6 +15,8 @@ macro_rules! doc {
 }
 mod architecture;
 mod changes;
+mod codeflow;
+pub use codeflow::CallGraphRequest;
 mod files;
 mod graph;
 mod profile;

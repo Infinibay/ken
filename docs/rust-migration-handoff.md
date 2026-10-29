@@ -10,6 +10,31 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización de codeflow del 28/10: señales estructurales de llamadas, bases y
+wiring migradas en `ken-syntax`; resolución de símbolos, tiers, enclosing spans,
+jerarquía y overrides en `ken-search/navigation/codeflow`. CLI/MCP añaden
+`ken_related` callers/callees/subtypes/supertypes y `ken_find(scope="wiring")`.
+Comparten un propietario diferido de gramáticas, sin modelos; `--resources`
+admite un manifest mínimo con format y grammar_manifest. La preparación de
+modelos sigue separada y su lector completo conserva la validación anterior.
+Referencia esencial 3.413 bytes, SHA-256
+`b5586fe9eae7915b49c44f8da201deda952aaa8bf6e87911882fa83028055969`:
+19 señales, 26 consultas de dominio y 10 respuestas públicas capturadas una sola
+vez, sin indexación/modelos originales. Todas coinciden en datos/texto. Pasaron
+33 raíces nativas del alcance y Clippy estricto; revisión sin hallazgos.
+Una aserción local adicional omitía descendientes Java/Dart del mismo nombre;
+se corrigió esa expectativa, sin cambiar código de producción ni referencias.
+Preservar los quirks originales observados: confianza numérica pública usa T2;
+subtypes/supertypes envían down/up y ambas devuelven descendientes sin overrides.
+La biblioteca sí ofrece direcciones sub/super y umbrales string T1/T2. No corregir
+esas inconsistencias silenciosamente dentro de la migración. Los sources siguen
+confinados al proyecto y una sesión observa ediciones actuales sin caché de AST.
+Ver [plan](superpowers/plans/2026-10-28-rust-live-codeflow.md) y
+[uso](rust-migration.md#exploración-nativa-del-código-vivo).
+Próximos inventarios de calificación: público255, BestSearch231. No equivalen a
+calificación global nueva; IR/CFG/KQL de M5, memoria de M6 y resto de M7/M8 siguen
+pendientes. Fuentes originales, crudos y workspaces permanecen localmente.
+
 Actualización de orientación del 28/10: `ken_rank` migra scopes `project`,
 `architecture` y `changes` por CLI tools y MCP, sin modelos. Algoritmos iterativos
 de SCC/capas, comunidades, PageRank y calidad conservan cobertura y muestras
@@ -28,8 +53,7 @@ Se observaron sólo las dos consultas Git pendientes y se selló todo sin repeti
 los 42 originales. Intentos, journals y comandos permanecen locales.
 Ver [plan](superpowers/plans/2026-10-28-rust-project-orientation.md) y
 [uso](rust-migration.md#orientación-nativa-del-proyecto).
-Inventarios para próxima calificación: público253, BestSearch230; no son nuevos
-recibos globales. Se instaló y aplicó deprecation-and-migration de
+No son nuevos recibos globales. Se instaló y aplicó deprecation-and-migration de
 addyosmani/agent-skills (~111k estrellas observadas), fuera del repositorio;
 sus pasos de retirar fuentes/cutover siguen subordinados a la autorización
 vigente de preservar Python hasta completar la migración.
@@ -169,7 +193,7 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | Búsqueda pública por defecto x86_64 | CLI y MCP stdio implementados; calificación en curso | Manifest de instalación reubicable, recursos diferidos, texto/JSON y sesiones recuperables. MCP negocia el protocolo 2025-11-25; otros scopes/modos y el protocolo moderno quedan pendientes |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
-| M7 | Parcial: navegación, perfiles, búsqueda literal/BM25 y orientación project/architecture/changes por CLI/MCP implementadas | Quedan ranking de sesión, daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
+| M7 | Parcial: navegación/perfiles, literal/BM25, orientación y llamadas/tipos/wiring por CLI/MCP implementadas | Quedan ranking de sesión, otras relaciones, daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
 | M8 | Pendiente | Distribución, matriz global, upgrade/rollback y promoción nativa sin Python |
 
 No hay un porcentaje funcional global acreditado. M3 incluye el modelo común,

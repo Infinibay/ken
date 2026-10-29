@@ -78,6 +78,44 @@ con pruebas reales CLI/MCP sin instalación de modelos. Sólo el par demostrado
 directorio; la referencia original permanece intacta. Pasaron las nueve pruebas
 nativas del alcance de perfiles/navegación/texto y Clippy estricto.
 
+## Exploración nativa del código vivo
+
+CLI y MCP implementan `ken_related` con `callers`, `callees`, `subtypes` y
+`supertypes`, además de `ken_find(scope="wiring")` para rutas, comandos,
+decoradores y variables de entorno. Releen los archivos actuales y usan el
+índice para enlazar símbolos y imports. No escriben en la base ni cargan modelos.
+La resolución conserva T1 (mismo archivo/nombre único), T2 (un único importado)
+y los callsites sin resolver cuando el nombre es ambiguo.
+
+```sh
+./target/release/ken-rs --resources grammar-only.json tools --path . related run callees
+./target/release/ken-rs --resources grammar-only.json tools --path . related helper callers
+./target/release/ken-rs --resources grammar-only.json tools --path . find ENV --scope wiring
+```
+
+Estas operaciones aceptan el manifest completo de búsqueda o uno mínimo:
+
+```json
+{"format":"ken-search-installation/1","grammar_manifest":"/ruta/grammars/manifest.json"}
+```
+
+Las rutas relativas parten del directorio del manifest. La carga de gramáticas
+es diferida y compartida entre los tools; una configuración fallida puede
+repararse y reintentarse en la misma sesión MCP. La biblioteca ofrece
+`signals::extract`, `IndexNavigation.callgraph`, `type_hierarchy` y `wiring`.
+
+Se conservan dos inconsistencias del original para separarlas de la migración:
+el `min_confidence` numérico del tool se devuelve sin cambiar y selecciona T2;
+los dos nombres públicos `subtypes`/`supertypes` producen descendientes sin
+overrides porque el adaptador original pasa `down`/`up`. La API de biblioteca
+admite `sub`/`super` y overrides, así como los umbrales de llamadas `T1`/`T2`.
+La jerarquía es una heurística por nombres, incluso entre lenguajes.
+
+Coinciden 19 observaciones de señales, 26 de dominio y 10 respuestas públicas
+JSON/texto del original. Pasaron 33 raíces nativas del alcance afectado y Clippy
+estricto, incluyendo reparaciones de configuración y cambios de fuente durante
+una sesión MCP. No se añadieron versiones externas ni se cerraron M5/KQL o M7.
+
 ## Orientación nativa del proyecto
 
 `ken_rank` añade tres scopes nativos, sin instalación de modelos:

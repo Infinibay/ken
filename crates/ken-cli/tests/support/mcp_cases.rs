@@ -220,9 +220,9 @@ fn malformed_frames_invalid_calls_and_notifications_do_not_poison_the_stdio_sess
     assert_eq!(tools[0]["name"], "ken_find");
     assert_eq!(
         tools[0]["inputSchema"]["properties"]["scope"]["enum"],
-        json!(["files", "symbols", "text", "tests"])
+        json!(["files", "symbols", "text", "tests", "wiring"])
     );
-    let invalid = client.call(3, json!({"query":"find value","scope":"wiring"}));
+    let invalid = client.call(3, json!({"query":"find value","scope":"structure"}));
     assert_eq!(invalid["result"]["isError"], true);
     client.send(&json!({"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"missing","arguments":{}}}));
     assert_eq!(client.receive()["error"]["code"], -32602);

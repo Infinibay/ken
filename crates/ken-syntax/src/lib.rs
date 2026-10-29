@@ -3,6 +3,7 @@ mod grammar;
 mod syntax;
 pub use grammar::{GrammarCatalog, Language, ParseError};
 pub use syntax::{SyntaxNode, SyntaxRecord, SyntaxTree};
+pub mod signals;
 
 mod helpers;
 mod model;
