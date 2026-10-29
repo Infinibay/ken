@@ -172,7 +172,7 @@ pub fn run(
         ),
         ToolCommand::Find(a) => (
             "ken_find",
-            json!({"query":a.query,"scope":a.scope,"limit":a.limit,"literal":a.literal,"purpose":a.purpose,"max_chars":a.max_chars,"piece_kind":a.piece_kind,"response_format":a.response_format,"query_language":a.query_language,"full":a.full,"output_format":a.output_format}),
+            json!({"query":a.query,"scope":a.scope,"limit":a.limit,"literal":a.literal,"language":a.language,"purpose":a.purpose,"max_chars":a.max_chars,"piece_kind":a.piece_kind,"response_format":a.response_format,"query_language":a.query_language,"full":a.full,"output_format":a.output_format}),
         ),
     };
     if args.json || args.compact {

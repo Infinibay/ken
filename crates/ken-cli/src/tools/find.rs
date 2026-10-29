@@ -16,6 +16,7 @@ struct Arguments {
     scope: String,
     limit: Option<isize>,
     literal: bool,
+    language: String,
     query_language: String,
     #[serde(rename = "path")]
     _path: String,
@@ -33,6 +34,7 @@ impl Default for Arguments {
             scope: "files".into(),
             limit: None,
             literal: false,
+            language: String::new(),
             query_language: "kenql/1".into(),
             _path: ".".into(),
             response_format: "auto".into(),
@@ -45,12 +47,13 @@ impl Default for Arguments {
     }
 }
 pub(super) fn definition() -> Value {
-    json!({"name":"ken_find","description":"Find source files or symbols using the native search engine, or likely tests using the index. Search the configured project; compact text is the default. Other Ken scopes are not available in this native binding yet.","inputSchema":{"type":"object","additionalProperties":false,"properties":{
-        "query":{"type":"string","default":""},"scope":{"type":"string","enum":["files","symbols","tests"],"default":"files"},
+    json!({"name":"ken_find","description":"Find source files or symbols using the native search engine, live text using literal or BM25 search, or likely tests using the index. Text and test search need no model resources. Compact text is the default.","inputSchema":{"type":"object","additionalProperties":false,"properties":{
+        "query":{"type":"string","default":""},"scope":{"type":"string","enum":["files","symbols","text","tests"],"default":"files"},
         "limit":{"anyOf":[{"type":"integer","minimum":1},{"type":"null"}],"default":null},
         "literal":{"type":"boolean","default":false},"query_language":{"type":"string","enum":["kenql/1"],"default":"kenql/1"},
+        "language":{"type":"string","default":"","description":"Language filter for scope=text."},
         "path":{"type":"string","default":".","description":"Compatibility parameter for other scopes; file/symbol search covers the configured project."},
-        "response_format":{"type":"string","enum":["auto","compact"],"default":"auto"},
+        "response_format":{"type":"string","enum":["auto","compact","legacy"],"default":"auto"},
         "output_format":{"type":"string","enum":["compact","json"],"default":"compact"},
         "purpose":{"type":"string","enum":["auto","implementation","usage","tests","documentation"],"default":"auto"},
         "max_chars":{"type":"integer","minimum":1,"default":12000},"piece_kind":{"type":"string","enum":["auto","class","module","symbol","file"],"default":"auto"},"full":{"type":"boolean","default":false}
@@ -69,6 +72,40 @@ impl FindService {
     }
     pub(super) fn call(&mut self, raw: &RawValue) -> Result<ToolReply, String> {
         let args: Arguments = serde_json::from_str(raw.get()).map_err(|e| e.to_string())?;
+        if !matches!(args.output_format.as_str(), "compact" | "json") {
+            return Err("output_format must be compact or json".into());
+        }
+        if args.scope == "text" {
+            if args.piece_kind != "auto"
+                || args.purpose != "auto"
+                || args.query_language != "kenql/1"
+                || !matches!(args.response_format.as_str(), "auto" | "legacy")
+            {
+                return Err("native text search requires default purpose, piece kind and query_language=kenql/1, with response_format=auto or legacy".into());
+            }
+            let query = args
+                .query
+                .to_utf8()
+                .ok_or("text query contains non-scalar Unicode")?;
+            let result = ken_search::text_search::WorktreeTextSearch::new(self.paths.clone())
+                .find(
+                    &query,
+                    args.literal,
+                    &args.language,
+                    args.limit.unwrap_or(10) as i64,
+                )
+                .map_err(|e| e.to_string())?;
+            return super::present(
+                &result,
+                "ken_find",
+                if args.response_format == "legacy" {
+                    "json"
+                } else {
+                    &args.output_format
+                },
+                args.full,
+            );
+        }
         if args.scope == "tests" {
             if args.piece_kind != "auto"
                 || args.purpose != "auto"
@@ -98,9 +135,6 @@ impl FindService {
             return Err(
                 "this compatibility response mode is not available in native MCP yet".into(),
             );
-        }
-        if !matches!(args.output_format.as_str(), "compact" | "json") {
-            return Err("output_format must be compact or json".into());
         }
         let request: SearchRequest = SearchOptions {
             query: args.query,

@@ -84,6 +84,8 @@ pub struct ToolFindArgs {
     pub limit: Option<isize>,
     #[arg(long)]
     pub literal: bool,
+    #[arg(long, default_value = "")]
+    pub language: String,
     #[arg(long)]
     pub full: bool,
     #[arg(long, default_value = "auto")]

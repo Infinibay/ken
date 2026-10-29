@@ -24,3 +24,4 @@ mod installation;
 pub use installation::{InstallationError, SearchInstallation};
 pub mod navigation;
 pub mod public;
+pub mod text_search;

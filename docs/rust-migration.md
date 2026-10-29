@@ -62,6 +62,33 @@ texto compacto de 49 casos de dominio y 19 respuestas públicas nuevas del
 original. Los perfiles de archivo, otras relaciones y la matriz global de CPU
 siguen pendientes; estas pruebas no acreditan la migración completa.
 
+## Búsqueda nativa de texto
+
+`ken_find(scope="text")` está implementado en CLI y MCP para Linux x86_64,
+sin instalación de modelos. El modo predeterminado usa BM25 de SQLite FTS5;
+`literal=true` busca substrings exactos en los archivos actuales ya indexados.
+
+```sh
+./target/release/ken-rs tools --path . find 'SourceFileReader' --scope text --literal
+./target/release/ken-rs tools --path . --json find 'source reader' --scope text --language rust --limit 10
+```
+
+La búsqueda literal sólo lee. BM25 actualiza atómicamente el espejo derivado
+`fts_files`/`ci_fts_state`, sin modificar los hechos del índice. Conserva el
+comportamiento original: un archivo indexado que ya no se puede leer o supera
+1 MiB retiene su entrada FTS anterior hasta retirarse del índice. Las rutas de
+fuente se confinan al proyecto. Los términos BM25 se escapan como texto, sin
+interpretar operadores escritos por el usuario. Los empates conservan el orden
+SQLite del espejo existente; la primera creación de filas empatadas puede
+ordenarse de forma distinta al `set` de Python.
+
+Las 29 observaciones originales nuevas coinciden en datos y texto compacto,
+por biblioteca, procesos CLI y sesiones MCP. También se comprobaron el rollback
+del espejo, el inicio sin caché, límites de tamaño y el rechazo de formatos
+inválidos antes de ejecutar la consulta. `response_format="legacy"` devuelve
+datos para este scope; las variantes semánticas de compatibilidad siguen
+pendientes. Este bloque no cierra la matriz global ni M4–M8.
+
 ## Continuación del 24 de octubre: ranking y Linux x86_64
 
 `piece_features` conserva el esquema de 262 columnas y sus tres pases de

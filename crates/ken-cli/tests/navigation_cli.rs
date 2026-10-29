@@ -4,6 +4,8 @@ mod evidence;
 #[path = "../../ken-search/tests/support/navigation.rs"]
 #[allow(dead_code)]
 mod support;
+#[path = "../../ken-search/tests/support/worktree_text.rs"]
+mod worktree_text;
 use serde_json::{Value, json};
 use std::{
     fs,
@@ -248,4 +250,103 @@ fn actual_stdio_navigation_matches_original_and_observes_replaced_database() {
     client.finish();
     assert!(!fixture.paths.root().join("cache").exists());
     assert!(!fixture.paths.root().join("owned").exists());
+}
+
+#[test]
+fn actual_text_cli_and_stdio_match_original_history_without_models() {
+    let reference = worktree_text::reference();
+    for json_output in [false, true] {
+        let fixture = worktree_text::fixture();
+        let mut rows = reference["rows"].as_array().unwrap().iter();
+        for event in reference["events"].as_array().unwrap() {
+            if event["action"] != "query" {
+                worktree_text::apply(&fixture, event);
+                continue;
+            }
+            let row = rows.next().unwrap();
+            let args = worktree_text::cli_args(&row["args"], json_output);
+            let got = command(&fixture).args(args).output().unwrap();
+            assert!(
+                got.status.success(),
+                "{}: {}",
+                row["args"],
+                String::from_utf8_lossy(&got.stderr)
+            );
+            assert!(got.stderr.is_empty());
+            if json_output {
+                assert_eq!(
+                    serde_json::from_slice::<Value>(&got.stdout).unwrap(),
+                    row["result"],
+                    "{}",
+                    row["args"]
+                );
+            } else {
+                assert_eq!(
+                    String::from_utf8(got.stdout).unwrap(),
+                    row["compact"].as_str().unwrap().to_owned() + "\n",
+                    "{}",
+                    row["args"]
+                );
+            }
+        }
+        let fixture = worktree_text::fixture();
+        let mut client = Mcp::new(&fixture);
+        client.initialize();
+        let mut rows = reference["rows"].as_array().unwrap().iter();
+        for (id, event) in reference["events"].as_array().unwrap().iter().enumerate() {
+            if event["action"] != "query" {
+                worktree_text::apply(&fixture, event);
+                continue;
+            }
+            let row = rows.next().unwrap();
+            let mut args = row["args"].clone();
+            if json_output {
+                args["output_format"] = json!("json");
+            }
+            let reply = client.call(id as i64 + 2, "ken_find", args);
+            if json_output {
+                assert_eq!(
+                    serde_json::from_str::<Value>(text(&reply)).unwrap(),
+                    row["result"],
+                    "{}",
+                    row["args"]
+                );
+            } else {
+                assert_eq!(
+                    text(&reply),
+                    row["compact"].as_str().unwrap(),
+                    "{}",
+                    row["args"]
+                );
+            }
+        }
+        fs::write(
+            fixture.paths.root().join("src/service.py"),
+            "INVALID_FORMAT_SENTINEL",
+        )
+        .unwrap();
+        let hash = fixture.database_hash();
+        for (id, response) in [(98, "auto"), (99, "legacy")] {
+            let rejected = client.call(id, "ken_find", json!({"query":"INVALID_FORMAT_SENTINEL","scope":"text","response_format":response,"output_format":"invalid"}));
+            assert_eq!(rejected["result"]["isError"], true);
+            assert_eq!(fixture.database_hash(), hash);
+        }
+        let reply = client.call(
+            100,
+            "ken_find",
+            json!({"query":"Service","scope":"text","response_format":"legacy"}),
+        );
+        assert_eq!(
+            serde_json::from_str::<Value>(text(&reply)).unwrap()["mode"],
+            "bm25"
+        );
+        let denied = client.call(
+            101,
+            "ken_find",
+            json!({"query":"Service","scope":"text","response_format":"compact"}),
+        );
+        assert_eq!(denied["result"]["isError"], true);
+        client.finish();
+        assert!(!fixture.paths.root().join("cache").exists());
+    }
 }

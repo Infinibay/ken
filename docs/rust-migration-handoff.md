@@ -10,6 +10,21 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización de texto del 28/10: `WorktreeTextSearch` implementa búsqueda literal
+en fuente actual y BM25 con espejo FTS incremental/atómico. CLI `tools find` y
+MCP `ken_find(scope="text")` comparten el servicio, filtros por lenguaje y
+JSON/texto/legacy sin cargar modelos. Las 29 nuevas observaciones originales
+coinciden en biblioteca y procesos CLI/MCP, incluyendo edición, borrado y retiro
+del índice. Pasaron 25 raíces nativas locales del alcance afectado y Clippy
+estricto. Una prueba antigua que esperaba text no soportado se actualizó a wiring;
+la revisión también corrigió la validación de formato antes de mutar el espejo.
+Referencia esencial: 1.949 bytes, SHA-256
+`75a95de020973bcaba8e06a1e2eeeffb5c85e28768a35649d5a1c8798f580396`.
+Ver [plan](superpowers/plans/2026-10-28-rust-worktree-text.md) y
+[uso](rust-migration.md#búsqueda-nativa-de-texto). Crudos/workspace locales sin
+seguimiento. Inventarios para la próxima calificación: público 247, BestSearch 226;
+esto no cambia recibos históricos ni cierra la matriz pendiente.
+
 Actualización de navegación del 28/10: implementado un bloque completo de lectura
 del índice con `IndexNavigation`, documentos ordenados y presentación compacta.
 CLI `tools read/related/find` y MCP `ken_read`, `ken_related` y `ken_find` con
@@ -117,7 +132,7 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | Búsqueda pública por defecto x86_64 | CLI y MCP stdio implementados; calificación en curso | Manifest de instalación reubicable, recursos diferidos, texto/JSON y sesiones recuperables. MCP negocia el protocolo 2025-11-25; otros scopes/modos y el protocolo moderno quedan pendientes |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
-| M7 | Parcial: navegación de índice por CLI/MCP implementada | Quedan daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
+| M7 | Parcial: navegación de índice y búsqueda literal/BM25 por CLI/MCP implementadas | Quedan daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
 | M8 | Pendiente | Distribución, matriz global, upgrade/rollback y promoción nativa sin Python |
 
 No hay un porcentaje funcional global acreditado. M3 incluye el modelo común,
