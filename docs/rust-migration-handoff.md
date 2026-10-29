@@ -10,6 +10,40 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización de control del 29/10: `ken_program::control` implementa sobre IR
+suministrado los kernels `lexical_execution`, `structured_control` y
+`syntax_contexts`. Índices de operaciones separan parentesco léxico de ownership;
+`CompletionRoutes` posee continuaciones, scopes de finalizador y retornos pendientes.
+Preserva ramas/bucles/else, do/for/range, break/continue, hoisting JS/TS, resultado
+descartado/await/tails Rust, excepciones/finally/except* Python, invalidación de
+aliases y puntos de suspensión. Los hechos mantienen orden original y cobertura
+parcial explícita; ninguna continuación se convierte en operación sintáctica.
+No son pruebas de viabilidad runtime ni un frontal completo desde archivos.
+Usa Ruff parser/AST y normalización Unicode ya fijados, sin nuevas versiones;
+el recurso de excepciones Python3.12.9 deriva una sola vez del original.
+Captura esencial: 88.797 bytes, SHA-256
+`5fdbec695fd653bb31a6a737b2a9a57230c99035f616bdcbd1e8e26ffc8c090a`.
+Tabla de producción: 12.630 bytes, SHA-256
+`aadc7e2be8f377e114bb7d69ecf90e492a8f6ac33716973027010926d23353c6`.
+23 casos nuevos de nueve lenguajes: 69 comparaciones exactas por etapas más
+roundtrip integrado del IR enriquecido por snapshots persistentes. No se
+repitieron originales ni se ejecutaron modelos, matrices CPU o nuevas CI.
+Pasaron 12 pruebas de ken-program y seis del store/pipeline, Clippy estricto y
+formato. Una revisión estática final encontró rangos CALL null que abortaban los
+contextos y la retención del índice temporal de llamadas. El primero se reprodujo
+RED→GREEN y cubre también números equivalentes y offsets no numéricos; el segundo
+se liberó antes del mapa de ancestros. Sin re-review. Los errores iniciales de
+compilación del nuevo test de integración y dos lints se corrigieron antes del
+gate final, sin cambiar referencias.
+Ver [plan](superpowers/plans/2026-10-29-rust-control-core.md) y
+[API/alcance](rust-migration.md#núcleo-estructural-rutas-de-control).
+Los contadores de búsqueda público255/BestSearch231 no cambian: sus comandos
+excluyen ken-program/ken-store. Las cinco raíces nuevas de control/pipeline se
+validan en el alcance M5; no se acreditan mediante los recibos de búsqueda.
+Siguiente núcleo pendiente: productor IR/declaraciones/linker semántico desde
+archivos, publicación del grafo, valores/efectos y compilador/ejecutor KQL1/2.
+M5a/M5b/M5c siguen abiertos; M6 y resto de M7/M8 también.
+
 Actualización del núcleo del 29/10: empezó M5a de adentro hacia afuera, por pedido
 expreso del usuario. `ken_store::structural::StructuralStore` implementa la base
 de persistencia que consumirá KQL: migraciones exactas 1–15, ownership/DDL/checksums,
@@ -44,7 +78,7 @@ Ver [plan](superpowers/plans/2026-10-28-rust-structural-store.md) y
 Los contadores de búsqueda público255/BestSearch231 no cambian: sus comandos
 no seleccionan ken-store. Las cinco raíces estructurales se validan aparte y
 deberán formar parte del gate M5; no acreditarlas mediante los recibos M4/M7.
-Siguen pendientes el productor IR/CFG, el grafo/publicación semántica, los caches
+Siguen pendientes el productor IR desde archivos, el grafo/publicación semántica, los caches
 de artefactos y la ejecución KQL1/2; M5a/M5b/M5c no están cerrados.
 
 Actualización de codeflow del 28/10: señales estructurales de llamadas, bases y

@@ -63,8 +63,55 @@ del modelo común, junto con Clippy estricto. Incluyen una base SQLite original,
 las 15 versiones del esquema, fallos de DDL, rollback por presupuesto,
 publicaciones en paralelo, expiración de leases y una unidad de 7.500 entidades.
 El grafo semántico persistente completo, sus publicaciones, cachés de artefactos,
-el productor CFG/IR y el motor KQL siguen pendientes; este bloque no cierra M5.
+el productor IR desde archivos y el motor KQL siguen pendientes; este bloque no cierra M5.
 Ver el [plan del núcleo](superpowers/plans/2026-10-28-rust-structural-store.md).
+
+## Núcleo estructural: rutas de control
+
+`ken_program::control` produce el CFG de sentencias y la evidencia léxica sobre
+un `StructuralIr` suministrado. La misma salida se puede guardar, publicar y
+recuperar mediante `StructuralStore`:
+
+```rust
+use ken_program::control::{lexical_execution, structured_control, syntax_contexts};
+
+lexical_execution(&mut ir, false)?; // true si el parser indicó sintaxis inválida
+structured_control(&mut ir, None)?; // opcional: rutas afectadas por diagnósticos
+syntax_contexts(&mut ir)?;
+let unit = store.put_unit("unit-key", &ir, "source-hash", "control-core/1", false)?;
+let snapshot = store.publish(&[unit], store.current()?, "control-core/1", false)?;
+```
+
+La ejecución léxica marca sufijos inalcanzables después de salidas incondicionales,
+conservando la sintaxis y el hoisting de funciones JavaScript/TypeScript. Los
+contextos enlazan padres, bucles, handlers, cuerpos protegidos y llamadas cuyo
+resultado se descarta; respetan `await` y las expresiones finales de Rust.
+
+El constructor conserva ramas, `elif`, bucles/else, inicialización/actualización,
+`break`/`continue`, retorno y opacidad explícita para construcciones sin cobertura.
+En Python incluye evaluación antes de retorno, `finally` anidados y continuaciones
+protegidas por su destino, invalidación de aliases de excepción, dispatch de
+`except`/`except*`, propagación y puntos de inyección del generador. Las
+continuaciones son hechos CFG; nunca se agregan como operaciones sintácticas.
+La tabla de excepciones se congeló desde Python3.12.9 y el shadowing de imports
+usa Ruff nativo ya fijado, admitiendo sintaxis3.12.
+
+`CFG_STATUS` conserva razones/gaps y diagnósticos. Estas rutas expresan
+posibilidades estructurales: la evaluación de expresiones, viabilidad runtime,
+protocolos completos de generadores y efectos no quedan demostrados por ellas.
+Los pasos agregan hechos al IR; se ejecutan una vez sobre cada unidad nueva.
+Este bloque no sustituye el frontend que produce operaciones desde archivos ni
+el grafo semántico, análisis de valores/efectos, compilador o ejecutor KQL1/2.
+M5 sigue abierto.
+
+La referencia nueva compara exactamente IR y orden de hechos en 23 casos de
+nueve lenguajes, incluidos operaciones invertidas, errores de parseo y diagnósticos
+con alcance. Tres pruebas cubren esos pasos, otra evita que rangos CALL ausentes/no numéricos
+aborten contextos ajenos y una integra publicación/reapertura
+del snapshot sin alterar pertenencia sintáctica. Los originales se observaron
+una sola vez; las pruebas Rust consumen la captura y no ejecutan Python.
+Pasaron las 18 pruebas del alcance afectado y Clippy estricto tras la revisión.
+Ver el [plan de control](superpowers/plans/2026-10-29-rust-control-core.md).
 
 ## Navegación nativa del índice
 

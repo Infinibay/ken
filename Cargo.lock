@@ -952,11 +952,16 @@ dependencies = [
 name = "ken-program"
 version = "0.18.0"
 dependencies = [
+ "flate2",
  "ken-text",
  "regex",
+ "rustpython-ruff_python_ast",
+ "rustpython-ruff_python_parser",
  "serde",
  "serde_json",
+ "sha2",
  "thiserror",
+ "unicode-normalization",
 ]
 
 [[package]]

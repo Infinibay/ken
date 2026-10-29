@@ -35,3 +35,4 @@ mod environment;
 pub use environment::{Environment, Resolution};
 
 mod bindings;
+pub mod control;
