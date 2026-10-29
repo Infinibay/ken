@@ -43,3 +43,6 @@ fn append(graph: &mut StructuralIr, facts: Vec<Fact>) {
         .extend(facts.iter().map(|f| f.relation.clone()));
     graph.facts.extend(facts);
 }
+
+mod coverage;
+pub use coverage::supports_general_walk;

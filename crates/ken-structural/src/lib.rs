@@ -16,9 +16,18 @@ pub enum BuildError {
     Io(#[from] std::io::Error),
     #[error(transparent)]
     Program(#[from] ken_program::ProgramError),
+    #[error(transparent)]
+    Store(#[from] ken_store::structural::StructuralError),
+    #[error(transparent)]
+    Json(#[from] serde_json::Error),
+    #[error(transparent)]
+    Sql(#[from] rusqlite::Error),
     #[error("path does not exist: {0}")]
     Missing(std::path::PathBuf),
     #[error("{0}")]
     Invalid(&'static str),
 }
 pub type Result<T> = std::result::Result<T, BuildError>;
+
+mod acquisition;
+pub use acquisition::{AcquiredProject, ProjectAcquisition};

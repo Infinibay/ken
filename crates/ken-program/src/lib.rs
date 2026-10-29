@@ -40,3 +40,6 @@ pub mod control;
 pub mod project;
 
 mod semantic;
+
+pub mod query_view;
+pub mod value;

@@ -10,6 +10,84 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización de grafos ejecutables del29/10: se implementaron QueryView y
+GraphValue en ken-program; publicación READY, diccionarios/valores por columnas,
+overlays OPERATION, scans perezosos y vistas de fuente en ken-store; adquisición
+de proyectos persistentes/temporales en ken-structural. Se reutiliza exactamente
+el esquema15: no agregar índices a escondidas, schema::validate compara todo el
+DDL. Las migraciones13/14 eliminaron role/start/end/member-key/operation-region;
+los accesos globales correspondientes conservan ese compromiso de recorrido.
+Las selecciones por un extremo correlacionan sus atributos y evitan un recorrido
+global; kind/native_kind/owner usan índices reales. Count de relación usa el
+inventario mantenido, no enumera los hechos.
+
+IR de fuente→QueryView conserva entrada y metadatos opacos; normaliza ocurrencias,
+retornos y slots. En la frontera original con sets, comparar hechos completos
+como multiconjunto. Publicación→reader debe conservar exactamente el orden
+recibido, evidencia y duplicados. Nunca pasar la fixture por serde Value antes
+de decodificar StructuralIr: reordena entidades y pierde enteros grandes.
+El codec coincide con286 firmas/IDs originales, floats aleatorios, negativos,
+infinidades/NaN y contenedores. Tuple/set heredados mantienen tags; el set nativo
+usa orden canónico, no repr por hash de CPython. Un surrogate aislado sobrevive en
+IR RawValue pero SQLite lo rechaza, igual que el original. El nuevo normalizador
+conserva familias escalares y distingue posiciones textuales de numéricas, con
+igualdad exacta bool/int/float y enteros>2^53.
+
+Las transacciones publican32768 registros del grafo como máximo y comprueban
+cancelación y ownership cada512; incluye sintaxis y ambos inventarios. La sintaxis
+legacy de grafos ya READY se prepara atómicamente con open_with_check y
+checkpoints en lectura, construcción y recorrido. READY aparece sólo al final. Error→limpieza de la publicación
+incompleta propia; lease ajeno activo→conflicto; lease abandonado→reconstrucción.
+No hay API de resume por ordinal sin garantizar input ordenado idéntico. Owned
+libera registros al escribirlos; borrowed copia uno por vez. El store posee el
+pin durante su vida útil, incluso entre préstamos de GraphIndex. Su renovación de
+lectura difiere SQLITE_BUSY_SNAPSHOT sólo con lease vigente; writers conservan
+renovación estricta y las expiraciones reales no se ocultan. Scans admiten
+rows_checked y un scope execution instala interrupción de VM cada1000 pasos sin
+mezclar política de presupuesto KQL con almacenamiento.
+
+ProjectAcquisition toma una manifest única, serializa con flock cancelable,
+reutiliza el índice READY sin volver a parsear o enlazar y actualiza omisiones y
+coverage del request. Ediciones invalidan la identidad. Si falla un frontend,
+publica temporalmente y deja graph_key vacío; la siguiente adquisición puede
+recuperarse. El índice ejecutable no consume la cuota opcional ArtifactCache.
+El lock se libera antes de la evaluación; AcquiredProject posee store y reader
+por préstamo. Config/env y el API CLI/MCP de estas bibliotecas siguen pendientes.
+
+Referencias nuevas, observadas una vez contra original1066 con autenticación
+antes/después, sin reparsear ni repetir linkers aceptados:
+
+| Recurso | Casos | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| query-graph-reference.json.gz |79 normalizaciones,16 índices,286 valores|1622826|`730db94ed79125323cfe497fbef50503b6c62f8bba0c665f25ba8cf5695554a7`|
+| query-graph-original.sqlite.gz |base interoperable|880673|`d3f667dd971d0470f3a31e06f30f7c83d87ef269c67ca98ab07054c5367570a4`|
+| query-source-reference.json.gz |16 vistas/coverage/witnesses|30196|`5ac2bb971e5bda46b6417b227b0fe9185a6aa89ff0edcdf7698dabd18c0a58ed`|
+| query-edge-reference.json.gz |13 familias/posiciones|2014|`955a923fe182646e8f7964c59dee4a38a58be72341a3b3e74391f5b343018fa8`|
+
+La revisión final dejó tres Important, todos corregidos en una pasada: búsqueda
+cuadrática del overlay OPERATION sin índice local_id; renovación de lectores con
+snapshot WAL antiguo; sintaxis final sin checkpoints/lotes. Las regresiones
+nativas fallaron primero. El trabajo SQL de publicación al duplicar1500→3000
+operaciones pasó de44745→179490 ticks a105→210 (100 instrucciones/tick; medición
+estructural, no benchmark de tiempo). Se acotaron además capacidades/relaciones,
+se verificó rollback de sintaxis legacy y se corrigió overflow del ID overlay
+i64::MIN. Sin nueva revisión repetida ni replay del original.
+
+El cierre agrupa81 raíces:30 program,15 structural,30 store/pipeline y seis
+syntax/frontend. Clippy estricto y formato cubren los tres paquetes afectados.
+No se ejecutaron suites de vectores/modelos ni calificaciones globales.
+
+Próximo núcleo: compilador, operadores, sesiones y evaluación BODY de KQL1/2.
+La publicación/adquisición del grafo ejecutable ya tiene implementación nativa;
+no volver a listarla como trabajo ausente. M5 permanece abierto; M6 y resto de
+M7/M8 también. Público271/Best247 no cambian ni constituyen recibos nuevos. Sin
+replay CPU/CI/modelos; SkylakeX/Intel conserva su pendiente histórico. Crudos y
+workspace de query-graph quedan locales sin seguimiento. Ver
+[API](rust-migration.md#grafos-ejecutables-para-consultas) y
+[plan](superpowers/plans/2026-10-29-rust-query-graph.md).
+
+Los apartados siguientes son registros de etapas anteriores.
+
 Actualización de construcción del 29/10: nueva biblioteca `ken-structural` para
 manifest de fuente confinada, unidades reutilizables y ensamblado completo con
 `ProjectBuilder::{manifest,build,build_manifest}`. `ScanLimits` conserva2MB por

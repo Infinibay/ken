@@ -31,3 +31,5 @@ pub enum StructuralError {
     Expired,
 }
 pub type Result<T> = std::result::Result<T, StructuralError>;
+
+pub mod graph;

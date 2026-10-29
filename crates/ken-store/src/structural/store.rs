@@ -184,6 +184,14 @@ impl StructuralStore {
         }
         Ok(())
     }
+    /// A live read cursor may hold an older WAL snapshot. Defer only a busy
+    /// renewal while its existing lease remains live; genuine expiry still fails.
+    pub(super) fn renew_reader(&self) -> Result<()> {
+        if let Some(lease) = &self.lease {
+            lease.renew(&self.db, false, true)?;
+        }
+        Ok(())
+    }
     pub fn current(&self) -> Result<Option<i64>> {
         current(&self.db)
     }

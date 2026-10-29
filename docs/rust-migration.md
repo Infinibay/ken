@@ -35,7 +35,8 @@ El primer bloque M5a está implementado en `ken_store::structural`, reutilizando
 el IR y el AST común de `ken-program`. Trabaja directamente en Rust, con el
 esquema estructural existente de 15 versiones, separado de la base del índice
 y sus vectores. El frontend nativo descrito abajo ya produce IR desde archivos;
-el ejecutor KQL y la publicación del grafo semántico completo siguen pendientes.
+el ejecutor KQL sigue pendiente. La publicación completa está implementada en
+[el índice ejecutable](#grafos-ejecutables-para-consultas).
 
 La API `StructuralStore` guarda unidades IR inmutables, proyecta operaciones y
 AST, publica snapshots mediante comparación del padre esperado y ofrece
@@ -62,8 +63,8 @@ Pasaron cinco pruebas nuevas de persistencia/concurrencia/migraciones y las ocho
 del modelo común, junto con Clippy estricto. Incluyen una base SQLite original,
 las 15 versiones del esquema, fallos de DDL, rollback por presupuesto,
 publicaciones en paralelo, expiración de leases y una unidad de 7.500 entidades.
-El grafo semántico persistente completo, sus publicaciones, cachés de artefactos,
-el servicio de construcción/caché y el motor KQL siguen pendientes; este bloque no cierra M5.
+La construcción/caché y publicación completas se añadieron en las etapas
+descritas abajo. El motor KQL sigue pendiente; M5 permanece abierto.
 Ver el [plan del núcleo](superpowers/plans/2026-10-28-rust-structural-store.md).
 
 ## Núcleo estructural: rutas de control
@@ -217,9 +218,8 @@ Clippy estricto y formato. Los inventarios de futuras calificaciones quedan en
 público270/Best246; no son recibos globales nuevos.
 
 El API `link_nominal` termina antes de `sequential_returns` del linker original.
-El ensamblado completo descrito abajo añade las fases restantes. El servicio de
-construcción/caché del grafo semántico y el compilador/ejecutor KQL1/2 siguen
-pendientes. M5 no está cerrado; M6 y el resto de M7/M8 tampoco. No se repitieron
+El ensamblado completo descrito abajo añade las fases restantes. La construcción/caché y el índice ejecutable también se implementaron en las
+etapas descritas abajo. El compilador/ejecutor KQL1/2 sigue pendiente. M5 no está cerrado; M6 y el resto de M7/M8 tampoco. No se repitieron
 modelos, matrices CPU/CI ni originales ya aceptados. Ver el
 [plan de esta etapa](superpowers/plans/2026-10-29-rust-source-frontend.md).
 
@@ -280,8 +280,8 @@ actualizados también compilan en Python.
 
 Esto completa la implementación del ensamblado semántico en biblioteca. El
 builder descrito a continuación ya captura archivos y administra cachés de IR.
-La conexión de configuración/transporte, publicación del índice ejecutable y el
-compilador/ejecutor KQL1/2 siguen pendientes. Tampoco
+El índice ejecutable está implementado en la sección siguiente. La conexión de
+configuración/transporte y el compilador/ejecutor KQL1/2 siguen pendientes. Tampoco
 cierra M5 ni reemplaza los comandos Python instalados. Ver el
 [plan](superpowers/plans/2026-10-29-rust-project-semantics.md).
 
@@ -346,9 +346,86 @@ ocho program/model,16 de lectura/recorrido/filtros,una integración de fuente
 y seis de snapshots), Clippy estricto y formato pasaron tras las correcciones.
 No equivalen a recibos globales de búsqueda.
 
-La configuración/env y los transports públicos, la publicación del grafo ejecutable
-y KQL continúan pendientes. Esta biblioteca no reemplaza el Ken Python instalado
+La configuración/env y los transports públicos y KQL continúan pendientes. La
+publicación del grafo ejecutable se implementó en la etapa siguiente. Esta biblioteca no reemplaza el Ken Python instalado
 ni cierra M5/M6/M7/M8. Ver el [plan](superpowers/plans/2026-10-29-rust-project-build.md).
+
+## Grafos ejecutables para consultas
+
+`ken_program::query_view::normalize_query_graph` deriva ocurrencias de argumentos,
+resultados/valores cargados, metadatos de entidades, cobertura de llamadas,
+retornos y expansión de slots sin modificar el IR de fuente. Conserva atributos
+opacos; posiciones bool/int/float usan igualdad numérica exacta, sin convertir
+enteros grandes a f64. El orden de sets del original se sustituye por un orden
+nativo determinista en esta frontera; la publicación conserva el orden recibido.
+
+`ken_store::structural::graph` publica y consulta esos grafos en las tablas
+nativas del esquema15 existente. `publish_graph` presta la entrada y copia sólo
+el registro que codifica; `publish_graph_owned` consume los buffers de adquisición.
+Las transacciones de hasta32768 registros del grafo incluyen sus términos y
+valores; hay checkpoints cada512 registros. Sintaxis, capacidades y relaciones
+también se publican por lotes. Para preparar sintaxis ausente en un grafo legacy
+ya READY, open_with_check mantiene visibilidad atómica y comprueba cancelación
+durante la construcción. Sólo READY permite abrir un índice. Un error
+elimina la publicación incompleta propia; un writer activo impide reemplazos y
+uno abandonado se reconstruye desde cero. El store mantiene el pin del snapshot
+hasta repinning/cierre; un índice lo presta durante sus lecturas.
+
+`GraphIndex::{facts,count,exists,entities,operations,syntax_bounds}` usa índices
+por relación/extremos, atributos y owners. Las secuencias decodifican un registro
+por vez. `rows_checked` permite cancelación antes de cada registro; `execution`
+instala una interrupción SQLite cada1000 instrucciones y la retira al salir del
+scope. Las renovaciones de lectores difieren un conflicto de snapshot WAL mientras el
+lease siga vivo; las expiraciones reales siguen siendo errores. El presupuesto
+del lenguaje pertenece al futuro ejecutor KQL.
+`source_view`, `source_coverage`, `operation_owners` y `call_witnesses` proporcionan
+las vistas locales y las condiciones conservadoras que necesitará BODY.
+
+`GraphValue` conserva enteros arbitrarios, floats con signo de cero, diccionarios
+ordenados y texto Python. El codec usa columnas tipadas, miembros ordenados y
+las firmas originales; también lee los tags tuple/set de bases existentes y los
+atributos OPERATION respaldados por columnas. La representación Rust de sets
+usa miembros canónicos y no promete el orden del hash table de CPython. SQLite
+rechaza surrogates aislados en texto, igual que el writer original; no se afirma
+que la tolerancia del IR opaco permita persistir cualquier string en SQLite.
+La proyección de un miembro no decodifica subárboles ajenos. Se conserva el esquema
+exacto: role/bytes globales y búsquedas de keys en diccionarios anchos mantienen
+los compromisos de recorrido del esquema15; no todos los predicados tienen índice.
+
+`ken_structural::ProjectAcquisition` conecta manifest, builder, normalización y
+publicación. El caller recibe `AcquiredProject`, que posee el store y presta un
+`index()`. El índice ejecutable persistente tiene identidad de implementación y
+no usa la cuota LRU de resultados JSON. Los hits mantienen las omisiones actuales;
+un frontend fallido produce un índice temporal y una clave de resultado vacía.
+El lock entre procesos cubre adquisición y se libera antes de consultar.
+
+```rust
+use ken_structural::ProjectAcquisition;
+use ken_store::structural::graph::FactFilter;
+
+let mut acquired = ProjectAcquisition::new(&mut builder, database, true)
+    .acquire(std::path::Path::new("src"), ScanLimits::default(), || Ok(()))?;
+let index = acquired.index()?;
+let mut calls = index.facts(&FactFilter::relation("POSSIBLE_CALL"))?;
+for fact in calls.rows()? {
+    let fact = fact?;
+    // Consumir candidatos manteniendo atributos, evidencia y duplicados.
+}
+```
+
+Las referencias nuevas comparan79 normalizaciones,13 casos tipados adicionales,
+16 índices y vistas de fuente,286 valores/signaturas y una base SQLite original.
+También se ejercitan adquisición caliente/fría, edición, omisiones, fallos,
+locks, cancelación, publicaciones abandonadas, ciclos, GC/pins, profundidad150 e
+interrupción durante trabajo SQL. Una prueba sobre10000 operaciones comprueba
+coste acotado de accesos que sí tienen índice, incluidos atributos correlacionados.
+Son bibliotecas nativas: compilador, operadores, sesiones y evaluación BODY KQL1/2,
+configuración/env y transport público siguen pendientes. M5 sigue abierto.
+Validación del bloque:81 raíces del alcance afectado (program30, structural15,
+store30 y syntax6); los seis escenarios de la revisión incluyen lectores WAL,
+crecimiento SQL, lotes/cancelación, sintaxis legacy y overflow de IDs. Clippy y
+formato se ejecutan sobre los tres paquetes afectados. No son recibos globales
+de búsqueda. Ver [plan](superpowers/plans/2026-10-29-rust-query-graph.md).
 
 ## Navegación nativa del índice
 

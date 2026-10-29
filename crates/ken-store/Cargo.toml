@@ -7,11 +7,12 @@ publish.workspace = true
 license.workspace = true
 
 [dependencies]
+ken-text = { path = "../ken-text" }
 ken-core = { path = "../ken-core" }
 ken-program = { path = "../ken-program" }
 flate2.workspace = true
 sha2.workspace = true
-rusqlite.workspace = true
+rusqlite = { workspace = true, features = ["hooks"] }
 thiserror.workspace = true
 serde.workspace = true
 serde_json.workspace = true
@@ -20,4 +21,3 @@ libc.workspace = true
 
 [dev-dependencies]
 base64 = "0.23.1"
-rusqlite = { workspace = true, features = ["hooks"] }
