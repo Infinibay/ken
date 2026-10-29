@@ -10,6 +10,21 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización de perfiles del 28/10: `IndexNavigation.profile` migra los perfiles
+de responsabilidad de archivos y paquetes; `ken_read(include=["profile"])`
+completa los cinco includes del original por CLI/MCP, sin modelos ni escrituras.
+Dieciséis casos de biblioteca y cinco respuestas públicas conservan datos y
+texto, salvo el orden explícitamente indeterminado de un par con exactamente
+iguales frecuencias/scores. Se conserva la captura original intacta y se demuestra
+la igualdad antes de permitir ese único intercambio en la comparación. Pasaron
+nueve raíces nativas del alcance y Clippy estricto; revisión sin nuevos hallazgos.
+Referencia esencial 1.579 bytes, SHA-256
+`947062689930f5f7c0404fdec13b2d9d07a22fc36a9eaf160e6e1825e04b12ea`.
+Ver [plan](superpowers/plans/2026-10-28-rust-responsibility-profile.md).
+Inventarios para la próxima calificación: público 249 y BestSearch 227;
+no representan una nueva calificación global. Paquetes sólo por API de biblioteca;
+el include público conserva el perfil de archivo del original.
+
 Actualización de texto del 28/10: `WorktreeTextSearch` implementa búsqueda literal
 en fuente actual y BM25 con espejo FTS incremental/atómico. CLI `tools find` y
 MCP `ken_find(scope="text")` comparten el servicio, filtros por lenguaje y
@@ -22,8 +37,7 @@ Referencia esencial: 1.949 bytes, SHA-256
 `75a95de020973bcaba8e06a1e2eeeffb5c85e28768a35649d5a1c8798f580396`.
 Ver [plan](superpowers/plans/2026-10-28-rust-worktree-text.md) y
 [uso](rust-migration.md#búsqueda-nativa-de-texto). Crudos/workspace locales sin
-seguimiento. Inventarios para la próxima calificación: público 247, BestSearch 226;
-esto no cambia recibos históricos ni cierra la matriz pendiente.
+seguimiento. Esto no cambia recibos históricos ni cierra la matriz pendiente.
 
 Actualización de navegación del 28/10: implementado un bloque completo de lectura
 del índice con `IndexNavigation`, documentos ordenados y presentación compacta.
@@ -132,7 +146,7 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | Búsqueda pública por defecto x86_64 | CLI y MCP stdio implementados; calificación en curso | Manifest de instalación reubicable, recursos diferidos, texto/JSON y sesiones recuperables. MCP negocia el protocolo 2025-11-25; otros scopes/modos y el protocolo moderno quedan pendientes |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
-| M7 | Parcial: navegación de índice y búsqueda literal/BM25 por CLI/MCP implementadas | Quedan daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
+| M7 | Parcial: navegación, perfiles y búsqueda literal/BM25 por CLI/MCP implementadas | Quedan daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
 | M8 | Pendiente | Distribución, matriz global, upgrade/rollback y promoción nativa sin Python |
 
 No hay un porcentaje funcional global acreditado. M3 incluye el modelo común,

@@ -1,6 +1,8 @@
 #[path = "support/public_evidence.rs"]
 #[allow(dead_code)]
 mod evidence;
+#[path = "../../ken-search/tests/support/responsibility_profile.rs"]
+mod responsibility_profile;
 #[path = "../../ken-search/tests/support/navigation.rs"]
 #[allow(dead_code)]
 mod support;
@@ -75,16 +77,15 @@ fn actual_cli_tools_match_original_json_and_compact_without_model_installation()
     assert!(listed.status.success());
     let text = String::from_utf8(listed.stdout).unwrap();
     assert!(text.contains("ken_read") && text.contains("ken_related"));
-    let denied = command(&fixture)
+    let profile = command(&fixture)
         .args(["tools", "read", "src/service.py", "--include", "profile"])
         .output()
         .unwrap();
-    assert_eq!(denied.status.code(), Some(1));
-    assert!(denied.stdout.is_empty());
+    assert!(profile.status.success());
     assert!(
-        String::from_utf8(denied.stderr)
+        String::from_utf8(profile.stdout)
             .unwrap()
-            .contains("not available")
+            .contains("evidence_strength")
     );
     assert_eq!(fixture.database_hash(), hash);
     assert!(!fixture.paths.root().join("cache").exists());
@@ -349,4 +350,59 @@ fn actual_text_cli_and_stdio_match_original_history_without_models() {
         client.finish();
         assert!(!fixture.paths.root().join("cache").exists());
     }
+}
+
+#[test]
+fn actual_profile_cli_and_stdio_match_original_without_models() {
+    let fixture = responsibility_profile::fixture();
+    let hash = fixture.database_hash();
+    let mut client = Mcp::new(&fixture);
+    client.initialize();
+    for (id, row) in responsibility_profile::reference()["public"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .enumerate()
+    {
+        for json_output in [false, true] {
+            let mut args = row["args"].clone();
+            if json_output {
+                args["output_format"] = json!("json");
+            }
+            let reply = client.call(
+                id as i64 * 2 + if json_output { 3 } else { 2 },
+                "ken_read",
+                args,
+            );
+            let cli_row = json!({"request":{"tool":"ken_read","args":row["args"]}});
+            let got = command(&fixture)
+                .args(cli_args(&cli_row, json_output))
+                .output()
+                .unwrap();
+            assert!(
+                got.status.success(),
+                "{}",
+                String::from_utf8_lossy(&got.stderr)
+            );
+            assert!(got.stderr.is_empty());
+            if json_output {
+                assert_eq!(
+                    serde_json::from_str::<Value>(text(&reply)).unwrap(),
+                    row["result"]
+                );
+                assert_eq!(
+                    serde_json::from_slice::<Value>(&got.stdout).unwrap(),
+                    row["result"]
+                );
+            } else {
+                assert_eq!(text(&reply), row["compact"].as_str().unwrap());
+                assert_eq!(
+                    String::from_utf8(got.stdout).unwrap(),
+                    row["compact"].as_str().unwrap().to_owned() + "\n"
+                );
+            }
+        }
+    }
+    client.finish();
+    assert_eq!(fixture.database_hash(), hash);
 }

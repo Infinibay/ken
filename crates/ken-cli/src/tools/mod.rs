@@ -16,8 +16,8 @@ use std::path::PathBuf;
 pub(crate) fn definitions() -> Vec<Value> {
     vec![
         find::definition(),
-        json!({"name":"ken_read","description":"Read an indexed file's symbols, imports, documentation and live source without model resources. File profiles are not available yet.","inputSchema":{"type":"object","additionalProperties":false,"required":["path"],"properties":{
-            "path":{"type":"string"},"include":{"anyOf":[{"type":"array","items":{"type":"string","enum":["symbols","imports","docstrings","source"]}},{"type":"null"}],"default":null},
+        json!({"name":"ken_read","description":"Read an indexed file's symbols, imports, documentation, live source and distinguishing-term responsibility profile without model resources.","inputSchema":{"type":"object","additionalProperties":false,"required":["path"],"properties":{
+            "path":{"type":"string"},"include":{"anyOf":[{"type":"array","items":{"type":"string","enum":["symbols","imports","docstrings","source","profile"]}},{"type":"null"}],"default":null},
             "qualname":{"type":"string","default":""},"start_line":{"type":"integer","default":0},"end_line":{"type":"integer","default":0},"max_chars":{"type":"integer","default":0},"output_format":{"type":"string","enum":["compact","json"],"default":"compact"}
         }}}),
         json!({"name":"ken_related","description":"Explore indexed neighbors or a bounded import graph. Other relationships are not available in the native binding yet.","inputSchema":{"type":"object","additionalProperties":false,"required":["target","relation"],"properties":{

@@ -14,6 +14,7 @@ macro_rules! doc {
     };
 }
 mod files;
+mod profile;
 mod relations;
 
 /// One read-only index snapshot. Open a new instance for each public tool call.
@@ -144,12 +145,6 @@ impl IndexNavigation {
                 doc!("ok":false,"error":format!("unknown include values: [{quoted}]"),"include":allowed.iter().map(|v|v.to_string()).collect::<Vec<_>>()),
             );
         }
-        if include.iter().any(|v| v == "profile") {
-            return Err(ken_retrieval::RetrievalError::Invalid(
-                "file profiles are not available in native ken_read yet".into(),
-            )
-            .into());
-        }
         let want = |v: &str| include.iter().any(|item| item == v);
         let mut result = doc!("ok":true,"path":path.clone());
         let detail = !request.qualname.is_empty() && (want("symbols") || want("docstrings"));
@@ -186,6 +181,9 @@ impl IndexNavigation {
                     },
                 )?,
             );
+        }
+        if want("profile") {
+            result.insert("profile", self.profile(&path, "file", 12)?);
         }
         Ok(result)
     }

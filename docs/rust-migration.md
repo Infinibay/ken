@@ -38,6 +38,7 @@ documentación, código fuente y relaciones sin configurar recursos de modelos:
 ./target/release/ken-rs tools --path . read src/ken/search.py
 ./target/release/ken-rs tools --path . --json read src/ken/search.py --include symbols imports docstrings
 ./target/release/ken-rs tools --path . read src/ken/search.py --qualname module_graph --include symbols source
+./target/release/ken-rs tools --path . read src/ken/search.py --include profile
 ./target/release/ken-rs tools --path . related src/ken/search.py imports --depth 2 --limit 20
 ./target/release/ken-rs tools --path . related src/ken/search.py neighbors
 ./target/release/ken-rs tools --path . find src/ken/search.py --scope tests
@@ -49,7 +50,7 @@ La salida predeterminada es texto compacto; `--json` devuelve los datos y
 `ken_read`, `ken_related` y `ken_find` después de `tools`.
 
 El mismo bloque está disponible por MCP mediante `ken-rs mcp PROYECTO`:
-`ken_read` admite `symbols`, `imports`, `docstrings` y `source`; `ken_related`
+`ken_read` admite `symbols`, `imports`, `docstrings`, `source` y `profile`; `ken_related`
 admite `neighbors` e `imports`; `ken_find` incorpora `scope="tests"`.
 Cada llamada abre una vista de solo lectura del índice actual. Una instancia de
 biblioteca `IndexNavigation` conserva su snapshot hasta cerrarse. Los snippets
@@ -59,8 +60,23 @@ El resumen del proyecto también está migrado como API de biblioteca.
 Este bloque pasó 23 pruebas nativas locales de navegación, CLI/MCP, búsqueda y
 status, junto con Clippy estricto. Compara estructuralmente JSON y exactamente
 texto compacto de 49 casos de dominio y 19 respuestas públicas nuevas del
-original. Los perfiles de archivo, otras relaciones y la matriz global de CPU
+original. Otras relaciones y la matriz global de CPU
 siguen pendientes; estas pruebas no acreditan la migración completa.
+
+El bloque posterior de perfiles completa todos los valores originales de
+`ken_read.include`. Describe la responsabilidad mediante términos reales de los
+símbolos y la documentación, contrastados con el resto del índice. La biblioteca
+`IndexNavigation.profile(path, granularity, top_terms)` también admite paquetes
+con `granularity="dir"`; el tool público solicita perfiles de archivo. Informa
+evidencia `none`/`thin`/`moderate`/`strong`, sin resumir con modelos. No escribe en
+la base. Conserva los scores y ordena lexicográficamente los empates exactos, que
+Python dejaba al orden variable de sus conjuntos.
+
+Se compararon 16 perfiles originales y cinco respuestas públicas JSON/texto,
+con pruebas reales CLI/MCP sin instalación de modelos. Sólo el par demostrado
+`client`/`explanation` (frecuencias idénticas) difiere en orden en un perfil de
+directorio; la referencia original permanece intacta. Pasaron las nueve pruebas
+nativas del alcance de perfiles/navegación/texto y Clippy estricto.
 
 ## Búsqueda nativa de texto
 
