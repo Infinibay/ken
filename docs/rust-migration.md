@@ -15,8 +15,9 @@ Ver el [estado actual](rust-migration-handoff.md#bestsearch-implementado-diagnó
 
 La rama `codex/rust-migration` añade un ejecutable temporal, `ken-rs`.
 La implementación Python, sus datos y sus integraciones siguen activos.
-La primera entrega implementa exclusivamente `status`; las siguientes etapas
-están descritas en [el contrato aprobado](superpowers/specs/2026-10-18-rust-migration-design.md).
+La entrega inicial implementó `status`. Ahora también están implementadas la
+búsqueda por defecto y la navegación del índice descrita abajo; las etapas
+restantes están en [el contrato aprobado](superpowers/specs/2026-10-18-rust-migration-design.md).
 
 ```sh
 cargo build --release --locked -p ken-cli
@@ -27,6 +28,39 @@ cargo build --release --locked -p ken-cli
 Rust 1.95.0 y los componentes rustfmt/clippy quedan fijados en
 `rust-toolchain.toml`. Cargo fija las dependencias directas y transitivas.
 No se instala ni reemplaza el comando `ken` para ensayar esta entrega.
+
+## Navegación nativa del índice
+
+Con una base `.ken/ken.db` ya indexada, estos comandos leen símbolos, imports,
+documentación, código fuente y relaciones sin configurar recursos de modelos:
+
+```sh
+./target/release/ken-rs tools --path . read src/ken/search.py
+./target/release/ken-rs tools --path . --json read src/ken/search.py --include symbols imports docstrings
+./target/release/ken-rs tools --path . read src/ken/search.py --qualname module_graph --include symbols source
+./target/release/ken-rs tools --path . related src/ken/search.py imports --depth 2 --limit 20
+./target/release/ken-rs tools --path . related src/ken/search.py neighbors
+./target/release/ken-rs tools --path . find src/ken/search.py --scope tests
+./target/release/ken-rs tools --list
+```
+
+La salida predeterminada es texto compacto; `--json` devuelve los datos y
+`--compact` produce JSON en una línea. También se admiten los nombres completos
+`ken_read`, `ken_related` y `ken_find` después de `tools`.
+
+El mismo bloque está disponible por MCP mediante `ken-rs mcp PROYECTO`:
+`ken_read` admite `symbols`, `imports`, `docstrings` y `source`; `ken_related`
+admite `neighbors` e `imports`; `ken_find` incorpora `scope="tests"`.
+Cada llamada abre una vista de solo lectura del índice actual. Una instancia de
+biblioteca `IndexNavigation` conserva su snapshot hasta cerrarse. Los snippets
+leen la fuente actual con rutas confinadas al proyecto y presupuesto de caracteres.
+El resumen del proyecto también está migrado como API de biblioteca.
+
+Este bloque pasó 23 pruebas nativas locales de navegación, CLI/MCP, búsqueda y
+status, junto con Clippy estricto. Compara estructuralmente JSON y exactamente
+texto compacto de 49 casos de dominio y 19 respuestas públicas nuevas del
+original. Los perfiles de archivo, otras relaciones y la matriz global de CPU
+siguen pendientes; estas pruebas no acreditan la migración completa.
 
 ## Continuación del 24 de octubre: ranking y Linux x86_64
 

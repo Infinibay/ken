@@ -10,6 +10,24 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización de navegación del 28/10: implementado un bloque completo de lectura
+del índice con `IndexNavigation`, documentos ordenados y presentación compacta.
+CLI `tools read/related/find` y MCP `ken_read`, `ken_related` y `ken_find` con
+`scope="tests"` comparten el mismo servicio. Incluye símbolos, outlines, detalles,
+snippets, grafos de imports, vecinos y asociación de tests; el resumen del proyecto
+está disponible como API de biblioteca. No necesita instalación de modelos.
+Pasaron 23 raíces nativas locales y Clippy estricto; 49 casos de dominio y 19
+respuestas públicas nuevas del original conservan JSON/texto. La revisión final
+corrigió la distinción texto/JSON de `tools --compact find --response-format compact`
+y la lectura de todos los archivos en grafos pequeños (ahora sólo consulta IDs
+seleccionados). Cada llamada pública abre una vista nueva; la instancia de
+biblioteca conserva un snapshot de lectura. Perfiles de archivo, otras relaciones,
+otros esquemas de presentación y calificación global quedan para sus bloques.
+Ver [plan](superpowers/plans/2026-10-28-rust-index-navigation.md) y
+[uso](rust-migration.md#navegación-nativa-del-índice). Referencia comprimida esencial:
+4.580 bytes, SHA-256 `5d8140a9c79d558412201aa1f22d6bd2b207b6dacefe5ad47ce7a4c2f62fbae3`.
+El resto de los originales, logs y workspace se conservan localmente, sin seguimiento.
+
 Actualización posterior del 28/10: `ken-rs search-files`, `search-symbols` y
 `mcp` ya tienen implementación nativa para la búsqueda por defecto/compacta en
 Linux x86_64. Comparten `SearchApplication`, recursos explícitos y carga diferida
@@ -99,7 +117,7 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | Búsqueda pública por defecto x86_64 | CLI y MCP stdio implementados; calificación en curso | Manifest de instalación reubicable, recursos diferidos, texto/JSON y sesiones recuperables. MCP negocia el protocolo 2025-11-25; otros scopes/modos y el protocolo moderno quedan pendientes |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
-| M7 | Pendiente | Daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
+| M7 | Parcial: navegación de índice por CLI/MCP implementada | Quedan daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
 | M8 | Pendiente | Distribución, matriz global, upgrade/rollback y promoción nativa sin Python |
 
 No hay un porcentaje funcional global acreditado. M3 incluye el modelo común,

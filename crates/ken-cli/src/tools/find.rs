@@ -1,4 +1,5 @@
 //! The implemented ken_find subset delegates to the shared public application.
+use super::ToolReply;
 use ken_core::project::ProjectPaths;
 use ken_retrieval::query::{SearchOptions, SearchRequest};
 use ken_search::public::SearchApplication;
@@ -66,7 +67,7 @@ impl FindService {
             application: SearchApplication::new(installation),
         }
     }
-    pub(super) fn call(&mut self, raw: &RawValue) -> Result<String, String> {
+    pub(super) fn call(&mut self, raw: &RawValue) -> Result<ToolReply, String> {
         let args: Arguments = serde_json::from_str(raw.get()).map_err(|e| e.to_string())?;
         if args.scope == "tests" {
             if args.piece_kind != "auto"
@@ -122,9 +123,11 @@ impl FindService {
             .find(&self.paths, &request)
             .map_err(|e| e.to_string())?;
         if args.output_format == "json" && args.response_format != "compact" {
-            serde_json::to_string_pretty(&response).map_err(|e| e.to_string())
+            serde_json::to_string_pretty(&response)
+                .map(ToolReply::Json)
+                .map_err(|e| e.to_string())
         } else {
-            Ok(response.render(args.full))
+            Ok(ToolReply::Text(response.render(args.full)))
         }
     }
 }

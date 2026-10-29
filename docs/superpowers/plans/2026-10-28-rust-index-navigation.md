@@ -24,12 +24,12 @@ ToolDocument owns ordered data and compact projection; transports parse/delegate
 - Model-free CLI/MCP must work without an installation and leave index data intact.
 
 ## One implementation block
-- [ ] Capture first-time original navigation/public presentation cases once; save
+- [x] Capture first-time original navigation/public presentation cases once; save
   input/source/output identities, raw journal and compact immutable fixture.
-- [ ] Add representative library and actual CLI/MCP caller tests against that
+- [x] Add representative library and actual CLI/MCP caller tests against that
   fixture, including read-only operation and unsupported capabilities.
-- [ ] Implement ToolDocument/presentation; indexed navigation/files/source;
+- [x] Implement ToolDocument/presentation; indexed navigation/files/source;
   relations/test ranking; CLI tools and shared MCP dispatch in one batch.
-- [ ] Run the combined affected-scope validation once; investigate and repair
+- [x] Run the combined affected-scope validation once; investigate and repair
   concrete failures with focused reruns. Review once, address material findings,
   update handoff, commit/push. Leave broad CPU qualification at the milestone.

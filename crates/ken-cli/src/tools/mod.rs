@@ -25,15 +25,28 @@ pub(crate) fn definitions() -> Vec<Value> {
         }}}),
     ]
 }
+pub(crate) enum ToolReply {
+    Json(String),
+    Text(String),
+}
+impl ToolReply {
+    pub(crate) fn into_text(self) -> String {
+        match self {
+            Self::Json(value) | Self::Text(value) => value,
+        }
+    }
+}
 pub(crate) fn present(
     value: &Document,
     name: &str,
     format: &str,
     full: bool,
-) -> Result<String, String> {
+) -> Result<ToolReply, String> {
     match format {
-        "json" => serde_json::to_string_pretty(value).map_err(|e| e.to_string()),
-        "compact" => Ok(render(value, name, full)),
+        "json" => serde_json::to_string_pretty(value)
+            .map(ToolReply::Json)
+            .map_err(|e| e.to_string()),
+        "compact" => Ok(ToolReply::Text(render(value, name, full))),
         _ => Err("output_format must be compact or json".into()),
     }
 }
@@ -69,7 +82,7 @@ impl ToolService {
     pub(crate) fn known(name: &str) -> bool {
         ["ken_find", "ken_read", "ken_related"].contains(&name)
     }
-    pub(crate) fn call(&mut self, name: &str, raw: &RawValue) -> Result<String, String> {
+    pub(crate) fn call(&mut self, name: &str, raw: &RawValue) -> Result<ToolReply, String> {
         if name == "ken_find" {
             return self.find.call(raw);
         }
@@ -167,11 +180,15 @@ pub fn run(
     }
     let raw = RawValue::from_string(value.to_string())?;
     match ToolService::new(paths, installation).call(name, &raw) {
-        Ok(mut stdout) => {
-            if args.compact {
-                let doc: Document = serde_json::from_str(&stdout)?;
-                stdout = serde_json::to_string(&doc)?;
-            }
+        Ok(reply) => {
+            let stdout = match reply {
+                ToolReply::Text(text) if args.compact => serde_json::to_string(&text)?,
+                ToolReply::Json(text) if args.compact => {
+                    let doc: Document = serde_json::from_str(&text)?;
+                    serde_json::to_string(&doc)?
+                }
+                reply => reply.into_text(),
+            };
             Ok(CommandOutput {
                 code: 0,
                 stdout: stdout + "\n",

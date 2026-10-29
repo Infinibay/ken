@@ -240,6 +240,36 @@ fn default_compact_and_json_search_quote_current_source_without_model_resources(
 
 #[path = "../../ken-search/tests/support/search_response.rs"]
 mod response;
+#[test]
+fn compact_tool_cli_encodes_compact_search_as_a_json_string() {
+    let fixture = Fixture::new();
+    fixture
+        .index(&json!({"source.py":"def public_transport_unique(value):\n    return value + 3\n"}));
+    let args = [
+        "tools",
+        "--compact",
+        "find",
+        "public_transport_unique",
+        "--scope",
+        "symbols",
+        "--response-format",
+        "compact",
+    ]
+    .map(str::to_owned);
+    let output = fixture.invoke(&fixture.project, &args);
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(output.stderr.is_empty());
+    let source: String = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(
+        source,
+        "source.py:1-2 :: public_transport_unique\n1 | def public_transport_unique(value):\n2 |     return value + 3"
+    );
+    assert_eq!(String::from_utf8(output.stdout).unwrap().lines().count(), 1);
+}
 fn configure_registered(fixture: &Fixture) {
     let mut config: Value =
         serde_json::from_slice(&fs::read(&fixture.installation).unwrap()).unwrap();

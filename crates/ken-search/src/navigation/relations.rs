@@ -48,15 +48,21 @@ impl IndexNavigation {
                 }
             }
         }
-        let mut query = self.conn.prepare(
-            "SELECT id,path,language,symbol_count,indexed_at FROM ci_files ORDER BY path",
-        )?;
-        let nodes = query
-            .query_map([], FileRecord::row)?
-            .collect::<rusqlite::Result<Vec<_>>>()?
-            .into_iter()
-            .filter(|f| seen.contains(&f.id))
-            .collect::<Vec<_>>();
+        let ids = seen.iter().copied().collect::<Vec<_>>();
+        let mut nodes = Vec::with_capacity(ids.len());
+        // Stay below SQLite's portable bind limit, including for large graphs.
+        for chunk in ids.chunks(900) {
+            let placeholders = std::iter::repeat_n("?", chunk.len())
+                .collect::<Vec<_>>()
+                .join(",");
+            let mut query=self.conn.prepare(&format!("SELECT id,path,language,symbol_count,indexed_at FROM ci_files WHERE id IN({placeholders})"))?;
+            nodes.extend(
+                query
+                    .query_map(rusqlite::params_from_iter(chunk), FileRecord::row)?
+                    .collect::<rusqlite::Result<Vec<_>>>()?,
+            );
+        }
+        nodes.sort_by(|a, b| a.path.cmp(&b.path));
         let paths: BTreeMap<_, _> = nodes.iter().map(|f| (f.id, f.path.clone())).collect();
         let mut kept = edges
             .iter()
@@ -231,4 +237,39 @@ fn looks_like_test(path: &str) -> bool {
                 .iter()
                 .any(|suffix| s.ends_with(suffix))
         })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ken_store::ProjectDatabase;
+    #[test]
+    fn bounded_graph_does_not_scan_unrelated_files() {
+        let directory = tempfile::tempdir().unwrap();
+        std::fs::create_dir(directory.path().join(".ken")).unwrap();
+        let paths = ProjectPaths::at(
+            directory.path(),
+            &DiscoveryContext {
+                cwd: directory.path().into(),
+                home: None,
+                forced_root: None,
+            },
+        )
+        .unwrap();
+        let mut db = ProjectDatabase::open(&paths.db()).unwrap();
+        db.initialize().unwrap();
+        db.connection().execute_batch("INSERT INTO ci_files(path,content_hash,mtime,indexed_at)VALUES('root.py',X'00',0,0);
+            WITH RECURSIVE files(n)AS(SELECT 1 UNION ALL SELECT n+1 FROM files WHERE n<5000)
+            INSERT INTO ci_files(path,content_hash,mtime,indexed_at)SELECT 'unrelated/'||n||'.py',X'00',0,0 FROM files;").unwrap();
+        drop(db);
+        let nav = IndexNavigation::open(&paths).unwrap();
+        // Deterministic SQLite instruction budget, independent of wall-clock speed.
+        nav.conn.progress_handler(1000, Some(|| true)).unwrap();
+        let graph = nav.module_graph("root.py", 0, 1).unwrap();
+        assert_eq!(graph.get("nodes").array().len(), 1);
+        assert_eq!(
+            graph.get("nodes").array()[0].get("path").string(),
+            Some("root.py")
+        );
+    }
 }

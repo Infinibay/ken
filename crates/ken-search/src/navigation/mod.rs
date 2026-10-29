@@ -16,6 +16,7 @@ macro_rules! doc {
 mod files;
 mod relations;
 
+/// One read-only index snapshot. Open a new instance for each public tool call.
 pub struct IndexNavigation {
     conn: Connection,
     paths: ProjectPaths,

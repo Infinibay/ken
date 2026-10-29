@@ -173,7 +173,7 @@ impl Server {
             .tools
             .call(&input.name, input.arguments.as_deref().unwrap_or(&empty))
         {
-            Ok(text) => tool_result(text, false),
+            Ok(reply) => tool_result(reply.into_text(), false),
             Err(error) => tool_result(error, true),
         };
         Some(result(id_value, output))
