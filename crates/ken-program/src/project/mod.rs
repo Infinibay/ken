@@ -350,3 +350,41 @@ pub fn link_nominal_owned(units: Vec<StructuralIr>) -> Result<StructuralIr> {
     check()?;
     Project::from_owned(units, &mut check)?.finish(&mut check)
 }
+
+/// Link source units and assemble all conservative project semantic evidence.
+/// Input units remain immutable; no parser, Python runtime or KQL is invoked.
+pub fn link_project(units: &[StructuralIr]) -> Result<StructuralIr> {
+    link_project_with_check(units, || Ok(()))
+}
+/// Check cancellation before copying units and at each original phase boundary.
+pub fn link_project_with_check(
+    units: &[StructuralIr],
+    mut check: impl FnMut() -> Result<()>,
+) -> Result<StructuralIr> {
+    check()?;
+    let paths = units
+        .iter()
+        .filter(|u| !u.diagnostics.is_empty())
+        .map(|u| u.path.clone())
+        .collect();
+    let graph = Project::from_owned(units.to_vec(), &mut check)?.finish(&mut check)?;
+    crate::semantic::enrich(graph, &paths, &mut check)
+}
+/// Consume disposable units without copying their source/metadata payloads.
+pub fn link_project_owned(units: Vec<StructuralIr>) -> Result<StructuralIr> {
+    link_project_owned_with_check(units, || Ok(()))
+}
+/// Ownership-transfer variant with the same cooperative phase checkpoints.
+pub fn link_project_owned_with_check(
+    units: Vec<StructuralIr>,
+    mut check: impl FnMut() -> Result<()>,
+) -> Result<StructuralIr> {
+    check()?;
+    let paths = units
+        .iter()
+        .filter(|u| !u.diagnostics.is_empty())
+        .map(|u| u.path.clone())
+        .collect();
+    let graph = Project::from_owned(units, &mut check)?.finish(&mut check)?;
+    crate::semantic::enrich(graph, &paths, &mut check)
+}

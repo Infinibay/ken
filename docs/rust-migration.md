@@ -63,7 +63,7 @@ del modelo común, junto con Clippy estricto. Incluyen una base SQLite original,
 las 15 versiones del esquema, fallos de DDL, rollback por presupuesto,
 publicaciones en paralelo, expiración de leases y una unidad de 7.500 entidades.
 El grafo semántico persistente completo, sus publicaciones, cachés de artefactos,
-las fases restantes del linker y el motor KQL siguen pendientes; este bloque no cierra M5.
+el servicio de construcción/caché y el motor KQL siguen pendientes; este bloque no cierra M5.
 Ver el [plan del núcleo](superpowers/plans/2026-10-28-rust-structural-store.md).
 
 ## Núcleo estructural: rutas de control
@@ -216,12 +216,73 @@ Pasaron 47 pruebas de syntax, 21 de program y seis de store/pipeline (74),
 Clippy estricto y formato. Los inventarios de futuras calificaciones quedan en
 público270/Best246; no son recibos globales nuevos.
 
-Este enlace llega hasta el punto anterior a `sequential_returns` del linker
-original. Sus fases posteriores de valores/efectos interprocedurales, la
-publicación/caché del grafo semántico y el compilador/ejecutor KQL1/2 siguen
+El API `link_nominal` termina antes de `sequential_returns` del linker original.
+El ensamblado completo descrito abajo añade las fases restantes. El servicio de
+construcción/caché del grafo semántico y el compilador/ejecutor KQL1/2 siguen
 pendientes. M5 no está cerrado; M6 y el resto de M7/M8 tampoco. No se repitieron
 modelos, matrices CPU/CI ni originales ya aceptados. Ver el
 [plan de esta etapa](superpowers/plans/2026-10-29-rust-source-frontend.md).
+
+## Ensamblado semántico completo del proyecto
+
+El linker nativo `ken_program::project::link_project` ya ensambla las fases del
+`semantic.link_project` original después del enlace nominal. El API nominal
+conserva su límite anterior. Para un proyecto completo:
+
+```rust
+use ken_program::project::{link_project, link_project_with_check, link_project_owned};
+
+let graph = link_project(&units)?; // conserva las unidades originales
+let graph = link_project_with_check(&units, || budget.check())?;
+let graph = link_project_owned(disposable_units)?; // transfiere ownership
+```
+
+La variante `link_project_owned_with_check` combina transferencia y cancelación.
+Los checkpoints se conservan en las fronteras originales, con la primera
+comprobación antes de copiar. Un error descarta el proyecto parcial y conserva
+las entradas prestadas.
+
+El ensamblado añade resúmenes de retornos/asignaciones y bindings, defaults de
+campos, dispatch de base, acreditación de interfaces funcionales Java, publicación
+de selectores ENTITY/OPERATION, descriptores de anotaciones, CFG/contextos y
+terminación. Luego agrega snapshots y lifecycle de colecciones, raíces nominales,
+métodos efectivos/slots y accesos a inputs, contratos estructurales y eventos C#,
+bindings correlacionados por ocurrencia, transferencias lineales de campos y
+miembros, inventarios de escrituras, Optional Java, concurrencia Python y contratos
+pequeños de valores. Cada análisis mantiene sus límites y estados sin cobertura;
+ninguno convierte evidencia sintáctica en garantías runtime de heap o ejecución.
+
+Los IDs de tipos conservan el hash de JSON Python ordenado, incluidos formato,
+escapes ASCII/UTF-16 y propiedades Unicode15 de palabras y dígitos. El orden de
+primeras declaraciones conserva la ubicación de evidencia de firmas compartidas.
+Los atributos que sólo se publican permanecen opacos como RawValue.
+
+La captura nueva cubre 79 proyectos y 639 descriptores de tipos en nueve lenguajes.
+53 proyectos parten de IR nominal y flujo ya congelados; esos originales no se
+repiten. Los otros 26 recorren fuente original nueva hasta el enlace completo.
+La integración Rust recorre los mismos bytes, valida el AST y publica/reabre
+cada proyecto mediante el almacén de snapshots existente. Proyectos independientes
+son revisiones de la ruta `<project>` y se publican por separado.
+La comparación conserva todos los atributos y la evidencia; los hechos derivados
+se cotejan como multiconjunto por las iteraciones de sets del original.
+
+La revisión final corrigió tres costes cuadráticos en histories de receptores,
+sets de contextos y matching de argumentos. Los índices conservan duplicados y
+spreads; cinco capturas adicionales comparan también el orden exacto y la igualdad
+de posiciones numéricas Python, incluidos bool y enteros mayores que2^53.
+Tres pruebas del API público verifican evidencia y límites lineales de
+asignaciones; otra preserva metadatos opacos en ENTITY/OPERATION sin copiarlos a
+un modelo JSON restringido.
+
+Pasaron30 raíces de program,48 de syntax y seis de store/pipeline (84),
+Clippy estricto y formato después de las correcciones. Los dos inventarios
+actualizados también compilan en Python.
+
+Esto completa la implementación del ensamblado semántico en biblioteca. El
+servicio que descubre archivos, construye/invalida manifest y administra cachés
+semánticas, así como el compilador y ejecutor KQL1/2, siguen pendientes. Tampoco
+cierra M5 ni reemplaza los comandos Python instalados. Ver el
+[plan](superpowers/plans/2026-10-29-rust-project-semantics.md).
 
 ## Navegación nativa del índice
 

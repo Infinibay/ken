@@ -54,8 +54,11 @@ pub fn query_literal_fold(c: char) -> char {
 }
 /// Unicode15 word ranges as literal regex character-class content.
 pub fn word_class_content() -> String {
+    class_content(&table().word_ranges)
+}
+fn class_content(ranges: &[[u32; 2]]) -> String {
     let mut result = String::new();
-    for &[start, end] in &table().word_ranges {
+    for &[start, end] in ranges {
         result.push(char::from_u32(start).expect("word scalar"));
         if end != start {
             result.push('-');
@@ -138,10 +141,14 @@ pub fn uppercase(c: char) -> bool {
 /// does not admit; the source-language boundary must not silently broaden.
 pub fn source_pattern(pattern: &str) -> String {
     static WORD: OnceLock<String> = OnceLock::new();
+    static DECIMAL: OnceLock<String> = OnceLock::new();
     let word = WORD.get_or_init(word_class_content);
+    let decimal = DECIMAL.get_or_init(|| class_content(&table().decimal_ranges));
     pattern
         .replace(r"\w", &format!("[{word}]"))
         .replace(r"\W", &format!("[^{word}]"))
+        .replace(r"\d", &format!("[{decimal}]"))
+        .replace(r"\D", &format!("[^{decimal}]"))
         .replace(r"\s", r"[\s\x1c-\x1f]")
 }
 /// Python word-boundary lookup for a literal keyword.

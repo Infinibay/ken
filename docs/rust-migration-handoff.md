@@ -10,6 +10,84 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización posterior del 29/10: `ken_program::project::link_project`,
+`link_project_with_check`, `link_project_owned` y
+`link_project_owned_with_check` implementan el ensamblado semántico completo del
+linker original. Los APIs nominales conservan su contrato. Nuevos módulos internos
+`semantic` separan resúmenes/defaults/publicación, tipos, colecciones, miembros y
+contratos, bindings, transferencias, inventarios y efectos; el acceso indexado al
+IR posee identidad y hechos, sin policy de análisis. No hay dependencia del parser
+ni runtime Python en ken-program; no se agregaron versiones de dependencias.
+
+Orden original conservado: sequential_returns → resúmenes de retornos/argumentos →
+defaults de campos → metadatos de parámetros/base dispatch/SAM Java →
+ENTITY/OPERATION/HAS_OPERATION → annotation_types → CFG/contexts/normal_completion →
+collection_snapshots/lifecycle → nominal_roots/member_access → structural_contracts →
+eventos C# → call_bindings → field/member transfers → binding_writes → Optional Java →
+concurrencia Python → resolved_allocations → explicit_write_inventory → value_contracts.
+Cancelación antes de copiar y en las fronteras originales; entradas prestadas
+inmutables en éxito/fallo. Transferencia evita copiar unidades desechables.
+
+Referencias nuevas observadas una vez, con autenticación antes/después del árbol
+original1066. El colector de la cola del linker conserva su AST desde la línea647
+y reconstruye sólo los locales nominales desde hechos congelados:
+
+| Recurso | Casos | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| project-semantics-reference.json.gz | 79 | 1007022 | `f50c367a4a8c2391c40a928e1dfcec0dcb3931e35b4bc17b09aa70ca3bda8479` |
+| annotation-types-reference.json.gz | 639 | 159570 | `f91717f82cfebaeaeb8b947b64332169b4bc314286e90d2d4f333c6a5b454428` |
+| argument-summary-reference.json | 5 | 26486 | `aca57c277d07cf8b2b4f3b071083653b755a743de642036377d75e0c7450784a` |
+
+53 casos consumen IR nominal/orígenes ya capturados, sin repetir sus originales;
+26 fuentes nuevas recorren todo el linker original y luego fuente→linker nativo→
+AST→snapshot/reapertura. Los checkpoints de esos26 también coinciden. Cada proyecto
+se publica por separado: todos tienen ruta IR `<project>` y no son unidades
+coexistentes de un snapshot. Comparar todo el grafo y evidencia como multiconjunto
+de hechos para admitir el orden de sets Python; conservar ENTITY attrs opacos y
+normalizar sólo las direcciones efímeras block_scope donde ya hay identidad estable.
+
+Correcciones halladas durante implementación: firmas compartidas Go deben tomar
+su evidencia del primer owner de HAS_METHOD, no del menor ID ordenado; los hashes
+de tipos usan JSON Python con espacios, keys ordenadas y ensure_ascii, incluyendo
+surrogates UTF-16 para astrales.639 casos incluyen profundidad32, tamaño10000,
+qualifiers/punteros/referencias, mapas/arrays/genéricos, control chars y Unicode.
+Dígitos posteriores a Unicode15 cambiaban cinco resultados: source_pattern congela
+ahora también clases decimal/inversa. No aumentar tolerancias ni ampliar cobertura
+silenciosamente. Transferencias de campos indexan calls/receivers por owner.
+
+La revisión final completa dejó tres Important de trabajo cuadrático: copia del
+historial de writes por cada receptor, copia del set de contextos por efecto y
+cruce de argumentos×parámetros con parsing repetido. Los tres se reprodujeron con
+contadores de asignaciones en el API público (2000 rebinds/calls,2000 contextos,
+dos llamadas de1500 argumentos:5,3M/5,4M/14,8M asignaciones) y se corrigieron en
+una pasada, sin re-review. Ahora se prestan slices/sets y se indexan parámetros
+por posición/nombre, preservando todas las ocurrencias duplicadas; spreads siguen
+produciendo la cantidad de edges que realmente corresponde. Las cinco capturas
+adicionales verifican orden completo, duplicados, spreads, bool/int/float, -0 y
+enteros mayores que2^53 sin redondear por f64. Los tres casos pasan con límites
+lineales generosos; un test aparte conserva RawValue de surrogates,1e400 y150
+arrays anidados en metadatos de fuente, ENTITY y OPERATION, con entradas intactas.
+El primer reviewer se perdió en un reinicio sin informe; la revisión completa
+se recuperó una sola vez y su informe queda persistido en el workspace local.
+
+Pasaron30 raíces de program,48 de syntax y seis de store/pipeline (84),
+Clippy estricto y formato después de las correcciones. Los dos inventarios
+actualizados también compilan en Python.
+
+Siguiente núcleo pendiente: servicio build_project/source_manifest, invalidación
+y cachés/publicación semántica persistente, luego compilador/operadores/sesiones
+KQL1/2. Las fases del linker enumeradas arriba ya están implementadas; no volver
+a listarlas como pendientes. M5 sigue abierto, al igual que M6 y resto de M7/M8.
+Los inventarios futuros quedan público271/Best247 por una nueva raíz syntax;
+las nuevas raíces de program no se incluyen en esos comandos. No son recibos
+globales ni nueva calificación CPU/CI. SkylakeX/Intel conserva su pendiente anterior.
+Crudos `.ken/rust-migration/project-semantics` y workspace
+`.superpowers/sdd/2026-10-29-rust-project-semantics` quedan locales, sin seguimiento.
+Ver [plan](superpowers/plans/2026-10-29-rust-project-semantics.md) y
+[API/alcance](rust-migration.md#ensamblado-semántico-completo-del-proyecto).
+
+Los apartados posteriores son el registro histórico de etapas anteriores.
+
 Etapa grande del 29/10 (inicio13:18:19UTC): frontend local completo de nueve
 lenguajes, enlace nominal del proyecto y orígenes/terminación local implementados
 en un mismo bloque. `ken_syntax::structural::lower_source` es ahora el frontend
