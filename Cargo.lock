@@ -1013,7 +1013,10 @@ dependencies = [
 name = "ken-store"
 version = "0.18.0"
 dependencies = [
+ "base64 0.23.1",
+ "flate2",
  "ken-core",
+ "ken-program",
  "libc",
  "rusqlite",
  "serde",

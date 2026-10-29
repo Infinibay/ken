@@ -3,7 +3,9 @@ mod boundaries;
 mod ir;
 mod model;
 pub use boundaries::{BodyRange, body_ranges};
+pub use ir::IR_VERSION;
 pub use ir::{Attributes, Entity, Fact, Operation, StructuralIr};
+pub use model::VERSION as AST_VERSION;
 pub use model::{Link, Node, Program, Reference, Scope, Symbol};
 
 #[derive(Debug, thiserror::Error)]

@@ -9,6 +9,7 @@ mod recovery;
 mod schema;
 mod segments;
 pub mod slots;
+pub mod structural;
 mod transaction;
 mod vectors;
 

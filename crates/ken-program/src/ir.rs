@@ -100,10 +100,12 @@ mod ordered_entities {
             }
             fn visit_map<M: MapAccess<'de>>(self, mut map: M) -> Result<Self::Value, M::Error> {
                 let mut values: Self::Value = Vec::new();
+                let mut positions = std::collections::BTreeMap::<String, usize>::new();
                 while let Some((key, value)) = map.next_entry::<String, Entity>()? {
-                    if let Some(existing) = values.iter_mut().find(|(k, _)| *k == key) {
-                        existing.1 = value;
+                    if let Some(&position) = positions.get(&key) {
+                        values[position].1 = value;
                     } else {
+                        positions.insert(key.clone(), values.len());
                         values.push((key, value));
                     }
                 }

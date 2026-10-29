@@ -29,6 +29,43 @@ Rust 1.95.0 y los componentes rustfmt/clippy quedan fijados en
 `rust-toolchain.toml`. Cargo fija las dependencias directas y transitivas.
 No se instala ni reemplaza el comando `ken` para ensayar esta entrega.
 
+## Núcleo estructural: almacén de snapshots
+
+El primer bloque M5a está implementado en `ken_store::structural`, reutilizando
+el IR y el AST común de `ken-program`. Trabaja directamente en Rust, con el
+esquema estructural existente de 15 versiones, separado de la base del índice
+y sus vectores. Todavía no produce el IR/CFG completo desde archivos ni ejecuta
+KQL: son los siguientes consumidores de este núcleo.
+
+La API `StructuralStore` guarda unidades IR inmutables, proyecta operaciones y
+AST, publica snapshots mediante comparación del padre esperado y ofrece
+`prepare_scan(snapshot, filter).rows()` para recorrer nodos en streaming. Cada
+scan une explícitamente la pertenencia al snapshot. Una publicación nueva no
+cambia los miembros de snapshots anteriores; dos escritores con el mismo padre
+no pueden publicar revisiones distintas como si ambos hubieran ganado.
+
+Las transacciones revierten unidades/proyecciones/publicaciones incompletas.
+Las propiedades conservan enteros grandes, booleanos, null y cero negativo.
+Los lectores y las adquisiciones en curso se protegen con leases entre procesos,
+renovables también mientras hay un cursor activo. La recolección respeta esos
+leases y las unidades aún en preparación. Un presupuesto diminuto usa una base
+temporal sin crear la ruta persistente; `cache_mb=None` expresa almacenamiento
+persistente sin límite de retención, con caché de páginas separada.
+
+El almacén valida ownership, checksums y DDL antes de modificar una base
+existente. Rechaza también bases ajenas que sólo tengan vistas: endurece un caso
+inseguro del original. Las migraciones up/down y los datos originales mantienen
+su formato. La reconstrucción de entidades de operaciones y el codec IR usan
+índices por ID para conservar orden/reemplazos sin búsquedas cuadráticas.
+
+Pasaron cinco pruebas nuevas de persistencia/concurrencia/migraciones y las ocho
+del modelo común, junto con Clippy estricto. Incluyen una base SQLite original,
+las 15 versiones del esquema, fallos de DDL, rollback por presupuesto,
+publicaciones en paralelo, expiración de leases y una unidad de 7.500 entidades.
+El grafo semántico persistente completo, sus publicaciones, cachés de artefactos,
+el productor CFG/IR y el motor KQL siguen pendientes; este bloque no cierra M5.
+Ver el [plan del núcleo](superpowers/plans/2026-10-28-rust-structural-store.md).
+
 ## Navegación nativa del índice
 
 Con una base `.ken/ken.db` ya indexada, estos comandos leen símbolos, imports,

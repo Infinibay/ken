@@ -10,6 +10,43 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización del núcleo del 29/10: empezó M5a de adentro hacia afuera, por pedido
+expreso del usuario. `ken_store::structural::StructuralStore` implementa la base
+de persistencia que consumirá KQL: migraciones exactas 1–15, ownership/DDL/checksums,
+unidades IR, propiedades tipadas, proyección de operaciones y AST, snapshots con
+publicación CAS y scans en streaming siempre ligados a pertenencia. Incluye
+leases/renovación durante cursores, conservación de adquisiciones activas, GC
+conservador y fallback de proyecciones al exceder retención. Reutiliza el modelo
+común/normalizador existente; no es un nuevo frontend ni un ejecutor KQL.
+El nuevo namespace queda separado de ProjectDatabase/vectores y no añade tools.
+Referencia esencial: 34.619 bytes, SHA-256
+`e7d887858d27db2395fc141011ff7a52baa33001499250b2bdf31e916ab36751`.
+El recurso SQL/layout de producción deriva una vez del original congelado:
+51.953 bytes, SHA-256
+`f5b49cc8a224d7758ea290a155916a0b45499c960f6659f5781a6403f08e5dbb`.
+Se observaron por primera vez las 15 versiones/up/down y tres unidades con sus
+AST/operaciones/propiedades/snapshots, preservando también una base original
+sintética. No se repitieron observaciones aceptadas ni se ejecutaron modelos.
+Pasaron cinco raíces nuevas del store y ocho de ken-program, Clippy estricto y
+formato. La suite histórica amplia se detuvo en maintenance por faltar
+KEN_RUST_REFERENCE antes de ejecutar su observador Python: no se habilitó esa
+variable para repetir originales de vectores ya aceptados. Los tests nuevos no
+ejecutan Python. Los recibos anteriores de vectores conservan su alcance.
+Una revisión encontró la aceptación de bases ajenas con sólo vistas (heredada de
+Python): se rechazó expresamente con RED→GREEN y comprobación de bytes intactos.
+La reconstrucción cuadrática de entidades se regraduó Important para unidades
+grandes y se indexó por ID; lo mismo en el codec IR ya existente, conservando su
+orden y último reemplazo. Se validó con 7.500 entidades y operaciones repetidas.
+La renovación usa estado interior mínimo para permitir heartbeat con un cursor
+vivo; su regresión pasó. No hubo re-review ni nuevos ciclos CPU/CI/archivos.
+Ver [plan](superpowers/plans/2026-10-28-rust-structural-store.md) y
+[API/alcance](rust-migration.md#núcleo-estructural-almacén-de-snapshots).
+Los contadores de búsqueda público255/BestSearch231 no cambian: sus comandos
+no seleccionan ken-store. Las cinco raíces estructurales se validan aparte y
+deberán formar parte del gate M5; no acreditarlas mediante los recibos M4/M7.
+Siguen pendientes el productor IR/CFG, el grafo/publicación semántica, los caches
+de artefactos y la ejecución KQL1/2; M5a/M5b/M5c no están cerrados.
+
 Actualización de codeflow del 28/10: señales estructurales de llamadas, bases y
 wiring migradas en `ken-syntax`; resolución de símbolos, tiers, enclosing spans,
 jerarquía y overrides en `ken-search/navigation/codeflow`. CLI/MCP añaden
@@ -191,7 +228,8 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | Búsqueda por piezas Linux x86_64 | PieceSearch aceptado | 45 observaciones originales, 3 frames Ettin reales; cadena completa local y dos réplicas CI, 586 pruebas de herramientas y 206 nativas por host; replay aislado |
 | M4d | En curso: BestSearch, preparación contextual y expansión CT2 x86 implementados; aceptación pendiente | Cadena local y CI Haswell pasan; contrastar SkylakeX con su original y completar Intel/MKL. Quedan modos de compatibilidad, modelos/canales y calidad global |
 | Búsqueda pública por defecto x86_64 | CLI y MCP stdio implementados; calificación en curso | Manifest de instalación reubicable, recursos diferidos, texto/JSON y sesiones recuperables. MCP negocia el protocolo 2025-11-25; otros scopes/modos y el protocolo moderno quedan pendientes |
-| M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
+| M5a | En curso: núcleo del almacén estructural implementado | Esquema15, unidades/AST/operaciones, snapshots/scans/leases/GC nativos; quedan productor IR/CFG, grafo semántico/publicación completa y calificación M5 |
+| M5b/M5c | Pendientes | KQL1/2, compilador/operadores/sesiones y flujo/completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
 | M7 | Parcial: navegación/perfiles, literal/BM25, orientación y llamadas/tipos/wiring por CLI/MCP implementadas | Quedan ranking de sesión, otras relaciones, daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
 | M8 | Pendiente | Distribución, matriz global, upgrade/rollback y promoción nativa sin Python |
