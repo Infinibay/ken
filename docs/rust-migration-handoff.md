@@ -10,6 +10,30 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización de orientación del 28/10: `ken_rank` migra scopes `project`,
+`architecture` y `changes` por CLI tools y MCP, sin modelos. Algoritmos iterativos
+de SCC/capas, comunidades, PageRank y calidad conservan cobertura y muestras
+acotadas. Git tiene plazo de cinco segundos, drenaje concurrente y cierre del
+grupo de procesos en Unix; los cambios conservan símbolos indexados de archivos
+borrados y las peculiaridades originales de porcelain v1. `session` queda
+explícitamente pendiente, con su default MCP original; CLI rank default project.
+Pasaron 31 raíces nativas del alcance y Clippy estricto en una validación conjunta;
+revisión independiente sin hallazgos. No se repitieron matrices CPU/CI/archivos.
+Referencia esencial 24.430 bytes, SHA-256
+`c6813356a1dfaeb9a9bcc19700a47cadfec8f6f18bf46d45ecb43b6ac4ef51c7`:
+24 informes de dominio y 20 públicos, más regresiones de ciclo12.000 y procesos.
+La primera preparación falló antes de consultas por FK; la segunda conservó sus
+42 registros aceptados antes de fallar en el setup Git por una ruta inexistente.
+Se observaron sólo las dos consultas Git pendientes y se selló todo sin repetir
+los 42 originales. Intentos, journals y comandos permanecen locales.
+Ver [plan](superpowers/plans/2026-10-28-rust-project-orientation.md) y
+[uso](rust-migration.md#orientación-nativa-del-proyecto).
+Inventarios para próxima calificación: público253, BestSearch230; no son nuevos
+recibos globales. Se instaló y aplicó deprecation-and-migration de
+addyosmani/agent-skills (~111k estrellas observadas), fuera del repositorio;
+sus pasos de retirar fuentes/cutover siguen subordinados a la autorización
+vigente de preservar Python hasta completar la migración.
+
 Actualización de perfiles del 28/10: `IndexNavigation.profile` migra los perfiles
 de responsabilidad de archivos y paquetes; `ken_read(include=["profile"])`
 completa los cinco includes del original por CLI/MCP, sin modelos ni escrituras.
@@ -21,8 +45,7 @@ nueve raíces nativas del alcance y Clippy estricto; revisión sin nuevos hallaz
 Referencia esencial 1.579 bytes, SHA-256
 `947062689930f5f7c0404fdec13b2d9d07a22fc36a9eaf160e6e1825e04b12ea`.
 Ver [plan](superpowers/plans/2026-10-28-rust-responsibility-profile.md).
-Inventarios para la próxima calificación: público 249 y BestSearch 227;
-no representan una nueva calificación global. Paquetes sólo por API de biblioteca;
+No representan una nueva calificación global. Paquetes sólo por API de biblioteca;
 el include público conserva el perfil de archivo del original.
 
 Actualización de texto del 28/10: `WorktreeTextSearch` implementa búsqueda literal
@@ -146,7 +169,7 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | Búsqueda pública por defecto x86_64 | CLI y MCP stdio implementados; calificación en curso | Manifest de instalación reubicable, recursos diferidos, texto/JSON y sesiones recuperables. MCP negocia el protocolo 2025-11-25; otros scopes/modos y el protocolo moderno quedan pendientes |
 | M5a/M5b/M5c | Pendientes | Productor/almacén estructural CFG/IR, KQL1/2 y sesiones, flujo y completitud |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
-| M7 | Parcial: navegación, perfiles y búsqueda literal/BM25 por CLI/MCP implementadas | Quedan daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
+| M7 | Parcial: navegación, perfiles, búsqueda literal/BM25 y orientación project/architecture/changes por CLI/MCP implementadas | Quedan ranking de sesión, daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
 | M8 | Pendiente | Distribución, matriz global, upgrade/rollback y promoción nativa sin Python |
 
 No hay un porcentaje funcional global acreditado. M3 incluye el modelo común,

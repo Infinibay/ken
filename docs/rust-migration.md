@@ -78,6 +78,40 @@ con pruebas reales CLI/MCP sin instalación de modelos. Sólo el par demostrado
 directorio; la referencia original permanece intacta. Pasaron las nueve pruebas
 nativas del alcance de perfiles/navegación/texto y Clippy estricto.
 
+## Orientación nativa del proyecto
+
+`ken_rank` añade tres scopes nativos, sin instalación de modelos:
+
+```sh
+./target/release/ken-rs tools --path . rank --scope project
+./target/release/ken-rs tools --path . --json rank --scope architecture --verbose 2
+./target/release/ken-rs tools --path . rank --scope changes
+```
+
+`project` resume lenguajes, directorios y archivos principales. `architecture`
+informa ciclos de imports, capas, comunidades y nodos centrales. Expone la
+cobertura de resolución, el tamaño completo de cada grupo, muestras acotadas,
+la calidad de las comunidades y si PageRank convergió. Los algoritmos son
+iterativos, también para ciclos grandes. `changes` lee Git con un límite de
+cinco segundos y añade símbolos/tests del índice a los cambios del worktree;
+conserva símbolos de archivos borrados y la interpretación original de nombres
+citados y renombres de porcelain v1. No escribe en la base.
+
+CLI y MCP comparten el mismo servicio y formatos de salida. `tools rank` usa
+`project` por defecto; MCP conserva el default original `session`, que todavía
+se rechaza explícitamente: hay que elegir uno de los tres scopes implementados.
+La biblioteca ofrece `IndexNavigation.architecture(depth, limit)` y
+`changed_context()`, además de `project_overview`.
+
+Se compararon 24 informes de arquitectura y 20 respuestas públicas originales
+JSON/texto en seis grafos y un worktree real. También se validaron un ciclo de
+12.000 archivos, grandes salidas de Git y el cierre de helpers al vencer el
+plazo. Las 31 raíces nativas del alcance afectado y Clippy estricto pasaron;
+la revisión final no encontró problemas pendientes. La matriz global sigue
+abierta. Se aplicó la skill
+[deprecation-and-migration](https://github.com/addyosmani/agent-skills/blob/main/skills/deprecation-and-migration/SKILL.md)
+para completar consumidores por interfaz y conservar el original hasta el cutover.
+
 ## Búsqueda nativa de texto
 
 `ken_find(scope="text")` está implementado en CLI y MCP para Linux x86_64,

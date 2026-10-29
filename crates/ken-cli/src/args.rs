@@ -44,6 +44,24 @@ pub enum ToolCommand {
     Related(RelatedArgs),
     #[command(alias = "ken_find")]
     Find(ToolFindArgs),
+    /// Summarize project layout, import architecture or Git worktree changes
+    #[command(alias = "ken_rank")]
+    Rank(ToolRankArgs),
+}
+#[derive(Debug, Args)]
+pub struct ToolRankArgs {
+    #[arg(long, default_value = "project")]
+    pub scope: String,
+    #[arg(default_value = "")]
+    pub query: String,
+    #[arg(long, default_value_t = 1, allow_hyphen_values = true)]
+    pub verbose: i64,
+    #[arg(long)]
+    pub explain: bool,
+    #[arg(long, default_value_t = 0, allow_hyphen_values = true)]
+    pub max_chars: i64,
+    #[arg(long, default_value = "compact")]
+    pub output_format: String,
 }
 #[derive(Debug, Args)]
 pub struct ReadArgs {

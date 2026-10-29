@@ -11,11 +11,14 @@ impl IndexNavigation {
         if !self.paths.root().join(&file.path).exists() {
             return Ok(doc!("ok":false,"error":"file missing on disk","path":file.path));
         }
-        let mut query=self.conn.prepare("SELECT kind,name,qualname,line_start,line_end,docstring FROM ci_symbols WHERE file_id=? ORDER BY line_start,line_end,name")?;
-        let rows = query
-            .query_map([file.id], |r| symbols(r, docs))?
-            .collect::<rusqlite::Result<Vec<_>>>()?;
+        let rows = self.indexed_symbols(file.id, docs)?;
         Ok(doc!("ok":true,"path":file.path.clone(),"language":file.language(),"symbols":rows))
+    }
+    pub(super) fn indexed_symbols(&self, file_id: i64, docs: bool) -> Result<Vec<Document>> {
+        let mut query=self.conn.prepare("SELECT kind,name,qualname,line_start,line_end,docstring FROM ci_symbols WHERE file_id=? ORDER BY line_start,line_end,name")?;
+        Ok(query
+            .query_map([file_id], |r| symbols(r, docs))?
+            .collect::<rusqlite::Result<_>>()?)
     }
     pub fn file_outline(
         &self,

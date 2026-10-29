@@ -13,7 +13,10 @@ macro_rules! doc {
         Document::object(vec![$(($key, Document::from($value))),*])
     };
 }
+mod architecture;
+mod changes;
 mod files;
+mod graph;
 mod profile;
 mod relations;
 

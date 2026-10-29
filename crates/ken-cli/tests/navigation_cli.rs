@@ -1,6 +1,8 @@
 #[path = "support/public_evidence.rs"]
 #[allow(dead_code)]
 mod evidence;
+#[path = "../../ken-search/tests/support/project_orientation.rs"]
+mod project_orientation;
 #[path = "../../ken-search/tests/support/responsibility_profile.rs"]
 mod responsibility_profile;
 #[path = "../../ken-search/tests/support/navigation.rs"]
@@ -100,9 +102,10 @@ struct Mcp {
 }
 impl Mcp {
     fn new(fixture: &Fixture) -> Self {
-        let mut child = command(fixture)
-            .arg("mcp")
-            .arg(fixture.paths.root())
+        Self::from_command(command(fixture).arg("mcp").arg(fixture.paths.root()))
+    }
+    fn from_command(command: &mut Command) -> Self {
+        let mut child = command
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::null())
@@ -191,7 +194,10 @@ fn actual_stdio_navigation_matches_original_and_observes_replaced_database() {
         .iter()
         .map(|v| v["name"].as_str().unwrap())
         .collect::<Vec<_>>();
-    assert_eq!(names, vec!["ken_find", "ken_read", "ken_related"]);
+    assert_eq!(
+        names,
+        vec!["ken_find", "ken_read", "ken_related", "ken_rank"]
+    );
     let mut id = 3;
     for row in reference()["public"].as_array().unwrap() {
         for json_output in [false, true] {
@@ -405,4 +411,96 @@ fn actual_profile_cli_and_stdio_match_original_without_models() {
     }
     client.finish();
     assert_eq!(fixture.database_hash(), hash);
+}
+
+#[test]
+fn actual_rank_cli_and_stdio_match_original_project_architecture_and_changes() {
+    fn run(fixture: &Fixture, rows: &[Value], git: bool) {
+        let hash = fixture.database_hash();
+        let make_command = || {
+            let mut cmd = command(fixture);
+            if git {
+                cmd.env("PATH", std::env::var_os("PATH").unwrap());
+            }
+            cmd
+        };
+        let mut client = if git {
+            Mcp::from_command(make_command().arg("mcp").arg(fixture.paths.root()))
+        } else {
+            Mcp::new(fixture)
+        };
+        client.initialize();
+        for (id, row) in rows.iter().enumerate() {
+            for json_output in [false, true] {
+                let mut args = row["args"].clone();
+                if json_output {
+                    args["output_format"] = json!("json");
+                }
+                let reply = client.call(
+                    id as i64 * 2 + if json_output { 3 } else { 2 },
+                    "ken_rank",
+                    args,
+                );
+                let got = make_command()
+                    .args(project_orientation::cli_args(&row["args"], json_output))
+                    .output()
+                    .unwrap();
+                assert!(
+                    got.status.success(),
+                    "{}",
+                    String::from_utf8_lossy(&got.stderr)
+                );
+                assert!(got.stderr.is_empty());
+                if json_output {
+                    assert_eq!(
+                        serde_json::from_str::<Value>(text(&reply)).unwrap(),
+                        row["result"],
+                        "{}",
+                        row["args"]
+                    );
+                    assert_eq!(
+                        serde_json::from_slice::<Value>(&got.stdout).unwrap(),
+                        row["result"],
+                        "{}",
+                        row["args"]
+                    );
+                } else {
+                    assert_eq!(
+                        text(&reply),
+                        row["compact"].as_str().unwrap(),
+                        "{}",
+                        row["args"]
+                    );
+                    assert_eq!(
+                        String::from_utf8(got.stdout).unwrap(),
+                        row["compact"].as_str().unwrap().to_owned() + "\n",
+                        "{}",
+                        row["args"]
+                    );
+                }
+            }
+        }
+        let failure = client.call(100, "ken_rank", json!({"scope":"session"}));
+        assert_eq!(failure["result"]["isError"], true);
+        client.finish();
+        assert_eq!(fixture.database_hash(), hash);
+    }
+    let reference = project_orientation::reference();
+    for (input, case) in reference["input"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .zip(reference["cases"].as_array().unwrap())
+    {
+        run(
+            &project_orientation::graph_fixture(input),
+            case["public"].as_array().unwrap(),
+            false,
+        );
+    }
+    run(
+        &project_orientation::changes_fixture(),
+        reference["changes"].as_array().unwrap(),
+        true,
+    );
 }

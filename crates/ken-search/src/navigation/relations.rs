@@ -76,7 +76,7 @@ impl IndexNavigation {
         }
         Ok(result)
     }
-    fn tests_for(&self, file: &FileRecord, limit: i64) -> Result<Vec<Document>> {
+    pub(super) fn tests_for(&self, file: &FileRecord, limit: i64) -> Result<Vec<Document>> {
         let stem = Path::new(&file.path)
             .file_stem()
             .and_then(|v| v.to_str())

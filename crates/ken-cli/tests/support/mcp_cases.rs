@@ -215,7 +215,7 @@ fn malformed_frames_invalid_calls_and_notifications_do_not_poison_the_stdio_sess
             .iter()
             .map(|tool| tool["name"].as_str().unwrap())
             .collect::<Vec<_>>(),
-        vec!["ken_find", "ken_read", "ken_related"]
+        vec!["ken_find", "ken_read", "ken_related", "ken_rank"]
     );
     assert_eq!(tools[0]["name"], "ken_find");
     assert_eq!(

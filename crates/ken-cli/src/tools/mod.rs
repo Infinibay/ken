@@ -23,6 +23,9 @@ pub(crate) fn definitions() -> Vec<Value> {
         json!({"name":"ken_related","description":"Explore indexed neighbors or a bounded import graph. Other relationships are not available in the native binding yet.","inputSchema":{"type":"object","additionalProperties":false,"required":["target","relation"],"properties":{
             "target":{"type":"string"},"relation":{"type":"string","enum":["neighbors","imports"]},"limit":{"type":"integer","default":10},"depth":{"type":"integer","default":1},"full":{"type":"boolean","default":false},"output_format":{"type":"string","enum":["compact","json"],"default":"compact"}
         }}}),
+        json!({"name":"ken_rank","description":"Orient in the indexed project: scopes project, architecture and changes run without model resources. Session ranking is not available in this native binding yet; choose an implemented scope explicitly.","inputSchema":{"type":"object","additionalProperties":false,"properties":{
+            "scope":{"type":"string","enum":["session","changes","project","architecture"],"default":"session"},"query":{"type":"string","default":""},"verbose":{"type":"integer","default":1},"explain":{"type":"boolean","default":false},"max_chars":{"type":"integer","default":0},"output_format":{"type":"string","enum":["compact","json"],"default":"compact"}
+        }}}),
     ]
 }
 pub(crate) enum ToolReply {
@@ -66,6 +69,31 @@ struct Related {
     #[serde(default)]
     full: bool,
 }
+#[derive(Deserialize)]
+#[serde(default, deny_unknown_fields)]
+struct Rank {
+    scope: String,
+    #[serde(
+        rename = "query",
+        deserialize_with = "ken_retrieval::query::deserialize_query_text"
+    )]
+    _query: ken_text::PythonText,
+    verbose: i64,
+    explain: bool,
+    #[serde(rename = "max_chars")]
+    _max_chars: i64,
+}
+impl Default for Rank {
+    fn default() -> Self {
+        Self {
+            scope: "session".into(),
+            _query: "".into(),
+            verbose: 1,
+            explain: false,
+            _max_chars: 0,
+        }
+    }
+}
 fn ten() -> i64 {
     10
 }
@@ -80,7 +108,7 @@ impl ToolService {
         }
     }
     pub(crate) fn known(name: &str) -> bool {
-        ["ken_find", "ken_read", "ken_related"].contains(&name)
+        ["ken_find", "ken_read", "ken_related", "ken_rank"].contains(&name)
     }
     pub(crate) fn call(&mut self, name: &str, raw: &RawValue) -> Result<ToolReply, String> {
         if name == "ken_find" {
@@ -121,6 +149,17 @@ impl ToolService {
                         .map_err(|e| e.to_string())?,
                     request.full,
                 )
+            }
+            "ken_rank" => {
+                let request: Rank = serde_json::from_value(args).map_err(|e| e.to_string())?;
+                let limit = request.verbose.max(1).saturating_mul(10);
+                let result = match request.scope.as_str() {
+                    "project" => navigation.project_overview(2, limit),
+                    "architecture" => navigation.architecture(2, limit),
+                    "changes" => navigation.changed_context(),
+                    _ => return Err("native ken_rank supports scope=project, architecture or changes; session ranking is not available yet".into()),
+                }.map_err(|e| e.to_string())?;
+                (result, request.explain)
             }
             _ => return Err(format!("Unknown tool: {name}")),
         };
@@ -173,6 +212,10 @@ pub fn run(
         ToolCommand::Find(a) => (
             "ken_find",
             json!({"query":a.query,"scope":a.scope,"limit":a.limit,"literal":a.literal,"language":a.language,"purpose":a.purpose,"max_chars":a.max_chars,"piece_kind":a.piece_kind,"response_format":a.response_format,"query_language":a.query_language,"full":a.full,"output_format":a.output_format}),
+        ),
+        ToolCommand::Rank(a) => (
+            "ken_rank",
+            json!({"scope":a.scope,"query":a.query,"verbose":a.verbose,"explain":a.explain,"max_chars":a.max_chars,"output_format":a.output_format}),
         ),
     };
     if args.json || args.compact {
