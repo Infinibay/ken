@@ -10,6 +10,40 @@ use std::{
     sync::{Arc, Mutex, Weak},
 };
 
+#[cfg(all(target_os = "linux", target_env = "gnu"))]
+mod namespace;
+
+// Dependencies must close in reverse load order, after the module and before
+// its private files. In particular, backend buffers never cross allocators:
+// their API's release function runs while this entire owner remains alive.
+struct Dependencies(Vec<Library>);
+
+impl Drop for Dependencies {
+    fn drop(&mut self) {
+        while self.0.pop().is_some() {}
+    }
+}
+
+fn load_module(
+    module: &Path,
+    root: &Path,
+    identity: &TransformerRuntimeIdentity,
+) -> Result<(Library, Dependencies), ModelError> {
+    #[cfg(not(all(target_os = "linux", target_env = "gnu")))]
+    let _ = root;
+    if identity.backend == "torch" && identity.os == "linux" {
+        #[cfg(all(target_os = "linux", target_env = "gnu"))]
+        return namespace::load(module, root, identity.libraries.keys());
+        #[cfg(not(all(target_os = "linux", target_env = "gnu")))]
+        return Err(invalid(
+            "isolated Linux Torch loading requires glibc dlmopen",
+        ));
+    }
+    // SAFETY: the caller authenticated and privately copied trusted native code.
+    let library = unsafe { Library::new(module) }.map_err(invalid)?;
+    Ok((library, Dependencies(Vec::new())))
+}
+
 fn invalid(message: impl std::fmt::Display) -> ModelError {
     ModelError::Runtime(message.to_string())
 }
@@ -104,6 +138,7 @@ pub(crate) struct TransformerModule {
     pub(crate) api: KenModelApiV1,
     // Fields drop in declaration order: no function/library may outlive files.
     _library: Library,
+    _dependencies: Dependencies,
     _files: tempfile::TempDir,
 }
 
@@ -247,7 +282,7 @@ impl NativeTransformerRuntime {
             // SAFETY: explicit trusted native-code registration authenticated the
             // private module and its registered dependency closure. The library
             // and files remain owned for the entire copied API table lifetime.
-            let library = unsafe { Library::new(&module) }.map_err(invalid)?;
+            let (library, dependencies) = load_module(&module, files.path(), &self.0.identity)?;
             let api = unsafe {
                 let getter: libloading::Symbol<GetApiV1> =
                     library.get(b"ken_model_api_v1\0").map_err(invalid)?;
@@ -257,6 +292,7 @@ impl NativeTransformerRuntime {
                 identity: self.0.identity.clone(),
                 api,
                 _library: library,
+                _dependencies: dependencies,
                 _files: files,
             });
             live.insert(id, Arc::downgrade(&owner));

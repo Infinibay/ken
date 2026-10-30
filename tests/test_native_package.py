@@ -208,3 +208,32 @@ def test_elf_owned_origin_path_relocates_to_real_available_dependency_without_ho
  executed=subprocess.run([destination/'ken-rs'],env={'PATH':'','LD_LIBRARY_PATH':str(destination/'lib')},cwd=tmp_path,check=False)
  assert executed.returncode==0
  assert result['provenance']['qualification']['accepted'] is False
+
+def test_torch_private_namespace_keeps_distinct_openmp_payload_from_launcher(tmp_path,monkeypatch):
+ import subprocess
+ repo,environment,binaries,provenance=inputs(tmp_path,monkeypatch)
+ compiler=shutil.which('cc');assert compiler
+ directory=tmp_path/'namespace';directory.mkdir()
+ libraries=[]
+ for name,value in [('host',17),('torch',41)]:
+  folder=directory/name;folder.mkdir();source=folder/'openmp.c';source.write_text(f'int fixture_openmp(void){{return {value};}}\n')
+  library=folder/'libgomp.so.1'
+  subprocess.run([compiler,'-shared','-fPIC',str(source),'-Wl,-soname,libgomp.so.1','-o',str(library)],check=True,capture_output=True)
+  libraries.append(library)
+ host,private=libraries
+ main=directory/'main.c';main.write_text('extern int fixture_openmp(void);int main(void){return fixture_openmp()==17?0:1;}\n')
+ cli=directory/'cli';subprocess.run([compiler,str(main),str(host),'-o',str(cli)],check=True,capture_output=True);binaries['cli']=cli
+ source=directory/'backend.c';source.write_text('extern int fixture_openmp(void);int fixture_backend(void){return fixture_openmp();}\n')
+ module=directory/'backend.so';subprocess.run([compiler,'-shared','-fPIC',str(source),str(private),'-Wl,-rpath,$ORIGIN/lib','-o',str(module)],check=True,capture_output=True)
+ closure=Path(environment['KEN_PACKAGE_ELF_CLOSURE']);value=json.loads(closure.read_text());value['files']['libgomp.so.1']={'source':str(host),**identity(host)};closure.write_text(json.dumps(value))
+ extra=directory/'torch.json';extra.write_text(json.dumps({'format':'ken-package-transformers/1',
+  'torch':{'registration':{'format':'ken-native-transformer/1','backend':'torch','runtimes':[{'os':'linux','arch':'x86_64','core_version':'2.9.0','module':identity(module),'libraries':{'lib/libgomp.so.1':identity(private)}}]},'module_path':'native/torch/backend.so','core_root':'native/torch'},
+  'files':{'native/torch/backend.so':{'source':str(module),**identity(module)},'native/torch/lib/libgomp.so.1':{'source':str(private),**identity(private)}},'sources':{}}))
+ environment['KEN_PACKAGE_TRANSFORMERS']=str(extra)
+ licenses=Path(environment['KEN_PACKAGE_LICENSES']);value=json.loads(licenses.read_text());value['components'].append('torch');licenses.write_text(json.dumps(value))
+ destination=tmp_path/'bundle'
+ result=native_package.build_bundle(repo,environment,binaries,destination,provenance)
+ edges=result['provenance']['runtime']['loader']['edges']
+ assert any(row.get('resolved')=='lib/libgomp.so.1' and row['object']=='ken-rs' for row in edges)
+ assert any(row.get('resolved')=='native/torch/lib/libgomp.so.1' and row['object']=='native/torch/backend.so' for row in edges)
+ assert identity(destination/'lib/libgomp.so.1')!=identity(destination/'native/torch/lib/libgomp.so.1')

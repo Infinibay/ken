@@ -2658,8 +2658,14 @@ perfil activo y conserva las comprobaciones de identidad. Pasaron la revisión
 enfocada, Clippy estricto de todos los targets afectados y la regresión pública:
 edición con ambos vectores actualizados, evento sin cambios sin cargar modelos
 y borrado manteniendo el perfil. También pasaron seis pruebas de procesos reales,
-cuatro de cola/watcher y tres de base de datos. Falta el paquete actualizado y
-su recorrido instalado antes de considerar cerrado ese recorrido.
+cuatro de cola/watcher y tres de base de datos. El Release limpio `d4bd8bba`
+terminó en 7m56s y su paquete `5964c2b196b87ad71e115e2cc05112c13be0f3968ff43f749d25da5dc65fa3b9`
+pasó el recorrido completo fuera del checkout: 56 invocaciones auditadas,
+116 ejecuciones autenticadas, los cinco roles de modelos, MCP con cancelación,
+hooks, Git, watcher y cierre sin procesos restantes. El watcher publicó los
+símbolos y los dos pasajes nuevos dentro del perfil activo; los logs del daemon
+quedaron vacíos. También pasó la actualización y rollback entre los Releases
+vinculados a fuentes `a16585ce` y `d4bd8bba` conservando los datos copiados.
 
 El ciclo de instalación, actualización mediante un hijo nativo nuevo, rollback
 entre binarios distintos, rechazo de un ejecutable anterior alterado,
@@ -2679,6 +2685,27 @@ fixtures necesarias con procedencia dentro de los crates. Ocho archivos
 comprimidos se expanden a los mismos bytes originales; el test de almacenamiento
 conserva exactamente las dos estructuras de esquema que consumía. La carga útil
 total es de 857588 bytes, sin volver a agregar recibos de ejecución a Git.
+
+El cierre del runtime opcional Torch detectó una omisión del paquete
+predeterminado: su `libgomp.so.1` autenticado tiene bytes distintos del OpenMP
+cargado por la CLI. Se reprodujo que tanto `dlopen` ordinario como un namespace
+nuevo sin precargas seleccionaban la dependencia equivocada cuando el lanzador
+establecía `LD_LIBRARY_PATH`. Linux/glibc carga ahora las dependencias privadas
+autenticadas en orden, por ruta absoluta, dentro de un namespace propio; el módulo
+se carga al final y conserva sus dependencias hasta liberar el último usuario.
+No se modifica el entorno global ni se sustituye la biblioteca registrada.
+
+Pasaron las dos regresiones ELF, los cinco contratos existentes de runtime,
+Clippy estricto de los targets afectados y las 35 pruebas de empaquetado/build.
+Una prueba separada con el módulo Torch 2.9.0 existente y sus seis bibliotecas
+originales ejecutó el fixture Qwen pequeño en CPU/float32, comparó un resultado
+congelado y verificó los hashes privados, la separación de OpenMP y la propiedad
+de sesiones/buffers después de cerrar los runtimes. Esto prueba la integración
+del core; no convierte todos los modelos registrados en modelos cualificados.
+El paquete ampliado requiere además `libbz2.so.1.0`, con bytes y licencia
+explícitos. Los pesos completos BGE/Qwen no están presentes en los recursos
+locales y no se presentan como incluidos. Falta generar y autenticar el Release
+con esta última integración antes de cerrar el empaquetado opcional.
 
 Siguen vigentes las restricciones externas: falta la observación original del
 par exacto SkylakeX `4fd097c7...`/`1f613df1...` tras agotar las tres asignaciones,

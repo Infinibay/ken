@@ -27,10 +27,12 @@ def _elf(path):
  result=subprocess.run([tool,'-d','-V',str(path)],capture_output=True,text=True,check=False)
  if result.returncode:raise ValueError('cannot inspect native ELF closure: '+str(path))
  needed=re.findall(r'\(NEEDED\).*?\[([^\]]+)\]',result.stdout)
+ sonames=re.findall(r'\(SONAME\).*?\[([^\]]+)\]',result.stdout)
  if any('libpython' in name.lower() or 'libtorch_python' in name.lower() for name in needed):raise ValueError('Python runtime is forbidden in native package ELF closure')
  paths={tag:re.findall(r'\('+tag+r'\).*?\[([^\]]*)\]',result.stdout) for tag in ('RPATH','RUNPATH')}
  if any('/'in name or ':'in name or not name for name in needed):raise ValueError('basename-only ELF dependencies required')
- return dict(needed=needed,rpath=paths['RPATH'],runpath=paths['RUNPATH'],version_requirements=sorted(set(re.findall(r'Name: ((?:GLIBC|GLIBCXX|CXXABI)_[A-Za-z0-9_.]+)',result.stdout))),inspection_sha256=hashlib.sha256(result.stdout.encode()).hexdigest())
+ if len(sonames)>1 or any('/'in name or ':'in name or not name for name in sonames):raise ValueError('distinct basename-only ELF SONAME required')
+ return dict(needed=needed,soname=sonames[0]if sonames else None,rpath=paths['RPATH'],runpath=paths['RUNPATH'],version_requirements=sorted(set(re.findall(r'Name: ((?:GLIBC|GLIBCXX|CXXABI)_[A-Za-z0-9_.]+)',result.stdout))),inspection_sha256=hashlib.sha256(result.stdout.encode()).hexdigest())
 
 def _loader_paths(values,logical,namespace):
  """Expand only portable ORIGIN paths inside the actual loader namespace."""
@@ -60,7 +62,7 @@ def _validate_elf_loader(files,measured,systems,plan,transformers):
  """
  if any(not isinstance(name,str)or Path(name).name!=name or not name for name in systems):raise ValueError('basename-only declared system libraries required')
  mappings={'release':{name:name for name in measured}};private=[]
- def private_owner(label,module,module_name,core_root,registration,deepbind=False):
+ def private_owner(label,module,module_name,core_root,registration,deepbind=False,isolated=False):
   rows=registration.get('runtimes',[])
   selected=[row for row in rows if (row.get('os'),row.get('arch'))==('linux','x86_64')]
   if len(selected)!=1:raise ValueError('explicit Linux x86 native private-copy identity required')
@@ -70,14 +72,14 @@ def _validate_elf_loader(files,measured,systems,plan,transformers):
    _relative(name);source=(PurePosixPath(core_root)/name).as_posix()
    if source not in measured or _record(files[source]['artifact'])!=_record(artifact):raise ValueError('native dependency differs from declared private-copy identity')
    members[name]=source
-   basename=PurePosixPath(name).name
+   basename=(measured[source]['soname']or PurePosixPath(name).name)if isolated else PurePosixPath(name).name
    if basename in expected:raise ValueError('ambiguous private native dependency basename')
    expected[basename]=_record(artifact)
-  mappings[label]=members;private.append((label,module_name,expected,deepbind))
+  mappings[label]=members;private.append((label,module_name,expected,deepbind,isolated))
  translation=plan['translation'];private_owner('ct2',translation['module_path'],'libken_ct2_backend.so',translation['core_root'],translation['registration'],True)
- if transformers:private_owner('torch',transformers['torch']['module_path'],'ken_model_backend.so',transformers['torch']['core_root'],transformers['torch']['registration'])
+ if transformers:private_owner('torch',transformers['torch']['module_path'],'ken_model_backend.so',transformers['torch']['core_root'],transformers['torch']['registration'],isolated=True)
  # ONNX authenticates a single anonymous private copy, not its source directory.
- onnx=plan['environment']['KEN_ORT_LIBRARY'];mappings['onnx']={'runtime.so':onnx};private.append(('onnx','runtime.so',{},False))
+ onnx=plan['environment']['KEN_ORT_LIBRARY'];mappings['onnx']={'runtime.so':onnx};private.append(('onnx','runtime.so',{},False,False))
  checked=set();used=set();edges=[];preloaded={}
  def visit(namespace,logical,inherited=(),environment=True,expected=None,preloads=None,active=None):
   expected=expected or {};preloads=preloads or {};active=set()if active is None else active
@@ -115,10 +117,27 @@ def _validate_elf_loader(files,measured,systems,plan,transformers):
    for edge in edges[before:]:
     if 'resolved'in edge:preloaded.setdefault(edge['needed'],(edge['namespace'],next(name for name,source in mappings[edge['namespace']].items()if source==edge['resolved']),edge['resolved']))
     elif edge.get('system'):preloaded.setdefault(edge['needed'],('system','', ''))
- for namespace,module,expected,deepbind in private:
-  visit(namespace,module,expected=expected,preloads={}if deepbind else preloaded)
+ for namespace,module,expected,deepbind,isolated in private:
+  admitted={}if deepbind or isolated else preloaded
+  if isolated:
+   # The native owner explicitly pins each authenticated dependency in its own
+   # glibc namespace before loading clients; LD_LIBRARY_PATH remains unchanged.
+   names={measured[source]['soname']or PurePosixPath(name).name:name for name,source in mappings[namespace].items()if name!=module}
+   visiting=set()
+   def preload(name):
+    source=mappings[namespace][name];soname=measured[source]['soname']or PurePosixPath(name).name
+    if soname in admitted:return
+    if name in visiting:raise ValueError('cyclic private native dependency graph')
+    if len(visiting)>=128:raise ValueError('private native dependency graph exceeds128 loading steps')
+    visiting.add(name)
+    for needed in measured[source]['needed']:
+     if needed in names:preload(names[needed])
+    visit(namespace,name,expected=expected,preloads=admitted)
+    admitted[soname]=(namespace,name,source);visiting.remove(name)
+   for name in sorted(names.values()):preload(name)
+  visit(namespace,module,expected=expected,preloads=admitted)
   for name in mappings[namespace]:
-   if mappings[namespace][name]not in used:visit(namespace,name,expected=expected,preloads={}if deepbind else preloaded)
+   if mappings[namespace][name]not in used:visit(namespace,name,expected=expected,preloads=admitted)
  # Direct grammar/dense libraries retain their real staged ORIGIN locations.
  private_sources={source for namespace in mappings if namespace!='release'for source in mappings[namespace].values()}
  for name in measured:
