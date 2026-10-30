@@ -1,0 +1,344 @@
+{
+  "format": "ken-storage-cases/1",
+  "cases": [
+    {
+      "id": "schema-fresh",
+      "classification": "compatibility",
+      "input": {
+        "op": "schema",
+        "legacy": false
+      }
+    },
+    {
+      "id": "schema-legacy",
+      "classification": "compatibility",
+      "input": {
+        "op": "schema",
+        "legacy": true
+      }
+    },
+    {
+      "id": "metadata-strings",
+      "classification": "compatibility",
+      "input": {
+        "op": "metadata",
+        "values": [
+          "",
+          "\u00e9/\u8a2d\u5b9a",
+          "\u0000middle\u0000",
+          "17"
+        ]
+      }
+    },
+    {
+      "id": "marker-absent",
+      "classification": "compatibility",
+      "input": {
+        "op": "marker",
+        "marker": "absent",
+        "model": "user/model"
+      }
+    },
+    {
+      "id": "marker-null",
+      "classification": "compatibility",
+      "input": {
+        "op": "marker",
+        "marker": "null",
+        "model": "user/model"
+      }
+    },
+    {
+      "id": "marker-empty",
+      "classification": "compatibility",
+      "input": {
+        "op": "marker",
+        "marker": "empty",
+        "model": "user/model"
+      }
+    },
+    {
+      "id": "marker-stored",
+      "classification": "compatibility",
+      "input": {
+        "op": "marker",
+        "marker": "stored",
+        "model": "user/model"
+      }
+    },
+    {
+      "id": "marker-vector-blob-empty",
+      "classification": "compatibility",
+      "input": {
+        "op": "marker",
+        "marker": "vector-blob-empty",
+        "model": "user/model"
+      }
+    },
+    {
+      "id": "marker-vector-slot-zero",
+      "classification": "compatibility",
+      "input": {
+        "op": "marker",
+        "marker": "vector-slot-zero",
+        "model": "user/model"
+      }
+    },
+    {
+      "id": "marker-vector-slot-negative",
+      "classification": "compatibility",
+      "input": {
+        "op": "marker",
+        "marker": "vector-slot-negative",
+        "model": "user/model"
+      }
+    },
+    {
+      "id": "slots-freed",
+      "classification": "compatibility",
+      "input": {
+        "op": "slots",
+        "rollback": false
+      }
+    },
+    {
+      "id": "slots-rollback",
+      "classification": "compatibility",
+      "input": {
+        "op": "slots",
+        "rollback": true
+      }
+    },
+    {
+      "id": "cascade",
+      "classification": "compatibility",
+      "input": {
+        "op": "cascade"
+      }
+    },
+    {
+      "id": "unique-slot",
+      "classification": "compatibility",
+      "input": {
+        "op": "unique"
+      }
+    },
+    {
+      "id": "vectors-boundary",
+      "classification": "compatibility",
+      "input": {
+        "op": "vectors",
+        "slots": [
+          65535,
+          65536
+        ],
+        "vectors_le_hex": [
+          "0000803f000000000000000000000000",
+          "000000000000803f0000000000000000"
+        ],
+        "query_le_hex": "0000803f000000400000404000008040",
+        "dim": 4
+      }
+    },
+    {
+      "id": "vectors-sparse",
+      "classification": "compatibility",
+      "input": {
+        "op": "vectors",
+        "slots": [
+          131072
+        ],
+        "vectors_le_hex": [
+          "00000000000000000000803f00000000"
+        ],
+        "query_le_hex": "0000803f000000400000404000008040",
+        "dim": 4
+      }
+    },
+    {
+      "id": "vectors-duplicates",
+      "classification": "compatibility",
+      "input": {
+        "op": "vectors",
+        "slots": [
+          2,
+          0,
+          2
+        ],
+        "vectors_le_hex": [
+          "0000803f000000000000000000000000",
+          "000000000000803f0000000000000000",
+          "00000000000000000000803f00000000"
+        ],
+        "query_le_hex": "0000803f000000400000404000008040",
+        "dim": 4
+      }
+    },
+    {
+      "id": "vectors-zero",
+      "classification": "compatibility",
+      "input": {
+        "op": "vectors",
+        "slots": [
+          0
+        ],
+        "vectors_le_hex": [
+          "00000000000000000000000000000000"
+        ],
+        "query_le_hex": "0000803f000000400000404000008040",
+        "dim": 4
+      }
+    },
+    {
+      "id": "vectors-mixed",
+      "classification": "compatibility",
+      "input": {
+        "op": "vectors",
+        "slots": [
+          0,
+          1
+        ],
+        "vectors_le_hex": [
+          "00004040000080400000000000000000",
+          "0000803f000000c000004040000080c0"
+        ],
+        "query_le_hex": "0000803f000000400000404000008040",
+        "dim": 4
+      }
+    },
+    {
+      "id": "migrate-mixed",
+      "classification": "compatibility",
+      "input": {
+        "op": "migrate",
+        "twice": false
+      }
+    },
+    {
+      "id": "migrate-twice",
+      "classification": "compatibility",
+      "input": {
+        "op": "migrate",
+        "twice": true
+      }
+    },
+    {
+      "id": "compact",
+      "classification": "compatibility",
+      "input": {
+        "op": "compact",
+        "interrupt": false
+      }
+    },
+    {
+      "id": "vacuum",
+      "classification": "compatibility",
+      "input": {
+        "op": "vacuum"
+      }
+    },
+    {
+      "id": "correction-manifest-space",
+      "classification": "integrity-correction",
+      "input": {
+        "op": "manifest",
+        "field": "space",
+        "value": "ci_symbols"
+      }
+    },
+    {
+      "id": "correction-manifest-dtype",
+      "classification": "integrity-correction",
+      "input": {
+        "op": "manifest",
+        "field": "dtype",
+        "value": "float16"
+      }
+    },
+    {
+      "id": "correction-manifest-capacity",
+      "classification": "integrity-correction",
+      "input": {
+        "op": "manifest",
+        "field": "segment_rows",
+        "value": 0
+      }
+    },
+    {
+      "id": "correction-manifest-model",
+      "classification": "integrity-correction",
+      "input": {
+        "op": "manifest",
+        "field": "model",
+        "value": "other/model"
+      }
+    },
+    {
+      "id": "correction-norm-overflow",
+      "classification": "integrity-correction",
+      "input": {
+        "op": "vectors",
+        "slots": [
+          0
+        ],
+        "vectors_le_hex": [
+          "caf24971caf24971"
+        ],
+        "query_le_hex": "0000803f00000000",
+        "dim": 2
+      }
+    },
+    {
+      "id": "correction-nan",
+      "classification": "integrity-correction",
+      "input": {
+        "op": "vectors",
+        "slots": [
+          0
+        ],
+        "vectors_le_hex": [
+          "0000c07f0000803f"
+        ],
+        "query_le_hex": "0000803f00000000",
+        "dim": 2
+      }
+    },
+    {
+      "id": "correction-inf",
+      "classification": "integrity-correction",
+      "input": {
+        "op": "vectors",
+        "slots": [
+          0
+        ],
+        "vectors_le_hex": [
+          "0000807f0000803f"
+        ],
+        "query_le_hex": "0000803f00000000",
+        "dim": 2
+      }
+    },
+    {
+      "id": "correction-sql-error",
+      "classification": "integrity-correction",
+      "input": {
+        "op": "sql-error"
+      }
+    },
+    {
+      "id": "correction-compaction-interruption",
+      "classification": "integrity-correction",
+      "input": {
+        "op": "compact",
+        "interrupt": true
+      }
+    }
+  ],
+  "numeric_contract": {
+    "atol": 1e-06,
+    "rtol": 1e-06,
+    "rule": "abs(actual-reference) <= atol + rtol*abs(reference)",
+    "finite_valid_data": true,
+    "exact_fields": "all other primitive types/IDs/slots/SQLite BLOBs/shape/order"
+  }
+}

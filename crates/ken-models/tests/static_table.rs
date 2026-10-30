@@ -1,3 +1,5 @@
+#[path = "support/fixture_json.rs"]
+mod fixture_json;
 use ken_models::StaticTableEncoder;
 use serde_json::Value;
 use std::{fs, path::PathBuf};
@@ -258,10 +260,9 @@ fn bundled_table_matches_all_frozen_case_outputs() {
         &fs::read(repo.join("src/ken/embedder/data/ken__static-qwen3-r512-v2.npz")).unwrap(),
     )
     .unwrap();
-    let oracle: Value = serde_json::from_slice(
-        &fs::read(repo.join("docs/validation/rust-migration-2026-10-18/m2-table/reference.json"))
-            .unwrap(),
-    )
+    let oracle: Value = serde_json::from_slice(&fixture_json::decode(include_bytes!(
+        "fixtures/portable/static-table-reference.json.gz"
+    )))
     .unwrap();
     parity(&encoder, &oracle);
 }

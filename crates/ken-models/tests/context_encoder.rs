@@ -1,3 +1,5 @@
+#[path = "support/fixture_json.rs"]
+mod fixture_json;
 use ken_models::{ContextEncoder, ContextInput, ContextModel, ModelAssets, NativeOnnxRuntime};
 use serde_json::Value;
 use std::{fs, path::PathBuf, sync::Arc};
@@ -298,12 +300,9 @@ fn original_for_host(os: &str, arch: &str) -> Value {
             .unwrap()
         }
     } else {
-        let document: Value = serde_json::from_slice(
-            &fs::read(
-                repo().join("docs/validation/rust-migration-2026-10-18/m2-context/reference.json"),
-            )
-            .unwrap(),
-        )
+        let document: Value = serde_json::from_slice(&fixture_json::decode(include_bytes!(
+            "fixtures/portable/context-reference.json.gz"
+        )))
         .unwrap();
         document["platforms"][format!("{system}/{machine}")].clone()
     };

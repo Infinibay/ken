@@ -1,3 +1,5 @@
+#[path = "support/fixture_json.rs"]
+mod fixture_json;
 use ken_models::model_policy::{
     InitialModelPin, LEGACY_MODEL, ModelPolicy, ModelUpgrade, POTION_MODEL, ProjectModelFacts,
     is_asymmetric, prompts_for,
@@ -6,13 +8,13 @@ use serde_json::{Value, json};
 
 fn fixtures() -> (Value, Value) {
     (
-        serde_json::from_str(include_str!(
-            "../../../docs/validation/rust-migration-2026-10-19/m2-policy/cases.json"
-        ))
+        serde_json::from_slice(&fixture_json::decode(include_bytes!(
+            "fixtures/portable/model-policy-cases.json.gz"
+        )))
         .unwrap(),
-        serde_json::from_str(include_str!(
-            "../../../docs/validation/rust-migration-2026-10-19/m2-policy/reference.json"
-        ))
+        serde_json::from_slice(&fixture_json::decode(include_bytes!(
+            "fixtures/portable/model-policy-reference.json.gz"
+        )))
         .unwrap(),
     )
 }

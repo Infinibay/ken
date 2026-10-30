@@ -125,6 +125,11 @@ def _validate_elf_loader(files,measured,systems,plan,transformers):
   if name not in used and name not in private_sources:visit('release',name)
  return {'scope':'launcher startup, child release/lib, declared private native copies and confined ORIGIN paths','edges':edges}
 
+def _validate_provenance(provenance):
+ if not isinstance(provenance,dict)or not all(isinstance(provenance.get(key),dict)for key in('source','build','runtime','qualification')):raise ValueError('explicit source/build/runtime/qualification provenance required')
+ source=provenance['source'];commit=source.get('commit')
+ if not isinstance(commit,str)or not re.fullmatch('[0-9a-f]{40}',commit)or type(source.get('dirty'))is not bool or type(provenance['qualification'].get('accepted'))is not bool:raise ValueError('explicit source and qualification state required')
+
 def authenticate_bundle(directory):
  root=Path(directory).resolve();manifest_path=root/'FILES.json'
  if manifest_path.stat().st_size>2*1024*1024 or manifest_path.stat().st_mode&0o7777!=0o444 or manifest_path.stat().st_nlink!=1:raise ValueError('independent read-only bounded FILES.json required')
@@ -171,7 +176,7 @@ def authenticate_bundle(directory):
   name=contained(declared['path'],True)
   if _record(declared)!=_record(files[name]):raise ValueError('catalogue declaration differs from authenticated inventory identity')
  provenance=manifest['provenance']
- if not all(isinstance(provenance.get(key),dict)for key in('source','build','runtime','qualification'))or type(provenance['qualification'].get('accepted'))is not bool:raise ValueError('explicit source/build/runtime/qualification provenance required')
+ _validate_provenance(provenance)
  return dict(root=str(root),manifest_sha256=identity(manifest_path)['sha256'],file_count=len(files),total_bytes=total,provenance=provenance)
 
 def build_bundle(repo,environment,binaries,destination,provenance):
@@ -183,7 +188,7 @@ def build_bundle(repo,environment,binaries,destination,provenance):
   from tools.native_release import bind_build
   binding=bind_build(Path(environment['KEN_NATIVE_BUILD']),binaries)
   if not re.fullmatch('[0-9a-f]{40}',binding.get('source_commit')or ''):raise ValueError('native build must retain its source commit before package assembly')
- if not all(isinstance(provenance.get(key),dict)for key in('source','build','runtime','qualification')):raise ValueError('explicit provenance input required')
+ _validate_provenance(provenance)
  legacy=provenance.get('legacy_runtime')
  if not isinstance(legacy,dict)or legacy.get('format')!='ken-legacy-runtime/1':raise ValueError('explicit versioned legacy runtime profile required')
  plan=copy.deepcopy(resources.plan(repo,environment))

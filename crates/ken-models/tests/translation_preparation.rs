@@ -1,3 +1,5 @@
+#[path = "support/fixture_json.rs"]
+mod fixture_json;
 use ken_models::{FrozenTranslationRuntime, ModelError, TranslationModel};
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
@@ -49,9 +51,9 @@ fn original_full_recipe_and_both_runtime_compatibility_revisions_are_exact() {
         model.recipe_key(),
         "1af342f7677e9f51477171000e5aa6e6527590a715f064bd64679c1aa491a9f0"
     );
-    let reference: Value = serde_json::from_str(include_str!(
-        "../../../docs/validation/rust-migration-2026-10-19/m2-translation/reference.json"
-    ))
+    let reference: Value = serde_json::from_slice(&fixture_json::decode(include_bytes!(
+        "fixtures/portable/translation-reference.json.gz"
+    )))
     .unwrap();
     for oracle in reference["oracles"].as_array().unwrap() {
         let profile = match oracle["platform"].as_str().unwrap() {

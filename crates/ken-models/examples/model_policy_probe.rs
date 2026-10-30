@@ -119,18 +119,22 @@ fn main() {
 }
 
 #[cfg(test)]
+#[path = "../tests/support/fixture_json.rs"]
+mod fixture_json;
+
+#[cfg(test)]
 mod tests {
     use serde_json::{Value, json};
 
     #[test]
     fn probe_executes_every_frozen_history_without_expected_values_in_request() {
-        let input: Value = serde_json::from_str(include_str!(
-            "../../../docs/validation/rust-migration-2026-10-19/m2-policy/cases.json"
-        ))
+        let input: Value = serde_json::from_slice(&super::fixture_json::decode(include_bytes!(
+            "../tests/fixtures/portable/model-policy-cases.json.gz"
+        )))
         .unwrap();
-        let oracle: Value = serde_json::from_str(include_str!(
-            "../../../docs/validation/rust-migration-2026-10-19/m2-policy/reference.json"
-        ))
+        let oracle: Value = serde_json::from_slice(&super::fixture_json::decode(include_bytes!(
+            "../tests/fixtures/portable/model-policy-reference.json.gz"
+        )))
         .unwrap();
         let cases: Vec<_> = input["cases"]
             .as_array()

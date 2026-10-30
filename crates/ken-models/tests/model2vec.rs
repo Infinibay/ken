@@ -1,3 +1,5 @@
+#[path = "support/fixture_json.rs"]
+mod fixture_json;
 use ken_models::{Model2VecEncoder, ModelAssets};
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
@@ -213,9 +215,9 @@ fn real_registered_potion_matches_all_frozen_calls() {
         .unwrap()
         .verify(std::path::Path::new(&snapshot))
         .unwrap();
-    let oracle: Value = serde_json::from_str(include_str!(
-        "../../../docs/validation/rust-migration-2026-10-18/m2-static/potion-reference.json"
-    ))
+    let oracle: Value = serde_json::from_slice(&fixture_json::decode(include_bytes!(
+        "fixtures/portable/potion-reference.json.gz"
+    )))
     .unwrap();
     for (case, result) in oracle["cases"]
         .as_array()

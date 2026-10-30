@@ -1,10 +1,9 @@
+#[path = "support/fixture_json.rs"]
+mod fixture_json;
 use ken_models::{NativeOnnxRuntime, OnnxReranker, RerankOptions, RerankerModel};
 use serde_json::{Value, json};
 use std::{fs, path::PathBuf, sync::Arc};
 
-fn repo() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
-}
 fn root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/ettin")
 }
@@ -484,18 +483,17 @@ fn original_for_host(os: &str, arch: &str) -> Value {
         ("macos", "aarch64") => ("Darwin", "arm64"),
         _ => panic!("prepare a separate Ettin original for this OS/architecture"),
     };
-    let (path, digest) = if (os, arch) == ("linux", "x86_64") {
+    let (bytes, digest) = if (os, arch) == ("linux", "x86_64") {
         (
-            root().join("linux-x86_64-original.json"),
+            fs::read(root().join("linux-x86_64-original.json")).unwrap(),
             "ec1a7477107da440828fd0f46ab2c6d9be45a5d64c7c516306797aa2636e20ce",
         )
     } else {
         (
-            repo().join("docs/validation/rust-migration-2026-10-19/m2-ettin/reference.json"),
+            fixture_json::decode(include_bytes!("fixtures/portable/ettin-reference.json.gz")),
             "ddbd13c1e29d8a4f689b58cb9041aa0fcea4745618f065423ddf7dbe4cf7824b",
         )
     };
-    let bytes = fs::read(path).unwrap();
     assert_eq!(format!("{:x}", Sha256::digest(&bytes)), digest);
     let document: Value = serde_json::from_slice(&bytes).unwrap();
     let original = if (os, arch) == ("linux", "x86_64") {

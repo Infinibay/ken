@@ -1,5 +1,7 @@
 //! Test-only selection of independent original translation observations.
 #![allow(dead_code)]
+#[path = "fixture_json.rs"]
+mod fixture_json;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use std::io::Read;
@@ -38,9 +40,9 @@ pub fn for_host(os: &str, arch: &str) -> Value {
             .unwrap();
         serde_json::from_str(&decoded).unwrap()
     } else {
-        let document: Value = serde_json::from_str(include_str!(
-            "../../../../docs/validation/rust-migration-2026-10-19/m2-translation/reference.json"
-        ))
+        let document: Value = serde_json::from_slice(&fixture_json::decode(include_bytes!(
+            "../fixtures/portable/translation-reference.json.gz"
+        )))
         .unwrap();
         document["oracles"]
             .as_array()
@@ -85,9 +87,10 @@ pub fn raw_histories(os: &str, arch: &str) -> Vec<Value> {
             ("macos", "aarch64") => "Darwin",
             _ => panic!("independent original raw translation oracle required for {os}/{arch}"),
         };
-        let document: Value = serde_json::from_str(include_str!(
-            "../../../../docs/validation/rust-migration-2026-10-19/m2-translation/raw-reference.json"
-        )).unwrap();
+        let document: Value = serde_json::from_slice(&fixture_json::decode(include_bytes!(
+            "../fixtures/portable/translation-raw-reference.json.gz"
+        )))
+        .unwrap();
         document["oracles"]
             .as_array()
             .unwrap()

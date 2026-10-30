@@ -2595,8 +2595,9 @@ previa; también se está cerrando la resolución efectiva de dependencias ELF.
 
 `tools/native_release.py` compila desde una exportación identificada de fuentes
 con un target separado y conserva las salidas Cargo y sus tres binarios. Sus
-ocho pruebas nuevas usan compilaciones nativas pequeñas y pasaron; esto todavía
-no constituye una compilación final ni una cualificación de modelos del paquete.
+ocho pruebas nuevas usan compilaciones nativas pequeñas y pasaron. También se
+completó una compilación Release real desde fuentes exportadas e independientes;
+esa vinculación no constituye por sí sola una cualificación de modelos.
 `tools/native_package.py` mantiene separadas la autenticidad de los bytes, la
 vinculación de compilación y la aceptación del comportamiento.
 
@@ -2632,8 +2633,52 @@ El formato y Clippy estricto pasaron para los 23 crates propios y sus targets;
 las dependencias vendorizadas se compilan pero no se alteran ni se seleccionan
 sus harnesses externos. El bloque nativo posterior pasó las pruebas afectadas
 de BODY, regex, valores, ejecución indexada, instrucciones, exploración, CLI y
-supervisión. Quedan la compilación vinculada a fuentes definitivas y el recorrido
-completo del paquete instalado fuera del checkout.
+supervisión. La compilación Release del commit limpio `a16585ce` terminó con éxito
+en un target independiente. Su exportación tiene SHA256
+`d1ce10456c11cbd984ccc14453b1334046ac0d0a0af025d0691c99af38b99a60`.
+El paquete autenticado contiene 1183 archivos y 823661573 bytes; su manifiesto es
+`f17512884a69223d255f8a3ff4d6444fc8ff1854490253d716e3faf3d1e7714f`.
+La autenticación e instalación nativas fuera del checkout pasaron.
+
+El recorrido instalado con modelos reales ya pasó búsquedas semánticas de
+archivos y símbolos en inglés y español, lectura y relaciones, KQL1, BODY/KQL2
+con y sin caché, reglas con ejemplos, checks con historial, memoria y razonamiento
+con checkpoints, los trece tools MCP y cancelación de workers. La auditoría
+conserva ejecutables exactos, conexiones, bibliotecas efectivamente cargadas y
+aperturas de modelos; el intérprete Python se usa sólo como observador externo.
+Las regiones anónimas ejecutables del JIT nativo se registran separadamente, sin
+atribuirlas a archivos que no las respaldan.
+
+Ese recorrido detectó un fallo de integración real: el watcher recibía cambios
+después de activar BestSearch, pero su indexador no recibía la identidad de
+ejecución ni el cargador del perfil de recuperación activo. La reparación lleva
+ambos al worker dedicado mediante una fábrica de cargador local al hilo y
+reutiliza `ModelEncoderLoader`; mantiene el modelo del proyecto separado del
+perfil activo y conserva las comprobaciones de identidad. Pasaron la revisión
+enfocada, Clippy estricto de todos los targets afectados y la regresión pública:
+edición con ambos vectores actualizados, evento sin cambios sin cargar modelos
+y borrado manteniendo el perfil. También pasaron seis pruebas de procesos reales,
+cuatro de cola/watcher y tres de base de datos. Falta el paquete actualizado y
+su recorrido instalado antes de considerar cerrado ese recorrido.
+
+El ciclo de instalación, actualización mediante un hijo nativo nuevo, rollback
+entre binarios distintos, rechazo de un ejecutable anterior alterado,
+`--keep-db`, reinstalación y desinstalación pasó en un prefix aislado. Se usó una
+copia coherente de una captura original existente: notas, contextos, sesiones,
+identidad y autenticación se conservaron, al igual que archivos ajenos y
+configuración del host editada por el usuario. Esa captura tiene un encoder
+determinista de dos dimensiones; demuestra conservación de datos, no aceptación
+numérica. El binario previo de ese ciclo es una compilación debug real con
+vinculación de fuentes no verificada, no una versión histórica cualificada.
+
+El ensamblador y el autenticador Python rechazan ahora la misma procedencia
+inválida que el instalador Rust. Se reprodujeron seis casos y pasaron las 34
+pruebas agrupadas de paquete y compilación. Los tests y ejemplos nativos también
+ya no dependen de recibos ignorados en `docs/validation`: once callers usan las
+fixtures necesarias con procedencia dentro de los crates. Ocho archivos
+comprimidos se expanden a los mismos bytes originales; el test de almacenamiento
+conserva exactamente las dos estructuras de esquema que consumía. La carga útil
+total es de 857588 bytes, sin volver a agregar recibos de ejecución a Git.
 
 Siguen vigentes las restricciones externas: falta la observación original del
 par exacto SkylakeX `4fd097c7...`/`1f613df1...` tras agotar las tres asignaciones,

@@ -64,6 +64,7 @@ fn daemon_process_child() {
         grammar_manifest: grammar,
         model: "daemon-fixture-model".into(),
         encoder: std::sync::Arc::new(Encoder),
+        retrieval: None,
     }
     .maintenance(&root);
     server::serve(config, state, Some(maintenance)).unwrap();

@@ -132,6 +132,18 @@ def test_supplied_build_boolean_cannot_establish_source_binding(tmp_path,monkeyp
  result=native_package.build_bundle(repo,environment,binaries,tmp_path/'bundle',provenance)
  assert result['provenance']['build']['source_binary_binding_verified'] is False
 
+@pytest.mark.parametrize('field,value', [('commit',None),('commit','A'*40),('commit','a'*39),('commit',40),('dirty',None),('dirty',0)])
+def test_package_provenance_matches_native_install_admission(tmp_path,monkeypatch,field,value):
+ repo,environment,binaries,provenance=inputs(tmp_path,monkeypatch)
+ destination=tmp_path/'invalid-input';valid=tmp_path/'valid'
+ native_package.build_bundle(repo,environment,binaries,valid,provenance)
+ provenance['source'][field]=value
+ with pytest.raises(ValueError):native_package.build_bundle(repo,environment,binaries,destination,provenance)
+ assert not destination.exists()
+ path=valid/'FILES.json';manifest=json.loads(path.read_text());manifest['provenance']['source'][field]=value
+ path.chmod(0o644);path.write_text(json.dumps(manifest));path.chmod(0o444)
+ with pytest.raises(ValueError):native_package.authenticate_bundle(valid)
+
 def test_missing_native_build_receipt_rejects_before_bundle_publication(tmp_path,monkeypatch):
  repo,environment,binaries,provenance=inputs(tmp_path,monkeypatch);environment['KEN_NATIVE_BUILD']=str(tmp_path/'missing-build')
  destination=tmp_path/'bundle'

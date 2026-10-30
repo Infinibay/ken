@@ -124,7 +124,7 @@ mod tests {
     #[test]
     fn storage_probe_executes_frozen_inputs_without_expected_payloads() {
         let cases: Value = serde_json::from_str(include_str!(
-            "../../../docs/validation/rust-migration-2026-10-19/m2-storage/cases.json"
+            "../tests/fixtures/portable/storage-cases.json"
         ))
         .unwrap();
         let rows: Vec<_> = cases["cases"]

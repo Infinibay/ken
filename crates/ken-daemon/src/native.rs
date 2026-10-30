@@ -1,4 +1,4 @@
-//! Production composition uses the selected project model, never BestSearch roles.
+//! Keep the selected project model and active search projection coherent.
 use crate::{
     Error, Result,
     queue::{Action, Batch, BatchIndexer},
@@ -10,12 +10,13 @@ use ken_core::{
     source_filter::SourceFilter,
     source_walk::ProjectSources,
 };
-use ken_index::{IndexOptions, Indexer};
+use ken_index::{IndexOptions, Indexer, encoder::ModelEncoderLoader};
 use ken_models::{
-    ModelFactory,
+    LegacyRuntimeIdentity, ModelFactory,
     model_policy::{ModelPolicy, ProjectModelFacts, is_asymmetric},
 };
 use ken_retrieval::{
+    encoder::EncoderLoader,
     project_embeddings::{ProjectEmbeddings, TransformerOverrides, configure_project},
     query_encoder::QueryEncoder,
 };
@@ -36,6 +37,7 @@ pub struct NativeResources {
     pub model_policy: ModelPolicy,
     pub environment: BTreeMap<String, String>,
     pub check_worker: Option<PathBuf>,
+    pub legacy_runtime: LegacyRuntimeIdentity,
 }
 struct SharedQuery(Arc<ProjectEmbeddings>);
 impl QueryEncoder for SharedQuery {
@@ -58,6 +60,8 @@ impl NativeResources {
             model_policy: user_model_policy(&environment),
             environment,
             check_worker: None,
+            legacy_runtime: ken_search::SearchInstallation::declared_legacy_runtime(installation)
+                .map_err(crate::invalid)?,
         })
     }
     pub fn compose(self, root: &Path) -> Result<(DaemonState, Maintenance)> {
@@ -100,6 +104,7 @@ impl NativeResources {
             .unwrap_or(if facts.file_vectors_present { 1 } else { 2 });
         let reembed=(is_asymmetric(&resolved.model)&&space<2&&facts.file_vectors_present).then(||format!("{} encodes questions and documents differently, and this index was built before ken applied that distinction to stored vectors",resolved.model));
         drop(bootstrap);
+        let retrieval = IndexRetrieval::managed(self.factory.clone(), self.legacy_runtime);
         let encoder = Arc::new(ProjectEmbeddings::new(
             self.factory,
             resolved.model,
@@ -129,6 +134,7 @@ impl NativeResources {
             grammar_manifest: self.grammar_manifest,
             model: encoder.model().to_owned(),
             encoder,
+            retrieval: Some(retrieval),
         };
         let maintenance = index.maintenance(paths.root());
         Ok((state, maintenance))
@@ -170,6 +176,22 @@ pub struct IndexResources {
     pub grammar_manifest: PathBuf,
     pub model: String,
     pub encoder: Arc<dyn ken_retrieval::DocumentEncoder + Send + Sync>,
+    pub retrieval: Option<IndexRetrieval>,
+}
+/// Transfer immutable retrieval inputs to the dedicated worker, constructing its
+/// thread-local loader there. The active profile remains owned by the database.
+pub struct IndexRetrieval {
+    pub runtime: LegacyRuntimeIdentity,
+    pub encoder_loader: Box<dyn FnOnce() -> Rc<dyn EncoderLoader> + Send>,
+}
+impl IndexRetrieval {
+    pub fn managed(factory: Arc<ModelFactory>, runtime: LegacyRuntimeIdentity) -> Self {
+        let legacy = runtime.clone();
+        Self {
+            runtime,
+            encoder_loader: Box::new(move || Rc::new(ModelEncoderLoader { factory, legacy })),
+        }
+    }
 }
 impl IndexResources {
     pub fn maintenance(self, root: &Path) -> Maintenance {
@@ -183,10 +205,18 @@ struct NativeIndexer {
     paths: ProjectPaths,
     store: ProjectStore,
     parsers: ParserRegistry,
-    resources: IndexResources,
+    model: String,
+    encoder: Arc<dyn ken_retrieval::DocumentEncoder + Send + Sync>,
+    retrieval: Option<(LegacyRuntimeIdentity, Rc<dyn EncoderLoader>)>,
 }
 impl NativeIndexer {
     fn open(root: &Path, resources: IndexResources) -> Result<Self> {
+        let IndexResources {
+            grammar_manifest,
+            model,
+            encoder,
+            retrieval,
+        } = resources;
         let context = DiscoveryContext {
             cwd: root.into(),
             home: None,
@@ -196,13 +226,15 @@ impl NativeIndexer {
         let mut store = ProjectStore::open(&paths)?;
         store.initialize()?;
         let parsers = ParserRegistry::new(
-            GrammarCatalog::prepared(&resources.grammar_manifest).map_err(crate::invalid)?,
+            GrammarCatalog::prepared(&grammar_manifest).map_err(crate::invalid)?,
         );
         Ok(Self {
             paths,
             store,
             parsers,
-            resources,
+            model,
+            encoder,
+            retrieval: retrieval.map(|input| (input.runtime, (input.encoder_loader)())),
         })
     }
     fn sources(&self) -> Result<Vec<PathBuf>> {
@@ -285,8 +317,10 @@ impl BatchIndexer for NativeIndexer {
         }
         if !reindex.is_empty() {
             let options = IndexOptions {
-                legacy_encoder: Some(self.resources.encoder.as_ref()),
-                legacy_model: Some(&self.resources.model),
+                legacy_encoder: Some(self.encoder.as_ref()),
+                legacy_model: Some(&self.model),
+                legacy_runtime: self.retrieval.as_ref().map(|(runtime, _)| runtime.clone()),
+                retrieval_loader: self.retrieval.as_ref().map(|(_, loader)| loader.clone()),
                 ..Default::default()
             };
             Indexer::new(&self.parsers).index_files(

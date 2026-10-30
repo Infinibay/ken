@@ -62,17 +62,9 @@ fn schema_snapshot(conn: &Connection) -> Value {
 }
 
 fn original_schema(case_id: &str) -> Value {
-    let document: Value = serde_json::from_str(include_str!(
-        "../../../docs/validation/rust-migration-2026-10-19/m2-storage/reference.json"
-    ))
-    .unwrap();
-    document["oracles"][0]["results"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|row| row["id"] == case_id)
-        .unwrap()["output"]["schema"]
-        .clone()
+    let schemas: Value =
+        serde_json::from_str(include_str!("fixtures/portable/storage-schemas.json")).unwrap();
+    schemas[case_id].clone()
 }
 
 #[test]

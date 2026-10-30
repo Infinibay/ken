@@ -1,0 +1,21 @@
+{
+  "format": "ken-portable-test-fixtures/1",
+  "files": [
+    {
+      "path": "storage-cases.json",
+      "bytes": 7475,
+      "sha256": "db8806ae8311641a017abf017ddd60f9f9c6fc6b6a5ce56a85084a201ca07f0b",
+      "source": "docs/validation/rust-migration-2026-10-19/m2-storage/cases.json",
+      "projection": "none; exact original bytes"
+    },
+    {
+      "path": "storage-schemas.json",
+      "bytes": 40417,
+      "sha256": "32b76ed49d99b198727fdb23c2b36dd6f33d006a5bf6420d761fd7b4e0735e3d",
+      "source": "docs/validation/rust-migration-2026-10-19/m2-storage/reference.json",
+      "source_bytes": 3605225,
+      "source_sha256": "ff5fe91b21fce85da9b896a1ad30c0cba2bcb1b4cf98ec371177e5535e7136c3",
+      "projection": "oracles[0].results[id in {schema-fresh,schema-legacy}].output.schema, keyed by original case ID; no schema values changed"
+    }
+  ]
+}
