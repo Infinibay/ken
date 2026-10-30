@@ -55,6 +55,30 @@ affected checks. Keep detailed status/evidence in the ignored plan workspace.
 Independent workers do not touch shared manifests, lib.rs/mod.rs, docs or another
 worker's paths, and never run shared Cargo without coordinator authorization.
 
+## Verified native application, 30 October
+
+Implementation commits `a16585ce`, `d4bd8bba` and `cc1ae5fb` are pushed to
+`codex/rust-migration`. The final source-bound Release includes the repaired
+watcher/profile boundary and the isolated optional Torch loader. Its package
+manifest is `7cd99ca0e5ef8b70cff31bfae69597daf5bf74e3ee47a0e3702eb33509230580`.
+
+The installed current-host application passed all 56 audited CLI/MCP/daemon
+invocations, actual default/static model calls, cancellation/reaping, live
+projection indexing, and cleanup. The unchanged packaged Torch SDK passed a
+separate optimized tiny-Qwen CPU Float32 and ownership probe. Actual source-bound
+release upgrade/rollback, corruption refusal, copied original data preservation,
+keep-db/reinstall/uninstall and edited configuration preservation also passed.
+Strict affected Clippy, native loader contracts and 35 package/build tests passed.
+Portable test fixtures preserve original bytes/selected schema values; raw
+captures, binaries, packages and traces remain local and ignored.
+
+These results close the implemented native application and current-host package
+checks, not the global migration/promotion gate. The exact original SkylakeX
+context/alignment observation, Intel/MKL acceptance and minimum portable baseline
+remain unproved. Full optional BGE/Qwen weights are not bundled or qualified by
+the tiny SDK probe. Keep `migration_complete=false`, `M4_accepted=false`, and the
+existing installed Python entry point until those requirements are resolved.
+
 ## Review focus
 
 - Stable identity versus historical value provenance across exclusive CFG arms.

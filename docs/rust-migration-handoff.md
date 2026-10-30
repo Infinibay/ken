@@ -2704,8 +2704,26 @@ de sesiones/buffers después de cerrar los runtimes. Esto prueba la integración
 del core; no convierte todos los modelos registrados en modelos cualificados.
 El paquete ampliado requiere además `libbz2.so.1.0`, con bytes y licencia
 explícitos. Los pesos completos BGE/Qwen no están presentes en los recursos
-locales y no se presentan como incluidos. Falta generar y autenticar el Release
-con esta última integración antes de cerrar el empaquetado opcional.
+locales y no se presentan como incluidos.
+
+El Release limpio `cc1ae5fb2a441cf779f5258f53cb60075575a58e` terminó en 7m48s.
+La exportación de fuentes tiene SHA256
+`ad7ddc64620cf72ff058675c5d68711acc4eeb1ffe14b2eb359d3f3e6eed03a9`.
+El paquete ampliado contiene 1197 archivos independientes, 1262189665 bytes y
+manifiesto `7cd99ca0e5ef8b70cff31bfae69597daf5bf74e3ee47a0e3702eb33509230580`.
+Pasaron autenticación, instalación aislada y el recorrido completo de 56
+invocaciones/116 ejecuciones nativas. Las operaciones predeterminadas y estáticas
+no abren ni cargan los siete archivos opcionales de Torch. El probe optimizado,
+compilado desde esa misma exportación, ejecutó el caso Qwen CPU/float32 usando
+exclusivamente el módulo y el SDK copiados a la instalación autenticada.
+La actualización desde `d4bd8bba`, rollback, conservación de datos y limpieza
+también pasaron sobre ese paquete final.
+
+El recibo compuesto local `NATIVE-APPLICATION-VERIFICATION.json` vincula las
+fuentes, el manifiesto y los hashes de los resultados. Permanece fuera de Git,
+junto con el paquete y las trazas. La implementación y la integración nativa
+descritas están verificadas para este equipo; esto no sustituye las aceptaciones
+externas enumeradas a continuación.
 
 Siguen vigentes las restricciones externas: falta la observación original del
 par exacto SkylakeX `4fd097c7...`/`1f613df1...` tras agotar las tres asignaciones,
