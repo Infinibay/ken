@@ -27,6 +27,11 @@ fn value(v: &Value) -> PlanValue {
             attrs: serde_json::from_value(v["attrs"].clone()).unwrap(),
         }),
         Value::Object(o) if o.contains_key("literal") => PlanValue::Term(term(v)),
+        Value::Object(o) if o.get("__class__").and_then(Value::as_str) == Some("Expr") => {
+            PlanValue::Expression(ken_query::ast::Expression::Query(
+                serde_json::from_value(v.clone()).unwrap(),
+            ))
+        }
         Value::Object(o) => PlanValue::Map(o.iter().map(|(k, v)| (k.clone(), value(v))).collect()),
         _ => panic!("plan value"),
     }

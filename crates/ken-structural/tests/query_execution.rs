@@ -29,6 +29,54 @@ fn corpus() -> Value {
         .extend(extra["cases"].as_array().unwrap().iter().cloned());
     corpus
 }
+#[test]
+fn source_operators_match_original_on_indexed_sqlite_reads() {
+    let mut store = StructuralStore::open(None, None).unwrap();
+    let mut graphs = BTreeMap::new();
+    let mut errors = vec![];
+    for bytes in [
+        &include_bytes!("../../ken-query/tests/fixtures/source-runtime-reference.json.gz")[..],
+        &include_bytes!("../../ken-query/tests/fixtures/source-operations-reference.json.gz")[..],
+    ] {
+        let mut text = String::new();
+        GzDecoder::new(bytes).read_to_string(&mut text).unwrap();
+        let data: Value = serde_json::from_str(&text).unwrap();
+        for c in data["cases"].as_array().unwrap() {
+            let key = c["graph"].to_string();
+            let ir = StructuralIr::from_json(&key).unwrap();
+            let id = if let Some(id) = graphs.get(&key) {
+                *id
+            } else {
+                let id = publish(&mut store, &format!("source{}", graphs.len()), &ir);
+                graphs.insert(key, id);
+                id
+            };
+            let mut index = GraphIndex::open(&mut store, id).unwrap();
+            let options: ExecutionOptions = serde_json::from_value(c["options"].clone()).unwrap();
+            match execute_query(&mut index, &fixture::query(&c["query"]), options) {
+                Ok(result) => {
+                    let mut got = serde_json::to_value(result).unwrap();
+                    got.as_object_mut().unwrap().remove("stats");
+                    if got != c["expected"] {
+                        errors.push(format!("{}: {got} != {}", c["name"], c["expected"]));
+                    }
+                }
+                Err(e) => errors.push(format!("{}: {e}", c["name"])),
+            }
+        }
+    }
+    assert!(
+        errors.is_empty(),
+        "{} failures: {}",
+        errors.len(),
+        errors
+            .iter()
+            .take(12)
+            .cloned()
+            .collect::<Vec<_>>()
+            .join("\n")
+    );
+}
 fn publish(store: &mut StructuralStore, key: &str, ir: &StructuralIr) -> i64 {
     let snapshot = store
         .publish(&[], store.current().unwrap(), key, true)

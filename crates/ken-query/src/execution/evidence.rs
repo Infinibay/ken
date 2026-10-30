@@ -30,6 +30,7 @@ impl Row {
 }
 #[derive(Clone)]
 pub(super) enum Proof {
+    Source(Arc<Value>),
     Fact(Arc<Fact>),
     Path {
         relation: String,
@@ -54,6 +55,7 @@ pub(super) struct Alternative {
 impl PartialEq for Proof {
     fn eq(&self, other: &Self) -> bool {
         crate::with_stack(|| match (self, other) {
+            (Self::Source(a), Self::Source(b)) => Arc::ptr_eq(a, b) || a == b,
             (Self::Fact(a), Self::Fact(b)) => {
                 Arc::ptr_eq(a, b)
                     || (a.subject == b.subject
@@ -107,6 +109,7 @@ impl Proof {
                 return Err(ExecutionError::Exhausted("evidence"));
             }
             Ok(match self {
+                Self::Source(value) => (**value).clone(),
                 Self::Fact(f) => {
                     json!({"subject":f.subject,"relation":f.relation,"object":f.object,"source":f.evidence})
                 }
@@ -164,6 +167,31 @@ pub(super) fn materialize(
             for p in proofs.iter() {
                 check()?;
                 let cost = match p {
+                    Proof::Source(value) => {
+                        let mut work = vec![(value.as_ref(), 0usize)];
+                        let mut cost = 0usize;
+                        while let Some((v, level)) = work.pop() {
+                            check()?;
+                            cost = cost.saturating_add(1);
+                            if level > 128 || cost > 65536 {
+                                return Err(ExecutionError::Exhausted("evidence"));
+                            }
+                            match v {
+                                Value::String(s) => cost = cost.saturating_add(s.len() / 64),
+                                Value::Array(values) => {
+                                    work.extend(values.iter().map(|v| (v, level + 1)))
+                                }
+                                Value::Object(values) => {
+                                    for (k, v) in values {
+                                        cost = cost.saturating_add(1 + k.len() / 64);
+                                        work.push((v, level + 1));
+                                    }
+                                }
+                                _ => (),
+                            }
+                        }
+                        cost
+                    }
                     Proof::Fact(f) => {
                         1 + (f.subject.len() + f.relation.len() + f.object.len()) / 64
                             + f.evidence.iter().map(|s| 1 + s.len() / 64).sum::<usize>()

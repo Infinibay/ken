@@ -187,8 +187,50 @@ repitieron suites originales aceptadas. Ver el
 [plan](superpowers/plans/2026-10-29-rust-kql-relational-compiler.md).
 
 Los dos compiladores KQL2 están implementados como bibliotecas. El núcleo de
-ejecución relacional se añadió en el bloque siguiente; quedan operadores de fuente
-especializados, runtime indexado, BODY, sesiones y conexión pública. M5 sigue abierto.
+ejecución relacional y sus operadores de fuente se describen abajo; quedan runtime
+indexado, BODY, sesiones y conexión pública. M5 sigue abierto.
+
+## Semántica y operaciones de fuente en Rust
+
+El mismo motor relacional ejecuta `source_type`, `source_quantifier`,
+`source_effective_field`, `source_initializer` y `source_usages`. Interpreta
+referencias de tipos, anidamiento, aliases, estado conocido/desconocido y shadowing
+nominal; contratos de inicialización/escritura/finalización, escapes de receptor,
+inventarios de constructores/asignaciones/dispatch, campos heredados y usos de
+valores evaluados. Las consultas compiladas conservan las formas `known` y
+`"known"`, y `writes: exactly($binding, 1)`.
+
+Las operaciones de sintaxis se leen por identidad, dueño, clase o región mediante
+`OperationProbe`. Memoria conserva índices del snapshot; SQLite utiliza los
+índices existentes de schema15 y el guard de ejecución. Un inicializador con
+lambda consulta hijos de sintaxis aunque pertenezcan a otro callable. Un call
+anidado no se convierte por ello en el valor raíz del inicializador.
+
+Los usos corresponden a valores evaluados y ocurrencias concretas; `RESULT`
+conserva identidad y los hechos de dependencia no propagan identidad histórica.
+El inventario de usos permanece abierto y produce un candidato incierto incluso
+cuando no hay testigos modelados. Los operadores de fuente conservan incertidumbre
+y evidencia y no acreditan por sí solos el cierre de un COUNT o una ausencia.
+
+Hay límites nativos de profundidad128 y expansión65536 para descriptores, y2MB/
+1024 entradas para su memo. La evidencia adicional participa en el límite común
+de tamaño expandido. Las cachés pertenecen a una invocación y se liberan al salir.
+
+700 observaciones nuevas del original congelado comparan resultados completos,
+pruebas e incertidumbre en memoria y SQLite:380 de tipos/contratos/inventarios/
+campos,320 de escapes/inicializadores/usos. Las capturas están comprimidas y
+fijadas por SHA-256; los crudos y observadores permanecen locales. No se repitieron
+observaciones originales aceptadas de parser/compilador/modelos ni matrices CPU.
+El runtime BODY, la ejecución indexada, las sesiones y el host siguen pendientes;
+este bloque deja la semántica compartida que deben consumir. M5 permanece abierto.
+
+Pasaron31 pruebas afectadas, Clippy estricto y formato. Una revisión fresca encontró
+tres Important, corregidos con regresiones rojas→verdes en una pasada: cierre de
+constructores sin coerción de strings, descubrimiento de regiones interrumpible y
+conteos con igualdad/conversión numérica exacta y null explícito. La preparación
+de una región ya no copia las operaciones de todo el snapshot ni colas de hijos.
+Se difiere un Minor de contrato para adaptadores OperationProbe externos; los dos
+adaptadores incluidos filtran exactamente sus criterios.
 
 ## Ejecución relacional sobre snapshots
 

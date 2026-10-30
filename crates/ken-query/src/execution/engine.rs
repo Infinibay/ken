@@ -41,6 +41,7 @@ pub(super) struct Engine<'a> {
     closure_bytes: usize,
     pub pruned: BTreeMap<(usize, Vec<String>), Arc<Vec<Op>>>,
     pub sizes: BTreeMap<(usize, usize, Option<String>, Option<String>), u64>,
+    pub source: super::source::SourceCache,
 }
 impl Execution {
     pub fn execute(self, graph: &dyn GraphRead, query: &RelationalQuery) -> Result<QueryOutcome> {
@@ -79,6 +80,7 @@ impl Execution {
             closure_bytes: 0,
             sizes: BTreeMap::new(),
             pruned: BTreeMap::new(),
+            source: Default::default(),
         };
         let root = engine.plan.root.clone();
         let result = engine
@@ -371,6 +373,9 @@ impl Engine<'_> {
             let Some(attr) = attr else {
                 return Ok(V::String(id.as_str().into()));
             };
+            if let Some(metadata) = self.source.usage_metadata.get(id) {
+                return Ok(metadata.get(attr).cloned().unwrap_or(V::Null));
+            }
             if let Some(entity) = self.graph.entity(id)? {
                 if attr == "name" {
                     return Ok(V::String(entity.name.as_str().into()));
@@ -573,7 +578,7 @@ impl Engine<'_> {
             for node in nodes.iter() {
                 self.check()?;
                 match &node.kind {
-                    Kind::Receiver(..) => return Ok(false),
+                    Kind::Receiver(..) | Kind::Source(_) => return Ok(false),
                     Kind::Match { query, .. } => {
                         if !self.preserves(&self.plan.queries[query].nodes, seen)? {
                             return Ok(false);

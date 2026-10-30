@@ -1,15 +1,15 @@
 //! Read-only schema15 adapter. Query policy and counters live in ken-query.
-use ken_program::{Entity, Fact};
+use ken_program::{Entity, Fact, Operation};
 use ken_query::{
     execution::{
         Execution, ExecutionError, ExecutionOptions, FactProbe, GraphRead, Interruption,
-        QueryOutcome, Result,
+        OperationProbe, QueryOutcome, Result,
     },
     relational::RelationalQuery,
 };
 use ken_store::structural::{
     StructuralError,
-    graph::{EntityFilter, FactFilter, GraphExecution, GraphIndex},
+    graph::{EntityFilter, FactFilter, GraphExecution, GraphIndex, OperationFilter},
 };
 use std::{collections::BTreeSet, sync::Arc};
 
@@ -76,6 +76,37 @@ fn filter(p: &FactProbe) -> FactFilter {
     }
 }
 impl GraphRead for GraphSnapshot<'_, '_> {
+    fn operations(
+        &self,
+        p: &OperationProbe,
+        visit: &mut dyn FnMut(Arc<Operation>) -> Result<()>,
+    ) -> Result<()> {
+        self.interruption.check()?;
+        let mut scan = self
+            .index
+            .operations(&OperationFilter {
+                local_id: p.id.clone(),
+                owner: p.owner.clone(),
+                kind: p.kind.clone(),
+                region: p.region.clone(),
+                ..Default::default()
+            })
+            .map_err(|e| storage(e, &self.interruption))?;
+        for op in scan
+            .rows_checked(|| {
+                if self.interruption.interrupted() {
+                    Err(StructuralError::Invalid("query execution interrupted"))
+                } else {
+                    Ok(())
+                }
+            })
+            .map_err(|e| storage(e, &self.interruption))?
+        {
+            self.interruption.check()?;
+            visit(Arc::new(op.map_err(|e| storage(e, &self.interruption))?))?;
+        }
+        self.interruption.check()
+    }
     fn facts(&self, p: &FactProbe, visit: &mut dyn FnMut(Arc<Fact>) -> Result<()>) -> Result<()> {
         self.interruption.check()?;
         let mut scan = self

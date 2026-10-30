@@ -43,6 +43,7 @@ pub(super) enum Kind {
         proof: String,
     },
     Receiver(String, String),
+    Source(super::source_plan::SourceOp),
 }
 #[derive(Clone)]
 pub(super) struct Query {
@@ -280,6 +281,16 @@ impl Builder<'_> {
                         pending.push(v);
                     }
                 }
+                PlanValue::Expression(crate::ast::Expression::Query(e)) => {
+                    let mut expressions = vec![(e, 0usize)];
+                    while let Some((e, depth)) = expressions.pop() {
+                        self.charge(1 + (e.kind.len() + e.value.len()) / 64 + e.args.len())?;
+                        if depth > 128 {
+                            return Err(invalid("source expression depth limit exceeded"));
+                        }
+                        expressions.extend(e.args.iter().map(|e| (e, depth + 1)));
+                    }
+                }
                 _ => (),
             }
         }
@@ -408,6 +419,15 @@ impl Builder<'_> {
                         let v = tuple(&n.value, Some(2))?;
                         Kind::Receiver(text(&v[0])?.into(), text(&v[1])?.into())
                     }
+                    "source_type"
+                    | "source_quantifier"
+                    | "source_effective_field"
+                    | "source_initializer"
+                    | "source_usages" => {
+                        let op = super::source_plan::SourceOp::parse(&n.kind, &n.value)?;
+                        op.prepare(self.comparisons)?;
+                        Kind::Source(op)
+                    }
                     "any" => {
                         if n.children.is_empty() {
                             return Err(invalid("alternative operator requires branches"));
@@ -517,7 +537,7 @@ fn number(v: &PlanValue) -> Result<String> {
     }
     Ok(s.into())
 }
-fn comparison(s: &str) -> Result<()> {
+pub(super) fn comparison(s: &str) -> Result<()> {
     if matches!(
         s,
         "=" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "literal" | "not_literal" | "~=" | "regex"

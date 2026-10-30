@@ -10,6 +10,32 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización de fuente del30/10: el motor nativo ejecuta tipos/estados de tipo,
+contratos initial/writes/reassigned/completes/escapes, cuantificadores de declaraciones,
+campos efectivos, raíces de inicializadores y usos de valores por ocurrencia.
+Leer la [API](rust-migration.md#semántica-y-operaciones-de-fuente-en-rust) y el
+[plan](superpowers/plans/2026-10-30-rust-source-runtime.md). El servicio de semántica
+es común para los siguientes consumidores BODY e indexado. `OperationProbe` permite
+lecturas por id/dueño/clase/región en memoria y SQLite sin DDL nuevo.
+
+Los700 resultados originales nuevos coinciden completos en ambos adaptadores.
+Descriptor conocido no implica familia resuelta: opaque/generic conservan unknown
+al comparar, mientras `type_status` sigue known. Un TYPE nominal sombrea familias
+primitivas sólo en tipos no retornados. Campos efectivos conservan identidad del
+acceso y de la declaración por separado. Inicializadores distinguen valor raíz,
+call anidado, no-call conocido y enlace ausente; regiones de sintaxis cruzan dueños
+para lambdas. Los usos conservan una alternativa incierta de inventario abierto y
+nunca recorren escrituras históricas para afirmar identidad del valor actual.
+
+| Recurso nuevo en ken-query | Casos | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| source-runtime-reference.json.gz |380|10736|`520edd028c3fae3ef5077d7e6161241daa386ae15768308ca3af71e6828a4053`|
+| source-operations-reference.json.gz |320|13483|`23e1e5a133cd8c7492fd408bb322e717ef54f638b8311726d4692fc4c092f00c`|
+
+Siguiente implementación: evaluación BODY, luego ejecución indexada y sesiones;
+continúan KQL1 y las superficies públicas. Los compiladores ya existen: no repetir
+su migración ni calificar como terminado el runtime que sólo está compilado.
+
 Actualización de ejecución relacional del30/10: `ken-query::execution` ya ejecuta
 el núcleo común sobre snapshots inmutables y `ken-structural::execute_query` lo
 conecta a `GraphIndex`, con guard SQLite/leases/cancelación. Leer la
@@ -21,11 +47,10 @@ invocación; los grafos se comparten, los bindings/budgets/cachés de query no.
 escapa al resultado: la evidencia pública se separa antes de cerrar el scope.
 
 Cubierto: hechos/joins/filtros/uniones, any, match con semilla/cache por scope,
-not/optional/count/path y source_receiver; validación de tipos/ciclos/forma, cierre
-por relación/dueño, pruebas alternativas16 y proyección. Los operadores fuente aún
-no portados se rechazan explícitamente antes de ejecutar, incluidos branches que
-no producirían filas. La siguiente capacidad es SourceType/BODY/source checks,
-después runtime indexado/sesiones/KQL1 y conexión CLI/MCP/config/cachés/catálogo.
+not/optional/count/path y source_receiver, más los operadores fuente descritos arriba; validación de tipos/ciclos/forma, cierre
+por relación/dueño, pruebas alternativas16 y proyección. El runtime BODY todavía se rechaza explícitamente antes de ejecutar, incluidos
+branches que no producirían filas. La siguiente capacidad es BODY, después runtime
+indexado/sesiones/KQL1 y conexión CLI/MCP/config/cachés/catálogo.
 
 Trampas: cache de dependencias incluye scope y semilla; cierre también depende de
 bindings y owner. La caché de cierre evita DAGs exponenciales y tiene límite2MB en
@@ -102,8 +127,7 @@ Recibe bibliotecas explícitas: descubrimiento empaquetado queda en el host.
 
 El lowering conserva selectores/requisitos/usos, relaciones semánticas, witnesses,
 walk/count, scopes, aliases, patrones y BODY checking. No confundir compilación
-con ejecución. El núcleo relacional ya está implementado arriba. Siguen operadores fuente
-especializados, ejecución indexada, sesiones y evaluación BODY; después KQL1 y superficies
+con ejecución. El núcleo relacional ya está implementado arriba. Siguen ejecución indexada, sesiones y evaluación BODY; después KQL1 y superficies
 CLI/MCP/config/cachés/catálogo. Python instalado sigue activo. M5 sigue abierto;
 M6 y el resto de M7/M8, y la calificación SkylakeX/Intel, siguen pendientes.
 
