@@ -23,3 +23,14 @@ preserve resource code/message and a valid source byte span instead of CPython's
 caller-stack-dependent emergency cutoff token. Other diagnostics compare exactly.
 The tests do not invoke Python or alter these references. New compatibility cases
 must be new observations against an authenticated original, not native snapshots.
+
+Indexed compilation observations (2026-10-29): `indexed-reference.json.gz` contains
+534 tagged prepared/expanded input trees and285 checked plans; records exact
+Program serialization/repr/fingerprints or diagnostics. Three intentionally built
+expansion-cap trees without select raised original StopIteration; retained as
+explicit unexpected records and checked for controlled native rejection.
+`body-check-reference.json.gz` contains670 direct BODY checks/374 plans across
+role maps, expected captures, mappings and linear flags; also pins roles after
+normal errors. `resources/capabilities.json` freezes compiler vocabulary from the
+same authenticated original. No original parser/preparation observations were
+replayed for previously captured trees. Native tests never execute observers.

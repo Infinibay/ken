@@ -8,16 +8,22 @@ enum Node<'a> {
     Type(&'a TypeName),
 }
 pub(crate) fn tree(tree: &File) -> Result<()> {
-    let mut pending: Vec<_> = tree
+    let pending: Vec<_> = tree
         .declarations
         .iter()
         .map(|d| (Node::Declaration(d), 1usize))
         .collect();
+    validate(pending, &tree.span)
+}
+pub(crate) fn clause(c: &Clause) -> Result<()> {
+    validate(vec![(Node::Clause(c), 1)], &c.span)
+}
+fn validate(mut pending: Vec<(Node<'_>, usize)>, span: &Span) -> Result<()> {
     while let Some((node, depth)) = pending.pop() {
         if depth > MAX_AST_DEPTH {
             return Err(ParseError::resource(
                 "prepared AST depth limit exceeded",
-                tree.span.clone(),
+                span.clone(),
             ));
         }
         let next = depth + 1;

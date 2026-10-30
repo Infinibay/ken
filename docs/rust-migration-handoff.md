@@ -10,6 +10,72 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización de compilación indexada del29/10: `ken-query` implementa
+`compile_indexed`, `compile_indexed_branches`, `IndexedProgram` y `compile_body`.
+La [API](rust-migration.md#kql2-compilación-indexada-y-comprobación-body) recibe
+sintaxis ya resuelta/especializada. El primer entry equivale a `_compile`; el
+segundo compone alternativas indexadas, mantiene el límite global y las huellas
+originales. No reemplaza el dispatcher `compile` que elige entre ambos backends.
+Próximo núcleo: lowering relacional/source selectors/quantifiers/usages; después
+operadores, sesiones, evaluación BODY y conexión KQL1/2 con CLI/MCP/config.
+
+Scans/actions/BODY conservan el orden del pipeline; scopes de cuantificadores y
+testigos `exists` son privados, y patrones generan roles higiénicos con el mismo
+contador. Tipos de query se comprueban aparte de operandos de fuente. BODY separa
+coordinación, operandos/condiciones, restricciones call/construct e intervalos.
+Outputs retienen orden y usan un set auxiliar para pertenencia; resume indexa por
+span completo los candidatos iguales, conservando el primer igual de Python sin
+recorrer todo el prefijo de cada instrucción.
+
+La huella indexada usa repr de **listas** para scans/filtros/acciones/optional/steps,
+**tuplas** para proyección/orden/predicados y **dict** de enums en orden original.
+No reemplazarlo por JSON ni convertir todos los Vec a la misma forma. Límites
+enteros grandes usan RawValue y repr decimal exacto. `sha2` pasó de dependencia de
+prueba a runtime con la misma versión ya fijada; no hay versión nueva en Cargo.lock.
+`compile_body` conserva roles mutados antes de errores normales; los errores se
+reenvuelven con el mismo source:start y código que `_compile`, no uniformemente
+como unsupported_capability. Mantener distintas las reglas call y let-call:
+receiver miembro y receiver_version sólo están admitidos en la primera.
+
+Seguridad nativa: validación iterativa de topología y slots obligatorios antes de
+indexar/remapear; profundidad512 y65536 unidades de trabajo además de los límites
+originales de256 pasos/96 joins. El presupuesto cuenta registros AST y parámetros,
+1 unidad adicional por64bytes de payload y entradas de mapas de BODY. Se cobra
+antes de copiar expresiones/subárboles BODY/optional y se comparte entre cuerpos
+anidados. Esto puede rechazar expansiones patológicas que Python terminaría tras
+trabajo enorme. Tras256 pasos no se sigue reteniendo un plan que ya no puede
+retornarse, pero se conservan bindings y diagnósticos posteriores de lowering
+hasta error o presupuesto. Los fallos nativos de presupuesto conservan resource_limit. Tres AST manuales sin
+select producían StopIteration original; el nativo retorna error estructurado.
+No extender esas diferencias a diagnósticos de fuente normal.
+
+Capturas nuevas, autenticadas antes/después contra original1066, consumen ASTs
+preparados/expandidos aceptados sin repetir parser/bibliotecas/modelos. Casos nuevos
+se observaron una vez. La primera invocación del script falló antes de observar
+por falta de PYTHONPATH; se corrigió el wrapper. Luego un assert del adaptador
+identificó los tres StopIteration ya journalizados: fixture finalizada del journal,
+sin repetir esos casos. Crudos y workspace se conservan locales y sin seguimiento.
+
+| Recurso en ken-query | Casos | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| indexed-reference.json.gz |534/285 planes|179905|`e04f6384a3fe04d4791c2bd84005fe1f6529f851e2ec0eba84bd32a96b80fb12`|
+| body-check-reference.json.gz |670/374 planes|37959|`be4698f3a09e7fdf7c3812a4dd75162a516ca25e500046f0358c13387b8846d4`|
+| capabilities.json |vocabulario original|8965|`743522d97fcfdba6c81aefda220954e9ec7330ac8e3ba4be8d2819728caff8ce`|
+
+Pasaron25 raíces nativas agrupadas, incluyendo paridad completa, ramas/límite
+privado, slots inválidos, cadenas/DAGs y30000 instrucciones BODY con10000 capturas
+en pila normal. Clippy estricto y formato también pasaron. La revisión final
+identificó cinco Important, todos con reproducción roja y corrección en una pasada:
+materialización antes del límite, slicing de regex corrupto, captura de lectura
+ante expected Call, span outer-let y recorrido cuadrático de restricciones gap.
+Tests adicionales fijan error directo/envuelto, precedencia posterior a256 pasos,
+intervalos y presupuestos compartidos de BODY/optional. La expansión rechazada
+(512 cláusulas×512 usos) bajó de1839935 a134699 asignaciones;512 restricciones gap,
+de271903 a6178. No hay Critical/Minor ni segunda revisión. No hay ejecución de consultas ni
+aceptación global nueva; público271/Best247 no cambian. M5 permanece abierto,
+igual que M6 y resto de M7/M8 y la calificación SkylakeX/Intel. Python instalado
+sigue activo. Ver el [plan](superpowers/plans/2026-10-29-rust-kql-indexed-compiler.md).
+
 Actualización KQL2 del29/10: `ken-query` implementa sintaxis y preparación puras.
 Leer primero la [API](rust-migration.md#kql2-sintaxis-y-preparación-nativas) y el
 [plan](superpowers/plans/2026-10-29-rust-kql-frontend.md). El recorrido público
@@ -22,9 +88,9 @@ solamente la indexada expande alternativas128 antes de `_compile`. No confundir
 inmutable módulo→File; `specialize_models` comprueba firmas y genera `@model` en
 orden de primer uso; `expand_indexed_alternatives` genera `@variant` y detecta
 recursión; `predicate_components` calcula SCC/estratificación iterativamente.
-No hay compilador completo ni ejecución BODY todavía. Próximo bloque core:
-ambos backends de comprobación/lowering y los operadores sobre QueryView/GraphIndex;
-después sesiones, runtime BODY y conexión KQL1/2 con CLI/MCP/config.
+La compilación indexada se añadió en el bloque descrito arriba; no hay dispatcher
+público completo ni ejecución BODY todavía. Siguen el lowering relacional y los
+operadores sobre QueryView/GraphIndex, sesiones, runtime BODY y conexión KQL1/2.
 
 Trampas observadas: `dataclasses.asdict` pierde Expr frente a SourceExpr;
 conservar `__class__` recursivo. Las identidades usan repr de dataclass/tuple,

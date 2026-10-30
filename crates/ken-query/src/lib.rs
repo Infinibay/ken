@@ -72,3 +72,21 @@ mod conditionals;
 pub(crate) fn with_stack<T>(work: impl FnOnce() -> T) -> T {
     stacker::maybe_grow(256 * 1024, 2 * 1024 * 1024, work)
 }
+
+mod capabilities;
+mod checked;
+mod source_matcher;
+pub use checked::{Action, BodyPattern, IndexedProgram, IntegerLiteral, Scan, Step};
+
+mod body_check;
+mod expression_check;
+mod indexed;
+mod operands;
+pub use body_check::compile_body;
+pub use indexed::{compile_indexed, compile_indexed_branches};
+
+mod syntax_shape;
+
+mod existential;
+
+mod compile_budget;

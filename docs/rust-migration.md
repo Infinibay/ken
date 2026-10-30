@@ -53,8 +53,9 @@ especialización comprueba firmas y genera instancias higiénicas `@model` en or
 de uso. La expansión `@variant` conserva el máximo de128 alternativas y pertenece
 sólo a la ruta indexada. `predicate_components` calcula componentes y rechaza
 recursión no estratificada. La ruta relacional consumirá el árbol preparado sin
-pasar por esa expansión. Estas APIs producen sintaxis preparada; los dos backends
-del compilador, operadores, sesiones y evaluación BODY siguen pendientes.
+pasar por esa expansión. Estas APIs producen sintaxis preparada. La compilación indexada se añadió en el
+bloque siguiente; el backend relacional, operadores, sesiones y evaluación BODY
+siguen pendientes.
 
 Los límites normales siguen en2MB de entrada,4KB por regex, anidamiento96 e
 instancias de modelo128. El validador regex comprueba la gramática restringida
@@ -76,6 +77,61 @@ la construcción ahora mueve prefijos y copia sólo al bifurcar. La regresión d
 cláusulas bajó de531997 a3102 asignaciones (5174 con dos alternativas), sin usar
 umbrales de tiempo. Clippy estricto y formato también pasan. Ver el [plan](superpowers/plans/2026-10-29-rust-kql-frontend.md).
 M5 continúa abierto; KQL1 y las superficies públicas también quedan pendientes.
+
+## KQL2: compilación indexada y comprobación BODY
+
+`ken-query` produce ahora `IndexedProgram` con scans, filtros, acciones, predicados,
+proyección, orden, límite y pasos BODY comprobados. La entrada ya debe tener
+bibliotecas resueltas y modelos especializados:
+
+```rust
+use ken_query::{parse, ParseLimits, resolve_libraries, specialize_models,
+                compile_indexed_branches};
+use std::collections::BTreeMap;
+
+let syntax = parse(kql_source, "query.kql", ParseLimits::default())?;
+let resolved = resolve_libraries(&syntax, &BTreeMap::new())?;
+let prepared = specialize_models(&resolved)?;
+let program = compile_indexed_branches(&prepared, None)?;
+```
+
+`compile_indexed` comprueba una sola rama, equivalente al `_compile` original.
+`compile_indexed_branches` añade expansión acotada y composición: conserva el
+límite global, quita límites de ramas y calcula la huella de sus hashes ordenados.
+El caller sigue siendo responsable de elegir el backend; el dispatcher público
+y el lowering relacional todavía no están migrados. Estos planes no ejecutan
+consultas ni incorporan grafos, proyectos o IDs de SQLite.
+
+El chequeo conserva ámbitos cuantificados, dominios finitos/enums, tipos de
+cálculos, higiene de patrones, testigos privados y member inventories exactos.
+`compile_body` comprueba operandos, capturas, llamadas/construcciones, intervalos,
+condicionales e iteraciones del subconjunto original; produce `BodyPattern` y
+actualiza roles. Como el original, un error normal puede conservar capturas
+introducidas antes de fallar. La evaluación BODY sigue pendiente.
+
+Las huellas coinciden con el repr original, incluidas las diferencias entre lista,
+tupla y diccionario. Los límites enteros grandes se conservan sin pasar por float.
+Se mantienen256 pasos y96 joins. Los límites nativos adicionales son512 llamadas
+de patrón anidadas y65536 unidades de trabajo de expansión/remapeo. El presupuesto
+cuenta registros AST y parámetros, agrega unidades por payload de64bytes y por
+entradas de roles de BODY; incluye subárboles BODY/optional y comparte el presupuesto
+entre cuerpos anidados. Puede rechazar expansiones patológicas antes que Python.
+Tras detectar más de256 pasos se deja de retener el plan descartable, pero se
+continúa comprobando bindings hasta un error normal o hasta agotar ese presupuesto.
+Registros AST construidos o persistidos sin slots obligatorios se rechazan con un
+diagnóstico estructurado; tres casos originales manuales fallaban con StopIteration.
+
+La referencia nueva compara534 compilaciones (285 planes) y670 comprobaciones
+BODY (374 planes), incluidos repr, huellas, errores y roles posteriores. Pasaron
+25 pruebas nativas agrupadas, Clippy estricto y formato. Una prueba de30000 instrucciones
+BODY conserva10000 capturas en orden sobre la pila normal del hilo. Los crudos y
+scripts de observación quedan locales; no se repitieron suites del original.
+La revisión encontró cinco Important, corregidos en una pasada con regresiones
+rojas→verdes: materialización excesiva, regex corrupto, alias de lectura tipado
+Call, span de constructor y validación cuadrática de gaps. La expansión rechazada
+bajó de1839935 a134699 asignaciones y un gap de512 restricciones, de271903 a6178.
+Los conteos son evidencia de asignaciones, sin umbrales de tiempo.
+Ver el [plan](superpowers/plans/2026-10-29-rust-kql-indexed-compiler.md).
 
 ## Núcleo estructural: almacén de snapshots
 

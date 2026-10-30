@@ -69,3 +69,51 @@ fn flat_expansion_allocations_scale_with_output_after_branching() {
         eprintln!("{alternatives} alternatives: {allocations} allocations");
     }
 }
+
+#[test]
+fn rejected_pattern_expansion_does_not_allocate_the_whole_pipeline() {
+    use ken_query::{ParseLimits, compile_indexed, parse};
+    let text = format!(
+        "language \"kql/2\";module bounded;pattern P(){{{}}}query q{{{}select 1;}}",
+        "where true;".repeat(512),
+        "use P();".repeat(512)
+    );
+    let tree = parse(&text, "bounded", ParseLimits::default()).unwrap();
+    ALLOCATIONS.with(|count| count.set(Some(0)));
+    let result = compile_indexed(&tree, None);
+    let allocations = ALLOCATIONS.with(|count| count.replace(None).unwrap());
+    assert_eq!(result.unwrap_err().code, "resource_limit");
+    assert!(
+        allocations < 200000,
+        "rejected expansion performed {allocations} allocations"
+    );
+    eprintln!("rejected expansion: {allocations} allocations");
+}
+
+#[test]
+fn wide_gap_forbidden_targets_do_not_repeat_allocations() {
+    use ken_query::{ParseLimits, compile_body, parse};
+    use std::collections::BTreeMap;
+    let text = format!(
+        "language \"kql/2\";module gap;pattern P(){{body{{call $f{{}};gap until next{{{}}}call $f{{}};}}}}",
+        "forbid call($f);".repeat(512)
+    );
+    let tree = parse(&text, "gap", ParseLimits::default()).unwrap();
+    let mut roles = BTreeMap::from([("f".into(), "callable".into())]);
+    ALLOCATIONS.with(|count| count.set(Some(0)));
+    let result = compile_body(
+        &tree.declarations[0].clauses[0],
+        "owner",
+        &BTreeMap::new(),
+        &mut roles,
+        None,
+    );
+    let allocations = ALLOCATIONS.with(|count| count.replace(None).unwrap());
+    let plan = result.unwrap();
+    assert_eq!(plan.clauses.len(), 3);
+    assert!(
+        allocations < 50000,
+        "wide gap performed {allocations} allocations"
+    );
+    eprintln!("wide gap: {allocations} allocations");
+}
