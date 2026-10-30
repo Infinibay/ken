@@ -31,3 +31,5 @@ pub(crate) fn vocabulary() -> &'static Vocabulary {
             .expect("frozen relational vocabulary")
     })
 }
+
+pub(crate) use terms::json_string;

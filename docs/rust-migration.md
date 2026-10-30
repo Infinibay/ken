@@ -186,10 +186,95 @@ regresiones rojas→verdes; no hubo Critical ni Minor. Los crudos quedan locales
 repitieron suites originales aceptadas. Ver el
 [plan](superpowers/plans/2026-10-29-rust-kql-relational-compiler.md).
 
-Los dos compiladores KQL2 están implementados como bibliotecas. Falta ejecutar
-sus planes sobre QueryView/GraphIndex: operadores, sesiones y evaluación BODY;
-después KQL1 y conexión con CLI/MCP/config/cachés y catálogo de bibliotecas. M5
-sigue abierto y no hay aceptación global nueva de la migración.
+Los dos compiladores KQL2 están implementados como bibliotecas. El núcleo de
+ejecución relacional se añadió en el bloque siguiente; quedan operadores de fuente
+especializados, runtime indexado, BODY, sesiones y conexión pública. M5 sigue abierto.
+
+## Ejecución relacional sobre snapshots
+
+`ken_query::execution` ejecuta planes relacionales tipados sobre un `GraphRead`
+inmutable. `MemoryGraph` posee una captura independiente del IR; el adaptador
+`ken_structural::execute_query` usa el mismo motor sobre `GraphIndex` persistido:
+
+```rust
+use ken_query::{compile, BackendPreference};
+use ken_query::execution::ExecutionOptions;
+use std::collections::BTreeMap;
+
+let compiled = compile(&syntax, None, &BTreeMap::new(), BackendPreference::Relational)?;
+let query = compiled.relational.as_deref().expect("relational preference");
+let mut index = acquired_project.index()?;
+let outcome = ken_structural::execute_query(&mut index, query, ExecutionOptions::default())?;
+```
+
+El motor cubre hechos/joins, filtros, alternativas y uniones, dependencias con
+semilla y caché por ámbito, ausencia acotada por dueño, optional, conteos distintos,
+caminos con modalidad y receptor de instancia. Cada consulta posee sus bindings,
+contadores, deadline y cachés. Los recursos de snapshot se pueden reutilizar; no
+se reutiliza estado de resultados. `Execution` se consume al ejecutarla. El motor
+no depende de SQLite; `GraphSnapshot` exige un guard `GraphExecution` para su uso
+manual. La ruta habitual instala y libera ese guard automáticamente, incluso al
+fallar. Los errores de almacenamiento conservan su causa; sólo una interrupción
+identificada se traduce a agotamiento de recursos.
+
+La completitud de ausencia/cardinalidad se verifica por relación y dueño, también
+a través de dependencias; inventarios de una alternativa no justifican otras.
+Los caminos comprueban todos los inventarios alcanzables antes del máximo de
+saltos y las uniones comprueban cada cláusula. COUNT clasifica un intervalo entre
+testigos ciertos y posibles; sin cierre no presume un máximo finito.
+Cachés de completitud evitan recorrer un DAG compartido exponencialmente y se
+limitan por bytes de claves. Las pruebas de caminos conservan el primer testigo
+por destino/modalidad/profundidad. La proyección agrupa bindings en orden, prefiere
+certeza y retiene hasta16 pruebas alternativas con marca de truncamiento. Los
+aliases de prueba usan exactamente los separadores y escapes ASCII del JSON Python.
+La evidencia compartida usa `Arc` y se convierte en datos independientes antes de
+cerrar la lectura. El códec SQLite actual decodifica los registros al escanear;
+la expansión del árbol de pruebas se difiere hasta la proyección o alias de prueba.
+
+`QueryBudget` conserva límites opcionales de filas examinadas, estados, matches y
+tiempo; `None` no fija límite del caller y cero se rechaza. `Cancellation` se puede
+compartir explícitamente entre llamadas. Cancelación y agotamiento producen
+`complete:false` con razón `budget:*`. En modo estricto, las derivaciones inciertas
+se omiten pero sus razones permanecen en `unknown`: una lista vacía con razones
+pendientes no demuestra ausencia, aunque el recorrido esté completo.
+
+Hay techos nativos de512 para planes y profundidad de evidencia, y65536 unidades
+para validación y tamaño expandido de una prueba. Este último se calcula con
+memoización del DAG antes de asignar el JSON. Una prueba patológica se rechaza con
+`budget:evidence` y resultado incompleto, aun sin límite del caller. No se recorta
+silenciosamente una prueba para declarar completitud. Regex usa la versión1.13.1
+ya fijada y caché acotada; las capacidades Python-regex no soportadas fallan de
+forma explícita. El matching avanzado sigue pendiente. No se añadió versión ni DDL.
+
+Se observaron una vez176 ejecuciones originales y34 límites adicionales, sin
+repetir parser/compiladores/BODY/modelos/matrices aceptadas. Memoria y SQLite
+comparan matches, evidencia, unknown y dependencias; en orden de autor también
+coinciden contadores. Se conservan las capturas originales y se separan18
+expectativas nativas corregidas de cardinalidad, explicadas abajo. La planificación selectiva conserva barreras, filtros listos
+y movimiento seguro de relaciones positivas; sus contadores físicos pueden variar.
+Pasaron76 raíces del alcance afectado. Un caso recorre completamente un archivo
+Python real → adquisición → compilación KQL2 → ejecución nativa y encuentra el
+método esperado. Otros prueban reapertura persistente, interrupción real del VM SQL,
+limpieza posterior, snapshots inmutables y DAGs de evidencia/completitud.
+La revisión final identificó seis Important, corregidos con regresiones en una
+pasada: coerción numérica, alternativas vacías/colas, hijos de operadores hoja,
+literales de caminos, cierre de caminos/uniones y cardinalidad incierta. Los dos
+últimos eran defectos heredados de Python: se corrigieron deliberadamente para
+evitar conclusiones ciertas sin prueba.18 casos tienen expectativas nativas
+separadas en `execution-safety-expectations.json`; las capturas originales no se
+reescribieron. Los otros192 resultados de ejecución conservan paridad exacta.
+Otros528 casos observados fijan coerción numérica: booleanos, espacios, separadores
+y dígitos decimales Unicode15 congelados.24 OverflowError originales por enteros
+extremos producen errores nativos controlados. Se verifica el resultado tanto en
+filtros de hechos como WHERE, con casos SQLite adicionales. Una cola rechazada
+bajó de1216766 a16766 bytes asignados, sin umbrales de tiempo. Clippy estricto y
+formato pasan. No hubo Critical/Minor ni segunda revisión.
+Ver el [plan](superpowers/plans/2026-10-30-rust-relational-execution.md).
+
+Quedan operadores de fuente especializados (tipos, BODY, cuantificadores/usos,
+inicializadores y campos efectivos), ejecución indexada KQL2, matching avanzado,
+sesiones y KQL1; después integración CLI/MCP/config/cachés/bibliotecas. No hay
+promoción pública ni aceptación global nueva: Python instalado sigue activo.
 
 ## Núcleo estructural: almacén de snapshots
 

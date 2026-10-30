@@ -10,6 +10,86 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización de ejecución relacional del30/10: `ken-query::execution` ya ejecuta
+el núcleo común sobre snapshots inmutables y `ken-structural::execute_query` lo
+conecta a `GraphIndex`, con guard SQLite/leases/cancelación. Leer la
+[API](rust-migration.md#ejecución-relacional-sobre-snapshots) y el
+[plan](superpowers/plans/2026-10-30-rust-relational-execution.md).
+`Execution::new(options)?.execute(&MemoryGraph::new(&ir)?, &query)` consume una
+invocación; los grafos se comparten, los bindings/budgets/cachés de query no.
+`GraphSnapshot::new` exige un GraphExecution vivo. Ninguna evidencia o statement
+escapa al resultado: la evidencia pública se separa antes de cerrar el scope.
+
+Cubierto: hechos/joins/filtros/uniones, any, match con semilla/cache por scope,
+not/optional/count/path y source_receiver; validación de tipos/ciclos/forma, cierre
+por relación/dueño, pruebas alternativas16 y proyección. Los operadores fuente aún
+no portados se rechazan explícitamente antes de ejecutar, incluidos branches que
+no producirían filas. La siguiente capacidad es SourceType/BODY/source checks,
+después runtime indexado/sesiones/KQL1 y conexión CLI/MCP/config/cachés/catálogo.
+
+Trampas: cache de dependencias incluye scope y semilla; cierre también depende de
+bindings y owner. La caché de cierre evita DAGs exponenciales y tiene límite2MB en
+claves. Un inventario HAS_CALL/HAS_PARAMETER sólo dispensa ENTITY en su conjunción.
+Source receiver no prueba inventarios cerrados. Where conserva comparación
+asimétrica de strings alternativos y el unknown de atributos ausentes. FactEvidence
+compara endpoints/proveniencia, no attrs. Arc de evidencia conserva identidad para
+no recorrer repetidamente el mismo DAG al agrupar pruebas iguales. Proof aliases
+usan JSON Python con espacios, sort_keys y ensure_ascii, no JSON compacto.
+
+Presupuestos positivos u opcionales; None no fija techo del caller. Cancelación,
+timeout y agotamiento dan `complete:false`, razón budget:*. Unknown estricto puede
+coexistir con complete:true y cero matches: eso sigue sin demostrar ausencia.
+La validación tiene techo512/65536 y cobra payload, tipos de roles y copias de
+ámbitos. Las pruebas tienen techo nativo de tamaño expandido65536/profundidad512,
+comprobado por memoización antes del JSON; exceso → budget:evidence, nunca prueba
+silenciosamente incompleta presentada como cierta. Este techo puede rechazar
+pruebas patológicas aun con None. Regex regular usa1.13.1 ya fijado, caché16; glob
+consulta cancelación durante el trabajo. Matching Python-regex avanzado permanece
+explícitamente unsupported. No hay nueva versión, DDL ni reemplazo de Python.
+
+| Recurso en ken-query | Casos | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| execution-reference.json.gz |176|11079|`8fb6020a819aa0c0bc570ef0792930feb490c5e0a7de10754cc0fc19e88f3f61`|
+| execution-boundaries-reference.json.gz |34|5151|`3aeca8a0312d96f5d59e95dbf9c4ad5ac50e20f25fdc1699d664147ec3769304`|
+
+Original1066 autenticado antes/después de cada grupo de observaciones nuevas.
+No replay de compilador/parser/BODY/modelos/CPU/CI/global. Pasaron76 raíces nativas
+afectadas. Los210 casos se comparan en memoria y SQLite:192 conservan paridad exacta,18
+tienen expectativas nativas de cardinalidad corregida, separadas de las capturas
+originales. Orden de autor incluye contadores exactos; orden selectivo compara
+resultado/pruebas/dependencias porque el coste físico cambia. Regresiones adicionales fijan SQL VM/callbacks y posterior
+consulta, persistencia/reapertura, archivo Python real→query nativa, forma/ciclos/
+profundidad, deadline, inmutabilidad, DAG de evidencia y cierre (2048 probes antes).
+La revisión fresca identificó seis Important, todos RED→GREEN en una pasada:
+coerción numérica, alternativas vacías/colas, hijos ilegales en hojas, payload/
+consistencia de literales path, cierre path/union y COUNT. No hubo Critical/Minor
+ni segunda revisión. La cola rechazada pasó de1216766B a16766B. Clippy estricto y
+formato pasan. La validación ahora cobra contenedores antes de crear colas, revisa
+forma completa y consulta interrupción también durante inferencia/construcción.
+
+Decisión de compatibilidad: corregir falsa certeza heredada de Python. Cada
+cláusula de una unión exige cierre; path recorre el inventario alcanzable por
+saltos acotados y exige cierre en cada sujeto expandido. COUNT usa límites ciertos/
+posibles, normaliza aliases numéricos y sólo afirma/rechaza cuando todo el intervalo
+coincide/discrepa; incertidumbre con inventario cerrado → cardinality:uncertain.
+Las18 diferencias están documentadas mediante tablas de verdad independientes
+en execution-safety-expectations.json; no se cambió el original congelado ni sus
+fixtures para simular paridad. Esto cambia resultados de esos casos a propósito.
+
+Coerción numérica separada de spelling de igualdad: bool y números se convierten
+por tipo; strings permiten espacios, underscores válidos y decimal Unicode15.
+528 observaciones nuevas califican este límite;24 OverflowError originales pasan
+a errores nativos controlados. No inferir soporte avanzado de regex de esto.
+
+| Recurso adicional en ken-query | Casos | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| execution-numeric-reference.json.gz |528/24 errores originales|2157|`f52021c33cef343056c05deceb90b742669398ab8547aefc3919397a64c27713`|
+| float-decimal-zeroes.json |ceros decimales Unicode15|455|`59e141744100cd9812c75cf9e1355e18d829a5c12bc7b5234ba42ac734570012`|
+| execution-safety-expectations.json |18 expectativas nativas, no oráculo original|15184|`df142d63787ad40069ef2e5c37a319a46d0bfede004f90391120000293560e81`|
+
+Crudos/scripts/workspace siguen locales. Público271/Best247 y calificación
+SkylakeX/Intel no cambian; M5 y los restantes M6/M7/M8 no están cerrados.
+
 Actualización relacional del30/10: `ken-query` completa el otro backend KQL2 y
 el coordinador puro `compile`. Leer la
 [API](rust-migration.md#kql2-compilación-relacional-y-coordinación) y el
@@ -22,8 +102,8 @@ Recibe bibliotecas explícitas: descubrimiento empaquetado queda en el host.
 
 El lowering conserva selectores/requisitos/usos, relaciones semánticas, witnesses,
 walk/count, scopes, aliases, patrones y BODY checking. No confundir compilación
-con ejecución. Próximo núcleo: operadores relacionales/indexados sobre
-QueryView/GraphIndex, sesiones y evaluación BODY; después KQL1 y superficies
+con ejecución. El núcleo relacional ya está implementado arriba. Siguen operadores fuente
+especializados, ejecución indexada, sesiones y evaluación BODY; después KQL1 y superficies
 CLI/MCP/config/cachés/catálogo. Python instalado sigue activo. M5 sigue abierto;
 M6 y el resto de M7/M8, y la calificación SkylakeX/Intel, siguen pendientes.
 
@@ -771,7 +851,7 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | M4d | En curso: BestSearch, preparación contextual y expansión CT2 x86 implementados; aceptación pendiente | Cadena local y CI Haswell pasan; contrastar SkylakeX con su original y completar Intel/MKL. Quedan modos de compatibilidad, modelos/canales y calidad global |
 | Búsqueda pública por defecto x86_64 | CLI y MCP stdio implementados; calificación en curso | Manifest de instalación reubicable, recursos diferidos, texto/JSON y sesiones recuperables. MCP negocia el protocolo 2025-11-25; otros scopes/modos y el protocolo moderno quedan pendientes |
 | M5a | Implementación en biblioteca; calificación M5 pendiente | Productor IR/CFG, ensamblado semántico, builder/caché y publicación/adquisición QueryView/GraphIndex nativos; integración y recibos globales pendientes |
-| M5b/M5c | Parcial: frontend, preparación y ambos compiladores KQL2 implementados | Quedan KQL1, operadores, sesiones, evaluación BODY, flujo/completitud e integración pública |
+| M5b/M5c | Parcial: frontend, preparación, compiladores KQL2 y núcleo relacional ejecutable implementados | Quedan operadores fuente/BODY, runtime indexado, sesiones, KQL1, flujo/completitud e integración pública |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
 | M7 | Parcial: navegación/perfiles, literal/BM25, orientación y llamadas/tipos/wiring por CLI/MCP implementadas | Quedan ranking de sesión, otras relaciones, daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
 | M8 | Pendiente | Distribución, matriz global, upgrade/rollback y promoción nativa sin Python |

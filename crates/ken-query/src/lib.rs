@@ -96,3 +96,5 @@ pub use relational::{CompiledQuery, compile_relational};
 
 mod compilation;
 pub use compilation::{BackendPreference, compile};
+
+pub mod execution;

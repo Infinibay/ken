@@ -1,0 +1,649 @@
+{
+  "format": "ken-native-cardinality-safety-expectations/1",
+  "basis": "Authored truth tables for count ranges: closed f=[1,2], open f/g=[1,infinity); source receiver f=[1,infinity), g=[0,infinity). Original observed fixtures remain unchanged.",
+  "cases": [
+    {
+      "name": "count/open/=/0",
+      "expected": {
+        "matches": [],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/open/!=/2",
+      "expected": {
+        "matches": [
+          {
+            "bindings": {
+              "$o": "f"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:open_world"
+            ],
+            "evidence": [
+              {
+                "subject": "f",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "f:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          },
+          {
+            "bindings": {
+              "$o": "g"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:open_world"
+            ],
+            "evidence": [
+              {
+                "subject": "g",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "g:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          }
+        ],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/open/</0",
+      "expected": {
+        "matches": [],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/open/</1",
+      "expected": {
+        "matches": [],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/open/<=/0",
+      "expected": {
+        "matches": [],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/closed/=/0",
+      "expected": {
+        "matches": [],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/closed/=/1",
+      "expected": {
+        "matches": [
+          {
+            "bindings": {
+              "$o": "f"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:uncertain"
+            ],
+            "evidence": [
+              {
+                "subject": "f",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "f:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          },
+          {
+            "bindings": {
+              "$o": "g"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:open_world"
+            ],
+            "evidence": [
+              {
+                "subject": "g",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "g:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          }
+        ],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/closed/=/2",
+      "expected": {
+        "matches": [
+          {
+            "bindings": {
+              "$o": "f"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:uncertain"
+            ],
+            "evidence": [
+              {
+                "subject": "f",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "f:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          },
+          {
+            "bindings": {
+              "$o": "g"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:open_world"
+            ],
+            "evidence": [
+              {
+                "subject": "g",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "g:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          }
+        ],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/closed/!=/1",
+      "expected": {
+        "matches": [
+          {
+            "bindings": {
+              "$o": "f"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:uncertain"
+            ],
+            "evidence": [
+              {
+                "subject": "f",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "f:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          },
+          {
+            "bindings": {
+              "$o": "g"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:open_world"
+            ],
+            "evidence": [
+              {
+                "subject": "g",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "g:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          }
+        ],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/closed/!=/2",
+      "expected": {
+        "matches": [
+          {
+            "bindings": {
+              "$o": "f"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:uncertain"
+            ],
+            "evidence": [
+              {
+                "subject": "f",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "f:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          },
+          {
+            "bindings": {
+              "$o": "g"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:open_world"
+            ],
+            "evidence": [
+              {
+                "subject": "g",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "g:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          }
+        ],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/closed/</0",
+      "expected": {
+        "matches": [],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/closed/</1",
+      "expected": {
+        "matches": [],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/closed/</2",
+      "expected": {
+        "matches": [
+          {
+            "bindings": {
+              "$o": "f"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:uncertain"
+            ],
+            "evidence": [
+              {
+                "subject": "f",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "f:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          },
+          {
+            "bindings": {
+              "$o": "g"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:open_world"
+            ],
+            "evidence": [
+              {
+                "subject": "g",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "g:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          }
+        ],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/closed/<=/0",
+      "expected": {
+        "matches": [],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/closed/<=/1",
+      "expected": {
+        "matches": [
+          {
+            "bindings": {
+              "$o": "f"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:uncertain"
+            ],
+            "evidence": [
+              {
+                "subject": "f",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "f:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          },
+          {
+            "bindings": {
+              "$o": "g"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:open_world"
+            ],
+            "evidence": [
+              {
+                "subject": "g",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "g:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          }
+        ],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/closed/>/1",
+      "expected": {
+        "matches": [
+          {
+            "bindings": {
+              "$o": "f"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:uncertain"
+            ],
+            "evidence": [
+              {
+                "subject": "f",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "f:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          },
+          {
+            "bindings": {
+              "$o": "g"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:open_world"
+            ],
+            "evidence": [
+              {
+                "subject": "g",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "g:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          }
+        ],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "count/closed/>=/2",
+      "expected": {
+        "matches": [
+          {
+            "bindings": {
+              "$o": "f"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:uncertain"
+            ],
+            "evidence": [
+              {
+                "subject": "f",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "f:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          },
+          {
+            "bindings": {
+              "$o": "g"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:open_world"
+            ],
+            "evidence": [
+              {
+                "subject": "g",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "g:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          }
+        ],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 5,
+          "dependencies": []
+        }
+      }
+    },
+    {
+      "name": "boundary/source-not-closure/possible/=",
+      "expected": {
+        "matches": [
+          {
+            "bindings": {
+              "$o": "g"
+            },
+            "status": "unknown",
+            "unknown": [
+              "cardinality:open_world"
+            ],
+            "evidence": [
+              {
+                "subject": "g",
+                "relation": "ENTITY",
+                "object": "CALLABLE",
+                "source": [
+                  "g:ENTITY:CALLABLE"
+                ]
+              }
+            ],
+            "variant": "default",
+            "evidence_score": 1.0
+          }
+        ],
+        "complete": true,
+        "unknown": [],
+        "stats": {
+          "states": 10,
+          "rows_examined": 2,
+          "dependencies": []
+        }
+      }
+    }
+  ]
+}

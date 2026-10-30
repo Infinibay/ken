@@ -31,3 +31,6 @@ pub type Result<T> = std::result::Result<T, BuildError>;
 
 mod acquisition;
 pub use acquisition::{AcquiredProject, ProjectAcquisition};
+
+mod query;
+pub use query::{GraphSnapshot, execute_query};
