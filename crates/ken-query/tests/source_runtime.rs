@@ -281,3 +281,43 @@ fn check(bytes: &[u8]) {
             .join("\n")
     );
 }
+
+#[test]
+fn captured_usage_columns_have_detached_metadata_without_changing_graph_json() {
+    let data = records(include_bytes!(
+        "fixtures/source-operations-reference.json.gz"
+    ));
+    let case = data["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["name"] == "usage/argument/[]/possible")
+        .unwrap();
+    let graph =
+        MemoryGraph::new(&StructuralIr::from_json(&case["graph"].to_string()).unwrap()).unwrap();
+    let result = Execution::new(serde_json::from_value(case["options"].clone()).unwrap())
+        .unwrap()
+        .execute(&graph, &fixture::query(&case["query"]))
+        .unwrap();
+    assert_eq!(result.matches.len(), 2);
+    for row in &result.matches {
+        let id = &row.bindings["$use"];
+        let metadata = result
+            .usage_metadata
+            .get(id)
+            .expect("captured usage metadata is detached from optional proof encoding");
+        if id.starts_with("@unknown:") {
+            assert!(metadata.is_empty());
+            continue;
+        }
+        assert_eq!(metadata["kind"].string().as_deref(), Some("argument"));
+        assert_eq!(metadata["path"].string().as_deref(), Some("fixture.py"));
+        assert_eq!(metadata["consumer_name"].string().as_deref(), Some("call"));
+    }
+    assert!(
+        serde_json::to_value(&result)
+            .unwrap()
+            .get("usage_metadata")
+            .is_none()
+    );
+}

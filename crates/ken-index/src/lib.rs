@@ -37,3 +37,8 @@ mod imports;
 mod indexer;
 pub mod parse_batch;
 pub use indexer::{IndexOptions, IndexStats, Indexer, PARSER_VERSION, Progress, VectorStorage};
+
+/// Canonical legacy document wording shared by indexing and explicit reencoding.
+pub mod embedding_text {
+    pub use crate::documents::{file_text, intent_text, symbol_text};
+}

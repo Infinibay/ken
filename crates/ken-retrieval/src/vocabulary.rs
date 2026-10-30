@@ -13,6 +13,11 @@ fn stop(text: &str, term: &str) -> bool {
     text.split(' ').any(|s| s == term)
 }
 /// Exact left-to-right match of [A-Z]?[a-z]+|[A-Z]+(?=[A-Z]|$)|\d+.
+/// The literal channel shares name stopwords without adding token aliases.
+pub fn is_name_stopword(word: &str) -> bool {
+    stop(STOP, word)
+}
+
 pub fn split_camel(text: &str) -> Vec<String> {
     let chars: Vec<_> = text.chars().collect();
     let mut out = Vec::new();

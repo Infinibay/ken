@@ -1,0 +1,2587 @@
+{
+  "format": "ken-responsibility-structure/1",
+  "runtime": "3.12.9",
+  "files": {
+    "storage.py": "def save():\n return 7\n",
+    "api.py": "from storage import save\ndef wrapper():\n save()\n value=save()\n alias=value\n alias.close()\n accept(alias)\n return alias\n",
+    "tests/test_api.py": "from api import wrapper\ndef test_value():\n value=wrapper()\n return value\n",
+    "other.py": "def save():\n return 99\n",
+    "unrelated.py": "def unrelated():\n return save()\n",
+    "consumer.py": "import storage as backend\n"
+  },
+  "batch": {
+    "results": {
+      "definitions": {
+        "rows": [
+          [
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+              "path": "tests/test_api.py",
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "line": 2
+            }
+          ],
+          [
+            {
+              "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+              "path": "unrelated.py",
+              "name": "unrelated",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "other.py::/CALLABLE:save@0:20",
+              "path": "other.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "calls": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:39:45:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 3
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:75:88:call",
+              "path": "api.py",
+              "name": "close",
+              "kind": "CALL",
+              "line": 6
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:90:103:call",
+              "path": "api.py",
+              "name": "accept",
+              "kind": "CALL",
+              "line": 7
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+              "path": "tests/test_api.py",
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "tests/test_api.py::op:45:54:call",
+              "path": "tests/test_api.py",
+              "name": "wrapper",
+              "kind": "CALL",
+              "line": 3
+            }
+          ],
+          [
+            {
+              "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+              "path": "unrelated.py",
+              "name": "unrelated",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "unrelated.py::op:24:30:call",
+              "path": "unrelated.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 2
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "targets": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::op:39:45:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 3
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::op:45:54:call",
+              "path": "tests/test_api.py",
+              "name": "wrapper",
+              "kind": "CALL",
+              "line": 3
+            },
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "possible_targets": {
+        "rows": [],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "usages": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "assignment",
+              "path": "api.py",
+              "line": 4
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "receiver",
+              "path": "api.py",
+              "line": 6,
+              "consumer": "api.py::op:75:88:call"
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "argument",
+              "path": "api.py",
+              "line": 7,
+              "position": 0,
+              "consumer": "api.py::op:90:103:call",
+              "consumer_name": "accept"
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "return",
+              "path": "api.py",
+              "line": 8
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+              "path": "tests/test_api.py",
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "tests/test_api.py::op:45:54:call",
+              "path": "tests/test_api.py",
+              "name": "wrapper",
+              "kind": "CALL",
+              "line": 3
+            },
+            {
+              "kind": "return",
+              "path": "tests/test_api.py",
+              "line": 4
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      }
+    },
+    "snapshot": {
+      "scope": ".",
+      "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+      "manifest": [
+        [
+          "api.py",
+          "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+        ],
+        [
+          "consumer.py",
+          "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+        ],
+        [
+          "other.py",
+          "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+        ],
+        [
+          "storage.py",
+          "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+        ],
+        [
+          "tests/test_api.py",
+          "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+        ],
+        [
+          "unrelated.py",
+          "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+        ]
+      ]
+    },
+    "selection": {
+      "basis": "prepared evidence",
+      "paths": [
+        "api.py",
+        "consumer.py",
+        "other.py",
+        "storage.py",
+        "tests/test_api.py",
+        "unrelated.py"
+      ],
+      "steps": [
+        {
+          "prepared": true
+        }
+      ]
+    }
+  },
+  "cases": [
+    {
+      "kind": "complete",
+      "initial": {
+        "ok": true,
+        "question": "Who stores reusable findings?",
+        "hypotheses": [],
+        "status": "candidates",
+        "candidates": [
+          {
+            "symbol": "wrapper",
+            "path": "api.py",
+            "line": 2,
+            "kind": "function",
+            "status": "hypothesis",
+            "confidence": {
+              "score": 0.85,
+              "band": "strong",
+              "calibrated": false,
+              "probability": null,
+              "policy": "responsibility-evidence/1"
+            },
+            "matched_formulation": "Who stores reusable findings?",
+            "documentation": "Store reusable findings.",
+            "evidence": [
+              {
+                "reasoner": "documentation",
+                "direction": "supports",
+                "strength": 0.85,
+                "explanation": "Documentation similarity 0.800; term coverage 1.000 (correlated signals, combined by max).",
+                "assumption": "The documentation accurately describes this symbol's current behavior."
+              }
+            ],
+            "assumptions": [
+              "The documentation accurately describes this symbol's current behavior."
+            ],
+            "source": {
+              "sha256": "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27",
+              "index_changed": false,
+              "documentation_scope": "full",
+              "documentation_kind": "function_docstring",
+              "behavior_verified": false
+            },
+            "inspect": {
+              "tool": "ken_read",
+              "path": "api.py",
+              "include": [
+                "source"
+              ],
+              "qualname": "wrapper"
+            }
+          }
+        ],
+        "counterevidence": [],
+        "assessment": {
+          "kind": "heuristic",
+          "calibrated": false,
+          "probability": null,
+          "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+        },
+        "coverage": {
+          "scope": "api.py",
+          "indexed_symbols": 2,
+          "inspected_symbols": 2,
+          "candidate_limit": 40,
+          "exhaustive": false,
+          "include_tests": false,
+          "sources": [
+            "module_docstrings",
+            "class_docstrings",
+            "method_docstrings",
+            "function_docstrings"
+          ],
+          "findings_used": false,
+          "issues": [],
+          "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+        }
+      },
+      "result": {
+        "ok": true,
+        "question": "Who stores reusable findings?",
+        "hypotheses": [],
+        "status": "candidates",
+        "candidates": [
+          {
+            "symbol": "wrapper",
+            "path": "api.py",
+            "line": 2,
+            "kind": "function",
+            "status": "hypothesis",
+            "confidence": {
+              "score": 0.85,
+              "band": "strong",
+              "calibrated": false,
+              "probability": null,
+              "policy": "responsibility-evidence/1"
+            },
+            "matched_formulation": "Who stores reusable findings?",
+            "documentation": "Store reusable findings.",
+            "evidence": [
+              {
+                "reasoner": "documentation",
+                "direction": "supports",
+                "strength": 0.85,
+                "explanation": "Documentation similarity 0.800; term coverage 1.000 (correlated signals, combined by max).",
+                "assumption": "The documentation accurately describes this symbol's current behavior."
+              }
+            ],
+            "assumptions": [
+              "The documentation accurately describes this symbol's current behavior."
+            ],
+            "source": {
+              "sha256": "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27",
+              "index_changed": false,
+              "documentation_scope": "full",
+              "documentation_kind": "function_docstring",
+              "behavior_verified": false
+            },
+            "inspect": {
+              "tool": "ken_read",
+              "path": "api.py",
+              "include": [
+                "source"
+              ],
+              "qualname": "wrapper"
+            },
+            "structure": {
+              "scope": ".",
+              "evidence": {
+                "calls": {
+                  "sites": [
+                    {
+                      "path": "api.py",
+                      "line": 3,
+                      "name": "save",
+                      "kind": "CALL"
+                    },
+                    {
+                      "path": "api.py",
+                      "line": 4,
+                      "name": "save",
+                      "kind": "CALL"
+                    },
+                    {
+                      "path": "api.py",
+                      "line": 6,
+                      "name": "close",
+                      "kind": "CALL"
+                    },
+                    {
+                      "path": "api.py",
+                      "line": 7,
+                      "name": "accept",
+                      "kind": "CALL"
+                    }
+                  ],
+                  "complete": true,
+                  "coverage_complete": true,
+                  "unknown_candidates": 0,
+                  "results_truncated": false,
+                  "reason": null
+                },
+                "returned_calls": {
+                  "sites": [
+                    {
+                      "path": "api.py",
+                      "line": 4,
+                      "name": "save",
+                      "kind": "CALL"
+                    }
+                  ],
+                  "complete": true,
+                  "coverage_complete": true,
+                  "unknown_candidates": 0,
+                  "results_truncated": false,
+                  "reason": null
+                }
+              },
+              "observations": {
+                "definitions": {
+                  "result": {
+                    "rows": [
+                      [
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+                          "path": "tests/test_api.py",
+                          "name": "test_value",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+                          "path": "unrelated.py",
+                          "name": "unrelated",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "other.py::/CALLABLE:save@0:20",
+                          "path": "other.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        }
+                      ]
+                    ],
+                    "complete": true,
+                    "coverage_complete": true,
+                    "unknown_candidates": 0,
+                    "results_truncated": false
+                  },
+                  "snapshot": null,
+                  "engine": null
+                },
+                "calls": {
+                  "result": {
+                    "rows": [
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "api.py::op:39:45:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 3
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "api.py::op:53:59:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 4
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "api.py::op:75:88:call",
+                          "path": "api.py",
+                          "name": "close",
+                          "kind": "CALL",
+                          "line": 6
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "api.py::op:90:103:call",
+                          "path": "api.py",
+                          "name": "accept",
+                          "kind": "CALL",
+                          "line": 7
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+                          "path": "tests/test_api.py",
+                          "name": "test_value",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "tests/test_api.py::op:45:54:call",
+                          "path": "tests/test_api.py",
+                          "name": "wrapper",
+                          "kind": "CALL",
+                          "line": 3
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+                          "path": "unrelated.py",
+                          "name": "unrelated",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        },
+                        {
+                          "local_id": "unrelated.py::op:24:30:call",
+                          "path": "unrelated.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 2
+                        }
+                      ]
+                    ],
+                    "complete": true,
+                    "coverage_complete": true,
+                    "unknown_candidates": 0,
+                    "results_truncated": false
+                  },
+                  "snapshot": null,
+                  "engine": null
+                },
+                "targets": {
+                  "result": {
+                    "rows": [
+                      [
+                        {
+                          "local_id": "api.py::op:39:45:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 3
+                        },
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::op:53:59:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 4
+                        },
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "tests/test_api.py::op:45:54:call",
+                          "path": "tests/test_api.py",
+                          "name": "wrapper",
+                          "kind": "CALL",
+                          "line": 3
+                        },
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        }
+                      ]
+                    ],
+                    "complete": true,
+                    "coverage_complete": true,
+                    "unknown_candidates": 0,
+                    "results_truncated": false
+                  },
+                  "snapshot": null,
+                  "engine": null
+                },
+                "possible_targets": {
+                  "result": {
+                    "rows": [],
+                    "complete": true,
+                    "coverage_complete": true,
+                    "unknown_candidates": 0,
+                    "results_truncated": false
+                  },
+                  "snapshot": null,
+                  "engine": null
+                },
+                "usages": {
+                  "result": {
+                    "rows": [
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        },
+                        {
+                          "local_id": "api.py::op:53:59:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 4
+                        },
+                        {
+                          "kind": "assignment",
+                          "path": "api.py",
+                          "line": 4
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        },
+                        {
+                          "local_id": "api.py::op:53:59:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 4
+                        },
+                        {
+                          "kind": "receiver",
+                          "path": "api.py",
+                          "line": 6,
+                          "consumer": "api.py::op:75:88:call"
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        },
+                        {
+                          "local_id": "api.py::op:53:59:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 4
+                        },
+                        {
+                          "kind": "argument",
+                          "path": "api.py",
+                          "line": 7,
+                          "position": 0,
+                          "consumer": "api.py::op:90:103:call",
+                          "consumer_name": "accept"
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        },
+                        {
+                          "local_id": "api.py::op:53:59:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 4
+                        },
+                        {
+                          "kind": "return",
+                          "path": "api.py",
+                          "line": 8
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+                          "path": "tests/test_api.py",
+                          "name": "test_value",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "tests/test_api.py::op:45:54:call",
+                          "path": "tests/test_api.py",
+                          "name": "wrapper",
+                          "kind": "CALL",
+                          "line": 3
+                        },
+                        {
+                          "kind": "return",
+                          "path": "tests/test_api.py",
+                          "line": 4
+                        }
+                      ]
+                    ],
+                    "complete": true,
+                    "coverage_complete": true,
+                    "unknown_candidates": 0,
+                    "results_truncated": false
+                  },
+                  "snapshot": null,
+                  "engine": null
+                }
+              },
+              "claim": "Observed calls and returned identities; business roles remain hypotheses."
+            }
+          }
+        ],
+        "counterevidence": [],
+        "assessment": {
+          "kind": "heuristic",
+          "calibrated": false,
+          "probability": null,
+          "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+        },
+        "coverage": {
+          "scope": "api.py",
+          "indexed_symbols": 2,
+          "inspected_symbols": 2,
+          "candidate_limit": 40,
+          "exhaustive": false,
+          "include_tests": false,
+          "sources": [
+            "module_docstrings",
+            "class_docstrings",
+            "method_docstrings",
+            "function_docstrings"
+          ],
+          "findings_used": false,
+          "issues": [],
+          "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+        },
+        "responsibility_map": {
+          "scope": ".",
+          "nodes": [
+            {
+              "path": "api.py",
+              "line": 2,
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "symbol": "wrapper",
+              "id": 0,
+              "roles": [
+                {
+                  "role": "coordinator_candidate",
+                  "basis": "Invokes multiple operations."
+                },
+                {
+                  "role": "delegates",
+                  "basis": "Calls a resolved project callable."
+                }
+              ],
+              "inference": "structural_hypothesis"
+            },
+            {
+              "path": "storage.py",
+              "line": 1,
+              "name": "save",
+              "kind": "CALLABLE",
+              "symbol": "save",
+              "id": 1,
+              "roles": [
+                {
+                  "role": "executor_candidate",
+                  "basis": "End of the observed project-call chain; external effects remain unverified."
+                }
+              ],
+              "inference": "structural_hypothesis"
+            },
+            {
+              "path": "tests/test_api.py",
+              "line": 2,
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "symbol": "test_value",
+              "id": 2,
+              "roles": [
+                {
+                  "role": "entry_candidate",
+                  "basis": "No incoming calls observed in this scope."
+                },
+                {
+                  "role": "delegates",
+                  "basis": "Calls a resolved project callable."
+                }
+              ],
+              "inference": "structural_hypothesis"
+            }
+          ],
+          "calls": [
+            {
+              "from": 0,
+              "to": [
+                1
+              ],
+              "call": {
+                "path": "api.py",
+                "line": 3,
+                "name": "save",
+                "kind": "CALL"
+              },
+              "resolution": "resolved"
+            },
+            {
+              "from": 0,
+              "to": [
+                1
+              ],
+              "call": {
+                "path": "api.py",
+                "line": 4,
+                "name": "save",
+                "kind": "CALL"
+              },
+              "resolution": "resolved"
+            },
+            {
+              "from": 0,
+              "to": [],
+              "call": {
+                "path": "api.py",
+                "line": 6,
+                "name": "close",
+                "kind": "CALL"
+              },
+              "resolution": "unresolved"
+            },
+            {
+              "from": 0,
+              "to": [],
+              "call": {
+                "path": "api.py",
+                "line": 7,
+                "name": "accept",
+                "kind": "CALL"
+              },
+              "resolution": "unresolved"
+            },
+            {
+              "from": 2,
+              "to": [
+                0
+              ],
+              "call": {
+                "path": "tests/test_api.py",
+                "line": 3,
+                "name": "wrapper",
+                "kind": "CALL"
+              },
+              "resolution": "resolved"
+            }
+          ],
+          "truncated": false,
+          "coverage": {
+            "definitions": {
+              "complete": true,
+              "coverage_complete": true,
+              "unknown_candidates": 0,
+              "results_truncated": false,
+              "reason": null
+            },
+            "calls": {
+              "complete": true,
+              "coverage_complete": true,
+              "unknown_candidates": 0,
+              "results_truncated": false,
+              "reason": null
+            },
+            "targets": {
+              "complete": true,
+              "coverage_complete": true,
+              "unknown_candidates": 0,
+              "results_truncated": false,
+              "reason": null
+            },
+            "possible_targets": {
+              "complete": true,
+              "coverage_complete": true,
+              "unknown_candidates": 0,
+              "results_truncated": false,
+              "reason": null
+            },
+            "usages": {
+              "complete": true,
+              "coverage_complete": true,
+              "unknown_candidates": 0,
+              "results_truncated": false,
+              "reason": null
+            }
+          },
+          "claim": "Roles are hypotheses from observed calls, not proof of business responsibility or public visibility.",
+          "acquisition": {
+            "basis": "prepared evidence",
+            "paths": [
+              "api.py",
+              "consumer.py",
+              "other.py",
+              "storage.py",
+              "tests/test_api.py",
+              "unrelated.py"
+            ]
+          }
+        }
+      },
+      "requests": [
+        {
+          "path": ".",
+          "timeout_ms": 3000,
+          "seeds": [
+            "api.py"
+          ],
+          "focus": {
+            "targets": [
+              "api.py"
+            ],
+            "relation": "outgoing",
+            "depth": 2
+          }
+        }
+      ]
+    },
+    {
+      "kind": "changed",
+      "initial": {
+        "ok": true,
+        "question": "Who stores reusable findings?",
+        "hypotheses": [],
+        "status": "candidates",
+        "candidates": [
+          {
+            "symbol": "wrapper",
+            "path": "api.py",
+            "line": 2,
+            "kind": "function",
+            "status": "hypothesis",
+            "confidence": {
+              "score": 0.85,
+              "band": "strong",
+              "calibrated": false,
+              "probability": null,
+              "policy": "responsibility-evidence/1"
+            },
+            "matched_formulation": "Who stores reusable findings?",
+            "documentation": "Store reusable findings.",
+            "evidence": [
+              {
+                "reasoner": "documentation",
+                "direction": "supports",
+                "strength": 0.85,
+                "explanation": "Documentation similarity 0.800; term coverage 1.000 (correlated signals, combined by max).",
+                "assumption": "The documentation accurately describes this symbol's current behavior."
+              }
+            ],
+            "assumptions": [
+              "The documentation accurately describes this symbol's current behavior."
+            ],
+            "source": {
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "index_changed": false,
+              "documentation_scope": "full",
+              "documentation_kind": "function_docstring",
+              "behavior_verified": false
+            },
+            "inspect": {
+              "tool": "ken_read",
+              "path": "api.py",
+              "include": [
+                "source"
+              ],
+              "qualname": "wrapper"
+            }
+          }
+        ],
+        "counterevidence": [],
+        "assessment": {
+          "kind": "heuristic",
+          "calibrated": false,
+          "probability": null,
+          "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+        },
+        "coverage": {
+          "scope": "api.py",
+          "indexed_symbols": 2,
+          "inspected_symbols": 2,
+          "candidate_limit": 40,
+          "exhaustive": false,
+          "include_tests": false,
+          "sources": [
+            "module_docstrings",
+            "class_docstrings",
+            "method_docstrings",
+            "function_docstrings"
+          ],
+          "findings_used": false,
+          "issues": [],
+          "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+        }
+      },
+      "result": {
+        "ok": true,
+        "question": "Who stores reusable findings?",
+        "hypotheses": [],
+        "status": "candidates",
+        "candidates": [
+          {
+            "symbol": "wrapper",
+            "path": "api.py",
+            "line": 2,
+            "kind": "function",
+            "status": "hypothesis",
+            "confidence": {
+              "score": 0.85,
+              "band": "strong",
+              "calibrated": false,
+              "probability": null,
+              "policy": "responsibility-evidence/1"
+            },
+            "matched_formulation": "Who stores reusable findings?",
+            "documentation": "Store reusable findings.",
+            "evidence": [
+              {
+                "reasoner": "documentation",
+                "direction": "supports",
+                "strength": 0.85,
+                "explanation": "Documentation similarity 0.800; term coverage 1.000 (correlated signals, combined by max).",
+                "assumption": "The documentation accurately describes this symbol's current behavior."
+              }
+            ],
+            "assumptions": [
+              "The documentation accurately describes this symbol's current behavior."
+            ],
+            "source": {
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "index_changed": false,
+              "documentation_scope": "full",
+              "documentation_kind": "function_docstring",
+              "behavior_verified": false
+            },
+            "inspect": {
+              "tool": "ken_read",
+              "path": "api.py",
+              "include": [
+                "source"
+              ],
+              "qualname": "wrapper"
+            },
+            "structure": {
+              "scope": ".",
+              "reason": "Source changed or structural acquisition incomplete."
+            }
+          }
+        ],
+        "counterevidence": [],
+        "assessment": {
+          "kind": "heuristic",
+          "calibrated": false,
+          "probability": null,
+          "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+        },
+        "coverage": {
+          "scope": "api.py",
+          "indexed_symbols": 2,
+          "inspected_symbols": 2,
+          "candidate_limit": 40,
+          "exhaustive": false,
+          "include_tests": false,
+          "sources": [
+            "module_docstrings",
+            "class_docstrings",
+            "method_docstrings",
+            "function_docstrings"
+          ],
+          "findings_used": false,
+          "issues": [],
+          "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+        }
+      },
+      "requests": [
+        {
+          "path": ".",
+          "timeout_ms": 3000,
+          "seeds": [
+            "api.py"
+          ],
+          "focus": {
+            "targets": [
+              "api.py"
+            ],
+            "relation": "outgoing",
+            "depth": 2
+          }
+        }
+      ]
+    },
+    {
+      "kind": "partial",
+      "initial": {
+        "ok": true,
+        "question": "Who stores reusable findings?",
+        "hypotheses": [],
+        "status": "candidates",
+        "candidates": [
+          {
+            "symbol": "wrapper",
+            "path": "api.py",
+            "line": 2,
+            "kind": "function",
+            "status": "hypothesis",
+            "confidence": {
+              "score": 0.85,
+              "band": "strong",
+              "calibrated": false,
+              "probability": null,
+              "policy": "responsibility-evidence/1"
+            },
+            "matched_formulation": "Who stores reusable findings?",
+            "documentation": "Store reusable findings.",
+            "evidence": [
+              {
+                "reasoner": "documentation",
+                "direction": "supports",
+                "strength": 0.85,
+                "explanation": "Documentation similarity 0.800; term coverage 1.000 (correlated signals, combined by max).",
+                "assumption": "The documentation accurately describes this symbol's current behavior."
+              }
+            ],
+            "assumptions": [
+              "The documentation accurately describes this symbol's current behavior."
+            ],
+            "source": {
+              "sha256": "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27",
+              "index_changed": false,
+              "documentation_scope": "full",
+              "documentation_kind": "function_docstring",
+              "behavior_verified": false
+            },
+            "inspect": {
+              "tool": "ken_read",
+              "path": "api.py",
+              "include": [
+                "source"
+              ],
+              "qualname": "wrapper"
+            }
+          }
+        ],
+        "counterevidence": [],
+        "assessment": {
+          "kind": "heuristic",
+          "calibrated": false,
+          "probability": null,
+          "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+        },
+        "coverage": {
+          "scope": "api.py",
+          "indexed_symbols": 2,
+          "inspected_symbols": 2,
+          "candidate_limit": 40,
+          "exhaustive": false,
+          "include_tests": false,
+          "sources": [
+            "module_docstrings",
+            "class_docstrings",
+            "method_docstrings",
+            "function_docstrings"
+          ],
+          "findings_used": false,
+          "issues": [],
+          "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+        }
+      },
+      "result": {
+        "ok": true,
+        "question": "Who stores reusable findings?",
+        "hypotheses": [],
+        "status": "candidates",
+        "candidates": [
+          {
+            "symbol": "wrapper",
+            "path": "api.py",
+            "line": 2,
+            "kind": "function",
+            "status": "hypothesis",
+            "confidence": {
+              "score": 0.85,
+              "band": "strong",
+              "calibrated": false,
+              "probability": null,
+              "policy": "responsibility-evidence/1"
+            },
+            "matched_formulation": "Who stores reusable findings?",
+            "documentation": "Store reusable findings.",
+            "evidence": [
+              {
+                "reasoner": "documentation",
+                "direction": "supports",
+                "strength": 0.85,
+                "explanation": "Documentation similarity 0.800; term coverage 1.000 (correlated signals, combined by max).",
+                "assumption": "The documentation accurately describes this symbol's current behavior."
+              }
+            ],
+            "assumptions": [
+              "The documentation accurately describes this symbol's current behavior."
+            ],
+            "source": {
+              "sha256": "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27",
+              "index_changed": false,
+              "documentation_scope": "full",
+              "documentation_kind": "function_docstring",
+              "behavior_verified": false
+            },
+            "inspect": {
+              "tool": "ken_read",
+              "path": "api.py",
+              "include": [
+                "source"
+              ],
+              "qualname": "wrapper"
+            },
+            "structure": {
+              "scope": ".",
+              "evidence": {
+                "calls": {
+                  "sites": [
+                    {
+                      "path": "api.py",
+                      "line": 3,
+                      "name": "save",
+                      "kind": "CALL"
+                    },
+                    {
+                      "path": "api.py",
+                      "line": 4,
+                      "name": "save",
+                      "kind": "CALL"
+                    },
+                    {
+                      "path": "api.py",
+                      "line": 6,
+                      "name": "close",
+                      "kind": "CALL"
+                    },
+                    {
+                      "path": "api.py",
+                      "line": 7,
+                      "name": "accept",
+                      "kind": "CALL"
+                    }
+                  ],
+                  "complete": false,
+                  "coverage_complete": true,
+                  "unknown_candidates": 0,
+                  "results_truncated": false,
+                  "reason": "bounded observation"
+                },
+                "returned_calls": {
+                  "sites": [
+                    {
+                      "path": "api.py",
+                      "line": 4,
+                      "name": "save",
+                      "kind": "CALL"
+                    }
+                  ],
+                  "complete": false,
+                  "coverage_complete": true,
+                  "unknown_candidates": 0,
+                  "results_truncated": false,
+                  "reason": "bounded observation"
+                }
+              },
+              "observations": {
+                "definitions": {
+                  "result": {
+                    "rows": [
+                      [
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+                          "path": "tests/test_api.py",
+                          "name": "test_value",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+                          "path": "unrelated.py",
+                          "name": "unrelated",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "other.py::/CALLABLE:save@0:20",
+                          "path": "other.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        }
+                      ]
+                    ],
+                    "complete": true,
+                    "coverage_complete": true,
+                    "unknown_candidates": 0,
+                    "results_truncated": false
+                  },
+                  "snapshot": null,
+                  "engine": null
+                },
+                "calls": {
+                  "result": {
+                    "rows": [
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "api.py::op:39:45:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 3
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "api.py::op:53:59:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 4
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "api.py::op:75:88:call",
+                          "path": "api.py",
+                          "name": "close",
+                          "kind": "CALL",
+                          "line": 6
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "api.py::op:90:103:call",
+                          "path": "api.py",
+                          "name": "accept",
+                          "kind": "CALL",
+                          "line": 7
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+                          "path": "tests/test_api.py",
+                          "name": "test_value",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "tests/test_api.py::op:45:54:call",
+                          "path": "tests/test_api.py",
+                          "name": "wrapper",
+                          "kind": "CALL",
+                          "line": 3
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+                          "path": "unrelated.py",
+                          "name": "unrelated",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        },
+                        {
+                          "local_id": "unrelated.py::op:24:30:call",
+                          "path": "unrelated.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 2
+                        }
+                      ]
+                    ],
+                    "complete": false,
+                    "coverage_complete": true,
+                    "unknown_candidates": 0,
+                    "results_truncated": false,
+                    "reason": "bounded observation"
+                  },
+                  "snapshot": null,
+                  "engine": null
+                },
+                "targets": {
+                  "result": {
+                    "rows": [
+                      [
+                        {
+                          "local_id": "api.py::op:39:45:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 3
+                        },
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::op:53:59:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 4
+                        },
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "tests/test_api.py::op:45:54:call",
+                          "path": "tests/test_api.py",
+                          "name": "wrapper",
+                          "kind": "CALL",
+                          "line": 3
+                        },
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        }
+                      ]
+                    ],
+                    "complete": true,
+                    "coverage_complete": true,
+                    "unknown_candidates": 0,
+                    "results_truncated": false
+                  },
+                  "snapshot": null,
+                  "engine": null
+                },
+                "possible_targets": {
+                  "result": {
+                    "rows": [],
+                    "complete": true,
+                    "coverage_complete": true,
+                    "unknown_candidates": 0,
+                    "results_truncated": false
+                  },
+                  "snapshot": null,
+                  "engine": null
+                },
+                "usages": {
+                  "result": {
+                    "rows": [
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        },
+                        {
+                          "local_id": "api.py::op:53:59:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 4
+                        },
+                        {
+                          "kind": "assignment",
+                          "path": "api.py",
+                          "line": 4
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        },
+                        {
+                          "local_id": "api.py::op:53:59:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 4
+                        },
+                        {
+                          "kind": "receiver",
+                          "path": "api.py",
+                          "line": 6,
+                          "consumer": "api.py::op:75:88:call"
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        },
+                        {
+                          "local_id": "api.py::op:53:59:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 4
+                        },
+                        {
+                          "kind": "argument",
+                          "path": "api.py",
+                          "line": 7,
+                          "position": 0,
+                          "consumer": "api.py::op:90:103:call",
+                          "consumer_name": "accept"
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "storage.py::/CALLABLE:save@0:20",
+                          "path": "storage.py",
+                          "name": "save",
+                          "kind": "CALLABLE",
+                          "line": 1
+                        },
+                        {
+                          "local_id": "api.py::op:53:59:call",
+                          "path": "api.py",
+                          "name": "save",
+                          "kind": "CALL",
+                          "line": 4
+                        },
+                        {
+                          "kind": "return",
+                          "path": "api.py",
+                          "line": 8
+                        }
+                      ],
+                      [
+                        {
+                          "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+                          "path": "tests/test_api.py",
+                          "name": "test_value",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "api.py::/CALLABLE:wrapper@0:20",
+                          "path": "api.py",
+                          "name": "wrapper",
+                          "kind": "CALLABLE",
+                          "line": 2
+                        },
+                        {
+                          "local_id": "tests/test_api.py::op:45:54:call",
+                          "path": "tests/test_api.py",
+                          "name": "wrapper",
+                          "kind": "CALL",
+                          "line": 3
+                        },
+                        {
+                          "kind": "return",
+                          "path": "tests/test_api.py",
+                          "line": 4
+                        }
+                      ]
+                    ],
+                    "complete": false,
+                    "coverage_complete": true,
+                    "unknown_candidates": 0,
+                    "results_truncated": false,
+                    "reason": "bounded observation"
+                  },
+                  "snapshot": null,
+                  "engine": null
+                }
+              },
+              "claim": "Observed calls and returned identities; business roles remain hypotheses."
+            }
+          }
+        ],
+        "counterevidence": [],
+        "assessment": {
+          "kind": "heuristic",
+          "calibrated": false,
+          "probability": null,
+          "note": "Scores rank hypotheses; they are not probabilities of correctness. Documentation and call sites do not prove behavior."
+        },
+        "coverage": {
+          "scope": "api.py",
+          "indexed_symbols": 2,
+          "inspected_symbols": 2,
+          "candidate_limit": 40,
+          "exhaustive": false,
+          "include_tests": false,
+          "sources": [
+            "module_docstrings",
+            "class_docstrings",
+            "method_docstrings",
+            "function_docstrings"
+          ],
+          "findings_used": false,
+          "issues": [],
+          "note": "Index retrieval can miss new symbols or concepts absent from the indexed docstring excerpt. Cross-language quality depends on the configured embedder."
+        },
+        "responsibility_map": {
+          "scope": ".",
+          "nodes": [
+            {
+              "path": "api.py",
+              "line": 2,
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "symbol": "wrapper",
+              "id": 0,
+              "roles": [
+                {
+                  "role": "coordinator_candidate",
+                  "basis": "Invokes multiple operations."
+                },
+                {
+                  "role": "delegates",
+                  "basis": "Calls a resolved project callable."
+                }
+              ],
+              "inference": "structural_hypothesis"
+            },
+            {
+              "path": "storage.py",
+              "line": 1,
+              "name": "save",
+              "kind": "CALLABLE",
+              "symbol": "save",
+              "id": 1,
+              "roles": [
+                {
+                  "role": "executor_candidate",
+                  "basis": "End of the observed project-call chain; external effects remain unverified."
+                }
+              ],
+              "inference": "structural_hypothesis"
+            },
+            {
+              "path": "tests/test_api.py",
+              "line": 2,
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "symbol": "test_value",
+              "id": 2,
+              "roles": [
+                {
+                  "role": "entry_candidate",
+                  "basis": "No incoming calls observed in this scope."
+                },
+                {
+                  "role": "delegates",
+                  "basis": "Calls a resolved project callable."
+                }
+              ],
+              "inference": "structural_hypothesis"
+            }
+          ],
+          "calls": [
+            {
+              "from": 0,
+              "to": [
+                1
+              ],
+              "call": {
+                "path": "api.py",
+                "line": 3,
+                "name": "save",
+                "kind": "CALL"
+              },
+              "resolution": "resolved"
+            },
+            {
+              "from": 0,
+              "to": [
+                1
+              ],
+              "call": {
+                "path": "api.py",
+                "line": 4,
+                "name": "save",
+                "kind": "CALL"
+              },
+              "resolution": "resolved"
+            },
+            {
+              "from": 0,
+              "to": [],
+              "call": {
+                "path": "api.py",
+                "line": 6,
+                "name": "close",
+                "kind": "CALL"
+              },
+              "resolution": "unresolved"
+            },
+            {
+              "from": 0,
+              "to": [],
+              "call": {
+                "path": "api.py",
+                "line": 7,
+                "name": "accept",
+                "kind": "CALL"
+              },
+              "resolution": "unresolved"
+            },
+            {
+              "from": 2,
+              "to": [
+                0
+              ],
+              "call": {
+                "path": "tests/test_api.py",
+                "line": 3,
+                "name": "wrapper",
+                "kind": "CALL"
+              },
+              "resolution": "resolved"
+            }
+          ],
+          "truncated": false,
+          "coverage": {
+            "definitions": {
+              "complete": true,
+              "coverage_complete": true,
+              "unknown_candidates": 0,
+              "results_truncated": false,
+              "reason": null
+            },
+            "calls": {
+              "complete": false,
+              "coverage_complete": true,
+              "unknown_candidates": 0,
+              "results_truncated": false,
+              "reason": "bounded observation"
+            },
+            "targets": {
+              "complete": true,
+              "coverage_complete": true,
+              "unknown_candidates": 0,
+              "results_truncated": false,
+              "reason": null
+            },
+            "possible_targets": {
+              "complete": true,
+              "coverage_complete": true,
+              "unknown_candidates": 0,
+              "results_truncated": false,
+              "reason": null
+            },
+            "usages": {
+              "complete": false,
+              "coverage_complete": true,
+              "unknown_candidates": 0,
+              "results_truncated": false,
+              "reason": "bounded observation"
+            }
+          },
+          "claim": "Roles are hypotheses from observed calls, not proof of business responsibility or public visibility.",
+          "acquisition": {
+            "basis": "prepared evidence",
+            "paths": [
+              "api.py",
+              "consumer.py",
+              "other.py",
+              "storage.py",
+              "tests/test_api.py",
+              "unrelated.py"
+            ]
+          }
+        }
+      },
+      "requests": [
+        {
+          "path": ".",
+          "timeout_ms": 3000,
+          "seeds": [
+            "api.py"
+          ],
+          "focus": {
+            "targets": [
+              "api.py"
+            ],
+            "relation": "outgoing",
+            "depth": 2
+          }
+        }
+      ]
+    }
+  ]
+}

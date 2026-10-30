@@ -1,0 +1,33 @@
+[package]
+name = "ken-checks-application"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+ken-contracts = { path = "../ken-contracts" }
+ken-structural = { path = "../ken-structural" }
+ken-query = { path = "../ken-query" }
+ken-core = { path = "../ken-core" }
+ken-syntax = { path = "../ken-syntax" }
+ken-text = { path = "../ken-text" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+sha2.workspace = true
+libc.workspace = true
+
+[build-dependencies]
+sha2.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+flate2.workspace = true
+
+ken-program = { path = "../ken-program" }
+
+[[bin]]
+name = "ken-check-worker"
+path = "src/bin/ken-check-worker.rs"

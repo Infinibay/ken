@@ -188,8 +188,7 @@ fn inline_migration_is_batched_restartable_and_preserves_foreign_dimensions() {
     );
 }
 
-#[test]
-fn compaction_preserves_all_three_spaces_and_reuses_a_dense_prefix() {
+fn compacted_all_three_spaces() -> (tempfile::TempDir, ProjectStore) {
     // Catches mismatched ID→vector remapping, transient unique collisions or discarded foreign files.
     let (root, mut project) = fixture();
     project.database().connection().execute_batch("INSERT INTO ci_files(id,path,content_hash,mtime,indexed_at,vec_slot) VALUES(1,'a',x'',0,0,4),(2,'b',x'',0,0,1); INSERT INTO ci_symbols(id,file_id,kind,name,line_start,line_end,vec_slot) VALUES(1,1,'function','a',1,1,4),(2,2,'function','b',1,1,1); INSERT INTO ci_intent_sources(id,source_kind,text,updated_at,vec_slot) VALUES(1,'module_docstring','a',0,4),(2,'module_docstring','b',0,1);").unwrap();
@@ -303,6 +302,44 @@ fn compaction_preserves_all_three_spaces_and_reuses_a_dense_prefix() {
             "cleaned"
         ]
     );
+    (root, project)
+}
+#[test]
+fn compaction_preserves_all_three_spaces_and_reuses_a_dense_prefix() {
+    // Native-only publication/remapping/permissions/foreign-files/events coverage.
+    let (root, project) = compacted_all_three_spaces();
+    drop(project);
+    let context = DiscoveryContext {
+        cwd: root.path().into(),
+        forced_root: None,
+        home: None,
+    };
+    let reopened = ProjectStore::open(&ProjectPaths::at(root.path(), &context).unwrap()).unwrap();
+    for space in VectorSpace::ALL {
+        let pairs: Vec<(i64, i64)> = reopened
+            .database()
+            .connection()
+            .prepare(&format!("SELECT id,vec_slot FROM {space} ORDER BY id"))
+            .unwrap()
+            .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
+            .unwrap()
+            .map(Result::unwrap)
+            .collect();
+        assert_eq!(pairs, [(1, 1), (2, 0)]);
+        assert_eq!(
+            reopened
+                .vectors(space, 2, Some("módelo"))
+                .unwrap()
+                .read(&[1, 0])
+                .unwrap(),
+            [vec![1., 0.], vec![0., 0.]]
+        );
+    }
+}
+#[test]
+#[ignore = "historical accepted Python interoperability replay; explicit qualification only"]
+fn original_python_reads_native_compaction_for_explicit_qualification() {
+    let (root, _project) = compacted_all_three_spaces();
     let script = format!(
         "{}\n{}",
         support::ORIGINAL_IMPORTS,

@@ -1,9 +1,11 @@
 //! Typed endpoint binding and the original asymmetric attribute comparisons.
+use super::regex_runtime::{Cache, Dialect};
 use super::{ExecutionError, Result};
 use crate::relational::Term;
 use ken_program::value::GraphValue;
-use regex::{Regex, RegexBuilder};
-use std::collections::{BTreeMap, HashMap};
+use ken_text::PythonText;
+use std::collections::BTreeMap;
+use std::time::Duration;
 pub(super) type Bindings = BTreeMap<String, String>;
 pub(super) fn variable(t: &Term) -> bool {
     matches!(t,Term::Text(s)if s.starts_with('$'))
@@ -40,8 +42,8 @@ pub(super) fn spelling(v: &GraphValue, actual: bool) -> String {
     }
 }
 #[derive(Default)]
-pub(super) struct Comparisons {
-    patterns: HashMap<String, Regex>,
+pub(crate) struct Comparisons {
+    patterns: Cache,
     interruption: super::Interruption,
 }
 impl Comparisons {
@@ -53,26 +55,51 @@ impl Comparisons {
     }
     pub fn new(interruption: super::Interruption) -> Self {
         Self {
-            patterns: HashMap::new(),
+            patterns: Cache::default(),
             interruption,
         }
     }
     pub fn prepare(&mut self, pattern: &str) -> Result<()> {
+        let interruption = self.interruption.clone();
+        self.patterns
+            .compile(&pattern.into(), "", Dialect::Regex, &mut || {
+                interruption.check()
+            })
+            .map(|_| ())
+    }
+    fn regex(
+        &mut self,
+        actual: &GraphValue,
+        pattern: &str,
+        timeout: Option<Duration>,
+    ) -> Result<bool> {
+        let interruption = self.interruption.clone();
+        let pattern = self
+            .patterns
+            .compile(&pattern.into(), "", Dialect::Regex, &mut || {
+                interruption.check()
+            })?;
+        let text = match actual {
+            GraphValue::String(text) => text.clone(),
+            _ => PythonText::from(spelling(actual, true)),
+        };
+        pattern.is_match_with_timeout(&text, timeout, &mut || interruption.check())
+    }
+    /// SourceExecutor regex callbacks rely on their enclosing query deadline.
+    pub fn compare_source(
+        &mut self,
+        actual: &GraphValue,
+        op: &str,
+        expected: &str,
+    ) -> Result<bool> {
         self.check()?;
-        if !self.patterns.contains_key(pattern) {
-            let regex = RegexBuilder::new(pattern)
-                .size_limit(8 * 1024 * 1024)
-                .dfa_size_limit(2 * 1024 * 1024)
-                .build()
-                .map_err(|e| {
-                    ExecutionError::Unsupported(format!("native regular-expression matching: {e}"))
-                })?;
-            if self.patterns.len() >= 16 {
-                self.patterns.clear();
+        if op == "regex" {
+            if matches!(actual, GraphValue::Null) {
+                return Ok(false);
             }
-            self.patterns.insert(pattern.into(), regex);
+            return self.regex(actual, expected, None);
         }
-        Ok(())
+        self.compare(actual, op, expected)
     }
 
     pub fn compare(&mut self, actual: &GraphValue, op: &str, expected: &str) -> Result<bool> {
@@ -93,14 +120,13 @@ impl Comparisons {
                 _ => false,
             });
         }
+        if op == "regex" {
+            return self.regex(actual, expected, Some(Duration::from_millis(10)));
+        }
         let value = spelling(actual, true);
         Ok(match op {
             "literal" => value == expected,
             "not_literal" => value != expected,
-            "regex" => {
-                self.prepare(expected)?;
-                self.patterns[expected].is_match(&value)
-            }
             "~=" => glob(&value, expected, &self.interruption)?,
             "!=" => !expected.split('|').any(|v| v == value),
             "=" | "==" => expected.split('|').any(|v| v == value),

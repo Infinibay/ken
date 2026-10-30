@@ -10,22 +10,41 @@ license.workspace = true
 name = "ken-rs"
 path = "src/main.rs"
 
+[[bin]]
+name = "ken"
+path = "src/launcher.rs"
+
 [dependencies]
+ken-program = { path = "../ken-program" }
+ken-application = { path = "../ken-application" }
+ken-daemon = { path = "../ken-daemon" }
+ken-hosts = { path = "../ken-hosts" }
+ken-maintenance = { path = "../ken-maintenance" }
+ken-models = { path = "../ken-models" }
+ken-context = { path = "../ken-context" }
+ken-responsibility = { path = "../ken-responsibility" }
+ken-index = { path = "../ken-index" }
 ken-core = { path = "../ken-core" }
 ken-search = { path = "../ken-search" }
 ken-retrieval = { path = "../ken-retrieval" }
 ken-text = { path = "../ken-text" }
 ken-syntax = { path = "../ken-syntax" }
+ken-structural = { path = "../ken-structural" }
+ken-knowledge = { path = "../ken-knowledge" }
+ken-contracts = { path = "../ken-contracts" }
+ken-query = { path = "../ken-query" }
+ken-checks-application = { path = "../ken-checks-application" }
+ken-history = { path = "../ken-history" }
+ken-store = { path = "../ken-store" }
 clap.workspace = true
 serde.workspace = true
 serde_json = { workspace = true, features = ["raw_value"] }
 thiserror.workspace = true
+rusqlite.workspace = true
+libc.workspace = true
 
 [dev-dependencies]
 base64 = "0.23.1"
-ken-index = { path = "../ken-index" }
-ken-store = { path = "../ken-store" }
 flate2.workspace = true
 sha2.workspace = true
-rusqlite.workspace = true
 tempfile.workspace = true

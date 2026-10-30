@@ -1,0 +1,40 @@
+{
+  "format": "ken-vector-ordering-source/1",
+  "numpy": "2.4.4",
+  "numpy_sort_profile": "linux-x86-v3",
+  "original_compiler": "GCC14.2.1",
+  "native_fallback_compiler": "GCC16.2.1",
+  "intel_commit": "5adb33411f3cea8bdbafa9d91bd75bc4bf19c7dd",
+  "license": "BSD-3-Clause",
+  "files": {
+    "xss-common-argsort.h": {
+      "bytes": 31923,
+      "sha256": "a9fb313c3d0d101b5333073d2754f103eb4e098b9fab9b16831c6fbef9b4f990"
+    },
+    "xss-network-keyvaluesort.hpp": {
+      "bytes": 14219,
+      "sha256": "8397a50ceae4c581742282f481496c7cb304ae93c9c1629503eb53bdb24f998c"
+    },
+    "xss-reg-networks.hpp": {
+      "bytes": 17311,
+      "sha256": "b00982b00d35aedf44950706ef8da539e29b75cd11cd93059dfb0d66dc81c2b2"
+    },
+    "avx2-32bit-half.hpp": {
+      "bytes": 16450,
+      "sha256": "146cbe08de1ced007c7448ed31cfc56f63bff2493d7ffcd20706b6ea851d772d"
+    },
+    "avx2-64bit-qsort.hpp": {
+      "bytes": 19607,
+      "sha256": "b8a9bed1d9cfbfc72891433e8f0b65877f3f502056ecdddbd00b56408a93c7bc"
+    },
+    "avx2-emu-funcs.hpp": {
+      "bytes": 13601,
+      "sha256": "44c2bf91ef4fc4724ddee486a48f7fd69d9ebc05e59f06ab87ef91ad9ecb19c0"
+    },
+    "LICENSE.md": {
+      "bytes": 1514,
+      "sha256": "211e7d737d6179a08f791ebb0a99897ce7cd2457410c542876d125576edfe910"
+    }
+  },
+  "qualification": "exact vector-math-reference.json.gz permutations are mandatory; no universal x86 or std::sort tie claim"
+}

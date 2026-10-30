@@ -37,6 +37,8 @@ fn main() {
     for name in [
         "ken-core",
         "ken-program",
+        "ken-query",
+        "ken-contracts",
         "ken-syntax",
         "ken-store",
         "ken-text",
@@ -52,6 +54,25 @@ fn main() {
         }
         collect(&directory.join("src"), &mut paths);
         collect(&directory.join("resources"), &mut paths);
+    }
+    let mut catalog_sources = Vec::new();
+    for name in ["patterns", "modern_patterns"] {
+        let directory = root.join("src/ken/structural").join(name);
+        collect(&directory, &mut paths);
+        if directory.is_dir() {
+            let mut resources = fs::read_dir(&directory)
+                .unwrap()
+                .map(|e| e.unwrap().path())
+                .filter(|p| p.extension().is_some_and(|e| e == "toml"))
+                .collect::<Vec<_>>();
+            resources.sort();
+            for path in resources {
+                catalog_sources.push((
+                    format!("{name}/{}", path.file_name().unwrap().to_str().unwrap()),
+                    path,
+                ));
+            }
+        }
     }
     paths.sort();
     paths.dedup();
@@ -78,6 +99,15 @@ fn main() {
         format!("pub const IMPLEMENTATION_FINGERPRINT: &str = {identity:?};\n"),
     )
     .unwrap();
+    let mut catalog = String::from("pub const SOURCES:&[CatalogSource]=&[\n");
+    for (name, path) in catalog_sources {
+        catalog.push_str(&format!(
+            "CatalogSource{{path:{name:?},text:include_str!({:?})}},\n",
+            path.to_str().unwrap()
+        ));
+    }
+    catalog.push_str("];\n");
+    fs::write(out.join("catalog_sources.rs"), catalog).unwrap();
     // The regression runs this exact program over isolated input trees, without Cargo.
     fs::write(
         out.join("identity-program"),

@@ -6,6 +6,8 @@ pub use resources::{SearchResourceInputs, SearchResourceProvider, SearchResource
 #[derive(Debug, thiserror::Error)]
 pub enum SearchError {
     #[error(transparent)]
+    Io(#[from] std::io::Error),
+    #[error(transparent)]
     Retrieval(#[from] ken_retrieval::RetrievalError),
     #[error(transparent)]
     Index(#[from] ken_index::IndexError),

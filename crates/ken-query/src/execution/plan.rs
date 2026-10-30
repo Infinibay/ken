@@ -44,6 +44,7 @@ pub(super) enum Kind {
     },
     Receiver(String, String),
     Source(super::source_plan::SourceOp),
+    Body(Arc<crate::BodyPattern>),
 }
 #[derive(Clone)]
 pub(super) struct Query {
@@ -414,6 +415,13 @@ impl Builder<'_> {
                     "different" => {
                         let v = tuple(&n.value, Some(2))?;
                         Kind::Different(text(&v[0])?.into(), text(&v[1])?.into())
+                    }
+                    "source_body" => {
+                        let PlanValue::Body(body) = &n.value else {
+                            return Err(invalid("invalid BODY pattern"));
+                        };
+                        super::body_runtime::validate(body, &mut || self.charge(1))?;
+                        Kind::Body(Arc::new(body.clone()))
                     }
                     "source_receiver" => {
                         let v = tuple(&n.value, Some(2))?;

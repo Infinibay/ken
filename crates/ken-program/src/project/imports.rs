@@ -66,6 +66,31 @@ fn normal(path: &str) -> String {
         result
     }
 }
+/// Existing Python module locations, including every ambiguous candidate.
+pub fn python_module_targets(origin: &str, module: &str, paths: &BTreeSet<String>) -> Vec<String> {
+    let dots = module.len() - module.trim_start_matches('.').len();
+    let tail = module[dots..].replace('.', "/");
+    let stems = if dots > 0 {
+        let mut base = parent(origin);
+        for _ in 0..dots - 1 {
+            base = dirname(&base);
+        }
+        vec![normal(&join(&base, &tail))]
+    } else {
+        vec![
+            tail.clone(),
+            format!("src/{tail}"),
+            join(&parent(origin), &tail),
+        ]
+    };
+    stems
+        .into_iter()
+        .flat_map(|s| [format!("{s}.py"), format!("{s}/__init__.py")])
+        .filter(|p| paths.contains(p))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
 #[derive(Default)]
 pub(super) struct Imports {
     pub members: BTreeMap<(String, String), (String, String)>,
@@ -82,25 +107,7 @@ pub(super) struct Imports {
 impl Imports {
     fn module_path(&self, origin: &str, module: &str, language: &str) -> Option<String> {
         let candidates = if language == "python" {
-            let dots = module.len() - module.trim_start_matches('.').len();
-            let tail = module[dots..].replace('.', "/");
-            let stems = if dots > 0 {
-                let mut base = parent(origin);
-                for _ in 0..dots - 1 {
-                    base = dirname(&base);
-                }
-                vec![normal(&join(&base, &tail))]
-            } else {
-                vec![
-                    tail.clone(),
-                    format!("src/{tail}"),
-                    join(&parent(origin), &tail),
-                ]
-            };
-            stems
-                .into_iter()
-                .flat_map(|s| [format!("{s}.py"), format!("{s}/__init__.py")])
-                .collect::<Vec<_>>()
+            python_module_targets(origin, module, &self.paths)
         } else {
             if !module.starts_with('.') {
                 return None;

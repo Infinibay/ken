@@ -1,7 +1,9 @@
 //! Native project inspection, independent of the Python runtime.
 pub mod health;
 pub mod imports;
+pub mod native_program;
 pub mod project;
+pub mod project_files;
 mod source_directory;
 pub mod source_filter;
 mod source_patterns;

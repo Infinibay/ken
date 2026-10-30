@@ -53,6 +53,10 @@ impl ProjectPaths {
             root: resolve_start(root, context)?,
         })
     }
+    /// Hold the canonical project root for component-relative confined access.
+    pub fn open_root(&self) -> io::Result<std::fs::File> {
+        crate::source_handles::open_root(&self.root)
+    }
     pub fn root(&self) -> &Path {
         &self.root
     }

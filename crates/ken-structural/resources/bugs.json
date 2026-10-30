@@ -1,0 +1,154 @@
+[
+  {
+    "id": "mutable-default-argument",
+    "query": "require $unit HAS_HAZARD mutable-default-argument",
+    "name": "mutable-default-argument",
+    "description": "A mutable literal default is shared between calls.",
+    "tags": [
+      "correctness"
+    ],
+    "collections": [
+      "bugs"
+    ],
+    "severity": "warning",
+    "recommendation": "",
+    "caveat": "",
+    "variants": [],
+    "source": "",
+    "operations": [],
+    "query_language": ""
+  },
+  {
+    "id": "bare-except",
+    "query": "require $unit HAS_HAZARD bare-except",
+    "name": "bare-except",
+    "description": "An unqualified except also catches cancellation and termination exceptions.",
+    "tags": [
+      "correctness"
+    ],
+    "collections": [
+      "bugs"
+    ],
+    "severity": "warning",
+    "recommendation": "",
+    "caveat": "",
+    "variants": [],
+    "source": "",
+    "operations": [],
+    "query_language": ""
+  },
+  {
+    "id": "swallowed-exception",
+    "query": "require $unit HAS_HAZARD swallowed-exception",
+    "name": "swallowed-exception",
+    "description": "The exception handler has no executable handling behavior.",
+    "tags": [
+      "correctness"
+    ],
+    "collections": [
+      "bugs"
+    ],
+    "severity": "warning",
+    "recommendation": "",
+    "caveat": "",
+    "variants": [],
+    "source": "",
+    "operations": [],
+    "query_language": ""
+  },
+  {
+    "id": "return-in-finally",
+    "query": "require $unit HAS_HAZARD return-in-finally",
+    "name": "return-in-finally",
+    "description": "A finally return can suppress an exception or replace an earlier result.",
+    "tags": [
+      "correctness"
+    ],
+    "collections": [
+      "bugs"
+    ],
+    "severity": "warning",
+    "recommendation": "",
+    "caveat": "",
+    "variants": [],
+    "source": "",
+    "operations": [],
+    "query_language": ""
+  },
+  {
+    "id": "unreachable-statement",
+    "query": "require $unit HAS_HAZARD unreachable-statement",
+    "name": "unreachable-statement",
+    "description": "A statement follows an unconditional terminator in the same block.",
+    "tags": [
+      "correctness"
+    ],
+    "collections": [
+      "bugs"
+    ],
+    "severity": "warning",
+    "recommendation": "",
+    "caveat": "",
+    "variants": [],
+    "source": "",
+    "operations": [],
+    "query_language": ""
+  },
+  {
+    "id": "self-assignment",
+    "query": "require $unit HAS_HAZARD self-assignment",
+    "name": "self-assignment",
+    "description": "A local identifier is assigned to itself; check for a mistaken target.",
+    "tags": [
+      "correctness"
+    ],
+    "collections": [
+      "bugs"
+    ],
+    "severity": "warning",
+    "recommendation": "",
+    "caveat": "",
+    "variants": [],
+    "source": "",
+    "operations": [],
+    "query_language": ""
+  },
+  {
+    "id": "nan-equality",
+    "query": "require $unit HAS_HAZARD nan-equality",
+    "name": "nan-equality",
+    "description": "Equality/inequality with the built-in NaN does not test numeric NaN state.",
+    "tags": [
+      "correctness"
+    ],
+    "collections": [
+      "bugs"
+    ],
+    "severity": "warning",
+    "recommendation": "",
+    "caveat": "",
+    "variants": [],
+    "source": "",
+    "operations": [],
+    "query_language": ""
+  },
+  {
+    "id": "tuple-assertion",
+    "query": "require $unit HAS_HAZARD tuple-assertion",
+    "name": "tuple-assertion",
+    "description": "A nonempty tuple assertion is always truthy, regardless of its elements.",
+    "tags": [
+      "correctness"
+    ],
+    "collections": [
+      "bugs"
+    ],
+    "severity": "warning",
+    "recommendation": "",
+    "caveat": "",
+    "variants": [],
+    "source": "",
+    "operations": [],
+    "query_language": ""
+  }
+]

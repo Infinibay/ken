@@ -12,6 +12,8 @@ fn prepare(root: &Path) {
     for name in [
         "ken-core",
         "ken-program",
+        "ken-query",
+        "ken-contracts",
         "ken-syntax",
         "ken-store",
         "ken-text",
@@ -83,6 +85,8 @@ fn resources_local_parser_and_feature_manifests_change_native_identity() {
         "crates/ken-retrieval/vendor/ruff-python-parser/src/lib.rs",
         "Cargo.toml",
         "crates/ken-program/Cargo.toml",
+        "crates/ken-query/src/lib.rs",
+        "crates/ken-contracts/src/lib.rs",
     ] {
         put(root, file, "changed production behavior");
         let changed = revision(root);

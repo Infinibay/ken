@@ -1,5 +1,5 @@
 //! Coordinate manifest acquisition, reusable lowering and complete project linking.
-use crate::{BuildError, Result, ScanLimits, Skipped, SourceManifest};
+use crate::{BuildError, ManifestSource, Result, ScanLimits, Skipped, SourceManifest};
 use ken_core::project::{DiscoveryContext, ProjectPaths};
 use ken_program::{IR_VERSION, StructuralIr, project::link_project_owned_with_check};
 use ken_store::artifact_cache::{ArtifactCache, CacheStats};
@@ -67,6 +67,8 @@ pub struct BuildReport {
     pub graph: StructuralIr,
     pub analysis: BuildAnalysis,
 }
+type SourceUnitSink<'a> = dyn FnMut(&ManifestSource, &StructuralIr) -> Result<()> + 'a;
+
 pub struct ProjectBuilder<'a> {
     paths: ProjectPaths,
     context: DiscoveryContext,
@@ -102,6 +104,24 @@ impl<'a> ProjectBuilder<'a> {
             &mut check,
         )
     }
+    /// Capture an explicit, confined source inventory without walking unrelated files.
+    pub fn manifest_sources(
+        &self,
+        path: &Path,
+        source_paths: Option<&[String]>,
+        limits: ScanLimits,
+        mut check: impl FnMut() -> Result<()>,
+    ) -> Result<SourceManifest> {
+        SourceManifest::capture_sources(
+            &self.paths,
+            &self.context,
+            path,
+            source_paths,
+            self.frontend.revision(),
+            limits,
+            &mut check,
+        )
+    }
     pub fn build(
         &mut self,
         path: &Path,
@@ -110,7 +130,7 @@ impl<'a> ProjectBuilder<'a> {
     ) -> Result<BuildReport> {
         let start = Instant::now();
         let manifest = self.manifest(path, limits, &mut check)?;
-        self.assemble(manifest, start, &mut check)
+        self.assemble(manifest, start, &mut check, None)
     }
     /// Reuse a captured manifest without re-reading a changing worktree.
     pub fn build_manifest(
@@ -118,13 +138,27 @@ impl<'a> ProjectBuilder<'a> {
         manifest: SourceManifest,
         mut check: impl FnMut() -> Result<()>,
     ) -> Result<BuildReport> {
-        self.assemble(manifest, Instant::now(), &mut check)
+        self.assemble(manifest, Instant::now(), &mut check, None)
+    }
+    /// Project each captured raw source unit before linking consumes it. A graph
+    /// cache alone cannot provide source-store node/AST identities to query users.
+    pub fn build_manifest_with_units(
+        &mut self,
+        manifest: SourceManifest,
+        mut check: impl FnMut() -> Result<()>,
+        mut unit: impl FnMut(&ManifestSource, &StructuralIr) -> Result<()>,
+    ) -> Result<BuildReport> {
+        self.assemble(manifest, Instant::now(), &mut check, Some(&mut unit))
+    }
+    pub fn frontend_revision(&self) -> &str {
+        self.frontend.revision()
     }
     fn assemble(
         &mut self,
         manifest: SourceManifest,
         start: Instant,
         check: &mut impl FnMut() -> Result<()>,
+        mut unit_sink: Option<&mut SourceUnitSink<'_>>,
     ) -> Result<BuildReport> {
         check()?;
         if manifest.root != self.paths.root() || manifest.revision != self.frontend.revision() {
@@ -140,9 +174,14 @@ impl<'a> ProjectBuilder<'a> {
             .iter()
             .map(|e| e.path().to_string())
             .collect::<Vec<_>>();
-        let graph = if let Some(graph) = self.cache.get_ir_checked(&graph_key, |ir| {
-            ir.path == "<project>" && ir.language == "mixed" && ir.view == "source"
-        }) {
+        let cached = if unit_sink.is_none() {
+            self.cache.get_ir_checked(&graph_key, |ir| {
+                ir.path == "<project>" && ir.language == "mixed" && ir.view == "source"
+            })
+        } else {
+            None
+        };
+        let graph = if let Some(graph) = cached {
             graph
         } else {
             let mut units = vec![];
@@ -187,6 +226,9 @@ impl<'a> ProjectBuilder<'a> {
                         }
                     }
                 };
+                if let Some(sink) = unit_sink.as_mut() {
+                    sink(&source, &unit)?;
+                }
                 units.push(unit);
             }
             let mut cancelled = None;

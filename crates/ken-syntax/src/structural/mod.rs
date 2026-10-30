@@ -69,3 +69,35 @@ fn admit(language: Language) -> Result<(), LoweringError> {
         Err(LoweringError::UnsupportedLanguage(language.as_str()))
     }
 }
+
+/// Classification of raw syntax, without declaration or source-operation lowering.
+pub fn syntax_classification(native: &str) -> (String, String) {
+    if let Some((kind, category)) = ken_program::raw_syntax_kind(native) {
+        return (kind.into(), category.into());
+    }
+    let v = vocabulary::vocabulary();
+    let result = if v.types.contains(native) {
+        ("type_declaration", "declaration")
+    } else if v.functions.contains(native) {
+        ("callable", "declaration")
+    } else if v.calls.contains(native) {
+        ("call", "expression")
+    } else if v.assignments.contains(native) {
+        ("assignment", "expression")
+    } else if v.members.contains(native) {
+        ("member", "expression")
+    } else if matches!(
+        native,
+        "binary_expression" | "binary_operator" | "boolean_operator" | "comparison_operator"
+    ) {
+        ("binary", "expression")
+    } else if matches!(
+        native,
+        "unary_expression" | "unary_operator" | "not_operator"
+    ) {
+        ("unary", "expression")
+    } else {
+        ("opaque", "opaque")
+    };
+    (result.0.into(), result.1.into())
+}

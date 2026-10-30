@@ -1,4 +1,5 @@
 //! Ordered public documents and their compact text projection.
+mod json;
 mod text;
 use serde::{
     Deserialize, Deserializer, Serialize, Serializer,
@@ -19,6 +20,10 @@ pub enum Document {
     Object(Vec<(String, Document)>),
 }
 impl Document {
+    /// Preserve source field order, arbitrary JSON numbers and ordinary object keys.
+    pub fn parse_json(raw: &str) -> Result<Self, serde_json::Error> {
+        json::parse(raw)
+    }
     pub fn object(fields: impl IntoIterator<Item = (impl Into<String>, Document)>) -> Self {
         Self::Object(fields.into_iter().map(|(k, v)| (k.into(), v)).collect())
     }

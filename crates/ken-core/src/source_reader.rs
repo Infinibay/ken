@@ -5,6 +5,14 @@ use std::{
     io::{self, Read},
     path::Path,
 };
+/// Hold a canonical directory without following a replacement symlink.
+pub fn open_directory(path: &Path) -> io::Result<File> {
+    crate::source_handles::open_root(path)
+}
+/// Open a confined component path relative to an already held directory.
+pub fn open_relative(root: &File, relative: &Path, directory: bool) -> io::Result<File> {
+    crate::source_handles::open(root, relative, directory)
+}
 pub struct SourceFileReader {
     paths: ProjectPaths,
 }
@@ -47,10 +55,27 @@ impl SourceFile {
     /// Bound bytes from the same source handle, including growth after stat.
     /// None means the file exceeded the caller's explicit limit.
     pub fn read_bounded(self, limit: u64) -> io::Result<Option<Vec<u8>>> {
+        self.read_bounded_checked(limit, &mut || Ok(()))
+    }
+    /// Cooperative bounded reads keep source bytes and stat on the same held handle.
+    pub fn read_bounded_checked<E: From<io::Error>>(
+        self,
+        limit: u64,
+        check: &mut dyn FnMut() -> Result<(), E>,
+    ) -> Result<Option<Vec<u8>>, E> {
+        check()?;
+        let mut reader = self.file.take(limit.saturating_add(1));
         let mut bytes = Vec::new();
-        self.file
-            .take(limit.saturating_add(1))
-            .read_to_end(&mut bytes)?;
+        let mut chunk = [0u8; 8192];
+        loop {
+            check()?;
+            let size = reader.read(&mut chunk)?;
+            if size == 0 {
+                break;
+            }
+            bytes.extend_from_slice(&chunk[..size]);
+        }
+        check()?;
         Ok((bytes.len() as u64 <= limit).then_some(bytes))
     }
     pub fn read(mut self) -> io::Result<Vec<u8>> {

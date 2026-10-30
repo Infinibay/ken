@@ -1,0 +1,289 @@
+{
+  "sources": {
+    "library": "language \"kql/2\"; module project.types; pattern HasWrite(in TypeDecl $owner) { class $owner {method $method {name:\"write\";}} }",
+    "middle": "language \"kql/2\"; module project.conventions; import project.types; pattern Writer(in TypeDecl $owner) {use project.types.HasWrite(owner:$owner);}",
+    "entry": "language \"kql/2\"; module project.search; import project.conventions; query writers {class $owner {} use project.conventions.Writer(owner:$owner); select $owner.name;}"
+  },
+  "missing": {
+    "generation": -1,
+    "modules": {}
+  },
+  "missing_has_ken": false,
+  "records": [
+    {
+      "module": "project.types",
+      "description": "Library",
+      "revision": "774901010122c1f598280c672bd1ea5998a0fd65fe5ae29838407beb5fd6710a",
+      "queries": [],
+      "patterns": [
+        "HasWrite"
+      ],
+      "imports": [],
+      "updated_ns": 1001,
+      "source": "language \"kql/2\"; module project.types; pattern HasWrite(in TypeDecl $owner) { class $owner {method $method {name:\"write\";}} }"
+    },
+    {
+      "module": "project.conventions",
+      "description": "",
+      "revision": "38a6169e2e3f45d31dc8559a2628d4aedfdef4742e819f2d58e9aba9fda8e2ab",
+      "queries": [],
+      "patterns": [
+        "Writer"
+      ],
+      "imports": [
+        "project.types"
+      ],
+      "updated_ns": 1002,
+      "source": "language \"kql/2\"; module project.conventions; import project.types; pattern Writer(in TypeDecl $owner) {use project.types.HasWrite(owner:$owner);}"
+    },
+    {
+      "module": "project.search",
+      "description": "",
+      "revision": "c3cd14dbdaf3d4c7d2613444c82868a542b4d6d74ab2c748851ea5a1b0ba6232",
+      "queries": [
+        "writers"
+      ],
+      "patterns": [],
+      "imports": [
+        "project.conventions"
+      ],
+      "updated_ns": 1003,
+      "source": "language \"kql/2\"; module project.search; import project.conventions; query writers {class $owner {} use project.conventions.Writer(owner:$owner); select $owner.name;}"
+    }
+  ],
+  "snapshot": {
+    "generation": 3,
+    "modules": {
+      "project.types": {
+        "module": "project.types",
+        "description": "Library",
+        "revision": "774901010122c1f598280c672bd1ea5998a0fd65fe5ae29838407beb5fd6710a",
+        "queries": [],
+        "patterns": [
+          "HasWrite"
+        ],
+        "imports": [],
+        "updated_ns": 1001,
+        "source": "language \"kql/2\"; module project.types; pattern HasWrite(in TypeDecl $owner) { class $owner {method $method {name:\"write\";}} }"
+      },
+      "project.conventions": {
+        "module": "project.conventions",
+        "description": "",
+        "revision": "38a6169e2e3f45d31dc8559a2628d4aedfdef4742e819f2d58e9aba9fda8e2ab",
+        "queries": [],
+        "patterns": [
+          "Writer"
+        ],
+        "imports": [
+          "project.types"
+        ],
+        "updated_ns": 1002,
+        "source": "language \"kql/2\"; module project.conventions; import project.types; pattern Writer(in TypeDecl $owner) {use project.types.HasWrite(owner:$owner);}"
+      },
+      "project.search": {
+        "module": "project.search",
+        "description": "",
+        "revision": "c3cd14dbdaf3d4c7d2613444c82868a542b4d6d74ab2c748851ea5a1b0ba6232",
+        "queries": [
+          "writers"
+        ],
+        "patterns": [],
+        "imports": [
+          "project.conventions"
+        ],
+        "updated_ns": 1003,
+        "source": "language \"kql/2\"; module project.search; import project.conventions; query writers {class $owner {} use project.conventions.Writer(owner:$owner); select $owner.name;}"
+      }
+    }
+  },
+  "idempotent_record": {
+    "module": "project.types",
+    "description": "Library",
+    "revision": "774901010122c1f598280c672bd1ea5998a0fd65fe5ae29838407beb5fd6710a",
+    "queries": [],
+    "patterns": [
+      "HasWrite"
+    ],
+    "imports": [],
+    "updated_ns": 1001,
+    "source": "language \"kql/2\"; module project.types; pattern HasWrite(in TypeDecl $owner) { class $owner {method $method {name:\"write\";}} }"
+  },
+  "idempotent_snapshot": {
+    "generation": 3,
+    "modules": {
+      "project.types": {
+        "module": "project.types",
+        "description": "Library",
+        "revision": "774901010122c1f598280c672bd1ea5998a0fd65fe5ae29838407beb5fd6710a",
+        "queries": [],
+        "patterns": [
+          "HasWrite"
+        ],
+        "imports": [],
+        "updated_ns": 1001,
+        "source": "language \"kql/2\"; module project.types; pattern HasWrite(in TypeDecl $owner) { class $owner {method $method {name:\"write\";}} }"
+      },
+      "project.conventions": {
+        "module": "project.conventions",
+        "description": "",
+        "revision": "38a6169e2e3f45d31dc8559a2628d4aedfdef4742e819f2d58e9aba9fda8e2ab",
+        "queries": [],
+        "patterns": [
+          "Writer"
+        ],
+        "imports": [
+          "project.types"
+        ],
+        "updated_ns": 1002,
+        "source": "language \"kql/2\"; module project.conventions; import project.types; pattern Writer(in TypeDecl $owner) {use project.types.HasWrite(owner:$owner);}"
+      },
+      "project.search": {
+        "module": "project.search",
+        "description": "",
+        "revision": "c3cd14dbdaf3d4c7d2613444c82868a542b4d6d74ab2c748851ea5a1b0ba6232",
+        "queries": [
+          "writers"
+        ],
+        "patterns": [],
+        "imports": [
+          "project.conventions"
+        ],
+        "updated_ns": 1003,
+        "source": "language \"kql/2\"; module project.search; import project.conventions; query writers {class $owner {} use project.conventions.Writer(owner:$owner); select $owner.name;}"
+      }
+    }
+  },
+  "errors": {
+    "missing": "registered KQL2 module not found: project.missing",
+    "update_without_revision": "module already exists; supply its current expected_revision to update",
+    "stale_revision": "module revision changed; read it before updating",
+    "imported_delete": "module is imported by: project.conventions",
+    "missing_import": "missing library module: project.absent",
+    "pattern_only": "registered module has no executable query: project.types",
+    "unknown_query": "query not declared in registered module: absent",
+    "both_entries": "provide either query source or saved_query, not both",
+    "no_entry": "provide either query source or saved_query, not both",
+    "mismatched_library": "mismatched library module: project.conventions",
+    "closed_resolver": "module resolver is closed",
+    "closed_reader": "registry readers belong to their open owner process and thread"
+  },
+  "saved": {
+    "source": "language \"kql/2\"; module project.search; import project.conventions; query writers {class $owner {} use project.conventions.Writer(owner:$owner); select $owner.name;}",
+    "query_name": "writers",
+    "libraries": {
+      "project.conventions": "language \"kql/2\"; module project.conventions; import project.types; pattern Writer(in TypeDecl $owner) {use project.types.HasWrite(owner:$owner);}",
+      "project.types": "language \"kql/2\"; module project.types; pattern HasWrite(in TypeDecl $owner) { class $owner {method $method {name:\"write\";}} }"
+    },
+    "revisions": {
+      "project.search": "c3cd14dbdaf3d4c7d2613444c82868a542b4d6d74ab2c748851ea5a1b0ba6232",
+      "project.conventions": "38a6169e2e3f45d31dc8559a2628d4aedfdef4742e819f2d58e9aba9fda8e2ab",
+      "project.types": "774901010122c1f598280c672bd1ea5998a0fd65fe5ae29838407beb5fd6710a"
+    }
+  },
+  "override": {
+    "source": "language \"kql/2\"; module project.search; import project.conventions; query writers {class $owner {} use project.conventions.Writer(owner:$owner); select $owner.name;}",
+    "query_name": null,
+    "libraries": {
+      "project.types": "language \"kql/2\"; module project.types; pattern HasWrite(in TypeDecl $owner) { class $owner {method $method {name:\"close\";}} }",
+      "project.conventions": "language \"kql/2\"; module project.conventions; import project.types; pattern Writer(in TypeDecl $owner) {use project.types.HasWrite(owner:$owner);}"
+    },
+    "revisions": {
+      "project.conventions": "38a6169e2e3f45d31dc8559a2628d4aedfdef4742e819f2d58e9aba9fda8e2ab"
+    }
+  },
+  "updated": {
+    "module": "project.types",
+    "description": "Library",
+    "revision": "b90c07f868bed119f2f49f52004d6fe716eb1c012539f8b68e4c209fee02d50e",
+    "queries": [],
+    "patterns": [
+      "HasWrite"
+    ],
+    "imports": [],
+    "updated_ns": 1004,
+    "source": "language \"kql/2\"; module project.types; pattern HasWrite(in TypeDecl $owner) { class $owner {method $method {name:\"close\";}} }"
+  },
+  "after": {
+    "generation": 4,
+    "modules": {
+      "project.types": {
+        "module": "project.types",
+        "description": "Library",
+        "revision": "b90c07f868bed119f2f49f52004d6fe716eb1c012539f8b68e4c209fee02d50e",
+        "queries": [],
+        "patterns": [
+          "HasWrite"
+        ],
+        "imports": [],
+        "updated_ns": 1004,
+        "source": "language \"kql/2\"; module project.types; pattern HasWrite(in TypeDecl $owner) { class $owner {method $method {name:\"close\";}} }"
+      },
+      "project.conventions": {
+        "module": "project.conventions",
+        "description": "",
+        "revision": "38a6169e2e3f45d31dc8559a2628d4aedfdef4742e819f2d58e9aba9fda8e2ab",
+        "queries": [],
+        "patterns": [
+          "Writer"
+        ],
+        "imports": [
+          "project.types"
+        ],
+        "updated_ns": 1002,
+        "source": "language \"kql/2\"; module project.conventions; import project.types; pattern Writer(in TypeDecl $owner) {use project.types.HasWrite(owner:$owner);}"
+      },
+      "project.search": {
+        "module": "project.search",
+        "description": "",
+        "revision": "c3cd14dbdaf3d4c7d2613444c82868a542b4d6d74ab2c748851ea5a1b0ba6232",
+        "queries": [
+          "writers"
+        ],
+        "patterns": [],
+        "imports": [
+          "project.conventions"
+        ],
+        "updated_ns": 1003,
+        "source": "language \"kql/2\"; module project.search; import project.conventions; query writers {class $owner {} use project.conventions.Writer(owner:$owner); select $owner.name;}"
+      }
+    }
+  },
+  "old": {
+    "source": "language \"kql/2\"; module project.search; import project.conventions; query writers {class $owner {} use project.conventions.Writer(owner:$owner); select $owner.name;}",
+    "query_name": null,
+    "libraries": {
+      "project.conventions": "language \"kql/2\"; module project.conventions; import project.types; pattern Writer(in TypeDecl $owner) {use project.types.HasWrite(owner:$owner);}",
+      "project.types": "language \"kql/2\"; module project.types; pattern HasWrite(in TypeDecl $owner) { class $owner {method $method {name:\"write\";}} }"
+    },
+    "revisions": {
+      "project.conventions": "38a6169e2e3f45d31dc8559a2628d4aedfdef4742e819f2d58e9aba9fda8e2ab",
+      "project.types": "774901010122c1f598280c672bd1ea5998a0fd65fe5ae29838407beb5fd6710a"
+    }
+  },
+  "new": {
+    "source": "language \"kql/2\"; module project.search; import project.conventions; query writers {class $owner {} use project.conventions.Writer(owner:$owner); select $owner.name;}",
+    "query_name": null,
+    "libraries": {
+      "project.conventions": "language \"kql/2\"; module project.conventions; import project.types; pattern Writer(in TypeDecl $owner) {use project.types.HasWrite(owner:$owner);}",
+      "project.types": "language \"kql/2\"; module project.types; pattern HasWrite(in TypeDecl $owner) { class $owner {method $method {name:\"close\";}} }"
+    },
+    "revisions": {
+      "project.conventions": "38a6169e2e3f45d31dc8559a2628d4aedfdef4742e819f2d58e9aba9fda8e2ab",
+      "project.types": "b90c07f868bed119f2f49f52004d6fe716eb1c012539f8b68e4c209fee02d50e"
+    }
+  },
+  "annotation": {
+    "rows": [],
+    "analysis": {
+      "registry_modules": {
+        "project.conventions": "38a6169e2e3f45d31dc8559a2628d4aedfdef4742e819f2d58e9aba9fda8e2ab",
+        "project.types": "b90c07f868bed119f2f49f52004d6fe716eb1c012539f8b68e4c209fee02d50e"
+      }
+    }
+  },
+  "owner_error": "registry readers belong to their open owner process and thread",
+  "empty": {
+    "generation": 7,
+    "modules": {}
+  }
+}

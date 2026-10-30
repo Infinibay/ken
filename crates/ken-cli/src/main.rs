@@ -32,6 +32,14 @@ fn run(invocation: Invocation) -> Result<CommandOutput, Box<dyn std::error::Erro
             Ok,
         )?;
     match invocation.command {
+        Command::Analysis(command) => ken_cli::analysis::run(command, installation, &context),
+        Command::Installation(command) => {
+            ken_cli::installation::run(command, installation, &context)
+        }
+        Command::Package(command) => ken_cli::package::run(command, &context),
+        Command::Memory(command) => Ok(ken_cli::memory::run(command, installation, &context)),
+        Command::Runtime(command) => ken_cli::runtime::run(command, installation, &context),
+        Command::Maintenance(command) => ken_cli::maintenance::run(command, installation, &context),
         Command::SearchFiles(args) => ken_cli::search::run(args, "file", installation, &context),
         Command::SearchSymbols(args) => {
             ken_cli::search::run(args, "symbol", installation, &context)
@@ -61,6 +69,12 @@ fn main() -> ExitCode {
         }
     };
     let label = match &args.command {
+        Command::Analysis(_) => "analysis",
+        Command::Installation(_) => "installation",
+        Command::Package(_) => "package",
+        Command::Memory(_) => "memory",
+        Command::Runtime(_) => "runtime",
+        Command::Maintenance(_) => "maintenance",
         Command::Status(_) => "status",
         Command::SearchFiles(_) => "search-files",
         Command::SearchSymbols(_) => "search-symbols",

@@ -76,6 +76,12 @@ pub struct SnapshotScan<'a> {
 }
 impl SnapshotScan<'_> {
     pub fn rows(&mut self) -> Result<impl Iterator<Item = Result<StoredNode>> + '_> {
+        self.rows_checked(|| Ok(()))
+    }
+    pub fn rows_checked<'a>(
+        &'a mut self,
+        mut check: impl FnMut() -> Result<()> + 'a,
+    ) -> Result<impl Iterator<Item = Result<StoredNode>> + 'a> {
         let filter = &self.filter;
         let scanned = self.scanned;
         Ok(self
@@ -83,6 +89,9 @@ impl SnapshotScan<'_> {
             .query_map(rusqlite::params_from_iter(&self.params), StoredNode::row)?
             .filter_map(move |row| match row {
                 Ok(node) => {
+                    if let Err(error) = check() {
+                        return Some(Err(error));
+                    }
                     scanned.set(scanned.get() + 1);
                     filter.matches(&node).then_some(Ok(node))
                 }
@@ -191,6 +200,24 @@ impl StructuralStore {
             lease.renew(&self.db, false, true)?;
         }
         Ok(())
+    }
+    /// Verify this reader still owns the requested live revision, without repinning.
+    pub fn check_pinned_snapshot(&self, snapshot: i64) -> Result<()> {
+        self.renew_reader()?;
+        let live = if let Some(lease) = self.lease_id() {
+            self.db.query_row("SELECT EXISTS(SELECT 1 FROM k2_leases l JOIN k2_snapshots s USING(snapshot_id) WHERE lease_id=?1 AND snapshot_id=?2 AND expires_ns>?3)",rusqlite::params![lease,snapshot,leases::now()?],|r|r.get::<_,bool>(0))?
+        } else {
+            self.db.query_row(
+                "SELECT EXISTS(SELECT 1 FROM k2_snapshots WHERE snapshot_id=?1)",
+                [snapshot],
+                |r| r.get::<_, bool>(0),
+            )?
+        };
+        if live {
+            Ok(())
+        } else {
+            Err(StructuralError::Expired)
+        }
     }
     pub fn current(&self) -> Result<Option<i64>> {
         current(&self.db)
@@ -388,6 +415,57 @@ impl StructuralStore {
         props.insert("path".into(), Scalar::String(node.path.clone()));
         props.insert("language".into(), Scalar::String(node.language.clone()));
         Ok(props)
+    }
+    /// Resolve only within this immutable snapshot; never leak another unit revision.
+    pub fn node_by_local_id(&self, snapshot: i64, local_id: &str) -> Result<Option<StoredNode>> {
+        self.renew_reader()?;
+        Ok(self.db.query_row("SELECT n.node_id,n.unit_id,n.local_id,n.kind,n.name,n.owner,n.line,n.end_line,u.path,u.language FROM k2_nodes n JOIN k2_units u ON u.unit_id=n.unit_id JOIN k2_snapshot_units m ON m.unit_id=n.unit_id WHERE m.snapshot_id=?1 AND n.local_id=?2 ORDER BY n.node_id LIMIT 1",params![snapshot,local_id],StoredNode::row).optional()?)
+    }
+    pub fn snapshot_coverage(&self, snapshot: i64) -> Result<bool> {
+        self.renew_reader()?;
+        self.db
+            .query_row(
+                "SELECT coverage FROM k2_snapshots WHERE snapshot_id=?1",
+                [snapshot],
+                |r| r.get::<_, bool>(0),
+            )
+            .map_err(Into::into)
+    }
+    pub fn snapshot_units_checked(
+        &self,
+        snapshot: i64,
+        mut visit: impl FnMut(i64) -> Result<()>,
+    ) -> Result<()> {
+        self.renew_reader()?;
+        let mut statement = self.db.prepare(
+            "SELECT unit_id FROM k2_snapshot_units WHERE snapshot_id=?1 ORDER BY unit_id",
+        )?;
+        for unit in statement.query_map([snapshot], |r| r.get(0))? {
+            visit(unit?)?;
+        }
+        Ok(())
+    }
+    /// Read prepared AST data without upgrading/writing during query execution.
+    pub fn read_snapshot_program(&self, snapshot: i64, unit: i64) -> Result<Option<Program>> {
+        self.renew_reader()?;
+        let member: bool = self.db.query_row(
+            "SELECT EXISTS(SELECT 1 FROM k2_snapshot_units WHERE snapshot_id=?1 AND unit_id=?2)",
+            params![snapshot, unit],
+            |r| r.get(0),
+        )?;
+        if !member {
+            return Ok(None);
+        }
+        let projected: bool = self.db.query_row(
+            "SELECT EXISTS(SELECT 1 FROM k2_ast_units WHERE unit_id=?1 AND version=?2)",
+            params![unit, ken_program::AST_VERSION],
+            |r| r.get(0),
+        )?;
+        Ok(Some(if projected {
+            ast::load(&self.db, unit)?
+        } else {
+            ken_program::normalize(&self.load_unit(unit)?)?
+        }))
     }
     pub fn program(&mut self, unit: i64) -> Result<Program> {
         let exists: bool = self.db.query_row(

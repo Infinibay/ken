@@ -1,8 +1,8 @@
 //! Immutable checked indexed plans; no project, graph or database identities.
 use crate::{Predicate, PythonRepr, ast::*};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::fmt::{self, Write};
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "__class__")]
 pub struct Scan {
     pub role: String,
@@ -10,13 +10,13 @@ pub struct Scan {
     pub owner: Option<String>,
     pub properties: Vec<(String, Expr)>,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "__class__")]
 pub struct Action {
     pub role: String,
     pub expression: Expr,
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "__class__")]
 pub struct BodyPattern {
     pub owner: String,
@@ -42,7 +42,7 @@ impl BodyPattern {
         }
     }
 }
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum Step {
     Scan(Scan),
@@ -68,13 +68,24 @@ impl IntegerLiteral {
         )
     }
 }
+impl<'de> Deserialize<'de> for IntegerLiteral {
+    fn deserialize<D: serde::Deserializer<'de>>(d: D) -> std::result::Result<Self, D::Error> {
+        let raw = Box::<serde_json::value::RawValue>::deserialize(d)?;
+        if raw.get().is_empty() || !raw.get().bytes().all(|b| b.is_ascii_digit()) {
+            return Err(serde::de::Error::custom(
+                "expected nonnegative integer literal",
+            ));
+        }
+        Ok(Self(raw))
+    }
+}
 impl PartialEq for IntegerLiteral {
     fn eq(&self, other: &Self) -> bool {
         self.digits() == other.digits()
     }
 }
 impl Eq for IntegerLiteral {}
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "__class__", rename = "Program")]
 pub struct Program {
     pub name: String,

@@ -43,6 +43,23 @@ impl EncoderDefinition {
     }
 }
 
+/// Registered metadata only. Listing never acquires assets or promises unqualified inference.
+#[derive(Clone, Debug, Serialize)]
+pub struct ModelDescriptor {
+    pub model: String,
+    pub dim: Option<usize>,
+    pub bytes: u64,
+    pub backend: EncoderFamily,
+    pub registration: ModelRegistration,
+    pub native_inference_accepted: bool,
+}
+#[derive(Clone, Debug, Serialize)]
+pub struct ModelRegistration {
+    pub model_id: String,
+    pub revision: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub assets: Option<ModelAssets>,
+}
 pub struct ModelCatalog {
     pub(crate) static_table: StaticRegistration,
     pub(crate) potion: ModelAssets,
@@ -50,6 +67,7 @@ pub struct ModelCatalog {
     pub(crate) reranker: RerankerModel,
     pub(crate) translation: TranslationModel,
     fastembed: FastEmbedCatalog,
+    extensions: Vec<crate::CatalogExtensions>,
     transformers: Vec<TransformerModel>,
     compatible: BTreeMap<EncoderBackend, Vec<Vec<(String, String)>>>,
 }
@@ -89,8 +107,147 @@ impl ModelCatalog {
                 "../resources/fastembed-catalog.json"
             ))?,
             transformers,
+            extensions: Vec::new(),
             compatible: compatibility.backends,
         })
+    }
+
+    pub fn models(&self) -> Vec<ModelDescriptor> {
+        let descriptor =
+            |name: String, dim: Option<usize>, backend, assets: &ModelAssets| ModelDescriptor {
+                model: name,
+                dim,
+                bytes: assets
+                    .artifact_records()
+                    .values()
+                    .map(|item| item.bytes)
+                    .sum(),
+                backend,
+                registration: ModelRegistration {
+                    model_id: assets.model_id().into(),
+                    revision: assets.revision().into(),
+                    assets: Some(assets.clone()),
+                },
+                native_inference_accepted: false,
+            };
+        let mut result = vec![
+            ModelDescriptor {
+                model: self.static_table.model_id.clone(),
+                dim: None,
+                bytes: self.static_table.bytes,
+                backend: EncoderFamily::StaticTable,
+                registration: ModelRegistration {
+                    model_id: self.static_table.model_id.clone(),
+                    revision: self.static_table.sha256.clone(),
+                    assets: None,
+                },
+                native_inference_accepted: false,
+            },
+            descriptor(
+                self.potion.model_id().into(),
+                None,
+                EncoderFamily::Potion,
+                &self.potion,
+            ),
+        ];
+        result.extend(self.fastembed.models().iter().map(|model| {
+            descriptor(
+                model.name().into(),
+                Some(model.dim()),
+                EncoderFamily::FastEmbed,
+                model.assets(),
+            )
+        }));
+        result.extend(
+            self.transformers
+                .iter()
+                .filter(|model| model.role() == TransformerRole::Encoder)
+                .map(|model| {
+                    descriptor(
+                        model.assets().model_id().into(),
+                        Some(model.dimension()),
+                        EncoderFamily::SentenceTransformer,
+                        model.assets(),
+                    )
+                }),
+        );
+        result.extend(
+            self.extensions
+                .iter()
+                .flat_map(|extension| extension.entries())
+                .map(|entry| entry.descriptor()),
+        );
+        result
+    }
+
+    /// Compose additional immutable encoders without shadowing established names.
+    pub fn with_extensions(
+        mut self,
+        extension: crate::CatalogExtensions,
+    ) -> Result<Self, ModelError> {
+        let mut names = std::collections::BTreeSet::new();
+        names.insert(self.static_table.model_id.to_lowercase());
+        names.insert(self.potion.model_id().to_lowercase());
+        names.extend(
+            self.fastembed
+                .models()
+                .iter()
+                .map(|model| model.name().to_lowercase()),
+        );
+        names.extend(
+            self.transformers
+                .iter()
+                .map(|model| model.assets().model_id().to_lowercase()),
+        );
+        names.extend(
+            self.extensions
+                .iter()
+                .flat_map(|extension| extension.entries())
+                .map(|entry| entry.name().to_lowercase()),
+        );
+        for entry in extension.entries() {
+            if !names.insert(entry.name().to_lowercase()) {
+                return Err(crate::profile::invalid(
+                    "catalogue extension conflicts with a registered model name",
+                ));
+            }
+        }
+        self.extensions.push(extension);
+        Ok(self)
+    }
+
+    pub fn extension_selector(&self, name: &str) -> Result<String, ModelError> {
+        self.extension_named(name)
+            .map(|entry| entry.selector().to_owned())
+    }
+
+    pub fn extension_spec(&self, name: &str) -> Result<EncoderSpec, ModelError> {
+        self.extension_named(name)?.spec()
+    }
+
+    pub fn extension_status(
+        &self,
+        selector: &str,
+        snapshot: Option<&std::path::Path>,
+    ) -> Result<crate::ExtensionStatus, ModelError> {
+        self.extension_selected(selector)?.status(snapshot)
+    }
+
+    fn extension_named(&self, name: &str) -> Result<&crate::catalog_extensions::Entry, ModelError> {
+        self.extensions
+            .iter()
+            .find_map(|extension| extension.name(name))
+            .ok_or_else(|| crate::profile::invalid("unregistered additional encoder name"))
+    }
+
+    fn extension_selected(
+        &self,
+        selector: &str,
+    ) -> Result<&crate::catalog_extensions::Entry, ModelError> {
+        self.extensions
+            .iter()
+            .find_map(|extension| extension.selector(selector))
+            .ok_or_else(|| crate::profile::invalid("unregistered immutable catalogue selector"))
     }
 
     pub fn static_spec(&self) -> EncoderSpec {
@@ -146,6 +303,13 @@ impl ModelCatalog {
                 model.assets().model_id() == spec.model_id
                     && model.assets().revision() == spec.revision
                     && model.role() == role
+            })
+            .cloned()
+            .or_else(|| {
+                self.extensions
+                    .iter()
+                    .flat_map(|extension| extension.entries())
+                    .find_map(|entry| entry.transformer_for(spec, role))
             })
             .ok_or_else(|| crate::profile::invalid("unregistered transformer identity or role"))?;
         if spec.backend == EncoderBackend::Mlx
@@ -233,8 +397,11 @@ impl ModelCatalog {
                 TransformerSettings::default(),
             ));
         }
+        if let Ok(entry) = self.extension_selected(name) {
+            return Ok(entry.definition());
+        }
         Err(crate::profile::invalid(
-            "unregistered legacy encoder name or non-encoder role",
+            "unregistered legacy encoder name or non-encoder role; additional models require their immutable catalogue selector",
         ))
     }
 }

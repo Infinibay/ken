@@ -1,4 +1,5 @@
 //! Confined live source revisions assembled into conservative semantic projects.
+pub mod application;
 mod manifest;
 mod project;
 pub use manifest::{ManifestSource, ScanLimits, Skipped, SourceManifest};

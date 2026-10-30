@@ -53,6 +53,20 @@ pub fn render(value: &D, tool: &str, diagnostics: bool) -> String {
     {
         projected = compact_neighbors(value);
         &projected
+    } else if tool == "ken_check" && !diagnostics {
+        projected = D::Object(
+            value
+                .fields()
+                .iter()
+                .filter(|(key, item)| {
+                    !(matches!(key.as_str(), "created_at" | "claim")
+                        || key == "scope" && item.string() == Some("project")
+                        || key == "selection" && item.string() == Some("."))
+                })
+                .cloned()
+                .collect(),
+        );
+        &projected
     } else {
         value
     };
@@ -244,8 +258,40 @@ fn lines(value: &D, parent: &str, diagnostics: bool, numbered: bool) -> Vec<Stri
                 .map(|(i, line)| format!("{} | {line}", first + i as i64)),
         );
     }
+    let columns = value.get("columns").array();
+    let rows = value.get("rows").array();
+    let tabular = matches!(value.get("columns"), D::Array(_))
+        && columns.iter().all(|c| c.string().is_some())
+        && matches!(value.get("rows"), D::Array(_))
+        && rows
+            .iter()
+            .all(|r| matches!(r, D::Array(_)) && r.array().len() == columns.len());
+    if tabular {
+        if rows.is_empty() {
+            out.push("rows: none".into());
+        }
+        for (index, row) in rows.iter().enumerate() {
+            out.push(format!("row {}:", index + 1));
+            for (column, cell) in columns.iter().zip(row.array()) {
+                let column = column.string().unwrap();
+                if matches!(cell, D::Object(_) | D::Array(_)) {
+                    out.push(format!("  {column}:"));
+                    out.extend(
+                        lines(cell, path, diagnostics, numbered)
+                            .into_iter()
+                            .map(|line| format!("    {line}")),
+                    );
+                } else {
+                    out.push(format!("  {column}: {}", scalar(cell)));
+                }
+            }
+        }
+    }
     for (key, item) in value.fields() {
         let key = key.as_str();
+        if tabular && matches!(key, "columns" | "rows") {
+            continue;
+        }
         let consumed = if titled {
             LOCATION.contains(&key) || IDENTITY.contains(&key)
         } else {

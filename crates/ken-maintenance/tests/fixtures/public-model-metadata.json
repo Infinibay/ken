@@ -1,0 +1,230 @@
+{
+  "default": "minishlab/potion-code-16M-v2",
+  "legacy": "sentence-transformers/all-MiniLM-L6-v2",
+  "models": [
+    {
+      "model": "BAAI/bge-small-en-v1.5",
+      "dim": 384,
+      "mb": 69,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "dim": 384,
+      "mb": 92,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "snowflake/snowflake-arctic-embed-xs",
+      "dim": 384,
+      "mb": 92,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "BAAI/bge-small-en",
+      "dim": 384,
+      "mb": 133,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "snowflake/snowflake-arctic-embed-s",
+      "dim": 384,
+      "mb": 133,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "dim": 384,
+      "mb": 225,
+      "multilingual": true,
+      "backend": "fastembed"
+    },
+    {
+      "model": "BAAI/bge-small-zh-v1.5",
+      "dim": 512,
+      "mb": 92,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "jinaai/jina-embeddings-v2-small-en",
+      "dim": 512,
+      "mb": 123,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "Qdrant/clip-ViT-B-32-text",
+      "dim": 512,
+      "mb": 256,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "nomic-ai/nomic-embed-text-v1.5-Q",
+      "dim": 768,
+      "mb": 133,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "BAAI/bge-base-en-v1.5",
+      "dim": 768,
+      "mb": 215,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "jinaai/jina-embeddings-v2-base-de",
+      "dim": 768,
+      "mb": 328,
+      "multilingual": true,
+      "backend": "fastembed"
+    },
+    {
+      "model": "BAAI/bge-base-en",
+      "dim": 768,
+      "mb": 430,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "snowflake/snowflake-arctic-embed-m",
+      "dim": 768,
+      "mb": 440,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "thenlper/gte-base",
+      "dim": 768,
+      "mb": 451,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "jinaai/jina-embeddings-v2-base-en",
+      "dim": 768,
+      "mb": 532,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "nomic-ai/nomic-embed-text-v1",
+      "dim": 768,
+      "mb": 532,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "nomic-ai/nomic-embed-text-v1.5",
+      "dim": 768,
+      "mb": 532,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "snowflake/snowflake-arctic-embed-m-long",
+      "dim": 768,
+      "mb": 553,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "jinaai/jina-clip-v1",
+      "dim": 768,
+      "mb": 563,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "jinaai/jina-embeddings-v2-base-code",
+      "dim": 768,
+      "mb": 655,
+      "multilingual": true,
+      "backend": "fastembed"
+    },
+    {
+      "model": "jinaai/jina-embeddings-v2-base-es",
+      "dim": 768,
+      "mb": 655,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "jinaai/jina-embeddings-v2-base-zh",
+      "dim": 768,
+      "mb": 655,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "dim": 768,
+      "mb": 1024,
+      "multilingual": true,
+      "backend": "fastembed"
+    },
+    {
+      "model": "mixedbread-ai/mxbai-embed-large-v1",
+      "dim": 1024,
+      "mb": 655,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "snowflake/snowflake-arctic-embed-l",
+      "dim": 1024,
+      "mb": 1044,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "BAAI/bge-large-en-v1.5",
+      "dim": 1024,
+      "mb": 1229,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "thenlper/gte-large",
+      "dim": 1024,
+      "mb": 1229,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "intfloat/multilingual-e5-large",
+      "dim": 1024,
+      "mb": 2294,
+      "multilingual": true,
+      "backend": "fastembed"
+    },
+    {
+      "model": "jinaai/jina-embeddings-v3",
+      "dim": 1024,
+      "mb": 2345,
+      "multilingual": false,
+      "backend": "fastembed"
+    },
+    {
+      "model": "Qwen/Qwen3-Embedding-0.6B",
+      "dim": 1024,
+      "mb": 1200,
+      "multilingual": true,
+      "backend": "torch"
+    },
+    {
+      "model": "BAAI/bge-m3",
+      "dim": 1024,
+      "mb": 4400,
+      "multilingual": true,
+      "backend": "torch"
+    }
+  ]
+}

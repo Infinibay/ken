@@ -38,6 +38,21 @@ type Gemm<T> = unsafe extern "C" fn(
     BlasInt,
 );
 
+// Symmetric A @ A.T dispatch has a different reduction order from GEMM.
+type Syrk32 = unsafe extern "C" fn(
+    i32,
+    i32,
+    i32,
+    BlasInt,
+    BlasInt,
+    f32,
+    *const f32,
+    BlasInt,
+    f32,
+    *mut f32,
+    BlasInt,
+);
+
 pub(crate) struct DenseMath {
     dot: Dot<f32>,
     gemv: Gemv<f32>,
@@ -94,6 +109,19 @@ unsafe extern "C" {
         lda: BlasInt,
         b: *const f32,
         ldb: BlasInt,
+        beta: f32,
+        c: *mut f32,
+        ldc: BlasInt,
+    );
+    fn cblas_ssyrk(
+        order: i32,
+        triangle: i32,
+        trans: i32,
+        n: BlasInt,
+        k: BlasInt,
+        alpha: f32,
+        a: *const f32,
+        lda: BlasInt,
         beta: f32,
         c: *mut f32,
         ldc: BlasInt,
@@ -380,6 +408,55 @@ impl DenseMath {
             )
         };
         Ok(out)
+    }
+    /// NumPy2.4.4 matmul.c.src uses SSYRK Upper for an aliased A @ A.T,
+    /// then copies its upper triangle. Preserve tiny-axis dot/GEMV dispatch.
+    pub(crate) fn symmetric_product32(
+        matrix: &[f32],
+        rows: usize,
+        width: usize,
+    ) -> Result<Vec<f32>> {
+        if rows <= 1 || width <= 1 {
+            return Self::product32(matrix, rows, width, matrix, rows);
+        }
+        let mut output = product_output(matrix, rows, width, matrix, rows)?;
+        let (n, k) = (size(rows)?, size(width)?);
+        let math = Self::platform()?;
+        #[cfg(target_os = "macos")]
+        let syrk: Syrk32 = cblas_ssyrk;
+        #[cfg(target_os = "linux")]
+        let syrk: Syrk32 = unsafe {
+            // SAFETY: platform owns the already byte-verified ILP64 library;
+            // retain the same handle and exact public CBLAS ABI used above.
+            *math
+                ._library
+                .get::<Syrk32>(b"scipy_cblas_ssyrk64_\0")
+                .map_err(|e| RetrievalError::Invalid(e.to_string()))?
+        };
+        // SAFETY: product_output validates every row and output allocation;
+        // n/k and their leading dimensions fit the retained platform BLAS ABI.
+        // Inputs are immutable and disjoint from the owned output allocation.
+        unsafe {
+            syrk(
+                101,
+                121,
+                111,
+                n,
+                k,
+                1.,
+                matrix.as_ptr(),
+                k,
+                0.,
+                output.as_mut_ptr(),
+                n,
+            );
+        }
+        for i in 0..rows {
+            for j in i + 1..rows {
+                output[j * rows + i] = output[i * rows + j];
+            }
+        }
+        Ok(output)
     }
     pub(crate) fn product64(
         a: &[f64],

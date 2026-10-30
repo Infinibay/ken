@@ -1,0 +1,1463 @@
+{
+  "files": [
+    {
+      "id": 1,
+      "path": "a.py",
+      "source": "def compute_alpha(value, weight):\n    total = 0\n    total = total + value_0 * weight_0\n    total = total + value_1 * weight_1\n    total = total + value_2 * weight_2\n    total = total + value_3 * weight_3\n    total = total + value_4 * weight_4\n    total = total + value_5 * weight_5\n    total = total + value_6 * weight_6\n    total = total + value_7 * weight_7\n    total = total + value_8 * weight_8\n    total = total + value_9 * weight_9\n    return total\n"
+    },
+    {
+      "id": 2,
+      "path": "b.py",
+      "source": "def compute_beta(value, weight):\n    total = 1\n    total = total + value_0 * weight_0\n    total = total + value_1 * weight_1\n    total = total + value_2 * weight_2\n    total = total + value_3 * weight_3\n    total = total + value_4 * weight_4\n    total = total + value_5 * weight_5\n    total = total + value_6 * weight_6\n    total = total + value_7 * weight_7\n    total = total + value_8 * weight_8\n    total = total + value_9 * weight_9\n    return total\n"
+    },
+    {
+      "id": 3,
+      "path": "c.py",
+      "source": "def tiny(): return 1\n"
+    },
+    {
+      "id": 4,
+      "path": "tests/test_a.py",
+      "source": "def test_a(): return 1\n"
+    },
+    {
+      "id": 5,
+      "path": "config.sql",
+      "source": "-- schema\n"
+    },
+    {
+      "id": 6,
+      "path": "other.py",
+      "source": "x=1\n"
+    },
+    {
+      "id": 7,
+      "path": ".hidden/mod.py",
+      "source": "def compute_alpha(value, weight):\n    total = 0\n    total = total + value_0 * weight_0\n    total = total + value_1 * weight_1\n    total = total + value_2 * weight_2\n    total = total + value_3 * weight_3\n    total = total + value_4 * weight_4\n    total = total + value_5 * weight_5\n    total = total + value_6 * weight_6\n    total = total + value_7 * weight_7\n    total = total + value_8 * weight_8\n    total = total + value_9 * weight_9\n    return total\n"
+    },
+    {
+      "id": 8,
+      "path": "tiny.py",
+      "source": "def stub(): pass\n"
+    }
+  ],
+  "symbols": [
+    {
+      "id": 1,
+      "file_id": 1,
+      "qualname": "compute_alpha",
+      "name": "compute_alpha",
+      "kind": "function",
+      "line_start": 1,
+      "line_end": 13
+    },
+    {
+      "id": 2,
+      "file_id": 2,
+      "qualname": "compute_beta",
+      "name": "compute_beta",
+      "kind": "function",
+      "line_start": 1,
+      "line_end": 13
+    },
+    {
+      "id": 3,
+      "file_id": 3,
+      "qualname": "tiny",
+      "name": "tiny",
+      "kind": "function",
+      "line_start": 1,
+      "line_end": 1
+    },
+    {
+      "id": 4,
+      "file_id": 7,
+      "qualname": "compute_alpha",
+      "name": "compute_alpha",
+      "kind": "function",
+      "line_start": 1,
+      "line_end": 13
+    }
+  ],
+  "edges": [
+    [
+      1,
+      2,
+      "internal"
+    ],
+    [
+      2,
+      1,
+      "internal"
+    ],
+    [
+      3,
+      1,
+      "internal"
+    ],
+    [
+      4,
+      1,
+      "internal"
+    ],
+    [
+      1,
+      null,
+      "external"
+    ],
+    [
+      3,
+      null,
+      "unresolved"
+    ]
+  ],
+  "commits": [
+    {
+      "sha": "root-0",
+      "committed_at": 1700000000,
+      "files": [
+        "a.py",
+        "b.py",
+        "config.sql"
+      ]
+    },
+    {
+      "sha": "root-1",
+      "committed_at": 1699913600,
+      "files": [
+        "a.py",
+        "b.py",
+        "config.sql"
+      ]
+    },
+    {
+      "sha": "root-2",
+      "committed_at": 1699827200,
+      "files": [
+        "a.py",
+        "b.py",
+        "config.sql"
+      ]
+    },
+    {
+      "sha": "root-3",
+      "committed_at": 1699740800,
+      "files": [
+        "a.py",
+        "b.py",
+        "config.sql"
+      ]
+    },
+    {
+      "sha": "root-4",
+      "committed_at": 1699654400,
+      "files": [
+        "a.py",
+        "b.py",
+        "config.sql"
+      ]
+    },
+    {
+      "sha": "root-5",
+      "committed_at": 1699568000,
+      "files": [
+        "c.py"
+      ]
+    },
+    {
+      "sha": "root-6",
+      "committed_at": 1699481600,
+      "files": [
+        "c.py"
+      ]
+    },
+    {
+      "sha": "root-7",
+      "committed_at": 1699395200,
+      "files": [
+        "c.py"
+      ]
+    },
+    {
+      "sha": "root-8",
+      "committed_at": 1699308800,
+      "files": [
+        "c.py"
+      ]
+    },
+    {
+      "sha": "root-9",
+      "committed_at": 1699222400,
+      "files": [
+        "c.py"
+      ]
+    },
+    {
+      "sha": "sibling\u00010",
+      "committed_at": 1700000000,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u00011",
+      "committed_at": 1699996400,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u00012",
+      "committed_at": 1699992800,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u00013",
+      "committed_at": 1699989200,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u00014",
+      "committed_at": 1699985600,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u00015",
+      "committed_at": 1699982000,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u00016",
+      "committed_at": 1699978400,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u00017",
+      "committed_at": 1699974800,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u00018",
+      "committed_at": 1699971200,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u00019",
+      "committed_at": 1699967600,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u000110",
+      "committed_at": 1699964000,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u000111",
+      "committed_at": 1699960400,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u000112",
+      "committed_at": 1699956800,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u000113",
+      "committed_at": 1699953200,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u000114",
+      "committed_at": 1699949600,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u000115",
+      "committed_at": 1699946000,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u000116",
+      "committed_at": 1699942400,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u000117",
+      "committed_at": 1699938800,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u000118",
+      "committed_at": 1699935200,
+      "files": [
+        "sibling/other.py"
+      ]
+    },
+    {
+      "sha": "sibling\u000119",
+      "committed_at": 1699931600,
+      "files": [
+        "sibling/other.py"
+      ]
+    }
+  ],
+  "now": 1700000000,
+  "outputs": {
+    "cochange": {
+      "ok": true,
+      "path": "a.py",
+      "total_commits": 10,
+      "target_commits": 5,
+      "scope": ".",
+      "partners": [
+        {
+          "path": "config.sql",
+          "support": 5,
+          "confidence": 1.0,
+          "confidence_low": 0.566,
+          "lift": 1.96,
+          "llr": 13.9,
+          "strength": 0.566,
+          "has_import_edge": false,
+          "hidden_coupling": true
+        },
+        {
+          "path": "b.py",
+          "support": 5,
+          "confidence": 1.0,
+          "confidence_low": 0.566,
+          "lift": 1.96,
+          "llr": 13.9,
+          "strength": 0.566,
+          "has_import_edge": true,
+          "hidden_coupling": false
+        }
+      ]
+    },
+    "architecture": {
+      "ok": true,
+      "edge_coverage": {
+        "resolved": 4,
+        "total": 6,
+        "internal_resolved": 4,
+        "internal_unresolved": 1,
+        "internal_total": 5,
+        "external": 1,
+        "internal_coverage_pct": 80.0
+      },
+      "trust": "cycles are exact; layers/communities are approximate and degrade as unresolved imports rise",
+      "quality": {
+        "clusters_modularity": 0.0,
+        "clusters_meaningful": false,
+        "pagerank_converged": false
+      },
+      "summary": {
+        "graph_files": 4,
+        "cycles": 1,
+        "layers": 2,
+        "clusters": 1,
+        "note": "showing top 3 of each list; layer file samples for the first 1 layer(s) — raise limit/depth for more"
+      },
+      "cycles": [
+        {
+          "size": 2,
+          "files": [
+            "a.py",
+            "b.py"
+          ]
+        }
+      ],
+      "layers": [
+        {
+          "layer": 0,
+          "size": 2,
+          "files": [
+            "c.py",
+            "tests/test_a.py"
+          ]
+        },
+        {
+          "layer": 1,
+          "size": 2
+        }
+      ],
+      "clusters": [
+        {
+          "label": "(root)",
+          "size": 4,
+          "central_file": "a.py",
+          "members": [
+            "a.py",
+            "b.py",
+            "c.py"
+          ],
+          "truncated": 1
+        }
+      ],
+      "hubs": [
+        {
+          "path": "a.py",
+          "pagerank": 0.47938
+        },
+        {
+          "path": "b.py",
+          "pagerank": 0.44562
+        },
+        {
+          "path": "c.py",
+          "pagerank": 0.0375
+        }
+      ],
+      "sinks": [
+        {
+          "path": "a.py",
+          "reverse_pagerank": 0.32456
+        },
+        {
+          "path": "b.py",
+          "reverse_pagerank": 0.22515
+        },
+        {
+          "path": "c.py",
+          "reverse_pagerank": 0.22515
+        }
+      ]
+    },
+    "blast": {
+      "ok": true,
+      "path": "a.py",
+      "direct_importers": [
+        "b.py",
+        "tests/test_a.py",
+        "c.py"
+      ],
+      "impacted": [
+        {
+          "path": "b.py",
+          "hops": 1,
+          "evidence": [
+            "imports(hop 1)",
+            "co-changed 5x"
+          ]
+        },
+        {
+          "path": "tests/test_a.py",
+          "hops": 1,
+          "evidence": [
+            "imports(hop 1)",
+            "test-of (imports target; named for target)"
+          ]
+        },
+        {
+          "path": "c.py",
+          "hops": 1,
+          "evidence": [
+            "imports(hop 1)"
+          ]
+        },
+        {
+          "path": "config.sql",
+          "hops": 1,
+          "evidence": [
+            "co-changed 5x"
+          ]
+        }
+      ],
+      "coverage_note": "1/5 internal imports are unresolved and not traced (external deps excluded) — this is a LOWER bound; verify before assuming safety"
+    },
+    "clones": {
+      "ok": true,
+      "clones": [
+        {
+          "similarity": 1.0,
+          "containment": 1.0,
+          "a": {
+            "qualname": "compute_alpha",
+            "file": "a.py",
+            "line": 1
+          },
+          "b": {
+            "qualname": "compute_alpha",
+            "file": ".hidden/mod.py",
+            "line": 1
+          }
+        },
+        {
+          "similarity": 0.76,
+          "containment": 0.864,
+          "a": {
+            "qualname": "compute_alpha",
+            "file": "a.py",
+            "line": 1
+          },
+          "b": {
+            "qualname": "compute_beta",
+            "file": "b.py",
+            "line": 1
+          }
+        },
+        {
+          "similarity": 0.76,
+          "containment": 0.864,
+          "a": {
+            "qualname": "compute_beta",
+            "file": "b.py",
+            "line": 1
+          },
+          "b": {
+            "qualname": "compute_alpha",
+            "file": ".hidden/mod.py",
+            "line": 1
+          }
+        }
+      ]
+    },
+    "target_clones": {
+      "ok": true,
+      "path": ".hidden/mod.py",
+      "qualname": null,
+      "clones": [
+        {
+          "qualname": "compute_alpha",
+          "file": "a.py",
+          "line": 1,
+          "line_end": 13,
+          "size": 13,
+          "similarity": 1.0,
+          "containment": 1.0
+        },
+        {
+          "qualname": "compute_beta",
+          "file": "b.py",
+          "line": 1,
+          "line_end": 13,
+          "size": 13,
+          "similarity": 0.76,
+          "containment": 0.864
+        }
+      ]
+    },
+    "clone_small": {
+      "ok": false,
+      "error": "symbol not found / too small to compare",
+      "path": "c.py",
+      "qualname": null
+    }
+  },
+  "clone_primitives": [
+    {
+      "source": "def f(a, b):\n return a + b * a - b / a\n",
+      "shingles": [
+        1348050834,
+        1408608603,
+        1427679678,
+        1538487557,
+        2037796784,
+        2074954589
+      ],
+      "signature": [
+        411863283,
+        86799376,
+        555677092,
+        840058690,
+        401548628,
+        166579124,
+        392590615,
+        19397120,
+        1011079827,
+        92142876,
+        11310212,
+        894768165,
+        301078089,
+        313342219,
+        374161566,
+        234171070,
+        1028396568,
+        699269511,
+        600508048,
+        242980034,
+        738672207,
+        29735152,
+        272115342,
+        618613992,
+        29174937,
+        681690916,
+        816957243,
+        326004078,
+        197811311,
+        414409474,
+        80044753,
+        663687686,
+        199686201,
+        138945930,
+        268051261,
+        495328377,
+        1066678747,
+        326810230,
+        842116,
+        242217085,
+        439804746,
+        139084645,
+        772021009,
+        444363276,
+        651530629,
+        5114630,
+        124904277,
+        187990359,
+        86198952,
+        218994077,
+        353761681,
+        80804964,
+        783248347,
+        467739882,
+        404695133,
+        22750668,
+        197139188,
+        66840494,
+        325930830,
+        378651425,
+        119370376,
+        619788101,
+        489116341,
+        225314171
+      ]
+    },
+    {
+      "source": "A # comment\nB // comment\n C D E F G",
+      "shingles": [
+        900002574,
+        1344246198,
+        1473290497
+      ],
+      "signature": [
+        137651197,
+        725057123,
+        205076913,
+        669829075,
+        962776598,
+        769322086,
+        295863943,
+        1007327465,
+        603868567,
+        386509990,
+        1171785132,
+        707032649,
+        554518736,
+        113507227,
+        505420312,
+        2576291,
+        14696245,
+        259418046,
+        615564338,
+        309148821,
+        433182387,
+        433808038,
+        85157237,
+        22696427,
+        154567641,
+        840272674,
+        423772490,
+        1046516616,
+        433812667,
+        160878015,
+        1154695058,
+        716427843,
+        527341732,
+        741345234,
+        181721097,
+        798455078,
+        1445707623,
+        382199897,
+        584271996,
+        480317143,
+        206501840,
+        890418134,
+        483917376,
+        291708082,
+        1751703895,
+        43004001,
+        291930759,
+        573086741,
+        1039010943,
+        209708263,
+        341817157,
+        442147972,
+        10343521,
+        717502047,
+        344649578,
+        235359310,
+        1136367619,
+        1035346940,
+        1157301722,
+        296704146,
+        628970995,
+        881193468,
+        373206615,
+        881109515
+      ]
+    },
+    {
+      "source": "İ KEY Key value_0 + VALUE_1",
+      "shingles": [
+        1451714135
+      ],
+      "signature": [
+        1009034140,
+        1435890870,
+        396912721,
+        1793967763,
+        2020403295,
+        652770712,
+        902939030,
+        170458864,
+        414402698,
+        1950925148,
+        961575173,
+        129345702,
+        1801626341,
+        1741484068,
+        1054943239,
+        1915046193,
+        1451035709,
+        1841344538,
+        625540325,
+        1840679358,
+        1912471871,
+        1543989300,
+        879113477,
+        806491623,
+        1701835137,
+        2016340735,
+        1933849278,
+        595153373,
+        1895314356,
+        884994118,
+        659747772,
+        1939819380,
+        1107897946,
+        134232151,
+        1616244426,
+        1218415995,
+        617589737,
+        292082912,
+        210502512,
+        1261364902,
+        272961372,
+        1588613444,
+        811275667,
+        1645843930,
+        688854954,
+        846727558,
+        562374698,
+        518335327,
+        551761415,
+        1546169633,
+        1191161328,
+        1589072128,
+        1030209811,
+        1117246887,
+        1415202850,
+        784276503,
+        1488921423,
+        619342803,
+        1678276937,
+        986582422,
+        1626869878,
+        1765045348,
+        702019988,
+        1862410296
+      ]
+    }
+  ],
+  "lsh": [
+    {
+      "threshold": 0.01,
+      "params": [
+        64,
+        1
+      ]
+    },
+    {
+      "threshold": 0.4,
+      "params": [
+        32,
+        2
+      ]
+    },
+    {
+      "threshold": 0.5,
+      "params": [
+        32,
+        2
+      ]
+    },
+    {
+      "threshold": 0.6,
+      "params": [
+        21,
+        3
+      ]
+    },
+    {
+      "threshold": 0.75,
+      "params": [
+        16,
+        4
+      ]
+    },
+    {
+      "threshold": 0.9,
+      "params": [
+        8,
+        8
+      ]
+    },
+    {
+      "threshold": 1.0,
+      "params": [
+        2,
+        32
+      ]
+    }
+  ],
+  "intent": {
+    "contexts": [
+      {
+        "id": 1,
+        "session_id": 1,
+        "content": "prompt 1",
+        "embedding": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 2,
+        "session_id": 1,
+        "content": "prompt 2",
+        "embedding": [
+          2.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.8,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 3,
+        "session_id": 3,
+        "content": "prompt 3",
+        "embedding": [
+          3.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 4,
+        "session_id": 4,
+        "content": "prompt 4",
+        "embedding": [
+          4.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.2,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 5,
+        "session_id": 5,
+        "content": "prompt 5",
+        "embedding": [
+          5.0,
+          0.0
+        ],
+        "score": 0.1999,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 6,
+        "session_id": 6,
+        "content": "prompt 6",
+        "embedding": [
+          6.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 7,
+        "session_id": 7,
+        "content": "prompt 7",
+        "embedding": [
+          7.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 8,
+        "session_id": 8,
+        "content": "prompt 8",
+        "embedding": [
+          8.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 9,
+        "session_id": 9,
+        "content": "prompt 9",
+        "embedding": [
+          9.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 10,
+        "session_id": 10,
+        "content": "prompt 10",
+        "embedding": [
+          10.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 11,
+        "session_id": 11,
+        "content": "prompt 11",
+        "embedding": [
+          11.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 12,
+        "session_id": 12,
+        "content": "prompt 12",
+        "embedding": [
+          12.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 13,
+        "session_id": 13,
+        "content": "prompt 13",
+        "embedding": [
+          13.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 14,
+        "session_id": 14,
+        "content": "prompt 14",
+        "embedding": [
+          14.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 15,
+        "session_id": 15,
+        "content": "prompt 15",
+        "embedding": [
+          15.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 16,
+        "session_id": 16,
+        "content": "prompt 16",
+        "embedding": [
+          16.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 17,
+        "session_id": 17,
+        "content": "prompt 17",
+        "embedding": [
+          17.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 18,
+        "session_id": 18,
+        "content": "prompt 18",
+        "embedding": [
+          18.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 19,
+        "session_id": 19,
+        "content": "prompt 19",
+        "embedding": [
+          19.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      },
+      {
+        "id": 20,
+        "session_id": 20,
+        "content": "prompt 20",
+        "embedding": [
+          20.0,
+          0.0,
+          0.0
+        ],
+        "score": 0.9,
+        "kind": "user_prompt"
+      }
+    ],
+    "interactions": [
+      {
+        "context_id": 1,
+        "session_id": 1,
+        "path": "a.py",
+        "weight": 0.0
+      },
+      {
+        "context_id": 1,
+        "session_id": 1,
+        "path": "a.py",
+        "weight": 9.0
+      },
+      {
+        "context_id": 1,
+        "session_id": 1,
+        "path": "b.py",
+        "weight": 2.0
+      },
+      {
+        "context_id": 2,
+        "session_id": 1,
+        "path": "a.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 2,
+        "session_id": 1,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 3,
+        "session_id": 3,
+        "path": "b.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 3,
+        "session_id": 3,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 4,
+        "session_id": 4,
+        "path": "a.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 4,
+        "session_id": 4,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 5,
+        "session_id": 5,
+        "path": "b.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 5,
+        "session_id": 5,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 6,
+        "session_id": 6,
+        "path": "a.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 6,
+        "session_id": 6,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 7,
+        "session_id": 7,
+        "path": "b.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 7,
+        "session_id": 7,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 8,
+        "session_id": 8,
+        "path": "a.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 8,
+        "session_id": 8,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 9,
+        "session_id": 9,
+        "path": "b.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 9,
+        "session_id": 9,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 10,
+        "session_id": 10,
+        "path": "a.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 10,
+        "session_id": 10,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 11,
+        "session_id": 11,
+        "path": "b.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 11,
+        "session_id": 11,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 12,
+        "session_id": 12,
+        "path": "a.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 12,
+        "session_id": 12,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 13,
+        "session_id": 13,
+        "path": "b.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 13,
+        "session_id": 13,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 14,
+        "session_id": 14,
+        "path": "a.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 14,
+        "session_id": 14,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 15,
+        "session_id": 15,
+        "path": "b.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 15,
+        "session_id": 15,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 16,
+        "session_id": 16,
+        "path": "a.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 16,
+        "session_id": 16,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 17,
+        "session_id": 17,
+        "path": "b.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 17,
+        "session_id": 17,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 18,
+        "session_id": 18,
+        "path": "a.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 18,
+        "session_id": 18,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 19,
+        "session_id": 19,
+        "path": "b.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 19,
+        "session_id": 19,
+        "path": "missing.py",
+        "weight": 0.5
+      },
+      {
+        "context_id": 20,
+        "session_id": 20,
+        "path": "a.py",
+        "weight": 1.0
+      },
+      {
+        "context_id": 20,
+        "session_id": 20,
+        "path": "missing.py",
+        "weight": 0.5
+      }
+    ],
+    "ranking": {
+      "scores": [
+        0.8999999761581421,
+        0.800000011920929,
+        0.8999999761581421,
+        0.20000000298023224,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421,
+        0.8999999761581421
+      ],
+      "order": [
+        0,
+        2,
+        5,
+        4,
+        6,
+        7,
+        9,
+        8,
+        12,
+        13,
+        10,
+        11,
+        14,
+        15,
+        17,
+        16,
+        18,
+        1,
+        3
+      ],
+      "kept": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ]
+    },
+    "result": {
+      "ok": true,
+      "query": "history query",
+      "matched_prompts": [
+        {
+          "text": "prompt 1",
+          "similarity": 0.9
+        },
+        {
+          "text": "prompt 3",
+          "similarity": 0.9
+        },
+        {
+          "text": "prompt 7",
+          "similarity": 0.9
+        },
+        {
+          "text": "prompt 6",
+          "similarity": 0.9
+        },
+        {
+          "text": "prompt 8",
+          "similarity": 0.9
+        }
+      ],
+      "files": [
+        {
+          "path": "b.py",
+          "behavioral_score": 7.2,
+          "times_touched": 7,
+          "sessions": 7
+        },
+        {
+          "path": "a.py",
+          "behavioral_score": 5.4,
+          "times_touched": 6,
+          "sessions": 6
+        }
+      ]
+    },
+    "empty": {
+      "ok": true,
+      "query": "history query",
+      "files": [],
+      "note": "no embedded prompt history yet"
+    },
+    "mismatch": {
+      "ok": true,
+      "query": "history query",
+      "files": [],
+      "note": "stored prompt vectors predate the current embedding model"
+    }
+  }
+}

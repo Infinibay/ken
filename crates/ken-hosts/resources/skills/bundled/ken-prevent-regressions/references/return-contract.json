@@ -1,0 +1,38 @@
+{
+  "id": "storage.return-id",
+  "description": "At least one save_user callable returns the value from its save call.",
+  "path": "src",
+  "expectation": "some_match",
+  "query": "language \"kql/2\"; module project.storage; query returned_identifier { callable $owner { name: \"save_user\"; body { let $value = call $save { name: \"save\"; }; return $value; } } select $owner; }",
+  "examples": [
+    {
+      "name": "returns the call result",
+      "files": {
+        "src/store.py": "def save():\n    return 42\n\ndef save_user():\n    return save()\n"
+      },
+      "expect": "pass"
+    },
+    {
+      "name": "discards the call result",
+      "files": {
+        "src/store.py": "def save():\n    return 42\n\ndef save_user():\n    save()\n    return 0\n"
+      },
+      "expect": "fail"
+    },
+    {
+      "name": "overwritten call result",
+      "files": {
+        "src/store.py": "def save():\n    return 42\n\ndef save_user():\n    result = save()\n    result = 0\n    return result\n"
+      },
+      "expect": "fail"
+    },
+    {
+      "name": "existential witness does not certify a broken neighbor",
+      "files": {
+        "src/store.py": "def save():\n    return 42\n\ndef save_user():\n    return save()\n",
+        "src/other.py": "def save():\n    return 42\n\ndef save_user():\n    save()\n    return 0\n"
+      },
+      "expect": "pass"
+    }
+  ]
+}

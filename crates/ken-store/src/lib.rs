@@ -26,3 +26,6 @@ pub use transaction::WriteTransaction;
 pub use vectors::{LiveScores, VectorStore, VerificationReport, live_scores, verify};
 
 pub mod artifact_cache;
+
+mod rebuild;
+pub use rebuild::VectorRebuild;

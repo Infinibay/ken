@@ -178,7 +178,12 @@ impl GrammarCatalog {
         })
     }
 
-    fn grammar(&self, language: Language, hint: &str) -> Result<Arc<Grammar>, ParseError> {
+    fn grammar(
+        &self,
+        language: Language,
+        hint: &str,
+        check: &mut dyn FnMut() -> Result<(), ParseError>,
+    ) -> Result<Arc<Grammar>, ParseError> {
         let builtin = match language {
             Language::Python => Some(tree_sitter_python::LANGUAGE),
             Language::Rust => Some(tree_sitter_rust::LANGUAGE),
@@ -197,7 +202,16 @@ impl GrammarCatalog {
                 _library: None,
             }));
         }
-        let mut loaded = self.loaded.lock().map_err(|e| grammar_error(language, e))?;
+        let mut loaded = loop {
+            check()?;
+            match self.loaded.try_lock() {
+                Ok(loaded) => break loaded,
+                Err(std::sync::TryLockError::WouldBlock) => {
+                    std::thread::sleep(std::time::Duration::from_millis(1))
+                }
+                Err(error) => return Err(grammar_error(language, error)),
+            }
+        };
         if let Some(grammar) = loaded.get(&language) {
             return Ok(Arc::clone(grammar));
         }
@@ -210,10 +224,24 @@ impl GrammarCatalog {
         if !metadata.is_file() || metadata.len() != resource.bytes {
             return Err(grammar_error(language, "native module identity differs"));
         }
-        let raw = fs::read(&path).map_err(|e| grammar_error(language, e))?;
-        if raw.len() as u64 != resource.bytes
-            || format!("{:x}", Sha256::digest(&raw)) != resource.sha256
-        {
+        use std::io::Read;
+        let mut file = fs::File::open(&path).map_err(|e| grammar_error(language, e))?;
+        let mut hash = Sha256::new();
+        let mut count = 0u64;
+        let mut chunk = [0u8; 8192];
+        loop {
+            check()?;
+            let size = file
+                .read(&mut chunk)
+                .map_err(|e| grammar_error(language, e))?;
+            if size == 0 {
+                break;
+            }
+            count += size as u64;
+            hash.update(&chunk[..size]);
+        }
+        check()?;
+        if count != resource.bytes || format!("{:x}", hash.finalize()) != resource.sha256 {
             return Err(grammar_error(language, "native module identity differs"));
         }
         // SAFETY: bytes match a platform-specific immutable official module in
@@ -243,17 +271,46 @@ impl GrammarCatalog {
         source: &[u8],
         hint: &str,
     ) -> Result<SyntaxTree, ParseError> {
-        let grammar = self.grammar(language, hint)?;
+        self.syntax_checked(language, source, hint, &mut || Ok(()))
+    }
+    /// Poll during a single parse, retaining the exact caller interruption error.
+    pub fn syntax_checked(
+        &self,
+        language: Language,
+        source: &[u8],
+        hint: &str,
+        check: &mut dyn FnMut() -> Result<(), ParseError>,
+    ) -> Result<SyntaxTree, ParseError> {
+        check()?;
+        let grammar = self.grammar(language, hint, check)?;
+        check()?;
         let mut parser = tree_sitter::Parser::new();
         parser
             .set_language(&grammar.language)
             .map_err(|e| grammar_error(language, e))?;
-        let tree = parser
-            .parse(source, None)
-            .ok_or_else(|| ParseError::Parse {
-                language: language.as_str().into(),
-                reason: "parser returned no tree".into(),
-            })?;
+        let mut stopped = None;
+        let tree = {
+            let mut progress = |_: &tree_sitter::ParseState| match check() {
+                Ok(()) => false,
+                Err(error) => {
+                    stopped = Some(error);
+                    true
+                }
+            };
+            parser.parse_with_options(
+                &mut |offset, _| source.get(offset..).unwrap_or(&[]),
+                None,
+                Some(tree_sitter::ParseOptions::new().progress_callback(&mut progress)),
+            )
+        };
+        if let Some(error) = stopped {
+            return Err(error);
+        }
+        check()?;
+        let tree = tree.ok_or_else(|| ParseError::Parse {
+            language: language.as_str().into(),
+            reason: "parser returned no tree".into(),
+        })?;
         Ok(SyntaxTree::new(tree, grammar))
     }
 }

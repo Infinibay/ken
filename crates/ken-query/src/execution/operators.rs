@@ -15,6 +15,7 @@ impl Engine<'_> {
     pub fn apply(&mut self, node: &Op, row: Row, out: &mut Vec<Row>) -> Result<()> {
         match &node.kind {
             Kind::Source(op) => self.source_apply(op, row, out)?,
+            Kind::Body(pattern) => self.source_body(pattern.clone(), row, out)?,
             Kind::Fact(c) => self.facts(c, row, out)?,
             Kind::Union(clauses) => {
                 for c in clauses {

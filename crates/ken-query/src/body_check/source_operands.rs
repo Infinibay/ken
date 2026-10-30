@@ -194,7 +194,7 @@ impl BodyChecker<'_> {
 fn json_string(e: Operand<'_>) -> bool {
     e.kind() == "literal" && serde_json::from_str::<String>(e.value()).is_ok()
 }
-fn binary_parts(e: Operand<'_>) -> Result<(Operand<'_>, Operand<'_>, Operand<'_>)> {
+pub(crate) fn binary_parts(e: Operand<'_>) -> Result<(Operand<'_>, Operand<'_>, Operand<'_>)> {
     let mut arguments = BTreeMap::new();
     for a in e.args() {
         arguments.insert(a.value(), arg(a, 0)?);

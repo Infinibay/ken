@@ -1,9 +1,10 @@
 //! Python text admits surrogate code points that Rust scalar strings cannot hold.
+pub mod json;
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
 use serde_json::value::RawValue;
 
 /// Lossless Python code points. JSON preserves isolated surrogates as escapes.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct PythonText {
     codepoints: Vec<u32>,
 }
@@ -19,6 +20,25 @@ impl PythonText {
     }
     pub fn to_utf8(&self) -> Option<String> {
         self.codepoints.iter().map(|&c| char::from_u32(c)).collect()
+    }
+    /// JSON decoders combine adjacent UTF-16 escape pairs. The historical
+    /// Deserialize codec stays unchanged for stored Python-codepoint fixtures.
+    pub fn joined_surrogates(self) -> Self {
+        let mut input = self.codepoints.into_iter().peekable();
+        let mut codepoints = Vec::new();
+        while let Some(point) = input.next() {
+            if (0xd800..=0xdbff).contains(&point)
+                && input
+                    .peek()
+                    .is_some_and(|low| (0xdc00..=0xdfff).contains(low))
+            {
+                let low = input.next().expect("validated low surrogate");
+                codepoints.push(0x10000 + ((point - 0xd800) << 10) + (low - 0xdc00));
+            } else {
+                codepoints.push(point);
+            }
+        }
+        Self { codepoints }
     }
     pub fn trimmed(mut self) -> Self {
         let whitespace = |c: &u32| {
@@ -115,4 +135,5 @@ impl<'de> Deserialize<'de> for PythonText {
     }
 }
 
+pub mod source;
 pub mod unicode;

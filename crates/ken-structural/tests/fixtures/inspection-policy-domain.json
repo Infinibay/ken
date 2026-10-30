@@ -1,0 +1,4984 @@
+{
+  "provenance": "Prepared explicit observation graph; original inspection policy and actual Python import/snapshot metadata. No native query equivalence claim.",
+  "files": {
+    "storage.py": "def save():\n return 7\n",
+    "api.py": "from storage import save\ndef wrapper():\n save()\n value=save()\n alias=value\n alias.close()\n accept(alias)\n return alias\n",
+    "tests/test_api.py": "from api import wrapper\ndef test_value():\n value=wrapper()\n return value\n",
+    "other.py": "def save():\n return 99\n",
+    "unrelated.py": "def unrelated():\n return save()\n",
+    "consumer.py": "import storage as backend\n"
+  },
+  "facts": {
+    "storage.py": {
+      "path": "storage.py",
+      "language": "python",
+      "sha256": "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f",
+      "imports": [],
+      "spellings": [],
+      "issues": []
+    },
+    "api.py": {
+      "path": "api.py",
+      "language": "python",
+      "sha256": "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27",
+      "imports": [
+        {
+          "kind": "from",
+          "module": "storage",
+          "line": 1,
+          "top_level": true,
+          "aliases": [
+            {
+              "name": "save",
+              "asname": null
+            }
+          ]
+        }
+      ],
+      "spellings": [
+        "accept",
+        "alias",
+        "close",
+        "save",
+        "value"
+      ],
+      "issues": []
+    },
+    "tests/test_api.py": {
+      "path": "tests/test_api.py",
+      "language": "python",
+      "sha256": "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9",
+      "imports": [
+        {
+          "kind": "from",
+          "module": "api",
+          "line": 1,
+          "top_level": true,
+          "aliases": [
+            {
+              "name": "wrapper",
+              "asname": null
+            }
+          ]
+        }
+      ],
+      "spellings": [
+        "value",
+        "wrapper"
+      ],
+      "issues": []
+    },
+    "other.py": {
+      "path": "other.py",
+      "language": "python",
+      "sha256": "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072",
+      "imports": [],
+      "spellings": [],
+      "issues": []
+    },
+    "unrelated.py": {
+      "path": "unrelated.py",
+      "language": "python",
+      "sha256": "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39",
+      "imports": [],
+      "spellings": [
+        "save"
+      ],
+      "issues": []
+    },
+    "consumer.py": {
+      "path": "consumer.py",
+      "language": "python",
+      "sha256": "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840",
+      "imports": [
+        {
+          "kind": "import",
+          "module": "",
+          "line": 1,
+          "top_level": true,
+          "aliases": [
+            {
+              "name": "storage",
+              "asname": "backend"
+            }
+          ]
+        }
+      ],
+      "spellings": [],
+      "issues": []
+    }
+  },
+  "batch": {
+    "results": {
+      "definitions": {
+        "rows": [
+          [
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+              "path": "tests/test_api.py",
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "line": 2
+            }
+          ],
+          [
+            {
+              "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+              "path": "unrelated.py",
+              "name": "unrelated",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "other.py::/CALLABLE:save@0:20",
+              "path": "other.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "calls": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:39:45:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 3
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:75:88:call",
+              "path": "api.py",
+              "name": "close",
+              "kind": "CALL",
+              "line": 6
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:90:103:call",
+              "path": "api.py",
+              "name": "accept",
+              "kind": "CALL",
+              "line": 7
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+              "path": "tests/test_api.py",
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "tests/test_api.py::op:45:54:call",
+              "path": "tests/test_api.py",
+              "name": "wrapper",
+              "kind": "CALL",
+              "line": 3
+            }
+          ],
+          [
+            {
+              "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+              "path": "unrelated.py",
+              "name": "unrelated",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "unrelated.py::op:24:30:call",
+              "path": "unrelated.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 2
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "targets": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::op:39:45:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 3
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::op:45:54:call",
+              "path": "tests/test_api.py",
+              "name": "wrapper",
+              "kind": "CALL",
+              "line": 3
+            },
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "possible_targets": {
+        "rows": [],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "usages": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "assignment",
+              "path": "api.py",
+              "line": 4
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "receiver",
+              "path": "api.py",
+              "line": 6,
+              "consumer": "api.py::op:75:88:call"
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "argument",
+              "path": "api.py",
+              "line": 7,
+              "position": 0,
+              "consumer": "api.py::op:90:103:call",
+              "consumer_name": "accept"
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "return",
+              "path": "api.py",
+              "line": 8
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+              "path": "tests/test_api.py",
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "tests/test_api.py::op:45:54:call",
+              "path": "tests/test_api.py",
+              "name": "wrapper",
+              "kind": "CALL",
+              "line": 3
+            },
+            {
+              "kind": "return",
+              "path": "tests/test_api.py",
+              "line": 4
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      }
+    },
+    "snapshot": {
+      "scope": ".",
+      "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+      "manifest": [
+        [
+          "api.py",
+          "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+        ],
+        [
+          "consumer.py",
+          "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+        ],
+        [
+          "other.py",
+          "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+        ],
+        [
+          "storage.py",
+          "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+        ],
+        [
+          "tests/test_api.py",
+          "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+        ],
+        [
+          "unrelated.py",
+          "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+        ]
+      ]
+    },
+    "selection": {
+      "basis": "prepared evidence",
+      "paths": [
+        "api.py",
+        "consumer.py",
+        "other.py",
+        "storage.py",
+        "tests/test_api.py",
+        "unrelated.py"
+      ],
+      "steps": [
+        {
+          "prepared": true
+        }
+      ]
+    }
+  },
+  "transformed_batch": {
+    "results": {
+      "definitions": {
+        "rows": [
+          [
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+              "path": "tests/test_api.py",
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "line": 2
+            }
+          ],
+          [
+            {
+              "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+              "path": "unrelated.py",
+              "name": "unrelated",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "other.py::/CALLABLE:save@0:20",
+              "path": "other.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "calls": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:39:45:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 3
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:75:88:call",
+              "path": "api.py",
+              "name": "close",
+              "kind": "CALL",
+              "line": 6
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:90:103:call",
+              "path": "api.py",
+              "name": "accept",
+              "kind": "CALL",
+              "line": 7
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+              "path": "tests/test_api.py",
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "tests/test_api.py::op:45:54:call",
+              "path": "tests/test_api.py",
+              "name": "wrapper",
+              "kind": "CALL",
+              "line": 3
+            }
+          ],
+          [
+            {
+              "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+              "path": "unrelated.py",
+              "name": "unrelated",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "unrelated.py::op:24:30:call",
+              "path": "unrelated.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 2
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "targets": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::op:39:45:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 3
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::op:45:54:call",
+              "path": "tests/test_api.py",
+              "name": "wrapper",
+              "kind": "CALL",
+              "line": 3
+            },
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "possible_targets": {
+        "rows": [],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "usages": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "assignment",
+              "path": "api.py",
+              "line": 4
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "receiver",
+              "path": "api.py",
+              "line": 6,
+              "consumer": "api.py::op:75:88:call"
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "argument",
+              "path": "api.py",
+              "line": 7,
+              "position": 0,
+              "consumer": "api.py::op:90:103:call",
+              "consumer_name": "accept"
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+              "path": "tests/test_api.py",
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "tests/test_api.py::op:45:54:call",
+              "path": "tests/test_api.py",
+              "name": "wrapper",
+              "kind": "CALL",
+              "line": 3
+            },
+            {
+              "kind": "return",
+              "path": "tests/test_api.py",
+              "line": 4
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "operand",
+              "path": "api.py",
+              "line": 8
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      }
+    },
+    "snapshot": {
+      "scope": ".",
+      "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+      "manifest": [
+        [
+          "api.py",
+          "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+        ],
+        [
+          "consumer.py",
+          "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+        ],
+        [
+          "other.py",
+          "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+        ],
+        [
+          "storage.py",
+          "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+        ],
+        [
+          "tests/test_api.py",
+          "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+        ],
+        [
+          "unrelated.py",
+          "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+        ]
+      ]
+    },
+    "selection": {
+      "basis": "prepared evidence",
+      "paths": [
+        "api.py",
+        "consumer.py",
+        "other.py",
+        "storage.py",
+        "tests/test_api.py",
+        "unrelated.py"
+      ],
+      "steps": [
+        {
+          "prepared": true
+        }
+      ]
+    }
+  },
+  "ambiguous_batch": {
+    "results": {
+      "definitions": {
+        "rows": [
+          [
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+              "path": "tests/test_api.py",
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "line": 2
+            }
+          ],
+          [
+            {
+              "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+              "path": "unrelated.py",
+              "name": "unrelated",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "other.py::/CALLABLE:save@0:20",
+              "path": "other.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "calls": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:39:45:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 3
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:75:88:call",
+              "path": "api.py",
+              "name": "close",
+              "kind": "CALL",
+              "line": 6
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:90:103:call",
+              "path": "api.py",
+              "name": "accept",
+              "kind": "CALL",
+              "line": 7
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+              "path": "tests/test_api.py",
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "tests/test_api.py::op:45:54:call",
+              "path": "tests/test_api.py",
+              "name": "wrapper",
+              "kind": "CALL",
+              "line": 3
+            }
+          ],
+          [
+            {
+              "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+              "path": "unrelated.py",
+              "name": "unrelated",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "unrelated.py::op:24:30:call",
+              "path": "unrelated.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 2
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "targets": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::op:39:45:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 3
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::op:45:54:call",
+              "path": "tests/test_api.py",
+              "name": "wrapper",
+              "kind": "CALL",
+              "line": 3
+            },
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "possible_targets": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "local_id": "other.py::/CALLABLE:save@0:20",
+              "path": "other.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "usages": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "assignment",
+              "path": "api.py",
+              "line": 4
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "receiver",
+              "path": "api.py",
+              "line": 6,
+              "consumer": "api.py::op:75:88:call"
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "argument",
+              "path": "api.py",
+              "line": 7,
+              "position": 0,
+              "consumer": "api.py::op:90:103:call",
+              "consumer_name": "accept"
+            }
+          ],
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            },
+            {
+              "kind": "return",
+              "path": "api.py",
+              "line": 8
+            }
+          ],
+          [
+            {
+              "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+              "path": "tests/test_api.py",
+              "name": "test_value",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "tests/test_api.py::op:45:54:call",
+              "path": "tests/test_api.py",
+              "name": "wrapper",
+              "kind": "CALL",
+              "line": 3
+            },
+            {
+              "kind": "return",
+              "path": "tests/test_api.py",
+              "line": 4
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      }
+    },
+    "snapshot": {
+      "scope": ".",
+      "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+      "manifest": [
+        [
+          "api.py",
+          "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+        ],
+        [
+          "consumer.py",
+          "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+        ],
+        [
+          "other.py",
+          "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+        ],
+        [
+          "storage.py",
+          "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+        ],
+        [
+          "tests/test_api.py",
+          "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+        ],
+        [
+          "unrelated.py",
+          "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+        ]
+      ]
+    },
+    "selection": {
+      "basis": "prepared evidence",
+      "paths": [
+        "api.py",
+        "consumer.py",
+        "other.py",
+        "storage.py",
+        "tests/test_api.py",
+        "unrelated.py"
+      ],
+      "steps": [
+        {
+          "prepared": true
+        }
+      ]
+    }
+  },
+  "views": {
+    "impact": {
+      "scope": ".",
+      "targets": [
+        {
+          "path": "storage.py",
+          "line": 1,
+          "name": "save",
+          "kind": "CALLABLE"
+        }
+      ],
+      "consumers": [
+        {
+          "caller": {
+            "path": "api.py",
+            "line": 2,
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "symbol": "wrapper"
+          },
+          "call": {
+            "path": "api.py",
+            "line": 3,
+            "name": "save",
+            "kind": "CALL"
+          },
+          "resolution": "resolved",
+          "result_uses": [],
+          "hops": 1,
+          "result_flow": {
+            "identity": "unknown",
+            "boundaries": [],
+            "ownership": "unproven",
+            "inventory": "open",
+            "next": "Inspect the call's enclosing statement; no observed use does not prove discard or a leak."
+          },
+          "via": [
+            {
+              "path": "storage.py",
+              "line": 1,
+              "name": "save",
+              "kind": "CALLABLE"
+            }
+          ],
+          "usage_status": "unknown"
+        },
+        {
+          "caller": {
+            "path": "api.py",
+            "line": 2,
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "symbol": "wrapper"
+          },
+          "call": {
+            "path": "api.py",
+            "line": 4,
+            "name": "save",
+            "kind": "CALL"
+          },
+          "resolution": "resolved",
+          "result_uses": [
+            {
+              "kind": "assignment",
+              "path": "api.py",
+              "line": 4
+            },
+            {
+              "kind": "receiver",
+              "path": "api.py",
+              "line": 6
+            },
+            {
+              "kind": "argument",
+              "path": "api.py",
+              "line": 7,
+              "position": 0
+            },
+            {
+              "kind": "return",
+              "path": "api.py",
+              "line": 8
+            }
+          ],
+          "hops": 1,
+          "result_flow": {
+            "identity": "observed",
+            "boundaries": [
+              {
+                "kind": "receiver",
+                "path": "api.py",
+                "line": 6,
+                "consumer": {
+                  "path": "api.py",
+                  "line": 6,
+                  "name": "close",
+                  "kind": "CALL"
+                },
+                "resolution": "unresolved",
+                "targets": [],
+                "status": "cleanup_candidate",
+                "next": "Verify this method releases the resource and runs on all required paths."
+              },
+              {
+                "kind": "argument",
+                "path": "api.py",
+                "line": 7,
+                "position": 0,
+                "consumer": {
+                  "path": "api.py",
+                  "line": 7,
+                  "name": "accept",
+                  "kind": "CALL"
+                },
+                "resolution": "unresolved",
+                "targets": [],
+                "status": "argument_boundary",
+                "next": "Read the receiving method's contract and failure paths; ownership is not established by this use."
+              },
+              {
+                "kind": "return",
+                "path": "api.py",
+                "line": 8,
+                "status": "returned_identity",
+                "next": "Inspect callers and their ownership contract.",
+                "followed": true
+              }
+            ],
+            "ownership": "unproven",
+            "inventory": "open"
+          },
+          "via": [
+            {
+              "path": "storage.py",
+              "line": 1,
+              "name": "save",
+              "kind": "CALLABLE"
+            }
+          ]
+        },
+        {
+          "caller": {
+            "path": "tests/test_api.py",
+            "line": 2,
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "symbol": "test_value"
+          },
+          "call": {
+            "path": "tests/test_api.py",
+            "line": 3,
+            "name": "wrapper",
+            "kind": "CALL"
+          },
+          "resolution": "resolved",
+          "result_uses": [
+            {
+              "kind": "return",
+              "path": "tests/test_api.py",
+              "line": 4
+            }
+          ],
+          "hops": 2,
+          "result_flow": {
+            "identity": "observed",
+            "boundaries": [
+              {
+                "kind": "return",
+                "path": "tests/test_api.py",
+                "line": 4,
+                "status": "returned_identity",
+                "next": "Inspect callers and their ownership contract.",
+                "followed": true
+              }
+            ],
+            "ownership": "unproven",
+            "inventory": "open"
+          },
+          "via": [
+            {
+              "path": "api.py",
+              "line": 2,
+              "name": "wrapper",
+              "kind": "CALLABLE"
+            }
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "caller": {
+            "path": "tests/test_api.py",
+            "line": 2,
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "symbol": "test_value"
+          },
+          "call": {
+            "path": "tests/test_api.py",
+            "line": 3,
+            "name": "wrapper",
+            "kind": "CALL"
+          },
+          "resolution": "resolved",
+          "result_uses": [
+            {
+              "kind": "return",
+              "path": "tests/test_api.py",
+              "line": 4
+            }
+          ],
+          "hops": 2,
+          "result_flow": {
+            "identity": "observed",
+            "boundaries": [
+              {
+                "kind": "return",
+                "path": "tests/test_api.py",
+                "line": 4,
+                "status": "returned_identity",
+                "next": "Inspect callers and their ownership contract.",
+                "followed": true
+              }
+            ],
+            "ownership": "unproven",
+            "inventory": "open"
+          },
+          "via": [
+            {
+              "path": "api.py",
+              "line": 2,
+              "name": "wrapper",
+              "kind": "CALLABLE"
+            }
+          ]
+        }
+      ],
+      "unresolved_candidates": [
+        {
+          "path": "unrelated.py",
+          "line": 2,
+          "name": "save",
+          "kind": "CALL",
+          "resolution": "unresolved",
+          "claim": "Spelling match only; not an established dependency."
+        }
+      ],
+      "truncated": false,
+      "depth": 3,
+      "coverage": {
+        "definitions": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "calls": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "possible_targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "usages": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        }
+      },
+      "claim": "Observed result consumers and return propagation. Test links show use, not assertion coverage; empty uses are not proof of discard."
+    },
+    "roles": {
+      "scope": ".",
+      "nodes": [
+        {
+          "path": "api.py",
+          "line": 2,
+          "name": "wrapper",
+          "kind": "CALLABLE",
+          "symbol": "wrapper",
+          "id": 0,
+          "roles": [
+            {
+              "role": "coordinator_candidate",
+              "basis": "Invokes multiple operations."
+            },
+            {
+              "role": "delegates",
+              "basis": "Calls a resolved project callable."
+            }
+          ],
+          "inference": "structural_hypothesis"
+        },
+        {
+          "path": "storage.py",
+          "line": 1,
+          "name": "save",
+          "kind": "CALLABLE",
+          "symbol": "save",
+          "id": 1,
+          "roles": [
+            {
+              "role": "executor_candidate",
+              "basis": "End of the observed project-call chain; external effects remain unverified."
+            }
+          ],
+          "inference": "structural_hypothesis"
+        },
+        {
+          "path": "tests/test_api.py",
+          "line": 2,
+          "name": "test_value",
+          "kind": "CALLABLE",
+          "symbol": "test_value",
+          "id": 2,
+          "roles": [
+            {
+              "role": "entry_candidate",
+              "basis": "No incoming calls observed in this scope."
+            },
+            {
+              "role": "delegates",
+              "basis": "Calls a resolved project callable."
+            }
+          ],
+          "inference": "structural_hypothesis"
+        }
+      ],
+      "calls": [
+        {
+          "from": 0,
+          "to": [
+            1
+          ],
+          "call": {
+            "path": "api.py",
+            "line": 3,
+            "name": "save",
+            "kind": "CALL"
+          },
+          "resolution": "resolved"
+        },
+        {
+          "from": 0,
+          "to": [
+            1
+          ],
+          "call": {
+            "path": "api.py",
+            "line": 4,
+            "name": "save",
+            "kind": "CALL"
+          },
+          "resolution": "resolved"
+        },
+        {
+          "from": 0,
+          "to": [],
+          "call": {
+            "path": "api.py",
+            "line": 6,
+            "name": "close",
+            "kind": "CALL"
+          },
+          "resolution": "unresolved"
+        },
+        {
+          "from": 0,
+          "to": [],
+          "call": {
+            "path": "api.py",
+            "line": 7,
+            "name": "accept",
+            "kind": "CALL"
+          },
+          "resolution": "unresolved"
+        },
+        {
+          "from": 2,
+          "to": [
+            0
+          ],
+          "call": {
+            "path": "tests/test_api.py",
+            "line": 3,
+            "name": "wrapper",
+            "kind": "CALL"
+          },
+          "resolution": "resolved"
+        }
+      ],
+      "truncated": false,
+      "coverage": {
+        "definitions": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "calls": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "possible_targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "usages": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        }
+      },
+      "claim": "Roles are hypotheses from observed calls, not proof of business responsibility or public visibility."
+    },
+    "connected": [
+      "api.py::/CALLABLE:wrapper@0:20",
+      "storage.py::/CALLABLE:save@0:20",
+      "tests/test_api.py::/CALLABLE:test_value@0:20"
+    ],
+    "coverage": {
+      "definitions": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "calls": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "targets": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "possible_targets": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "usages": {
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      }
+    },
+    "transformed": {
+      "scope": ".",
+      "targets": [
+        {
+          "path": "storage.py",
+          "line": 1,
+          "name": "save",
+          "kind": "CALLABLE"
+        }
+      ],
+      "consumers": [
+        {
+          "caller": {
+            "path": "api.py",
+            "line": 2,
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "symbol": "wrapper"
+          },
+          "call": {
+            "path": "api.py",
+            "line": 3,
+            "name": "save",
+            "kind": "CALL"
+          },
+          "resolution": "resolved",
+          "result_uses": [],
+          "hops": 1,
+          "result_flow": {
+            "identity": "unknown",
+            "boundaries": [],
+            "ownership": "unproven",
+            "inventory": "open",
+            "next": "Inspect the call's enclosing statement; no observed use does not prove discard or a leak."
+          },
+          "via": [
+            {
+              "path": "storage.py",
+              "line": 1,
+              "name": "save",
+              "kind": "CALLABLE"
+            }
+          ],
+          "usage_status": "unknown"
+        },
+        {
+          "caller": {
+            "path": "api.py",
+            "line": 2,
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "symbol": "wrapper"
+          },
+          "call": {
+            "path": "api.py",
+            "line": 4,
+            "name": "save",
+            "kind": "CALL"
+          },
+          "resolution": "resolved",
+          "result_uses": [
+            {
+              "kind": "assignment",
+              "path": "api.py",
+              "line": 4
+            },
+            {
+              "kind": "receiver",
+              "path": "api.py",
+              "line": 6
+            },
+            {
+              "kind": "argument",
+              "path": "api.py",
+              "line": 7,
+              "position": 0
+            },
+            {
+              "kind": "operand",
+              "path": "api.py",
+              "line": 8
+            }
+          ],
+          "hops": 1,
+          "result_flow": {
+            "identity": "observed",
+            "boundaries": [
+              {
+                "kind": "receiver",
+                "path": "api.py",
+                "line": 6,
+                "consumer": {
+                  "path": "api.py",
+                  "line": 6,
+                  "name": "close",
+                  "kind": "CALL"
+                },
+                "resolution": "unresolved",
+                "targets": [],
+                "status": "cleanup_candidate",
+                "next": "Verify this method releases the resource and runs on all required paths."
+              },
+              {
+                "kind": "argument",
+                "path": "api.py",
+                "line": 7,
+                "position": 0,
+                "consumer": {
+                  "path": "api.py",
+                  "line": 7,
+                  "name": "accept",
+                  "kind": "CALL"
+                },
+                "resolution": "unresolved",
+                "targets": [],
+                "status": "argument_boundary",
+                "next": "Read the receiving method's contract and failure paths; ownership is not established by this use."
+              },
+              {
+                "kind": "operand",
+                "path": "api.py",
+                "line": 8,
+                "status": "transformed_value",
+                "next": "Inspect the transformation; the derived result has a different identity."
+              }
+            ],
+            "ownership": "unproven",
+            "inventory": "open"
+          },
+          "via": [
+            {
+              "path": "storage.py",
+              "line": 1,
+              "name": "save",
+              "kind": "CALLABLE"
+            }
+          ]
+        }
+      ],
+      "tests": [],
+      "unresolved_candidates": [
+        {
+          "path": "unrelated.py",
+          "line": 2,
+          "name": "save",
+          "kind": "CALL",
+          "resolution": "unresolved",
+          "claim": "Spelling match only; not an established dependency."
+        }
+      ],
+      "truncated": false,
+      "depth": 3,
+      "coverage": {
+        "definitions": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "calls": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "possible_targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "usages": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        }
+      },
+      "claim": "Observed result consumers and return propagation. Test links show use, not assertion coverage; empty uses are not proof of discard."
+    },
+    "ambiguous": {
+      "scope": ".",
+      "targets": [
+        {
+          "path": "storage.py",
+          "line": 1,
+          "name": "save",
+          "kind": "CALLABLE"
+        }
+      ],
+      "consumers": [
+        {
+          "caller": {
+            "path": "api.py",
+            "line": 2,
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "symbol": "wrapper"
+          },
+          "call": {
+            "path": "api.py",
+            "line": 3,
+            "name": "save",
+            "kind": "CALL"
+          },
+          "resolution": "resolved",
+          "result_uses": [],
+          "hops": 1,
+          "result_flow": {
+            "identity": "unknown",
+            "boundaries": [],
+            "ownership": "unproven",
+            "inventory": "open",
+            "next": "Inspect the call's enclosing statement; no observed use does not prove discard or a leak."
+          },
+          "via": [
+            {
+              "path": "storage.py",
+              "line": 1,
+              "name": "save",
+              "kind": "CALLABLE"
+            }
+          ],
+          "usage_status": "unknown"
+        },
+        {
+          "caller": {
+            "path": "api.py",
+            "line": 2,
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "symbol": "wrapper"
+          },
+          "call": {
+            "path": "api.py",
+            "line": 4,
+            "name": "save",
+            "kind": "CALL"
+          },
+          "resolution": "ambiguous",
+          "result_uses": [
+            {
+              "kind": "assignment",
+              "path": "api.py",
+              "line": 4
+            },
+            {
+              "kind": "receiver",
+              "path": "api.py",
+              "line": 6
+            },
+            {
+              "kind": "argument",
+              "path": "api.py",
+              "line": 7,
+              "position": 0
+            },
+            {
+              "kind": "return",
+              "path": "api.py",
+              "line": 8
+            }
+          ],
+          "hops": 1,
+          "result_flow": {
+            "identity": "observed",
+            "boundaries": [
+              {
+                "kind": "receiver",
+                "path": "api.py",
+                "line": 6,
+                "consumer": {
+                  "path": "api.py",
+                  "line": 6,
+                  "name": "close",
+                  "kind": "CALL"
+                },
+                "resolution": "unresolved",
+                "targets": [],
+                "status": "cleanup_candidate",
+                "next": "Verify this method releases the resource and runs on all required paths."
+              },
+              {
+                "kind": "argument",
+                "path": "api.py",
+                "line": 7,
+                "position": 0,
+                "consumer": {
+                  "path": "api.py",
+                  "line": 7,
+                  "name": "accept",
+                  "kind": "CALL"
+                },
+                "resolution": "unresolved",
+                "targets": [],
+                "status": "argument_boundary",
+                "next": "Read the receiving method's contract and failure paths; ownership is not established by this use."
+              },
+              {
+                "kind": "return",
+                "path": "api.py",
+                "line": 8,
+                "status": "returned_identity",
+                "next": "Inspect callers and their ownership contract.",
+                "followed": false,
+                "stop_reason": "ambiguous_target"
+              }
+            ],
+            "ownership": "unproven",
+            "inventory": "open"
+          },
+          "via": [
+            {
+              "path": "storage.py",
+              "line": 1,
+              "name": "save",
+              "kind": "CALLABLE"
+            }
+          ]
+        }
+      ],
+      "tests": [],
+      "unresolved_candidates": [
+        {
+          "path": "api.py",
+          "line": 4,
+          "name": "save",
+          "kind": "CALL",
+          "resolution": "ambiguous",
+          "claim": "Spelling match only; not an established dependency."
+        },
+        {
+          "path": "unrelated.py",
+          "line": 2,
+          "name": "save",
+          "kind": "CALL",
+          "resolution": "unresolved",
+          "claim": "Spelling match only; not an established dependency."
+        }
+      ],
+      "truncated": false,
+      "depth": 3,
+      "coverage": {
+        "definitions": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "calls": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "possible_targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        },
+        "usages": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null
+        }
+      },
+      "claim": "Observed result consumers and return propagation. Test links show use, not assertion coverage; empty uses are not proof of discard."
+    }
+  },
+  "availability": [
+    {
+      "source": "import storage as backend\n",
+      "facts": {
+        "path": "consumer.py",
+        "language": "python",
+        "sha256": "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840",
+        "imports": [
+          {
+            "kind": "import",
+            "module": "",
+            "line": 1,
+            "top_level": true,
+            "aliases": [
+              {
+                "name": "storage",
+                "asname": "backend"
+              }
+            ]
+          }
+        ],
+        "spellings": [],
+        "issues": []
+      },
+      "result": {
+        "status": "candidates",
+        "context": "consumer.py",
+        "candidates": [
+          {
+            "target": {
+              "path": "storage.py",
+              "line": 1,
+              "name": "save",
+              "kind": "CALLABLE"
+            },
+            "expression": "backend.save",
+            "basis": "explicit_module_import",
+            "line": 1,
+            "status": "candidate",
+            "obligations": [
+              "binding not shadowed at the use site",
+              "module initialization completed",
+              "argument and return type compatibility",
+              "effects and errors preserved"
+            ]
+          }
+        ],
+        "issues": [],
+        "claim": "Explicit access spellings only; absence does not prove unavailability. No replacement or autofix is certified."
+      }
+    },
+    {
+      "source": "from storage import save as persist\n",
+      "facts": {
+        "path": "consumer.py",
+        "language": "python",
+        "sha256": "3f1fa04a2d849b9e3a22eb0a5d6f9bb154c6fd81fffbeff3dd6be6765fcd60c0",
+        "imports": [
+          {
+            "kind": "from",
+            "module": "storage",
+            "line": 1,
+            "top_level": true,
+            "aliases": [
+              {
+                "name": "save",
+                "asname": "persist"
+              }
+            ]
+          }
+        ],
+        "spellings": [],
+        "issues": []
+      },
+      "result": {
+        "status": "candidates",
+        "context": "consumer.py",
+        "candidates": [
+          {
+            "target": {
+              "path": "storage.py",
+              "line": 1,
+              "name": "save",
+              "kind": "CALLABLE"
+            },
+            "expression": "persist",
+            "basis": "explicit_from_import",
+            "line": 1,
+            "status": "candidate",
+            "obligations": [
+              "binding not shadowed at the use site",
+              "module initialization completed",
+              "argument and return type compatibility",
+              "effects and errors preserved"
+            ]
+          }
+        ],
+        "issues": [],
+        "claim": "Explicit access spellings only; absence does not prove unavailability. No replacement or autofix is certified."
+      }
+    },
+    {
+      "source": "if configured:\n import storage as backend\n",
+      "facts": {
+        "path": "consumer.py",
+        "language": "python",
+        "sha256": "70534e71dfa62a85827e24c1f3d4175237b6c828776817724db7573d887094b1",
+        "imports": [
+          {
+            "kind": "import",
+            "module": "",
+            "line": 2,
+            "top_level": false,
+            "aliases": [
+              {
+                "name": "storage",
+                "asname": "backend"
+              }
+            ]
+          }
+        ],
+        "spellings": [
+          "configured"
+        ],
+        "issues": []
+      },
+      "result": {
+        "status": "unknown",
+        "context": "consumer.py",
+        "candidates": [],
+        "issues": [],
+        "claim": "Explicit access spellings only; absence does not prove unavailability. No replacement or autofix is certified."
+      }
+    }
+  ],
+  "partial": {
+    "results": {
+      "definitions": {
+        "rows": [
+          [
+            {
+              "local_id": "storage.py::/CALLABLE:save@0:20",
+              "path": "storage.py",
+              "name": "save",
+              "kind": "CALLABLE",
+              "line": 1
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "queries": [
+          {
+            "query": "locate fixture",
+            "source_scope": {
+              "kind": "explicit_files",
+              "paths": [
+                "storage.py"
+              ]
+            },
+            "analysis": {
+              "parsed_units": 1
+            }
+          }
+        ],
+        "check_snapshot": {
+          "scope": ".",
+          "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+          "manifest": [
+            [
+              "api.py",
+              "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+            ],
+            [
+              "consumer.py",
+              "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+            ],
+            [
+              "other.py",
+              "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+            ],
+            [
+              "storage.py",
+              "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+            ],
+            [
+              "tests/test_api.py",
+              "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+            ],
+            [
+              "unrelated.py",
+              "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+            ]
+          ]
+        },
+        "check_engine": "prepared-inspection/1"
+      },
+      "calls": {
+        "rows": [
+          [
+            {
+              "local_id": "api.py::/CALLABLE:wrapper@0:20",
+              "path": "api.py",
+              "name": "wrapper",
+              "kind": "CALLABLE",
+              "line": 2
+            },
+            {
+              "local_id": "api.py::op:53:59:call",
+              "path": "api.py",
+              "name": "save",
+              "kind": "CALL",
+              "line": 4
+            }
+          ]
+        ],
+        "entities": {
+          "storage.py::/CALLABLE:save@0:20": {
+            "local_id": "storage.py::/CALLABLE:save@0:20",
+            "path": "storage.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::/CALLABLE:wrapper@0:20": {
+            "local_id": "api.py::/CALLABLE:wrapper@0:20",
+            "path": "api.py",
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "tests/test_api.py::/CALLABLE:test_value@0:20": {
+            "local_id": "tests/test_api.py::/CALLABLE:test_value@0:20",
+            "path": "tests/test_api.py",
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "line": 2
+          },
+          "unrelated.py::/CALLABLE:unrelated@0:20": {
+            "local_id": "unrelated.py::/CALLABLE:unrelated@0:20",
+            "path": "unrelated.py",
+            "name": "unrelated",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "other.py::/CALLABLE:save@0:20": {
+            "local_id": "other.py::/CALLABLE:save@0:20",
+            "path": "other.py",
+            "name": "save",
+            "kind": "CALLABLE",
+            "line": 1
+          },
+          "api.py::op:39:45:call": {
+            "local_id": "api.py::op:39:45:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 3
+          },
+          "api.py::op:53:59:call": {
+            "local_id": "api.py::op:53:59:call",
+            "path": "api.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 4
+          },
+          "tests/test_api.py::op:45:54:call": {
+            "local_id": "tests/test_api.py::op:45:54:call",
+            "path": "tests/test_api.py",
+            "name": "wrapper",
+            "kind": "CALL",
+            "line": 3
+          },
+          "unrelated.py::op:24:30:call": {
+            "local_id": "unrelated.py::op:24:30:call",
+            "path": "unrelated.py",
+            "name": "save",
+            "kind": "CALL",
+            "line": 2
+          },
+          "api.py::op:75:88:call": {
+            "local_id": "api.py::op:75:88:call",
+            "path": "api.py",
+            "name": "close",
+            "kind": "CALL",
+            "line": 6
+          },
+          "api.py::op:90:103:call": {
+            "local_id": "api.py::op:90:103:call",
+            "path": "api.py",
+            "name": "accept",
+            "kind": "CALL",
+            "line": 7
+          }
+        },
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "test interruption",
+        "queries": [
+          {
+            "query": "partial fixture",
+            "source_scope": null,
+            "analysis": {}
+          }
+        ],
+        "check_snapshot": {
+          "scope": ".",
+          "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+          "manifest": [
+            [
+              "api.py",
+              "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+            ],
+            [
+              "consumer.py",
+              "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+            ],
+            [
+              "other.py",
+              "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+            ],
+            [
+              "storage.py",
+              "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+            ],
+            [
+              "tests/test_api.py",
+              "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+            ],
+            [
+              "unrelated.py",
+              "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+            ]
+          ]
+        },
+        "check_engine": "prepared-inspection/1"
+      },
+      "targets": {
+        "rows": [],
+        "entities": {},
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "queries": [],
+        "check_snapshot": {
+          "scope": ".",
+          "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+          "manifest": [
+            [
+              "api.py",
+              "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+            ],
+            [
+              "consumer.py",
+              "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+            ],
+            [
+              "other.py",
+              "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+            ],
+            [
+              "storage.py",
+              "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+            ],
+            [
+              "tests/test_api.py",
+              "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+            ],
+            [
+              "unrelated.py",
+              "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+            ]
+          ]
+        },
+        "check_engine": "prepared-inspection/1"
+      },
+      "possible_targets": {
+        "rows": [],
+        "entities": {},
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "queries": [],
+        "check_snapshot": {
+          "scope": ".",
+          "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+          "manifest": [
+            [
+              "api.py",
+              "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+            ],
+            [
+              "consumer.py",
+              "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+            ],
+            [
+              "other.py",
+              "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+            ],
+            [
+              "storage.py",
+              "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+            ],
+            [
+              "tests/test_api.py",
+              "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+            ],
+            [
+              "unrelated.py",
+              "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+            ]
+          ]
+        },
+        "check_engine": "prepared-inspection/1"
+      },
+      "usages": {
+        "rows": [],
+        "entities": {},
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null,
+        "queries": [],
+        "check_snapshot": {
+          "scope": ".",
+          "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+          "manifest": [
+            [
+              "api.py",
+              "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+            ],
+            [
+              "consumer.py",
+              "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+            ],
+            [
+              "other.py",
+              "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+            ],
+            [
+              "storage.py",
+              "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+            ],
+            [
+              "tests/test_api.py",
+              "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+            ],
+            [
+              "unrelated.py",
+              "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+            ]
+          ]
+        },
+        "check_engine": "prepared-inspection/1"
+      }
+    },
+    "snapshot": {
+      "scope": ".",
+      "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+      "manifest": [
+        [
+          "api.py",
+          "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+        ],
+        [
+          "consumer.py",
+          "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+        ],
+        [
+          "other.py",
+          "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+        ],
+        [
+          "storage.py",
+          "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+        ],
+        [
+          "tests/test_api.py",
+          "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+        ],
+        [
+          "unrelated.py",
+          "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+        ]
+      ]
+    },
+    "engine": "prepared-inspection/1",
+    "selection": {
+      "paths": [
+        "api.py",
+        "storage.py"
+      ]
+    }
+  },
+  "invalidated": {
+    "results": {
+      "definitions": {
+        "rows": [],
+        "entities": {},
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "source_changed_during_inspection",
+        "queries": [
+          {
+            "query": "locate fixture",
+            "source_scope": {
+              "kind": "explicit_files",
+              "paths": [
+                "storage.py"
+              ]
+            },
+            "analysis": {
+              "parsed_units": 1
+            }
+          },
+          {
+            "query": "changed fixture",
+            "source_scope": null,
+            "analysis": {}
+          }
+        ],
+        "check_snapshot": {
+          "scope": ".",
+          "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+          "manifest": [
+            [
+              "api.py",
+              "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+            ],
+            [
+              "consumer.py",
+              "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+            ],
+            [
+              "other.py",
+              "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+            ],
+            [
+              "storage.py",
+              "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+            ],
+            [
+              "tests/test_api.py",
+              "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+            ],
+            [
+              "unrelated.py",
+              "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+            ]
+          ]
+        },
+        "check_engine": "prepared-inspection/1"
+      },
+      "calls": {
+        "rows": [],
+        "entities": {},
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "source_changed_during_inspection",
+        "queries": [
+          {
+            "query": "partial fixture",
+            "source_scope": null,
+            "analysis": {}
+          }
+        ],
+        "check_snapshot": {
+          "scope": ".",
+          "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+          "manifest": [
+            [
+              "api.py",
+              "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+            ],
+            [
+              "consumer.py",
+              "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+            ],
+            [
+              "other.py",
+              "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+            ],
+            [
+              "storage.py",
+              "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+            ],
+            [
+              "tests/test_api.py",
+              "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+            ],
+            [
+              "unrelated.py",
+              "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+            ]
+          ]
+        },
+        "check_engine": "prepared-inspection/1"
+      },
+      "targets": {
+        "rows": [],
+        "entities": {},
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "source_changed_during_inspection",
+        "queries": [],
+        "check_snapshot": {
+          "scope": ".",
+          "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+          "manifest": [
+            [
+              "api.py",
+              "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+            ],
+            [
+              "consumer.py",
+              "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+            ],
+            [
+              "other.py",
+              "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+            ],
+            [
+              "storage.py",
+              "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+            ],
+            [
+              "tests/test_api.py",
+              "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+            ],
+            [
+              "unrelated.py",
+              "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+            ]
+          ]
+        },
+        "check_engine": "prepared-inspection/1"
+      },
+      "possible_targets": {
+        "rows": [],
+        "entities": {},
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "source_changed_during_inspection",
+        "queries": [],
+        "check_snapshot": {
+          "scope": ".",
+          "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+          "manifest": [
+            [
+              "api.py",
+              "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+            ],
+            [
+              "consumer.py",
+              "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+            ],
+            [
+              "other.py",
+              "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+            ],
+            [
+              "storage.py",
+              "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+            ],
+            [
+              "tests/test_api.py",
+              "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+            ],
+            [
+              "unrelated.py",
+              "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+            ]
+          ]
+        },
+        "check_engine": "prepared-inspection/1"
+      },
+      "usages": {
+        "rows": [],
+        "entities": {},
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "source_changed_during_inspection",
+        "queries": [],
+        "check_snapshot": {
+          "scope": ".",
+          "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+          "manifest": [
+            [
+              "api.py",
+              "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+            ],
+            [
+              "consumer.py",
+              "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+            ],
+            [
+              "other.py",
+              "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+            ],
+            [
+              "storage.py",
+              "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+            ],
+            [
+              "tests/test_api.py",
+              "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+            ],
+            [
+              "unrelated.py",
+              "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+            ]
+          ]
+        },
+        "check_engine": "prepared-inspection/1"
+      }
+    },
+    "snapshot": {
+      "scope": ".",
+      "sha256": "1c7e8e0946ca33b335be87302ac25441785d4d1af1509e62f3b98f85a61e06c3",
+      "manifest": [
+        [
+          "api.py",
+          "e2d9be9d16cc1ce60c2f2727056d67f837c92900591d5346f285e68978139e27"
+        ],
+        [
+          "consumer.py",
+          "fb840584d0621b4ebee992631f07735be2d23c14084de3a6536e98a39ae61840"
+        ],
+        [
+          "other.py",
+          "136f5e4b7002e42390414627c9f0829d2cbe14d830af009dcd62ed4b469e8072"
+        ],
+        [
+          "storage.py",
+          "8e640ca9ecc94c47b832319533482123e85feb4d213e4e354ae0af51feaf6e4f"
+        ],
+        [
+          "tests/test_api.py",
+          "066c1335e072a25c778631b7dc94fa9aa8268ea44233a89b0dc623b71c764fb9"
+        ],
+        [
+          "unrelated.py",
+          "689d51982c4c7e6a90dc46d8c3419f9550e36f12feafef79ea9d4b6de6eada39"
+        ]
+      ]
+    },
+    "engine": "prepared-inspection/1",
+    "selection": {
+      "paths": [
+        "api.py",
+        "storage.py"
+      ]
+    }
+  },
+  "public": {
+    "impact": {
+      "scope": ".",
+      "targets": [
+        {
+          "path": "storage.py",
+          "line": 1,
+          "name": "save",
+          "kind": "CALLABLE"
+        }
+      ],
+      "consumers": [
+        {
+          "caller": {
+            "path": "api.py",
+            "line": 2,
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "symbol": "wrapper"
+          },
+          "call": {
+            "path": "api.py",
+            "line": 3,
+            "name": "save",
+            "kind": "CALL"
+          },
+          "resolution": "resolved",
+          "result_uses": [],
+          "hops": 1,
+          "result_flow": {
+            "identity": "unknown",
+            "boundaries": [],
+            "ownership": "unproven",
+            "inventory": "open",
+            "next": "Inspect the call's enclosing statement; no observed use does not prove discard or a leak."
+          },
+          "via": [
+            {
+              "path": "storage.py",
+              "line": 1,
+              "name": "save",
+              "kind": "CALLABLE"
+            }
+          ],
+          "usage_status": "unknown"
+        },
+        {
+          "caller": {
+            "path": "api.py",
+            "line": 2,
+            "name": "wrapper",
+            "kind": "CALLABLE",
+            "symbol": "wrapper"
+          },
+          "call": {
+            "path": "api.py",
+            "line": 4,
+            "name": "save",
+            "kind": "CALL"
+          },
+          "resolution": "resolved",
+          "result_uses": [
+            {
+              "kind": "assignment",
+              "path": "api.py",
+              "line": 4
+            },
+            {
+              "kind": "receiver",
+              "path": "api.py",
+              "line": 6
+            },
+            {
+              "kind": "argument",
+              "path": "api.py",
+              "line": 7,
+              "position": 0
+            },
+            {
+              "kind": "return",
+              "path": "api.py",
+              "line": 8
+            }
+          ],
+          "hops": 1,
+          "result_flow": {
+            "identity": "observed",
+            "boundaries": [
+              {
+                "kind": "receiver",
+                "path": "api.py",
+                "line": 6,
+                "status": "receiver_use",
+                "next": "Read the receiving method's contract and failure paths; ownership is not established by this use."
+              },
+              {
+                "kind": "argument",
+                "path": "api.py",
+                "line": 7,
+                "position": 0,
+                "consumer": {
+                  "path": "api.py",
+                  "line": 7,
+                  "name": "accept",
+                  "kind": "CALL"
+                },
+                "resolution": "not_inspected",
+                "status": "argument_boundary",
+                "next": "Read the receiving method's contract and failure paths; ownership is not established by this use."
+              },
+              {
+                "kind": "return",
+                "path": "api.py",
+                "line": 8,
+                "status": "returned_identity",
+                "next": "Inspect callers and their ownership contract.",
+                "followed": true
+              }
+            ],
+            "ownership": "unproven",
+            "inventory": "open"
+          },
+          "via": [
+            {
+              "path": "storage.py",
+              "line": 1,
+              "name": "save",
+              "kind": "CALLABLE"
+            }
+          ]
+        },
+        {
+          "caller": {
+            "path": "tests/test_api.py",
+            "line": 2,
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "symbol": "test_value"
+          },
+          "call": {
+            "path": "tests/test_api.py",
+            "line": 3,
+            "name": "wrapper",
+            "kind": "CALL"
+          },
+          "resolution": "resolved",
+          "result_uses": [
+            {
+              "kind": "return",
+              "path": "tests/test_api.py",
+              "line": 4
+            }
+          ],
+          "hops": 2,
+          "result_flow": {
+            "identity": "observed",
+            "boundaries": [
+              {
+                "kind": "return",
+                "path": "tests/test_api.py",
+                "line": 4,
+                "status": "returned_identity",
+                "next": "Inspect callers and their ownership contract.",
+                "followed": true
+              }
+            ],
+            "ownership": "unproven",
+            "inventory": "open"
+          },
+          "via": [
+            {
+              "path": "api.py",
+              "line": 2,
+              "name": "wrapper",
+              "kind": "CALLABLE"
+            }
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "caller": {
+            "path": "tests/test_api.py",
+            "line": 2,
+            "name": "test_value",
+            "kind": "CALLABLE",
+            "symbol": "test_value"
+          },
+          "call": {
+            "path": "tests/test_api.py",
+            "line": 3,
+            "name": "wrapper",
+            "kind": "CALL"
+          },
+          "resolution": "resolved",
+          "result_uses": [
+            {
+              "kind": "return",
+              "path": "tests/test_api.py",
+              "line": 4
+            }
+          ],
+          "hops": 2,
+          "result_flow": {
+            "identity": "observed",
+            "boundaries": [
+              {
+                "kind": "return",
+                "path": "tests/test_api.py",
+                "line": 4,
+                "status": "returned_identity",
+                "next": "Inspect callers and their ownership contract.",
+                "followed": true
+              }
+            ],
+            "ownership": "unproven",
+            "inventory": "open"
+          },
+          "via": [
+            {
+              "path": "api.py",
+              "line": 2,
+              "name": "wrapper",
+              "kind": "CALLABLE"
+            }
+          ]
+        }
+      ],
+      "unresolved_candidates": [],
+      "truncated": false,
+      "depth": 3,
+      "coverage": {
+        "definitions": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "calls": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 3
+        },
+        "targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 2
+        },
+        "possible_targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 2
+        },
+        "usages": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 2
+        }
+      },
+      "claim": "Observed result consumers and return propagation. Test links show use, not assertion coverage; empty uses are not proof of discard.",
+      "status": "observed",
+      "acquisition": {
+        "basis": "requested identities and explicit imports, one frontier at a time",
+        "claim": "Statically modeled calls; computed imports/member names and runtime dispatch are not traced.",
+        "paths": [
+          "api.py",
+          "storage.py",
+          "tests/test_api.py"
+        ],
+        "issues": [],
+        "import_files_read": 6,
+        "expanded_symbols": 3,
+        "depth_limited": false
+      }
+    },
+    "roles": {
+      "scope": ".",
+      "nodes": [
+        {
+          "path": "api.py",
+          "line": 2,
+          "name": "wrapper",
+          "kind": "CALLABLE",
+          "symbol": "wrapper",
+          "id": 0,
+          "roles": [
+            {
+              "role": "coordinator_candidate",
+              "basis": "Invokes multiple operations."
+            },
+            {
+              "role": "delegates",
+              "basis": "Calls a resolved project callable."
+            }
+          ],
+          "inference": "structural_hypothesis"
+        },
+        {
+          "path": "storage.py",
+          "line": 1,
+          "name": "save",
+          "kind": "CALLABLE",
+          "symbol": "save",
+          "id": 1,
+          "roles": [
+            {
+              "role": "executor_candidate",
+              "basis": "End of the observed project-call chain; external effects remain unverified."
+            }
+          ],
+          "inference": "structural_hypothesis"
+        },
+        {
+          "path": "tests/test_api.py",
+          "line": 2,
+          "name": "test_value",
+          "kind": "CALLABLE",
+          "symbol": "test_value",
+          "id": 2,
+          "roles": [
+            {
+              "role": "entry_candidate",
+              "basis": "No incoming calls observed in this scope."
+            },
+            {
+              "role": "delegates",
+              "basis": "Calls a resolved project callable."
+            }
+          ],
+          "inference": "structural_hypothesis"
+        }
+      ],
+      "calls": [
+        {
+          "from": 0,
+          "to": [
+            1
+          ],
+          "call": {
+            "path": "api.py",
+            "line": 3,
+            "name": "save",
+            "kind": "CALL"
+          },
+          "resolution": "resolved"
+        },
+        {
+          "from": 0,
+          "to": [
+            1
+          ],
+          "call": {
+            "path": "api.py",
+            "line": 4,
+            "name": "save",
+            "kind": "CALL"
+          },
+          "resolution": "resolved"
+        },
+        {
+          "from": 0,
+          "to": [],
+          "call": {
+            "path": "api.py",
+            "line": 6,
+            "name": "close",
+            "kind": "CALL"
+          },
+          "resolution": "unresolved"
+        },
+        {
+          "from": 0,
+          "to": [],
+          "call": {
+            "path": "api.py",
+            "line": 7,
+            "name": "accept",
+            "kind": "CALL"
+          },
+          "resolution": "unresolved"
+        },
+        {
+          "from": 2,
+          "to": [
+            0
+          ],
+          "call": {
+            "path": "tests/test_api.py",
+            "line": 3,
+            "name": "wrapper",
+            "kind": "CALL"
+          },
+          "resolution": "resolved"
+        }
+      ],
+      "truncated": false,
+      "coverage": {
+        "definitions": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 1
+        },
+        "calls": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 2
+        },
+        "targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 2
+        },
+        "possible_targets": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 2
+        },
+        "usages": {
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "evaluations": 0
+        }
+      },
+      "claim": "Roles are hypotheses from observed calls, not proof of business responsibility or public visibility.",
+      "status": "observed",
+      "acquisition": {
+        "basis": "requested identities and explicit imports, one frontier at a time",
+        "claim": "Statically modeled calls; computed imports/member names and runtime dispatch are not traced.",
+        "paths": [
+          "api.py",
+          "storage.py",
+          "tests/test_api.py"
+        ],
+        "issues": [],
+        "import_files_read": 6,
+        "expanded_symbols": 3,
+        "depth_limited": false
+      }
+    },
+    "available": {
+      "status": "candidates",
+      "context": "consumer.py",
+      "candidates": [
+        {
+          "target": {
+            "path": "storage.py",
+            "line": 1,
+            "name": "save",
+            "kind": "CALLABLE"
+          },
+          "expression": "backend.save",
+          "basis": "explicit_module_import",
+          "line": 1,
+          "status": "candidate",
+          "obligations": [
+            "binding not shadowed at the use site",
+            "module initialization completed",
+            "argument and return type compatibility",
+            "effects and errors preserved"
+          ]
+        }
+      ],
+      "issues": [],
+      "claim": "Explicit access spellings only; absence does not prove unavailability. No replacement or autofix is certified.",
+      "acquisition": {
+        "basis": "requested identities and explicit imports, one frontier at a time",
+        "claim": "Statically modeled calls; computed imports/member names and runtime dispatch are not traced.",
+        "paths": [
+          "storage.py"
+        ],
+        "issues": [],
+        "import_files_read": 0,
+        "expanded_symbols": 0,
+        "depth_limited": false
+      }
+    }
+  },
+  "requests": [
+    {
+      "name": "definitions",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { callable $f {name:\"save\";} select $f; }",
+      "source_paths": [
+        "storage.py"
+      ]
+    },
+    {
+      "name": "calls",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { either { edge TARGET($site,[\"storage.py::/CALLABLE:save@0:20\"]); } or { edge MAY_TARGET($site,[\"storage.py::/CALLABLE:save@0:20\"]); } edge HAS_CALL($owner,$site); select $owner,$site; }",
+      "source_paths": [
+        "api.py",
+        "storage.py"
+      ]
+    },
+    {
+      "name": "targets",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { edge TARGET([\"api.py::op:39:45:call\", \"api.py::op:53:59:call\"],$target); edge TARGET($site,$target); either { where $site == \"api.py::op:39:45:call\"; } or { where $site == \"api.py::op:53:59:call\"; } select $site,$target; }",
+      "source_paths": [
+        "api.py",
+        "storage.py"
+      ]
+    },
+    {
+      "name": "possible_targets",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { edge MAY_TARGET([\"api.py::op:39:45:call\", \"api.py::op:53:59:call\"],$target); edge MAY_TARGET($site,$target); either { where $site == \"api.py::op:39:45:call\"; } or { where $site == \"api.py::op:53:59:call\"; } select $site,$target; }",
+      "source_paths": [
+        "api.py",
+        "storage.py"
+      ]
+    },
+    {
+      "name": "usages",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { edge TARGET([\"api.py::op:39:45:call\", \"api.py::op:53:59:call\"],$target); edge TARGET($call,$target); edge HAS_CALL($owner,$call); either { where $call == \"api.py::op:39:45:call\"; } or { where $call == \"api.py::op:53:59:call\"; } callable $target {} callable $owner {body {let $value=call $target {} as $site;}} usages of $value as $use {} select $owner,$target,$site,$use; }",
+      "source_paths": [
+        "api.py",
+        "storage.py"
+      ]
+    },
+    {
+      "name": "calls",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { either { edge TARGET($site,[\"api.py::/CALLABLE:wrapper@0:20\"]); } or { edge MAY_TARGET($site,[\"api.py::/CALLABLE:wrapper@0:20\"]); } edge HAS_CALL($owner,$site); select $owner,$site; }",
+      "source_paths": [
+        "api.py",
+        "tests/test_api.py"
+      ]
+    },
+    {
+      "name": "targets",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { edge TARGET([\"tests/test_api.py::op:45:54:call\"],$target); edge TARGET($site,$target); where $site == \"tests/test_api.py::op:45:54:call\"; select $site,$target; }",
+      "source_paths": [
+        "api.py",
+        "tests/test_api.py"
+      ]
+    },
+    {
+      "name": "possible_targets",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { edge MAY_TARGET([\"tests/test_api.py::op:45:54:call\"],$target); edge MAY_TARGET($site,$target); where $site == \"tests/test_api.py::op:45:54:call\"; select $site,$target; }",
+      "source_paths": [
+        "api.py",
+        "tests/test_api.py"
+      ]
+    },
+    {
+      "name": "usages",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { edge TARGET([\"tests/test_api.py::op:45:54:call\"],$target); edge TARGET($call,$target); edge HAS_CALL($owner,$call); where $call == \"tests/test_api.py::op:45:54:call\"; callable $target {} callable $owner {body {let $value=call $target {} as $site;}} usages of $value as $use {} select $owner,$target,$site,$use; }",
+      "source_paths": [
+        "api.py",
+        "tests/test_api.py"
+      ]
+    },
+    {
+      "name": "calls",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { either { edge TARGET($site,[\"tests/test_api.py::/CALLABLE:test_value@0:20\"]); } or { edge MAY_TARGET($site,[\"tests/test_api.py::/CALLABLE:test_value@0:20\"]); } edge HAS_CALL($owner,$site); select $owner,$site; }",
+      "source_paths": [
+        "tests/test_api.py"
+      ]
+    },
+    {
+      "name": "definitions",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { callable $f {name:\"wrapper\";} select $f; }",
+      "source_paths": [
+        "api.py"
+      ]
+    },
+    {
+      "name": "calls",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { either { edge TARGET($site,[\"api.py::/CALLABLE:wrapper@0:20\"]); } or { edge MAY_TARGET($site,[\"api.py::/CALLABLE:wrapper@0:20\"]); } or { edge HAS_CALL([\"api.py::/CALLABLE:wrapper@0:20\"],$site); } edge HAS_CALL($owner,$site); select $owner,$site; }",
+      "source_paths": [
+        "api.py",
+        "storage.py",
+        "tests/test_api.py"
+      ]
+    },
+    {
+      "name": "targets",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { edge TARGET([\"api.py::op:39:45:call\", \"api.py::op:53:59:call\", \"api.py::op:75:88:call\", \"api.py::op:90:103:call\", \"tests/test_api.py::op:45:54:call\"],$target); edge TARGET($site,$target); either { where $site == \"api.py::op:39:45:call\"; } or { where $site == \"api.py::op:53:59:call\"; } or { where $site == \"api.py::op:75:88:call\"; } or { where $site == \"api.py::op:90:103:call\"; } or { where $site == \"tests/test_api.py::op:45:54:call\"; } select $site,$target; }",
+      "source_paths": [
+        "api.py",
+        "storage.py",
+        "tests/test_api.py"
+      ]
+    },
+    {
+      "name": "possible_targets",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { edge MAY_TARGET([\"api.py::op:39:45:call\", \"api.py::op:53:59:call\", \"api.py::op:75:88:call\", \"api.py::op:90:103:call\", \"tests/test_api.py::op:45:54:call\"],$target); edge MAY_TARGET($site,$target); either { where $site == \"api.py::op:39:45:call\"; } or { where $site == \"api.py::op:53:59:call\"; } or { where $site == \"api.py::op:75:88:call\"; } or { where $site == \"api.py::op:90:103:call\"; } or { where $site == \"tests/test_api.py::op:45:54:call\"; } select $site,$target; }",
+      "source_paths": [
+        "api.py",
+        "storage.py",
+        "tests/test_api.py"
+      ]
+    },
+    {
+      "name": "calls",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { either { edge TARGET($site,[\"storage.py::/CALLABLE:save@0:20\", \"tests/test_api.py::/CALLABLE:test_value@0:20\"]); } or { edge MAY_TARGET($site,[\"storage.py::/CALLABLE:save@0:20\", \"tests/test_api.py::/CALLABLE:test_value@0:20\"]); } or { edge HAS_CALL([\"storage.py::/CALLABLE:save@0:20\", \"tests/test_api.py::/CALLABLE:test_value@0:20\"],$site); } edge HAS_CALL($owner,$site); select $owner,$site; }",
+      "source_paths": [
+        "api.py",
+        "storage.py",
+        "tests/test_api.py"
+      ]
+    },
+    {
+      "name": "targets",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { edge TARGET([\"api.py::op:39:45:call\", \"api.py::op:53:59:call\", \"tests/test_api.py::op:45:54:call\"],$target); edge TARGET($site,$target); either { where $site == \"api.py::op:39:45:call\"; } or { where $site == \"api.py::op:53:59:call\"; } or { where $site == \"tests/test_api.py::op:45:54:call\"; } select $site,$target; }",
+      "source_paths": [
+        "api.py",
+        "storage.py",
+        "tests/test_api.py"
+      ]
+    },
+    {
+      "name": "possible_targets",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { edge MAY_TARGET([\"api.py::op:39:45:call\", \"api.py::op:53:59:call\", \"tests/test_api.py::op:45:54:call\"],$target); edge MAY_TARGET($site,$target); either { where $site == \"api.py::op:39:45:call\"; } or { where $site == \"api.py::op:53:59:call\"; } or { where $site == \"tests/test_api.py::op:45:54:call\"; } select $site,$target; }",
+      "source_paths": [
+        "api.py",
+        "storage.py",
+        "tests/test_api.py"
+      ]
+    },
+    {
+      "name": "definitions",
+      "query": "language \"kql/2\"; module ken.inspection; query inspect { callable $f {name:\"save\";} select $f; }",
+      "source_paths": [
+        "storage.py"
+      ]
+    }
+  ]
+}

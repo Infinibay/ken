@@ -184,7 +184,9 @@ impl<'a> Lexer<'a> {
                     break;
                 }
             }
-            if serde_json::from_str::<String>(&self.text[start..self.pos]).is_err() {
+            if serde_json::from_str::<Box<serde_json::value::RawValue>>(&self.text[start..self.pos])
+                .is_err()
+            {
                 return Err(ParseError::new(
                     "invalid JSON string",
                     self.span(start, self.pos),

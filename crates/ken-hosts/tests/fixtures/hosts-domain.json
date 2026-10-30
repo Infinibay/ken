@@ -1,0 +1,1599 @@
+{
+  "format": "ken-hosts-policy/1",
+  "runtime": "3.12.9",
+  "hooks": [
+    {
+      "host": "claude",
+      "id": "empty",
+      "input": null,
+      "merged": {
+        "hooks": {
+          "SessionStart": [
+            {
+              "matcher": "startup|resume|clear|compact",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook session-start"
+                }
+              ]
+            }
+          ],
+          "SessionEnd": [
+            {
+              "matcher": "*",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook session-end"
+                }
+              ]
+            }
+          ],
+          "UserPromptSubmit": [
+            {
+              "matcher": "*",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook user-prompt"
+                }
+              ]
+            }
+          ],
+          "PreToolUse": [
+            {
+              "matcher": "Read|Edit|Write|MultiEdit|Glob|Grep|Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase pre"
+                }
+              ]
+            }
+          ],
+          "PostToolUse": [
+            {
+              "matcher": "Read|Edit|Write|MultiEdit|Glob|Grep|Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase post"
+                }
+              ]
+            }
+          ],
+          "Stop": [
+            {
+              "matcher": "*",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook stop"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "touched": [
+        "SessionStart",
+        "SessionEnd",
+        "UserPromptSubmit",
+        "PreToolUse",
+        "PostToolUse",
+        "Stop"
+      ],
+      "again": {
+        "hooks": {
+          "SessionStart": [
+            {
+              "matcher": "startup|resume|clear|compact",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook session-start"
+                }
+              ]
+            }
+          ],
+          "SessionEnd": [
+            {
+              "matcher": "*",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook session-end"
+                }
+              ]
+            }
+          ],
+          "UserPromptSubmit": [
+            {
+              "matcher": "*",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook user-prompt"
+                }
+              ]
+            }
+          ],
+          "PreToolUse": [
+            {
+              "matcher": "Read|Edit|Write|MultiEdit|Glob|Grep|Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase pre"
+                }
+              ]
+            }
+          ],
+          "PostToolUse": [
+            {
+              "matcher": "Read|Edit|Write|MultiEdit|Glob|Grep|Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase post"
+                }
+              ]
+            }
+          ],
+          "Stop": [
+            {
+              "matcher": "*",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook stop"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "twice": [],
+      "removed": {}
+    },
+    {
+      "host": "claude",
+      "id": "user",
+      "input": {
+        "model": "custom",
+        "permissions": {
+          "allow": [
+            "Bash(pytest *)"
+          ]
+        },
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "echo user-pre"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "merged": {
+        "model": "custom",
+        "permissions": {
+          "allow": [
+            "Bash(pytest *)"
+          ]
+        },
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "echo user-pre"
+                }
+              ]
+            },
+            {
+              "matcher": "Read|Edit|Write|MultiEdit|Glob|Grep|Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase pre"
+                }
+              ]
+            }
+          ],
+          "SessionStart": [
+            {
+              "matcher": "startup|resume|clear|compact",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook session-start"
+                }
+              ]
+            }
+          ],
+          "SessionEnd": [
+            {
+              "matcher": "*",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook session-end"
+                }
+              ]
+            }
+          ],
+          "UserPromptSubmit": [
+            {
+              "matcher": "*",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook user-prompt"
+                }
+              ]
+            }
+          ],
+          "PostToolUse": [
+            {
+              "matcher": "Read|Edit|Write|MultiEdit|Glob|Grep|Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase post"
+                }
+              ]
+            }
+          ],
+          "Stop": [
+            {
+              "matcher": "*",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook stop"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "touched": [
+        "SessionStart",
+        "SessionEnd",
+        "UserPromptSubmit",
+        "PreToolUse",
+        "PostToolUse",
+        "Stop"
+      ],
+      "again": {
+        "model": "custom",
+        "permissions": {
+          "allow": [
+            "Bash(pytest *)"
+          ]
+        },
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "echo user-pre"
+                }
+              ]
+            },
+            {
+              "matcher": "Read|Edit|Write|MultiEdit|Glob|Grep|Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase pre"
+                }
+              ]
+            }
+          ],
+          "SessionStart": [
+            {
+              "matcher": "startup|resume|clear|compact",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook session-start"
+                }
+              ]
+            }
+          ],
+          "SessionEnd": [
+            {
+              "matcher": "*",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook session-end"
+                }
+              ]
+            }
+          ],
+          "UserPromptSubmit": [
+            {
+              "matcher": "*",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook user-prompt"
+                }
+              ]
+            }
+          ],
+          "PostToolUse": [
+            {
+              "matcher": "Read|Edit|Write|MultiEdit|Glob|Grep|Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase post"
+                }
+              ]
+            }
+          ],
+          "Stop": [
+            {
+              "matcher": "*",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook stop"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "twice": [],
+      "removed": {
+        "model": "custom",
+        "permissions": {
+          "allow": [
+            "Bash(pytest *)"
+          ]
+        },
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "echo user-pre"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "host": "codex",
+      "id": "empty",
+      "input": null,
+      "merged": {
+        "hooks": {
+          "SessionStart": [
+            {
+              "matcher": "startup|resume|clear|compact",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook session-start"
+                }
+              ]
+            }
+          ],
+          "UserPromptSubmit": [
+            {
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook user-prompt"
+                }
+              ]
+            }
+          ],
+          "PreToolUse": [
+            {
+              "matcher": "Bash|apply_patch|functions.exec_command|functions.apply_patch|functions.view_image",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase pre"
+                }
+              ]
+            }
+          ],
+          "PostToolUse": [
+            {
+              "matcher": "Bash|apply_patch|functions.exec_command|functions.apply_patch|functions.view_image",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase post"
+                }
+              ]
+            }
+          ],
+          "Stop": [
+            {
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook stop"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "touched": [
+        "SessionStart",
+        "UserPromptSubmit",
+        "PreToolUse",
+        "PostToolUse",
+        "Stop"
+      ],
+      "again": {
+        "hooks": {
+          "SessionStart": [
+            {
+              "matcher": "startup|resume|clear|compact",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook session-start"
+                }
+              ]
+            }
+          ],
+          "UserPromptSubmit": [
+            {
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook user-prompt"
+                }
+              ]
+            }
+          ],
+          "PreToolUse": [
+            {
+              "matcher": "Bash|apply_patch|functions.exec_command|functions.apply_patch|functions.view_image",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase pre"
+                }
+              ]
+            }
+          ],
+          "PostToolUse": [
+            {
+              "matcher": "Bash|apply_patch|functions.exec_command|functions.apply_patch|functions.view_image",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase post"
+                }
+              ]
+            }
+          ],
+          "Stop": [
+            {
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook stop"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "twice": [],
+      "removed": {}
+    },
+    {
+      "host": "codex",
+      "id": "user",
+      "input": {
+        "model": "custom",
+        "permissions": {
+          "allow": [
+            "Bash(pytest *)"
+          ]
+        },
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "echo user-pre"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "merged": {
+        "model": "custom",
+        "permissions": {
+          "allow": [
+            "Bash(pytest *)"
+          ]
+        },
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "echo user-pre"
+                }
+              ]
+            },
+            {
+              "matcher": "Bash|apply_patch|functions.exec_command|functions.apply_patch|functions.view_image",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase pre"
+                }
+              ]
+            }
+          ],
+          "SessionStart": [
+            {
+              "matcher": "startup|resume|clear|compact",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook session-start"
+                }
+              ]
+            }
+          ],
+          "UserPromptSubmit": [
+            {
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook user-prompt"
+                }
+              ]
+            }
+          ],
+          "PostToolUse": [
+            {
+              "matcher": "Bash|apply_patch|functions.exec_command|functions.apply_patch|functions.view_image",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase post"
+                }
+              ]
+            }
+          ],
+          "Stop": [
+            {
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook stop"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "touched": [
+        "SessionStart",
+        "UserPromptSubmit",
+        "PreToolUse",
+        "PostToolUse",
+        "Stop"
+      ],
+      "again": {
+        "model": "custom",
+        "permissions": {
+          "allow": [
+            "Bash(pytest *)"
+          ]
+        },
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "echo user-pre"
+                }
+              ]
+            },
+            {
+              "matcher": "Bash|apply_patch|functions.exec_command|functions.apply_patch|functions.view_image",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase pre"
+                }
+              ]
+            }
+          ],
+          "SessionStart": [
+            {
+              "matcher": "startup|resume|clear|compact",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook session-start"
+                }
+              ]
+            }
+          ],
+          "UserPromptSubmit": [
+            {
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook user-prompt"
+                }
+              ]
+            }
+          ],
+          "PostToolUse": [
+            {
+              "matcher": "Bash|apply_patch|functions.exec_command|functions.apply_patch|functions.view_image",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook tool-call --phase post"
+                }
+              ]
+            }
+          ],
+          "Stop": [
+            {
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "ken hook stop"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "twice": [],
+      "removed": {
+        "model": "custom",
+        "permissions": {
+          "allow": [
+            "Bash(pytest *)"
+          ]
+        },
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "echo user-pre"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "codex": [
+    {
+      "input": "",
+      "has": false,
+      "appended": "[mcp_servers.ken]\ncommand = \"ken\"\nargs = [\"mcp\"]\n",
+      "removed": ""
+    },
+    {
+      "input": "[other]\nx=1\n",
+      "has": false,
+      "appended": "[other]\nx=1\n\n[mcp_servers.ken]\ncommand = \"ken\"\nargs = [\"mcp\"]\n",
+      "removed": "[other]\nx=1\n"
+    },
+    {
+      "input": "[other]\nx=1\n\n[mcp_servers.ken]\ncommand = \"ken\"\nargs = [\"mcp\"]\n",
+      "has": true,
+      "appended": "[other]\nx=1\n\n[mcp_servers.ken]\ncommand = \"ken\"\nargs = [\"mcp\"]\n\n[mcp_servers.ken]\ncommand = \"ken\"\nargs = [\"mcp\"]\n",
+      "removed": "[other]\nx=1\n\n"
+    },
+    {
+      "input": "[mcp_servers.ken]\ncommand = \"ken\"\nargs = [\"mcp\", \"--debug\"]\n[after]\ny = 2\n",
+      "has": true,
+      "appended": "[mcp_servers.ken]\ncommand = \"ken\"\nargs = [\"mcp\", \"--debug\"]\n[after]\ny = 2\n\n[mcp_servers.ken]\ncommand = \"ken\"\nargs = [\"mcp\"]\n",
+      "removed": "[after]\ny = 2\n"
+    }
+  ],
+  "jsonc": [
+    {
+      "input": "// top\n{\"url\":\"https://example.com/a//b\",\"mcp\":{\"other\":{\"url\":\"https://other\"},},}",
+      "result": {
+        "url": "https://example.com/a//b",
+        "mcp": {
+          "other": {
+            "url": "https://other"
+          }
+        }
+      }
+    },
+    {
+      "input": "{\"text\":\"be careful with /* nested */ and // slashes\",\"array\":[1,2,],}",
+      "result": {
+        "text": "be careful with /* nested */ and // slashes",
+        "array": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "input": "{\"literal\":\",}\",\"another\":\", ]\",}",
+      "result": {
+        "literal": "}",
+        "another": " ]"
+      }
+    },
+    {
+      "input": "{\"x\":1}/* unterminated",
+      "result": {
+        "x": 1
+      }
+    }
+  ],
+  "opencode": [
+    {
+      "input": null,
+      "merged": {
+        "mcp": {
+          "ken": {
+            "type": "local",
+            "command": [
+              "ken",
+              "mcp"
+            ],
+            "enabled": true
+          }
+        }
+      },
+      "touched": true,
+      "removed": {}
+    },
+    {
+      "input": {
+        "model": "custom",
+        "mcp": {
+          "other": {
+            "type": "remote",
+            "url": "https://other"
+          }
+        }
+      },
+      "merged": {
+        "model": "custom",
+        "mcp": {
+          "other": {
+            "type": "remote",
+            "url": "https://other"
+          },
+          "ken": {
+            "type": "local",
+            "command": [
+              "ken",
+              "mcp"
+            ],
+            "enabled": true
+          }
+        }
+      },
+      "touched": true,
+      "removed": {
+        "model": "custom",
+        "mcp": {
+          "other": {
+            "type": "remote",
+            "url": "https://other"
+          }
+        }
+      }
+    },
+    {
+      "input": {
+        "mcp": {
+          "ken": {
+            "type": "local",
+            "command": [
+              "ken",
+              "mcp"
+            ],
+            "enabled": true
+          }
+        }
+      },
+      "merged": {
+        "mcp": {
+          "ken": {
+            "type": "local",
+            "command": [
+              "ken",
+              "mcp"
+            ],
+            "enabled": true
+          }
+        }
+      },
+      "touched": false,
+      "removed": {}
+    }
+  ],
+  "destinations": [
+    {
+      "selection": {
+        "claude": false,
+        "codex": false,
+        "opencode": false,
+        "deepseek": false
+      },
+      "result": []
+    },
+    {
+      "selection": {
+        "claude": false,
+        "codex": false,
+        "opencode": false,
+        "deepseek": true
+      },
+      "result": [
+        ".dsh/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": false,
+        "codex": false,
+        "opencode": true,
+        "deepseek": false
+      },
+      "result": [
+        ".opencode/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": false,
+        "codex": false,
+        "opencode": true,
+        "deepseek": true
+      },
+      "result": [
+        ".opencode/skills",
+        ".dsh/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": false,
+        "codex": true,
+        "opencode": false,
+        "deepseek": false
+      },
+      "result": [
+        ".agents/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": false,
+        "codex": true,
+        "opencode": false,
+        "deepseek": true
+      },
+      "result": [
+        ".agents/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": false,
+        "codex": true,
+        "opencode": true,
+        "deepseek": false
+      },
+      "result": [
+        ".agents/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": false,
+        "codex": true,
+        "opencode": true,
+        "deepseek": true
+      },
+      "result": [
+        ".agents/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": true,
+        "codex": false,
+        "opencode": false,
+        "deepseek": false
+      },
+      "result": [
+        ".claude/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": true,
+        "codex": false,
+        "opencode": false,
+        "deepseek": true
+      },
+      "result": [
+        ".claude/skills",
+        ".dsh/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": true,
+        "codex": false,
+        "opencode": true,
+        "deepseek": false
+      },
+      "result": [
+        ".claude/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": true,
+        "codex": false,
+        "opencode": true,
+        "deepseek": true
+      },
+      "result": [
+        ".claude/skills",
+        ".dsh/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": true,
+        "codex": true,
+        "opencode": false,
+        "deepseek": false
+      },
+      "result": [
+        ".claude/skills",
+        ".agents/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": true,
+        "codex": true,
+        "opencode": false,
+        "deepseek": true
+      },
+      "result": [
+        ".claude/skills",
+        ".agents/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": true,
+        "codex": true,
+        "opencode": true,
+        "deepseek": false
+      },
+      "result": [
+        ".claude/skills",
+        ".agents/skills"
+      ]
+    },
+    {
+      "selection": {
+        "claude": true,
+        "codex": true,
+        "opencode": true,
+        "deepseek": true
+      },
+      "result": [
+        ".claude/skills",
+        ".agents/skills"
+      ]
+    }
+  ],
+  "detection": [
+    {
+      "paths": [],
+      "result": [
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "paths": [
+        ".codex"
+      ],
+      "result": [
+        false,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "paths": [
+        ".claude",
+        ".codex"
+      ],
+      "result": [
+        true,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "paths": [
+        "opencode.json"
+      ],
+      "result": [
+        false,
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "paths": [
+        ".opencode"
+      ],
+      "result": [
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "paths": [
+        ".opencode/agents/x.md"
+      ],
+      "result": [
+        false,
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "paths": [
+        ".dsh"
+      ],
+      "result": [
+        false,
+        false,
+        false,
+        true
+      ]
+    }
+  ],
+  "deepseek": {
+    "entry": {
+      "id": "ken-mcp",
+      "name": "@deepseek-ai/dsh-mcp-client",
+      "config": {
+        "serverName": "ken",
+        "transport": "stdio",
+        "command": "/home/andres/Proyects/ken/.ken/rust-migration/x86-runtime-cores/validation-venv/bin/python",
+        "args": [
+          "-m",
+          "ken",
+          "mcp",
+          "/fixture/project with quotes"
+        ],
+        "cwd": "/fixture/project with quotes"
+      }
+    },
+    "launch": "cd '/fixture/project'\"'\"'s path' && dsh --profile web --patch .dsh/ken.cordis.json",
+    "python": "/home/andres/Proyects/ken/.ken/rust-migration/x86-runtime-cores/validation-venv/bin/python"
+  },
+  "catalog": {
+    "ken-find-code-patterns": {
+      "SKILL.md": "c182bfa31692b972523edcba2a1bf345cc777ecce65e15ae33c48f3e2e90cc9e",
+      "references/kql2/README.md": "0a7f7e8f7961d28c695605786db308315a0fb4d4f68d958846533f16d7939c9b",
+      "references/kql2/graph-queries.md": "8d875a6b888adfa0ba0476d47d60a4a534a5a4761b8b81c4dffd420d3407616b",
+      "references/kql2/path-contracts.md": "cc6e8c918faef1d3e3c7fb5845eec66146020695a54a0975e222d2faff73db96",
+      "references/kql2/relationships/preview.py.txt": "d91e6187cb336218647dc948695d4f2cbaca3906bb4d67871b7ae012b3f340a4",
+      "references/kql2/relationships/publication.py.txt": "0328e4270361e561c66905cc5340cbcdb42746073199039134ece73ae0d28232",
+      "references/kql2/relationships.md": "a0dca27dd771c7073bf43d6b7f267ed6f0e1b11fb8abded01a5a08fdb0a130fd",
+      "references/kql2/sample.py.txt": "2503920e484e40bc25e6b27dd1d2173ded08531ea994dd69630be825c981c8c8",
+      "references/kql2/saved-modules.md": "ec8356e072cd8e699d271a4bea0162e301724b9c14ac6b11370e304f749780c4",
+      "references/kql2/syntax.md": "c41f02ba220fa289de0b764a4ada658677deb7112fdc8a3269564aeb2d6c70c3",
+      "references/kql2/syntax.py.txt": "bb842adab05db9884effc9d1deeb6adfbc276b7b6aed939a41874d4d583c54e0",
+      "references/kql2/values-and-patterns.md": "a98ec840f1297c4dadc77699a2628bbb12c6ff0cd1678785d417ab61bfdb2a0c"
+    },
+    "ken-investigate-bug": {
+      "SKILL.md": "2cf6fb4625003d166eb3c26a0bf72e04353dab3d4bb86b6ebbf9e5d326b3eee9",
+      "references/kql2/README.md": "0a7f7e8f7961d28c695605786db308315a0fb4d4f68d958846533f16d7939c9b",
+      "references/kql2/graph-queries.md": "8d875a6b888adfa0ba0476d47d60a4a534a5a4761b8b81c4dffd420d3407616b",
+      "references/kql2/path-contracts.md": "cc6e8c918faef1d3e3c7fb5845eec66146020695a54a0975e222d2faff73db96",
+      "references/kql2/relationships/preview.py.txt": "d91e6187cb336218647dc948695d4f2cbaca3906bb4d67871b7ae012b3f340a4",
+      "references/kql2/relationships/publication.py.txt": "0328e4270361e561c66905cc5340cbcdb42746073199039134ece73ae0d28232",
+      "references/kql2/relationships.md": "a0dca27dd771c7073bf43d6b7f267ed6f0e1b11fb8abded01a5a08fdb0a130fd",
+      "references/kql2/sample.py.txt": "2503920e484e40bc25e6b27dd1d2173ded08531ea994dd69630be825c981c8c8",
+      "references/kql2/saved-modules.md": "ec8356e072cd8e699d271a4bea0162e301724b9c14ac6b11370e304f749780c4",
+      "references/kql2/syntax.md": "c41f02ba220fa289de0b764a4ada658677deb7112fdc8a3269564aeb2d6c70c3",
+      "references/kql2/syntax.py.txt": "bb842adab05db9884effc9d1deeb6adfbc276b7b6aed939a41874d4d583c54e0",
+      "references/kql2/values-and-patterns.md": "a98ec840f1297c4dadc77699a2628bbb12c6ff0cd1678785d417ab61bfdb2a0c"
+    },
+    "ken-locate-code": {
+      "SKILL.md": "af91dccbd8e512afa970c0cb4139ffe7b1e299d0a6c75dc2b46404c93f8a16fb"
+    },
+    "ken-plan-change": {
+      "SKILL.md": "c6adffe5bb467dde0a80478c130a3208c834b0429a1e12dace090defd766c631"
+    },
+    "ken-prevent-regressions": {
+      "SKILL.md": "9becff446613a8df11f61857e9e306a98cd4238846bac8607704eb74a96e07e6",
+      "references/mutable-default-contract.json": "f92b6a9f9df4dcbfd0758b3ba9b68d27f19c8130fa72d46269367c229b267842",
+      "references/return-contract.json": "58bf7f157fe2863d45d0c553cb1f6a1eba07a6cda1e4b44a0ca3c15bb3fcd6dc",
+      "references/kql2/README.md": "0a7f7e8f7961d28c695605786db308315a0fb4d4f68d958846533f16d7939c9b",
+      "references/kql2/graph-queries.md": "8d875a6b888adfa0ba0476d47d60a4a534a5a4761b8b81c4dffd420d3407616b",
+      "references/kql2/path-contracts.md": "cc6e8c918faef1d3e3c7fb5845eec66146020695a54a0975e222d2faff73db96",
+      "references/kql2/relationships/preview.py.txt": "d91e6187cb336218647dc948695d4f2cbaca3906bb4d67871b7ae012b3f340a4",
+      "references/kql2/relationships/publication.py.txt": "0328e4270361e561c66905cc5340cbcdb42746073199039134ece73ae0d28232",
+      "references/kql2/relationships.md": "a0dca27dd771c7073bf43d6b7f267ed6f0e1b11fb8abded01a5a08fdb0a130fd",
+      "references/kql2/sample.py.txt": "2503920e484e40bc25e6b27dd1d2173ded08531ea994dd69630be825c981c8c8",
+      "references/kql2/saved-modules.md": "ec8356e072cd8e699d271a4bea0162e301724b9c14ac6b11370e304f749780c4",
+      "references/kql2/syntax.md": "c41f02ba220fa289de0b764a4ada658677deb7112fdc8a3269564aeb2d6c70c3",
+      "references/kql2/syntax.py.txt": "bb842adab05db9884effc9d1deeb6adfbc276b7b6aed939a41874d4d583c54e0",
+      "references/kql2/values-and-patterns.md": "a98ec840f1297c4dadc77699a2628bbb12c6ff0cd1678785d417ab61bfdb2a0c"
+    },
+    "ken-resume-work": {
+      "SKILL.md": "246a7a3f4033921f3d34cd7da8dd79b1fa2fc6d8aab0976c77fcd16504ddcdde"
+    },
+    "ken-reuse-code": {
+      "SKILL.md": "1883625406aefa2eda0802a38377a7e2fee9776c65f899a885e36277a97ab820"
+    },
+    "ken-understand-architecture": {
+      "SKILL.md": "7d12d532b32a89348b12554913bb1b9f1d6fa458e2c0e65d84faedfaaec3f0d2"
+    }
+  },
+  "guidance": "## Code intelligence: ken\n\nUse Ken to locate code and reuse project findings. If a `<context-rank>` block\nalready names the relevant file, read it before searching again.\n\nWrite natural-language code-search queries in **English**, translating the\nuser's intent yourself. Keep identifiers, paths, quoted source, regexes and\nKQL unchanged. Reply to the user in their preferred language.\n\nStart with one focused `ken_find(query=..., scope=...)`: `symbols` for a\nfunction or class, `files` for a file or module, `wiring` for an entry point,\nand `text` with `literal=true` for exact source. State the requested piece;\nuse `piece_kind=\"class\"`, `\"module\"`, `\"symbol\"` or `\"file\"` when known.\nUse `purpose=\"tests\"` for tests and distinguish test cases from test helpers.\n\nRead the returned code to verify a match. Compact results are the default;\nuse `ken_read` for more source and `full=true` only when debugging a ranking.\nAfter two unhelpful searches, read the likeliest file or use a literal search.\n\nBefore editing an unfamiliar file, check `ken_recall(path=...)`. For a shared\nchange, inspect `ken_related(..., relation=\"blast_radius\")` and its tests.\nSave non-obvious findings with `ken_remember`, anchored to the relevant file\nor symbol; include evidence, assumptions and a recheck step for conclusions.\n",
+  "skills": {
+    "initial": {
+      "ken-example": {
+        "SKILL.md": "23204578616d706c650a",
+        "references/old.json": "7b7d0a"
+      },
+      "ken-proof": {
+        "SKILL.md": "232050726f6f660a",
+        "references/input.txt": "65766964656e63650a"
+      }
+    },
+    "events": [
+      {
+        "action": "install",
+        "changes": {
+          "installed": [
+            ".agents/skills/ken-example",
+            ".agents/skills/ken-proof"
+          ],
+          "updated": [],
+          "unchanged": [],
+          "removed": [],
+          "preserved": {}
+        },
+        "files": {
+          ".agents/skills/ken-example/SKILL.md": {
+            "hex": "23204578616d706c650a"
+          },
+          ".agents/skills/ken-example/references/old.json": {
+            "hex": "7b7d0a"
+          },
+          ".agents/skills/ken-proof/SKILL.md": {
+            "hex": "232050726f6f660a"
+          },
+          ".agents/skills/ken-proof/references/input.txt": {
+            "hex": "65766964656e63650a"
+          },
+          ".ken/installed-skills.json": {
+            "json": {
+              "skills": {
+                ".agents/skills/ken-example": {
+                  "SKILL.md": "8ef0b048ad51a9d2ccaf9177716d7c83159a1d8c22fd37aa2b7d03c11b21b40d",
+                  "references/old.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+                },
+                ".agents/skills/ken-proof": {
+                  "SKILL.md": "4d68d22f29b3cbc12dde9f5f6d87f4561adfc7711a5a3c614b17b30d09eceb8c",
+                  "references/input.txt": "bdcf4c994585af6dd6cb1cfbff78bcc73ab27dc30a299db5bb83766ca05b5de4"
+                }
+              },
+              "version": 1
+            }
+          }
+        },
+        "bundles": {
+          "ken-example": {
+            "SKILL.md": "23204578616d706c650a",
+            "references/old.json": "7b7d0a"
+          },
+          "ken-proof": {
+            "SKILL.md": "232050726f6f660a",
+            "references/input.txt": "65766964656e63650a"
+          }
+        }
+      },
+      {
+        "action": "noop",
+        "changes": {
+          "installed": [],
+          "updated": [],
+          "unchanged": [
+            ".agents/skills/ken-example",
+            ".agents/skills/ken-proof"
+          ],
+          "removed": [],
+          "preserved": {}
+        },
+        "files": {
+          ".agents/skills/ken-example/SKILL.md": {
+            "hex": "23204578616d706c650a"
+          },
+          ".agents/skills/ken-example/references/old.json": {
+            "hex": "7b7d0a"
+          },
+          ".agents/skills/ken-proof/SKILL.md": {
+            "hex": "232050726f6f660a"
+          },
+          ".agents/skills/ken-proof/references/input.txt": {
+            "hex": "65766964656e63650a"
+          },
+          ".ken/installed-skills.json": {
+            "json": {
+              "skills": {
+                ".agents/skills/ken-example": {
+                  "SKILL.md": "8ef0b048ad51a9d2ccaf9177716d7c83159a1d8c22fd37aa2b7d03c11b21b40d",
+                  "references/old.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+                },
+                ".agents/skills/ken-proof": {
+                  "SKILL.md": "4d68d22f29b3cbc12dde9f5f6d87f4561adfc7711a5a3c614b17b30d09eceb8c",
+                  "references/input.txt": "bdcf4c994585af6dd6cb1cfbff78bcc73ab27dc30a299db5bb83766ca05b5de4"
+                }
+              },
+              "version": 1
+            }
+          }
+        },
+        "bundles": {
+          "ken-example": {
+            "SKILL.md": "23204578616d706c650a",
+            "references/old.json": "7b7d0a"
+          },
+          "ken-proof": {
+            "SKILL.md": "232050726f6f660a",
+            "references/input.txt": "65766964656e63650a"
+          }
+        }
+      },
+      {
+        "action": "update",
+        "changes": {
+          "installed": [],
+          "updated": [
+            ".agents/skills/ken-example"
+          ],
+          "unchanged": [
+            ".agents/skills/ken-proof"
+          ],
+          "removed": [],
+          "preserved": {}
+        },
+        "files": {
+          ".agents/skills/ken-example/SKILL.md": {
+            "hex": "232055706461746564206578616d706c650a"
+          },
+          ".agents/skills/ken-example/references/new.json": {
+            "hex": "7b226e6577223a747275657d0a"
+          },
+          ".agents/skills/ken-proof/SKILL.md": {
+            "hex": "232050726f6f660a"
+          },
+          ".agents/skills/ken-proof/references/input.txt": {
+            "hex": "65766964656e63650a"
+          },
+          ".ken/installed-skills.json": {
+            "json": {
+              "skills": {
+                ".agents/skills/ken-example": {
+                  "SKILL.md": "ec244653b0b78ce223651c56be3837d01d317ad54c18e4b769ccfccd6e524dc7",
+                  "references/new.json": "a0772078bc9c1b963aebd13ee9f03294e52653764c0bfde35a85073ccfd4b58e"
+                },
+                ".agents/skills/ken-proof": {
+                  "SKILL.md": "4d68d22f29b3cbc12dde9f5f6d87f4561adfc7711a5a3c614b17b30d09eceb8c",
+                  "references/input.txt": "bdcf4c994585af6dd6cb1cfbff78bcc73ab27dc30a299db5bb83766ca05b5de4"
+                }
+              },
+              "version": 1
+            }
+          }
+        },
+        "bundles": {
+          "ken-example": {
+            "SKILL.md": "232055706461746564206578616d706c650a",
+            "references/new.json": "7b226e6577223a747275657d0a"
+          },
+          "ken-proof": {
+            "SKILL.md": "232050726f6f660a",
+            "references/input.txt": "65766964656e63650a"
+          }
+        }
+      },
+      {
+        "action": "edit",
+        "changes": {
+          "installed": [],
+          "updated": [],
+          "unchanged": [
+            ".agents/skills/ken-example"
+          ],
+          "removed": [],
+          "preserved": {
+            ".agents/skills/ken-proof": "locally modified resource: SKILL.md"
+          }
+        },
+        "files": {
+          ".agents/skills/ken-example/SKILL.md": {
+            "hex": "232055706461746564206578616d706c650a"
+          },
+          ".agents/skills/ken-example/references/new.json": {
+            "hex": "7b226e6577223a747275657d0a"
+          },
+          ".agents/skills/ken-proof/SKILL.md": {
+            "hex": "4c6f63616c20637573746f6d697a6174696f6e0a"
+          },
+          ".agents/skills/ken-proof/references/input.txt": {
+            "hex": "65766964656e63650a"
+          },
+          ".ken/installed-skills.json": {
+            "json": {
+              "skills": {
+                ".agents/skills/ken-example": {
+                  "SKILL.md": "ec244653b0b78ce223651c56be3837d01d317ad54c18e4b769ccfccd6e524dc7",
+                  "references/new.json": "a0772078bc9c1b963aebd13ee9f03294e52653764c0bfde35a85073ccfd4b58e"
+                },
+                ".agents/skills/ken-proof": {
+                  "SKILL.md": "4d68d22f29b3cbc12dde9f5f6d87f4561adfc7711a5a3c614b17b30d09eceb8c",
+                  "references/input.txt": "bdcf4c994585af6dd6cb1cfbff78bcc73ab27dc30a299db5bb83766ca05b5de4"
+                }
+              },
+              "version": 1
+            }
+          }
+        },
+        "bundles": {
+          "ken-example": {
+            "SKILL.md": "232055706461746564206578616d706c650a",
+            "references/new.json": "7b226e6577223a747275657d0a"
+          },
+          "ken-proof": {
+            "SKILL.md": "232050726f6f660a",
+            "references/input.txt": "65766964656e63650a"
+          }
+        }
+      },
+      {
+        "action": "uninstall",
+        "changes": {
+          "installed": [],
+          "updated": [],
+          "unchanged": [],
+          "removed": [
+            ".agents/skills/ken-example"
+          ],
+          "preserved": {
+            ".agents/skills/ken-proof": "locally modified resource: SKILL.md"
+          }
+        },
+        "files": {
+          ".agents/skills/ken-proof/SKILL.md": {
+            "hex": "4c6f63616c20637573746f6d697a6174696f6e0a"
+          },
+          ".agents/skills/ken-proof/references/input.txt": {
+            "hex": "65766964656e63650a"
+          },
+          ".ken/installed-skills.json": {
+            "json": {
+              "skills": {
+                ".agents/skills/ken-proof": {
+                  "SKILL.md": "4d68d22f29b3cbc12dde9f5f6d87f4561adfc7711a5a3c614b17b30d09eceb8c",
+                  "references/input.txt": "bdcf4c994585af6dd6cb1cfbff78bcc73ab27dc30a299db5bb83766ca05b5de4"
+                }
+              },
+              "version": 1
+            }
+          }
+        },
+        "bundles": {
+          "ken-example": {
+            "SKILL.md": "232055706461746564206578616d706c650a",
+            "references/new.json": "7b226e6577223a747275657d0a"
+          },
+          "ken-proof": {
+            "SKILL.md": "232050726f6f660a",
+            "references/input.txt": "65766964656e63650a"
+          }
+        }
+      }
+    ]
+  },
+  "instructions": [
+    {
+      "initial": "",
+      "first": {
+        ".ken/instructions.json": {
+          "json": {
+            "version": 1,
+            "files": {
+              "AGENTS.md": {
+                "sha256": "45dc961744a0f24305a6ef99829fc137909a2937ed7ccbc4ea2e20d410807642",
+                "created": true
+              },
+              "CLAUDE.md": {
+                "sha256": "6d5d0efe87b9b209f2512d20996a133e04c45d0c6b53967bd16a8ad44f7c06cd",
+                "created": true
+              }
+            }
+          }
+        },
+        "AGENTS.md": {
+          "hex": "3c212d2d206b656e3a696e737472756374696f6e733a7374617274202d2d3e0a232320436f646520696e74656c6c6967656e63653a206b656e0a0a557365204b656e20746f206c6f6361746520636f646520616e642072657573652070726f6a6563742066696e64696e67732e204966206120603c636f6e746578742d72616e6b3e6020626c6f636b0a616c7265616479206e616d6573207468652072656c6576616e742066696c652c2072656164206974206265666f726520736561726368696e6720616761696e2e0a0a5772697465206e61747572616c2d6c616e677561676520636f64652d736561726368207175657269657320696e202a2a456e676c6973682a2a2c207472616e736c6174696e67207468650a75736572277320696e74656e7420796f757273656c662e204b656570206964656e746966696572732c2070617468732c2071756f74656420736f757263652c207265676578657320616e640a4b514c20756e6368616e6765642e205265706c7920746f20746865207573657220696e20746865697220707265666572726564206c616e67756167652e0a0a53746172742077697468206f6e6520666f637573656420606b656e5f66696e642871756572793d2e2e2e2c2073636f70653d2e2e2e29603a206073796d626f6c736020666f7220610a66756e6374696f6e206f7220636c6173732c206066696c65736020666f7220612066696c65206f72206d6f64756c652c2060776972696e676020666f7220616e20656e74727920706f696e742c0a616e6420607465787460207769746820606c69746572616c3d747275656020666f7220657861637420736f757263652e20537461746520746865207265717565737465642070696563653b0a757365206070696563655f6b696e643d22636c61737322602c2060226d6f64756c6522602c20602273796d626f6c2260206f7220602266696c652260207768656e206b6e6f776e2e0a5573652060707572706f73653d227465737473226020666f7220746573747320616e642064697374696e677569736820746573742063617365732066726f6d20746573742068656c706572732e0a0a52656164207468652072657475726e656420636f646520746f207665726966792061206d617463682e20436f6d7061637420726573756c747320617265207468652064656661756c743b0a75736520606b656e5f726561646020666f72206d6f726520736f7572636520616e64206066756c6c3d7472756560206f6e6c79207768656e20646562756767696e6720612072616e6b696e672e0a41667465722074776f20756e68656c7066756c2073656172636865732c207265616420746865206c696b656c696573742066696c65206f72207573652061206c69746572616c207365617263682e0a0a4265666f72652065646974696e6720616e20756e66616d696c6961722066696c652c20636865636b20606b656e5f726563616c6c28706174683d2e2e2e29602e20466f722061207368617265640a6368616e67652c20696e737065637420606b656e5f72656c61746564282e2e2e2c2072656c6174696f6e3d22626c6173745f72616469757322296020616e64206974732074657374732e0a53617665206e6f6e2d6f6276696f75732066696e64696e6773207769746820606b656e5f72656d656d626572602c20616e63686f72656420746f207468652072656c6576616e742066696c650a6f722073796d626f6c3b20696e636c7564652065766964656e63652c20617373756d7074696f6e7320616e642061207265636865636b207374657020666f7220636f6e636c7573696f6e732e0a3c212d2d206b656e3a696e737472756374696f6e733a656e64202d2d3e0a"
+        },
+        "CLAUDE.md": {
+          "hex": "3c212d2d206b656e3a6167656e74732d696d706f72743a7374617274202d2d3e0a404147454e54532e6d640a3c212d2d206b656e3a6167656e74732d696d706f72743a656e64202d2d3e0a"
+        }
+      },
+      "second": {
+        ".ken/instructions.json": {
+          "json": {
+            "version": 1,
+            "files": {
+              "AGENTS.md": {
+                "sha256": "45dc961744a0f24305a6ef99829fc137909a2937ed7ccbc4ea2e20d410807642",
+                "created": true
+              },
+              "CLAUDE.md": {
+                "sha256": "6d5d0efe87b9b209f2512d20996a133e04c45d0c6b53967bd16a8ad44f7c06cd",
+                "created": true
+              }
+            }
+          }
+        },
+        "AGENTS.md": {
+          "hex": "3c212d2d206b656e3a696e737472756374696f6e733a7374617274202d2d3e0a232320436f646520696e74656c6c6967656e63653a206b656e0a0a557365204b656e20746f206c6f6361746520636f646520616e642072657573652070726f6a6563742066696e64696e67732e204966206120603c636f6e746578742d72616e6b3e6020626c6f636b0a616c7265616479206e616d6573207468652072656c6576616e742066696c652c2072656164206974206265666f726520736561726368696e6720616761696e2e0a0a5772697465206e61747572616c2d6c616e677561676520636f64652d736561726368207175657269657320696e202a2a456e676c6973682a2a2c207472616e736c6174696e67207468650a75736572277320696e74656e7420796f757273656c662e204b656570206964656e746966696572732c2070617468732c2071756f74656420736f757263652c207265676578657320616e640a4b514c20756e6368616e6765642e205265706c7920746f20746865207573657220696e20746865697220707265666572726564206c616e67756167652e0a0a53746172742077697468206f6e6520666f637573656420606b656e5f66696e642871756572793d2e2e2e2c2073636f70653d2e2e2e29603a206073796d626f6c736020666f7220610a66756e6374696f6e206f7220636c6173732c206066696c65736020666f7220612066696c65206f72206d6f64756c652c2060776972696e676020666f7220616e20656e74727920706f696e742c0a616e6420607465787460207769746820606c69746572616c3d747275656020666f7220657861637420736f757263652e20537461746520746865207265717565737465642070696563653b0a757365206070696563655f6b696e643d22636c61737322602c2060226d6f64756c6522602c20602273796d626f6c2260206f7220602266696c652260207768656e206b6e6f776e2e0a5573652060707572706f73653d227465737473226020666f7220746573747320616e642064697374696e677569736820746573742063617365732066726f6d20746573742068656c706572732e0a0a52656164207468652072657475726e656420636f646520746f207665726966792061206d617463682e20436f6d7061637420726573756c747320617265207468652064656661756c743b0a75736520606b656e5f726561646020666f72206d6f726520736f7572636520616e64206066756c6c3d7472756560206f6e6c79207768656e20646562756767696e6720612072616e6b696e672e0a41667465722074776f20756e68656c7066756c2073656172636865732c207265616420746865206c696b656c696573742066696c65206f72207573652061206c69746572616c207365617263682e0a0a4265666f72652065646974696e6720616e20756e66616d696c6961722066696c652c20636865636b20606b656e5f726563616c6c28706174683d2e2e2e29602e20466f722061207368617265640a6368616e67652c20696e737065637420606b656e5f72656c61746564282e2e2e2c2072656c6174696f6e3d22626c6173745f72616469757322296020616e64206974732074657374732e0a53617665206e6f6e2d6f6276696f75732066696e64696e6773207769746820606b656e5f72656d656d626572602c20616e63686f72656420746f207468652072656c6576616e742066696c650a6f722073796d626f6c3b20696e636c7564652065766964656e63652c20617373756d7074696f6e7320616e642061207265636865636b207374657020666f7220636f6e636c7573696f6e732e0a3c212d2d206b656e3a696e737472756374696f6e733a656e64202d2d3e0a"
+        },
+        "CLAUDE.md": {
+          "hex": "3c212d2d206b656e3a6167656e74732d696d706f72743a7374617274202d2d3e0a404147454e54532e6d640a3c212d2d206b656e3a6167656e74732d696d706f72743a656e64202d2d3e0a"
+        }
+      },
+      "removed": {},
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "initial": "23205465616d2072756c65730d0a4b6565702065786163746c792e0d0a",
+      "first": {
+        ".ken/instructions.json": {
+          "json": {
+            "version": 1,
+            "files": {
+              "AGENTS.md": {
+                "sha256": "2c506baa1ae5f7263db0690842ee2a9602e34678bc7fa57c0694f4e77a23efbc",
+                "created": false
+              },
+              "CLAUDE.md": {
+                "sha256": "6d5d0efe87b9b209f2512d20996a133e04c45d0c6b53967bd16a8ad44f7c06cd",
+                "created": true
+              }
+            }
+          }
+        },
+        "AGENTS.md": {
+          "hex": "23205465616d2072756c65730d0a4b6565702065786163746c792e0d0a0d0a3c212d2d206b656e3a696e737472756374696f6e733a7374617274202d2d3e0d0a232320436f646520696e74656c6c6967656e63653a206b656e0d0a0d0a557365204b656e20746f206c6f6361746520636f646520616e642072657573652070726f6a6563742066696e64696e67732e204966206120603c636f6e746578742d72616e6b3e6020626c6f636b0d0a616c7265616479206e616d6573207468652072656c6576616e742066696c652c2072656164206974206265666f726520736561726368696e6720616761696e2e0d0a0d0a5772697465206e61747572616c2d6c616e677561676520636f64652d736561726368207175657269657320696e202a2a456e676c6973682a2a2c207472616e736c6174696e67207468650d0a75736572277320696e74656e7420796f757273656c662e204b656570206964656e746966696572732c2070617468732c2071756f74656420736f757263652c207265676578657320616e640d0a4b514c20756e6368616e6765642e205265706c7920746f20746865207573657220696e20746865697220707265666572726564206c616e67756167652e0d0a0d0a53746172742077697468206f6e6520666f637573656420606b656e5f66696e642871756572793d2e2e2e2c2073636f70653d2e2e2e29603a206073796d626f6c736020666f7220610d0a66756e6374696f6e206f7220636c6173732c206066696c65736020666f7220612066696c65206f72206d6f64756c652c2060776972696e676020666f7220616e20656e74727920706f696e742c0d0a616e6420607465787460207769746820606c69746572616c3d747275656020666f7220657861637420736f757263652e20537461746520746865207265717565737465642070696563653b0d0a757365206070696563655f6b696e643d22636c61737322602c2060226d6f64756c6522602c20602273796d626f6c2260206f7220602266696c652260207768656e206b6e6f776e2e0d0a5573652060707572706f73653d227465737473226020666f7220746573747320616e642064697374696e677569736820746573742063617365732066726f6d20746573742068656c706572732e0d0a0d0a52656164207468652072657475726e656420636f646520746f207665726966792061206d617463682e20436f6d7061637420726573756c747320617265207468652064656661756c743b0d0a75736520606b656e5f726561646020666f72206d6f726520736f7572636520616e64206066756c6c3d7472756560206f6e6c79207768656e20646562756767696e6720612072616e6b696e672e0d0a41667465722074776f20756e68656c7066756c2073656172636865732c207265616420746865206c696b656c696573742066696c65206f72207573652061206c69746572616c207365617263682e0d0a0d0a4265666f72652065646974696e6720616e20756e66616d696c6961722066696c652c20636865636b20606b656e5f726563616c6c28706174683d2e2e2e29602e20466f722061207368617265640d0a6368616e67652c20696e737065637420606b656e5f72656c61746564282e2e2e2c2072656c6174696f6e3d22626c6173745f72616469757322296020616e64206974732074657374732e0d0a53617665206e6f6e2d6f6276696f75732066696e64696e6773207769746820606b656e5f72656d656d626572602c20616e63686f72656420746f207468652072656c6576616e742066696c650d0a6f722073796d626f6c3b20696e636c7564652065766964656e63652c20617373756d7074696f6e7320616e642061207265636865636b207374657020666f7220636f6e636c7573696f6e732e0d0a3c212d2d206b656e3a696e737472756374696f6e733a656e64202d2d3e0d0a"
+        },
+        "CLAUDE.md": {
+          "hex": "3c212d2d206b656e3a6167656e74732d696d706f72743a7374617274202d2d3e0a404147454e54532e6d640a3c212d2d206b656e3a6167656e74732d696d706f72743a656e64202d2d3e0a"
+        }
+      },
+      "second": {
+        ".ken/instructions.json": {
+          "json": {
+            "version": 1,
+            "files": {
+              "AGENTS.md": {
+                "sha256": "2c506baa1ae5f7263db0690842ee2a9602e34678bc7fa57c0694f4e77a23efbc",
+                "created": false
+              },
+              "CLAUDE.md": {
+                "sha256": "6d5d0efe87b9b209f2512d20996a133e04c45d0c6b53967bd16a8ad44f7c06cd",
+                "created": true
+              }
+            }
+          }
+        },
+        "AGENTS.md": {
+          "hex": "23205465616d2072756c65730d0a4b6565702065786163746c792e0d0a0d0a3c212d2d206b656e3a696e737472756374696f6e733a7374617274202d2d3e0d0a232320436f646520696e74656c6c6967656e63653a206b656e0d0a0d0a557365204b656e20746f206c6f6361746520636f646520616e642072657573652070726f6a6563742066696e64696e67732e204966206120603c636f6e746578742d72616e6b3e6020626c6f636b0d0a616c7265616479206e616d6573207468652072656c6576616e742066696c652c2072656164206974206265666f726520736561726368696e6720616761696e2e0d0a0d0a5772697465206e61747572616c2d6c616e677561676520636f64652d736561726368207175657269657320696e202a2a456e676c6973682a2a2c207472616e736c6174696e67207468650d0a75736572277320696e74656e7420796f757273656c662e204b656570206964656e746966696572732c2070617468732c2071756f74656420736f757263652c207265676578657320616e640d0a4b514c20756e6368616e6765642e205265706c7920746f20746865207573657220696e20746865697220707265666572726564206c616e67756167652e0d0a0d0a53746172742077697468206f6e6520666f637573656420606b656e5f66696e642871756572793d2e2e2e2c2073636f70653d2e2e2e29603a206073796d626f6c736020666f7220610d0a66756e6374696f6e206f7220636c6173732c206066696c65736020666f7220612066696c65206f72206d6f64756c652c2060776972696e676020666f7220616e20656e74727920706f696e742c0d0a616e6420607465787460207769746820606c69746572616c3d747275656020666f7220657861637420736f757263652e20537461746520746865207265717565737465642070696563653b0d0a757365206070696563655f6b696e643d22636c61737322602c2060226d6f64756c6522602c20602273796d626f6c2260206f7220602266696c652260207768656e206b6e6f776e2e0d0a5573652060707572706f73653d227465737473226020666f7220746573747320616e642064697374696e677569736820746573742063617365732066726f6d20746573742068656c706572732e0d0a0d0a52656164207468652072657475726e656420636f646520746f207665726966792061206d617463682e20436f6d7061637420726573756c747320617265207468652064656661756c743b0d0a75736520606b656e5f726561646020666f72206d6f726520736f7572636520616e64206066756c6c3d7472756560206f6e6c79207768656e20646562756767696e6720612072616e6b696e672e0d0a41667465722074776f20756e68656c7066756c2073656172636865732c207265616420746865206c696b656c696573742066696c65206f72207573652061206c69746572616c207365617263682e0d0a0d0a4265666f72652065646974696e6720616e20756e66616d696c6961722066696c652c20636865636b20606b656e5f726563616c6c28706174683d2e2e2e29602e20466f722061207368617265640d0a6368616e67652c20696e737065637420606b656e5f72656c61746564282e2e2e2c2072656c6174696f6e3d22626c6173745f72616469757322296020616e64206974732074657374732e0d0a53617665206e6f6e2d6f6276696f75732066696e64696e6773207769746820606b656e5f72656d656d626572602c20616e63686f72656420746f207468652072656c6576616e742066696c650d0a6f722073796d626f6c3b20696e636c7564652065766964656e63652c20617373756d7074696f6e7320616e642061207265636865636b207374657020666f7220636f6e636c7573696f6e732e0d0a3c212d2d206b656e3a696e737472756374696f6e733a656e64202d2d3e0d0a"
+        },
+        "CLAUDE.md": {
+          "hex": "3c212d2d206b656e3a6167656e74732d696d706f72743a7374617274202d2d3e0a404147454e54532e6d640a3c212d2d206b656e3a6167656e74732d696d706f72743a656e64202d2d3e0a"
+        }
+      },
+      "removed": {
+        "AGENTS.md": {
+          "hex": "23205465616d2072756c65730d0a4b6565702065786163746c792e0d0a0d0a0d0a"
+        }
+      },
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "initial": "232320436f646520696e74656c6c6967656e63653a206b656e0a557365722067756964616e63652e0a",
+      "first": {
+        "AGENTS.md": {
+          "hex": "232320436f646520696e74656c6c6967656e63653a206b656e0a557365722067756964616e63652e0a"
+        }
+      },
+      "second": {
+        "AGENTS.md": {
+          "hex": "232320436f646520696e74656c6c6967656e63653a206b656e0a557365722067756964616e63652e0a"
+        }
+      },
+      "removed": {
+        "AGENTS.md": {
+          "hex": "232320436f646520696e74656c6c6967656e63653a206b656e0a557365722067756964616e63652e0a"
+        }
+      },
+      "stdout": "",
+      "stderr": "[instructions] AGENTS.md already has user-managed Ken guidance; preserving it\n[instructions] AGENTS.md already has user-managed Ken guidance; preserving it\n"
+    }
+  ]
+}

@@ -645,3 +645,4 @@ mod call_constraints;
 mod intervals;
 mod source_operands;
 use intervals::{interval_restrictions, terminal_bindings};
+pub(crate) use source_operands::binary_parts;

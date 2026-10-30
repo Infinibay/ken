@@ -2,6 +2,7 @@
 mod artifact_cache;
 mod assets;
 mod cache_directory;
+mod catalog_extensions;
 mod context_encoder;
 mod context_model;
 mod embedding_pool;
@@ -48,6 +49,7 @@ mod verified_file;
 
 pub use artifact_cache::{AcquisitionPolicy, ArtifactCache, ArtifactRequest, ArtifactTransport};
 pub use assets::{ModelAssets, VerifiedSnapshot};
+pub use catalog_extensions::{CatalogExtensions, ExtensionStatus, ResourceAvailability};
 pub use context_encoder::{ContextEncoder, ContextInput, ContextTokens};
 pub use context_model::ContextModel;
 pub use fastembed_encoder::{FastEmbedEncoder, FastEmbedRun};
@@ -63,7 +65,7 @@ pub use ken_native_model_api::{
     TransformerDtype, TransformerOutput, TransformerPooling, TransformerWeightLayout,
 };
 pub use managed_encoder::{EncoderPreparation, ManagedEncoder};
-pub use model_catalog::{EncoderFamily, ModelCatalog};
+pub use model_catalog::{EncoderFamily, ModelCatalog, ModelDescriptor, ModelRegistration};
 pub use model_factory::ModelFactory;
 pub use model_sources::PreparedModelResources;
 pub use model_transport::PublicModelTransport;

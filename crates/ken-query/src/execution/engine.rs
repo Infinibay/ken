@@ -50,6 +50,7 @@ impl Execution {
             Ok(plan) => plan,
             Err(ExecutionError::Exhausted(reason)) => {
                 return Ok(QueryOutcome {
+                    usage_metadata: Default::default(),
                     matches: vec![],
                     complete: false,
                     unknown: vec![format!("budget:{reason}")],
@@ -118,6 +119,7 @@ impl Execution {
         };
         let elapsed = (engine.run.started.elapsed().as_secs_f64() * 1_000_000.).round() / 1000.;
         Ok(QueryOutcome {
+            usage_metadata: engine.source.usage_metadata,
             matches,
             complete,
             unknown: reasons.into_iter().collect(),
@@ -578,7 +580,7 @@ impl Engine<'_> {
             for node in nodes.iter() {
                 self.check()?;
                 match &node.kind {
-                    Kind::Receiver(..) | Kind::Source(_) => return Ok(false),
+                    Kind::Receiver(..) | Kind::Source(_) | Kind::Body(_) => return Ok(false),
                     Kind::Match { query, .. } => {
                         if !self.preserves(&self.plan.queries[query].nodes, seen)? {
                             return Ok(false);

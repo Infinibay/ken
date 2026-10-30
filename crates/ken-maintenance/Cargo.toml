@@ -1,0 +1,29 @@
+[package]
+name = "ken-maintenance"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+sha2.workspace = true
+ken-core = { path = "../ken-core" }
+ken-store = { path = "../ken-store" }
+ken-models = { path = "../ken-models" }
+ken-retrieval = { path = "../ken-retrieval" }
+ken-index = { path = "../ken-index" }
+ken-search = { path = "../ken-search" }
+ken-context = { path = "../ken-context" }
+ken-syntax = { path = "../ken-syntax" }
+ken-text = { path = "../ken-text" }
+rusqlite.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tempfile.workspace = true
+blake2.workspace = true
+base64 = "0.23.1"
+
+[dev-dependencies]
+flate2.workspace = true

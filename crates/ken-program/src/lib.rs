@@ -28,6 +28,7 @@ pub use types::{TypeRef, parse_type, split_types};
 
 mod attributes;
 mod kinds;
+pub use kinds::{canonical_syntax_role, raw_syntax_kind, syntax_kinds};
 mod normalize;
 pub use normalize::{normalize, normalize_syntax};
 
@@ -38,8 +39,10 @@ mod bindings;
 pub mod control;
 
 pub mod project;
+pub use project::python_module_targets;
 
 mod semantic;
 
+pub mod instructions;
 pub mod query_view;
 pub mod value;

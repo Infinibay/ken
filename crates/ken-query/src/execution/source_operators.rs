@@ -173,7 +173,7 @@ impl Engine<'_> {
                             } else {
                                 attr(&entity.attrs, key)?
                             };
-                            if !self.comparisons.compare(&actual, op, value)? {
+                            if !self.comparisons.compare_source(&actual, op, value)? {
                                 accepted = false;
                                 break;
                             }

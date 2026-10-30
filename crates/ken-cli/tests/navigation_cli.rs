@@ -197,7 +197,11 @@ fn actual_stdio_navigation_matches_original_and_observes_replaced_database() {
         .map(|v| v["name"].as_str().unwrap())
         .collect::<Vec<_>>();
     assert_eq!(
-        names,
+        names
+            .iter()
+            .copied()
+            .filter(|name| ["ken_find", "ken_read", "ken_related", "ken_rank"].contains(name))
+            .collect::<Vec<_>>(),
         vec!["ken_find", "ken_read", "ken_related", "ken_rank"]
     );
     let mut id = 3;

@@ -44,6 +44,9 @@ pub mod lexical;
 
 pub mod dense;
 mod dense_math;
+pub mod project_embeddings;
+pub mod vector_math;
+pub mod vector_store;
 #[cfg(target_os = "linux")]
 pub use dense_math::verify_dense_runtime;
 #[cfg(all(target_os = "linux", target_arch = "x86_64"))]

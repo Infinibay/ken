@@ -7,6 +7,35 @@ struct Vocabulary {
     native: BTreeMap<String, (String, String)>,
     operations: BTreeMap<String, (String, String)>,
 }
+fn vocabulary() -> &'static Vocabulary {
+    static VOCABULARY: OnceLock<Vocabulary> = OnceLock::new();
+    VOCABULARY.get_or_init(|| {
+        serde_json::from_str(include_str!("kinds.json")).expect("original grammar vocabulary")
+    })
+}
+/// Canonical syntax names used by authoring diagnostics and public capabilities.
+pub fn syntax_kinds() -> std::collections::BTreeSet<String> {
+    vocabulary()
+        .native
+        .values()
+        .map(|(kind, _)| kind.clone())
+        .chain(
+            [
+                "type_declaration",
+                "callable",
+                "call",
+                "assignment",
+                "member",
+                "binary",
+                "unary",
+                "compare",
+                "opaque",
+            ]
+            .into_iter()
+            .map(str::to_owned),
+        )
+        .collect()
+}
 pub(crate) fn classify(operation: &Operation, root: bool) -> (String, String) {
     if root {
         return ("module".into(), "declaration".into());
@@ -17,10 +46,7 @@ pub(crate) fn classify(operation: &Operation, root: bool) -> (String, String) {
     if operation.native_kind == "unary_expression" {
         return ("unary".into(), "expression".into());
     }
-    static VOCABULARY: OnceLock<Vocabulary> = OnceLock::new();
-    let v = VOCABULARY.get_or_init(|| {
-        serde_json::from_str(include_str!("kinds.json")).expect("original grammar vocabulary")
-    });
+    let v = vocabulary();
     v.native
         .get(&operation.native_kind)
         .or_else(|| v.operations.get(&operation.kind))
@@ -140,4 +166,16 @@ pub(crate) fn operator(token: &str) -> bool {
             | "??"
             | ":="
     )
+}
+
+/// Raw grammar classification before indexed source-operation corrections.
+pub fn raw_syntax_kind(native: &str) -> Option<(&'static str, &'static str)> {
+    vocabulary()
+        .native
+        .get(native)
+        .map(|(kind, category)| (kind.as_str(), category.as_str()))
+}
+/// Canonical field role shared by raw and indexed syntax views.
+pub fn canonical_syntax_role<'a>(kind: &str, native: &'a str) -> &'a str {
+    role(kind, native)
 }

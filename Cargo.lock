@@ -850,20 +850,122 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
+name = "ken-application"
+version = "0.18.0"
+dependencies = [
+ "base64 0.23.1",
+ "ken-checks-application",
+ "ken-contracts",
+ "ken-core",
+ "ken-history",
+ "ken-hosts",
+ "ken-index",
+ "ken-knowledge",
+ "ken-maintenance",
+ "ken-models",
+ "ken-responsibility",
+ "ken-retrieval",
+ "ken-search",
+ "ken-store",
+ "ken-structural",
+ "ken-syntax",
+ "ken-text",
+ "libc",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
+name = "ken-checks-application"
+version = "0.18.0"
+dependencies = [
+ "flate2",
+ "ken-contracts",
+ "ken-core",
+ "ken-program",
+ "ken-query",
+ "ken-structural",
+ "ken-syntax",
+ "ken-text",
+ "libc",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
 name = "ken-cli"
 version = "0.18.0"
 dependencies = [
  "base64 0.23.1",
  "clap",
  "flate2",
+ "ken-application",
+ "ken-checks-application",
+ "ken-context",
+ "ken-contracts",
  "ken-core",
+ "ken-daemon",
+ "ken-history",
+ "ken-hosts",
  "ken-index",
+ "ken-knowledge",
+ "ken-maintenance",
+ "ken-models",
+ "ken-program",
+ "ken-query",
+ "ken-responsibility",
  "ken-retrieval",
  "ken-search",
  "ken-store",
+ "ken-structural",
  "ken-syntax",
  "ken-text",
+ "libc",
  "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
+name = "ken-context"
+version = "0.18.0"
+dependencies = [
+ "flate2",
+ "ken-core",
+ "ken-history",
+ "ken-knowledge",
+ "ken-retrieval",
+ "ken-store",
+ "ken-text",
+ "regex",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
+name = "ken-contracts"
+version = "0.18.0"
+dependencies = [
+ "ken-core",
+ "ken-knowledge",
+ "ken-query",
+ "ken-text",
+ "libc",
+ "regex",
  "serde",
  "serde_json",
  "sha2",
@@ -888,6 +990,65 @@ dependencies = [
 ]
 
 [[package]]
+name = "ken-daemon"
+version = "0.18.0"
+dependencies = [
+ "ken-checks-application",
+ "ken-context",
+ "ken-contracts",
+ "ken-core",
+ "ken-history",
+ "ken-index",
+ "ken-knowledge",
+ "ken-maintenance",
+ "ken-models",
+ "ken-retrieval",
+ "ken-search",
+ "ken-store",
+ "ken-syntax",
+ "ken-text",
+ "libc",
+ "regex",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
+name = "ken-history"
+version = "0.18.0"
+dependencies = [
+ "blake2",
+ "ken-core",
+ "ken-search",
+ "ken-store",
+ "libc",
+ "regex",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
+name = "ken-hosts"
+version = "0.18.0"
+dependencies = [
+ "ken-core",
+ "libc",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+ "toml",
+]
+
+[[package]]
 name = "ken-index"
 version = "0.18.0"
 dependencies = [
@@ -899,6 +1060,46 @@ dependencies = [
  "ken-syntax",
  "ken-text",
  "libc",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
+name = "ken-knowledge"
+version = "0.18.0"
+dependencies = [
+ "num-bigint",
+ "num-integer",
+ "num-traits",
+ "regex",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
+name = "ken-maintenance"
+version = "0.18.0"
+dependencies = [
+ "base64 0.23.1",
+ "blake2",
+ "flate2",
+ "ken-context",
+ "ken-core",
+ "ken-index",
+ "ken-models",
+ "ken-retrieval",
+ "ken-search",
+ "ken-store",
+ "ken-syntax",
+ "ken-text",
  "rusqlite",
  "serde",
  "serde_json",
@@ -971,6 +1172,10 @@ dependencies = [
  "flate2",
  "ken-program",
  "ken-text",
+ "num-bigint",
+ "num-integer",
+ "num-traits",
+ "py_literal",
  "regex",
  "serde",
  "serde_json",
@@ -981,9 +1186,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "ken-responsibility"
+version = "0.18.0"
+dependencies = [
+ "blake2",
+ "ken-contracts",
+ "ken-core",
+ "ken-models",
+ "ken-query",
+ "ken-retrieval",
+ "ken-store",
+ "ken-structural",
+ "ken-syntax",
+ "ken-text",
+ "rusqlite",
+ "rustpython-ruff_python_ast",
+ "rustpython-ruff_text_size",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+ "unicode-normalization",
+]
+
+[[package]]
 name = "ken-retrieval"
 version = "0.18.0"
 dependencies = [
+ "cc",
  "flate2",
  "ken-core",
  "ken-models",
@@ -1053,11 +1284,13 @@ name = "ken-structural"
 version = "0.18.0"
 dependencies = [
  "flate2",
+ "ken-contracts",
  "ken-core",
  "ken-program",
  "ken-query",
  "ken-store",
  "ken-syntax",
+ "ken-text",
  "libc",
  "rusqlite",
  "serde",
@@ -1065,6 +1298,7 @@ dependencies = [
  "sha2",
  "tempfile",
  "thiserror",
+ "toml",
 ]
 
 [[package]]
@@ -1098,6 +1332,7 @@ dependencies = [
 name = "ken-text"
 version = "0.18.0"
 dependencies = [
+ "libc",
  "serde",
  "serde_json",
 ]
@@ -2071,6 +2306,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_spanned"
+version = "0.6.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf41e0cfaf7226dca15e8197172c295a782857fcb97fad1808a166870dee75a3"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "sha2"
 version = "0.10.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2267,6 +2511,48 @@ dependencies = [
  "unicode-segmentation",
  "unicode_categories",
 ]
+
+[[package]]
+name = "toml"
+version = "0.8.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dc1beb996b9d83529a9e75c17a1686767d148d70663143c7854d8b4a09ced362"
+dependencies = [
+ "indexmap",
+ "serde",
+ "serde_spanned",
+ "toml_datetime",
+ "toml_edit",
+]
+
+[[package]]
+name = "toml_datetime"
+version = "0.6.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "22cddaf88f4fbc13c51aebbf5f8eceb5c7c5a9da2ac40a13519eb5b0a0e8f11c"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "toml_edit"
+version = "0.22.27"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41fe8c660ae4257887cf66394862d21dbca4a6ddd26f04a3560410406a2f819a"
+dependencies = [
+ "indexmap",
+ "serde",
+ "serde_spanned",
+ "toml_datetime",
+ "toml_write",
+ "winnow",
+]
+
+[[package]]
+name = "toml_write"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5d99f8c9a7727884afe522e9bd5edbfc91a3312b36a77b5fb8926e4c31a41801"
 
 [[package]]
 name = "tracing"
@@ -2641,6 +2927,15 @@ name = "windows_x86_64_msvc"
 version = "0.52.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
+
+[[package]]
+name = "winnow"
+version = "0.7.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "df79d97927682d2fd8adb29682d1140b343be4ac0f08fd68b7765d9c059d3945"
+dependencies = [
+ "memchr",
+]
 
 [[package]]
 name = "wit-bindgen"

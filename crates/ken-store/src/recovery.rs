@@ -64,6 +64,18 @@ fn sync_parent(path: &Path) -> StoreResult<()> {
         .map_err(|e| StoreError::io(path, e))
 }
 
+#[derive(Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum Layout {
+    #[default]
+    Dense,
+    Preserved,
+}
+impl Layout {
+    fn dense(&self) -> bool {
+        *self == Self::Dense
+    }
+}
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Journal {
@@ -75,6 +87,8 @@ struct Journal {
     old: Option<Identity>,
     new: Identity,
     dim: usize,
+    #[serde(default, skip_serializing_if = "Layout::dense")]
+    layout: Layout,
 }
 impl Journal {
     fn validate(&self, path: &Path) -> StoreResult<()> {
@@ -185,6 +199,21 @@ pub(crate) struct Publication {
 }
 impl Publication {
     pub fn prepare(live: &Path, staging: tempfile::TempDir, dim: usize) -> StoreResult<Self> {
+        Self::prepare_layout(live, staging, dim, Layout::Dense)
+    }
+    pub fn prepare_rebuild(
+        live: &Path,
+        staging: tempfile::TempDir,
+        dim: usize,
+    ) -> StoreResult<Self> {
+        Self::prepare_layout(live, staging, dim, Layout::Preserved)
+    }
+    fn prepare_layout(
+        live: &Path,
+        staging: tempfile::TempDir,
+        dim: usize,
+        layout: Layout,
+    ) -> StoreResult<Self> {
         let parent = live
             .parent()
             .ok_or_else(|| invalid(live, "no generation parent"))?
@@ -208,6 +237,7 @@ impl Publication {
             new: identity(staging.path())?
                 .ok_or_else(|| invalid(staging.path(), "missing staging directory"))?,
             dim,
+            layout,
         };
         journal.validate(&parent.join(JOURNAL))?;
         if identity(&parent.join(&journal.backup))?.is_some() {
@@ -353,7 +383,7 @@ pub(crate) fn recover(db: &mut ProjectDatabase, live: &Path) -> StoreResult<()> 
         if live_id != Some(journal.new) {
             return Err(invalid(live, "committed vector generation is missing"));
         }
-        committed_payload(conn, live, journal.dim)?;
+        committed_payload(conn, live, journal.dim, journal.layout)?;
         if let Some(old) = backup_id {
             remove_owned(&backup, old, None)?;
         }
@@ -390,7 +420,12 @@ pub(crate) fn recover(db: &mut ProjectDatabase, live: &Path) -> StoreResult<()> 
     tx.commit()
 }
 
-fn committed_payload(conn: &rusqlite::Connection, live: &Path, dim: usize) -> StoreResult<()> {
+fn committed_payload(
+    conn: &rusqlite::Connection,
+    live: &Path,
+    dim: usize,
+    layout: Layout,
+) -> StoreResult<()> {
     for space in VectorSpace::ALL {
         let manifest = live.join(format!("{space}.json"));
         if !manifest.is_file() {
@@ -398,6 +433,13 @@ fn committed_payload(conn: &rusqlite::Connection, live: &Path, dim: usize) -> St
         }
         let store = VectorStore::open(live, space, dim, None)?;
         let report = verify(conn, &store)?;
+        if layout == Layout::Preserved {
+            if report.out_of_range != 0 || report.double_booked != 0 {
+                return Err(invalid(live, "committed rebuilt mapping is inconsistent"));
+            }
+            store.validate_referenced_segments(conn)?;
+            continue;
+        }
         let expected = (report.high_water as u64).div_ceil(store.manifest().segment_rows as u64);
         if report.segments as u64 != expected
             || report.referenced as u64 != report.high_water as u64

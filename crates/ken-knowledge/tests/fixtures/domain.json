@@ -1,0 +1,1366 @@
+{
+  "reasoning": {
+    "operations": [
+      {
+        "op": "record",
+        "source": "doc",
+        "facts": [
+          {
+            "predicate": "type",
+            "subject": "Atlas",
+            "object": "robot",
+            "negative": false,
+            "scope": "present"
+          },
+          {
+            "predicate": "subclass",
+            "subject": "robot",
+            "object": "machine",
+            "negative": false,
+            "scope": "present"
+          },
+          {
+            "predicate": "all/use",
+            "subject": "machine",
+            "object": "battery",
+            "negative": false,
+            "scope": "present"
+          }
+        ],
+        "evidence": "source revision 1"
+      },
+      {
+        "op": "ask",
+        "goal": {
+          "predicate": "use",
+          "subject": "Atlas",
+          "object": "battery",
+          "negative": false,
+          "scope": "present"
+        }
+      },
+      {
+        "op": "ask",
+        "goal": {
+          "predicate": "type",
+          "subject": "Atlas",
+          "object": "machine",
+          "negative": false,
+          "scope": "present"
+        }
+      },
+      {
+        "op": "ask",
+        "goal": {
+          "predicate": "use",
+          "subject": "?who",
+          "object": "battery",
+          "negative": false,
+          "scope": "present"
+        }
+      },
+      {
+        "op": "record",
+        "source": "negative",
+        "facts": [
+          {
+            "predicate": "use",
+            "subject": "Atlas",
+            "object": "battery",
+            "negative": true,
+            "scope": "present"
+          }
+        ]
+      },
+      {
+        "op": "ask",
+        "goal": {
+          "predicate": "use",
+          "subject": "Atlas",
+          "object": "battery",
+          "negative": false,
+          "scope": "present"
+        }
+      },
+      {
+        "op": "ask",
+        "goal": {
+          "predicate": "use",
+          "subject": "Atlas",
+          "object": "battery",
+          "negative": false,
+          "scope": "present"
+        },
+        "assumptions": [
+          {
+            "predicate": "use",
+            "subject": "Other",
+            "object": "battery",
+            "negative": false,
+            "scope": "present"
+          }
+        ]
+      },
+      {
+        "op": "record",
+        "source": "negative",
+        "retract": true
+      },
+      {
+        "op": "ask",
+        "goal": {
+          "predicate": "use",
+          "subject": "Atlas",
+          "object": "battery",
+          "negative": false,
+          "scope": "present"
+        }
+      },
+      {
+        "op": "record",
+        "source": "doc",
+        "facts": [
+          {
+            "predicate": "different",
+            "subject": "x",
+            "object": "yes",
+            "negative": false,
+            "scope": "present"
+          }
+        ]
+      },
+      {
+        "op": "ask",
+        "goal": {
+          "predicate": "use",
+          "subject": "Atlas",
+          "object": "battery",
+          "negative": false,
+          "scope": "present"
+        }
+      }
+    ],
+    "results": [
+      {
+        "changed": true,
+        "revision": 1,
+        "update": "append_delta"
+      },
+      {
+        "status": "supported",
+        "answers": [
+          {
+            "fact": {
+              "predicate": "use",
+              "subject": "Atlas",
+              "object": "battery",
+              "negative": false,
+              "scope": "present"
+            },
+            "binding": {},
+            "proof": {
+              "fact": {
+                "predicate": "use",
+                "subject": "Atlas",
+                "object": "battery",
+                "negative": false,
+                "scope": "present"
+              },
+              "support": {
+                "kind": "deduced",
+                "source": "@builtin",
+                "rule": "e56e8fdb7c88109892c5ec18b4b48245a579af2883960565cae3773ece0c9def",
+                "premises": [
+                  "065d6da487d41a13c81b007de179c87fc0ae7d1a50af2eba7f0c03c64fdb9751",
+                  "42192cc03939e8130440afb8574d022bcea5564b0a3ddfe5aa5b0c681cec5688"
+                ]
+              },
+              "premises": [
+                {
+                  "fact": {
+                    "predicate": "type",
+                    "subject": "Atlas",
+                    "object": "machine",
+                    "negative": false,
+                    "scope": "present"
+                  },
+                  "support": {
+                    "kind": "deduced",
+                    "source": "@builtin",
+                    "rule": "95844861aba2673e4ea27e8ee98795e371fc3551c6dc45b666a52bc35ba3620d",
+                    "premises": [
+                      "a2e66a33eba322ecddfee072fec72e0d9559effbf2be18fe447e79eedb4bbb42",
+                      "a7e1ef23cf7f8ea314494aad42688da65c274c0415a83bdf14ad961377f454dc"
+                    ]
+                  },
+                  "premises": [
+                    {
+                      "fact": {
+                        "predicate": "subclass",
+                        "subject": "robot",
+                        "object": "machine",
+                        "negative": false,
+                        "scope": "present"
+                      },
+                      "support": {
+                        "kind": "asserted",
+                        "source": "doc",
+                        "premises": []
+                      },
+                      "premises": []
+                    },
+                    {
+                      "fact": {
+                        "predicate": "type",
+                        "subject": "Atlas",
+                        "object": "robot",
+                        "negative": false,
+                        "scope": "present"
+                      },
+                      "support": {
+                        "kind": "asserted",
+                        "source": "doc",
+                        "premises": []
+                      },
+                      "premises": []
+                    }
+                  ]
+                },
+                {
+                  "fact": {
+                    "predicate": "all/use",
+                    "subject": "machine",
+                    "object": "battery",
+                    "negative": false,
+                    "scope": "present"
+                  },
+                  "support": {
+                    "kind": "asserted",
+                    "source": "doc",
+                    "premises": []
+                  },
+                  "premises": []
+                }
+              ]
+            },
+            "opposing_proof": null
+          }
+        ],
+        "answers_truncated": false,
+        "opposition": [],
+        "proof_note": "Null proof means the explanation depth limit was reached, not absence of support.",
+        "context": "main",
+        "revision": 1,
+        "world": "base",
+        "query": {
+          "predicate": "use",
+          "subject": "Atlas",
+          "object": "battery",
+          "negative": false,
+          "scope": "present"
+        },
+        "assumptions": [],
+        "metrics": {
+          "work": 28,
+          "total_work": 28,
+          "facts": 6,
+          "pending": 0,
+          "complete": true,
+          "limits": [],
+          "resumable": false
+        },
+        "reuse": {
+          "checkpoint": false,
+          "prior_facts": 0,
+          "new_work": 28
+        },
+        "semantics": "Conditional on supplied premises, interpretations and scope; not verified world truth.",
+        "sources": {
+          "doc": "source revision 1"
+        },
+        "approximation": [],
+        "answer": "Hay apoyo en las premisas para la consulta."
+      },
+      {
+        "status": "supported",
+        "answers": [
+          {
+            "fact": {
+              "predicate": "type",
+              "subject": "Atlas",
+              "object": "machine",
+              "negative": false,
+              "scope": "present"
+            },
+            "binding": {},
+            "proof": {
+              "fact": {
+                "predicate": "type",
+                "subject": "Atlas",
+                "object": "machine",
+                "negative": false,
+                "scope": "present"
+              },
+              "support": {
+                "kind": "deduced",
+                "source": "@builtin",
+                "rule": "95844861aba2673e4ea27e8ee98795e371fc3551c6dc45b666a52bc35ba3620d",
+                "premises": [
+                  "a2e66a33eba322ecddfee072fec72e0d9559effbf2be18fe447e79eedb4bbb42",
+                  "a7e1ef23cf7f8ea314494aad42688da65c274c0415a83bdf14ad961377f454dc"
+                ]
+              },
+              "premises": [
+                {
+                  "fact": {
+                    "predicate": "subclass",
+                    "subject": "robot",
+                    "object": "machine",
+                    "negative": false,
+                    "scope": "present"
+                  },
+                  "support": {
+                    "kind": "asserted",
+                    "source": "doc",
+                    "premises": []
+                  },
+                  "premises": []
+                },
+                {
+                  "fact": {
+                    "predicate": "type",
+                    "subject": "Atlas",
+                    "object": "robot",
+                    "negative": false,
+                    "scope": "present"
+                  },
+                  "support": {
+                    "kind": "asserted",
+                    "source": "doc",
+                    "premises": []
+                  },
+                  "premises": []
+                }
+              ]
+            },
+            "opposing_proof": null
+          }
+        ],
+        "answers_truncated": false,
+        "opposition": [],
+        "proof_note": "Null proof means the explanation depth limit was reached, not absence of support.",
+        "context": "main",
+        "revision": 1,
+        "world": "base",
+        "query": {
+          "predicate": "type",
+          "subject": "Atlas",
+          "object": "machine",
+          "negative": false,
+          "scope": "present"
+        },
+        "assumptions": [],
+        "metrics": {
+          "work": 0,
+          "total_work": 28,
+          "facts": 6,
+          "pending": 0,
+          "complete": true,
+          "limits": [],
+          "resumable": false
+        },
+        "reuse": {
+          "checkpoint": true,
+          "prior_facts": 6,
+          "new_work": 0
+        },
+        "semantics": "Conditional on supplied premises, interpretations and scope; not verified world truth.",
+        "sources": {
+          "doc": "source revision 1"
+        },
+        "approximation": [],
+        "answer": "Hay apoyo en las premisas para la consulta."
+      },
+      {
+        "status": "supported",
+        "answers": [
+          {
+            "fact": {
+              "predicate": "use",
+              "subject": "Atlas",
+              "object": "battery",
+              "negative": false,
+              "scope": "present"
+            },
+            "binding": {
+              "?who": "Atlas"
+            },
+            "proof": {
+              "fact": {
+                "predicate": "use",
+                "subject": "Atlas",
+                "object": "battery",
+                "negative": false,
+                "scope": "present"
+              },
+              "support": {
+                "kind": "deduced",
+                "source": "@builtin",
+                "rule": "e56e8fdb7c88109892c5ec18b4b48245a579af2883960565cae3773ece0c9def",
+                "premises": [
+                  "065d6da487d41a13c81b007de179c87fc0ae7d1a50af2eba7f0c03c64fdb9751",
+                  "42192cc03939e8130440afb8574d022bcea5564b0a3ddfe5aa5b0c681cec5688"
+                ]
+              },
+              "premises": [
+                {
+                  "fact": {
+                    "predicate": "type",
+                    "subject": "Atlas",
+                    "object": "machine",
+                    "negative": false,
+                    "scope": "present"
+                  },
+                  "support": {
+                    "kind": "deduced",
+                    "source": "@builtin",
+                    "rule": "95844861aba2673e4ea27e8ee98795e371fc3551c6dc45b666a52bc35ba3620d",
+                    "premises": [
+                      "a2e66a33eba322ecddfee072fec72e0d9559effbf2be18fe447e79eedb4bbb42",
+                      "a7e1ef23cf7f8ea314494aad42688da65c274c0415a83bdf14ad961377f454dc"
+                    ]
+                  },
+                  "premises": [
+                    {
+                      "fact": {
+                        "predicate": "subclass",
+                        "subject": "robot",
+                        "object": "machine",
+                        "negative": false,
+                        "scope": "present"
+                      },
+                      "support": {
+                        "kind": "asserted",
+                        "source": "doc",
+                        "premises": []
+                      },
+                      "premises": []
+                    },
+                    {
+                      "fact": {
+                        "predicate": "type",
+                        "subject": "Atlas",
+                        "object": "robot",
+                        "negative": false,
+                        "scope": "present"
+                      },
+                      "support": {
+                        "kind": "asserted",
+                        "source": "doc",
+                        "premises": []
+                      },
+                      "premises": []
+                    }
+                  ]
+                },
+                {
+                  "fact": {
+                    "predicate": "all/use",
+                    "subject": "machine",
+                    "object": "battery",
+                    "negative": false,
+                    "scope": "present"
+                  },
+                  "support": {
+                    "kind": "asserted",
+                    "source": "doc",
+                    "premises": []
+                  },
+                  "premises": []
+                }
+              ]
+            },
+            "opposing_proof": null
+          }
+        ],
+        "answers_truncated": false,
+        "opposition": [],
+        "proof_note": "Null proof means the explanation depth limit was reached, not absence of support.",
+        "context": "main",
+        "revision": 1,
+        "world": "base",
+        "query": {
+          "predicate": "use",
+          "subject": "?who",
+          "object": "battery",
+          "negative": false,
+          "scope": "present"
+        },
+        "assumptions": [],
+        "metrics": {
+          "work": 0,
+          "total_work": 28,
+          "facts": 6,
+          "pending": 0,
+          "complete": true,
+          "limits": [],
+          "resumable": false
+        },
+        "reuse": {
+          "checkpoint": true,
+          "prior_facts": 6,
+          "new_work": 0
+        },
+        "semantics": "Conditional on supplied premises, interpretations and scope; not verified world truth.",
+        "sources": {
+          "doc": "source revision 1"
+        },
+        "approximation": [],
+        "answer": "Hay apoyo en las premisas para la consulta."
+      },
+      {
+        "changed": true,
+        "revision": 2,
+        "update": "append_delta"
+      },
+      {
+        "status": "conflict",
+        "answers": [
+          {
+            "fact": {
+              "predicate": "use",
+              "subject": "Atlas",
+              "object": "battery",
+              "negative": false,
+              "scope": "present"
+            },
+            "binding": {},
+            "proof": {
+              "fact": {
+                "predicate": "use",
+                "subject": "Atlas",
+                "object": "battery",
+                "negative": false,
+                "scope": "present"
+              },
+              "support": {
+                "kind": "deduced",
+                "source": "@builtin",
+                "rule": "e56e8fdb7c88109892c5ec18b4b48245a579af2883960565cae3773ece0c9def",
+                "premises": [
+                  "065d6da487d41a13c81b007de179c87fc0ae7d1a50af2eba7f0c03c64fdb9751",
+                  "42192cc03939e8130440afb8574d022bcea5564b0a3ddfe5aa5b0c681cec5688"
+                ]
+              },
+              "premises": [
+                {
+                  "fact": {
+                    "predicate": "type",
+                    "subject": "Atlas",
+                    "object": "machine",
+                    "negative": false,
+                    "scope": "present"
+                  },
+                  "support": {
+                    "kind": "deduced",
+                    "source": "@builtin",
+                    "rule": "95844861aba2673e4ea27e8ee98795e371fc3551c6dc45b666a52bc35ba3620d",
+                    "premises": [
+                      "a2e66a33eba322ecddfee072fec72e0d9559effbf2be18fe447e79eedb4bbb42",
+                      "a7e1ef23cf7f8ea314494aad42688da65c274c0415a83bdf14ad961377f454dc"
+                    ]
+                  },
+                  "premises": [
+                    {
+                      "fact": {
+                        "predicate": "subclass",
+                        "subject": "robot",
+                        "object": "machine",
+                        "negative": false,
+                        "scope": "present"
+                      },
+                      "support": {
+                        "kind": "asserted",
+                        "source": "doc",
+                        "premises": []
+                      },
+                      "premises": []
+                    },
+                    {
+                      "fact": {
+                        "predicate": "type",
+                        "subject": "Atlas",
+                        "object": "robot",
+                        "negative": false,
+                        "scope": "present"
+                      },
+                      "support": {
+                        "kind": "asserted",
+                        "source": "doc",
+                        "premises": []
+                      },
+                      "premises": []
+                    }
+                  ]
+                },
+                {
+                  "fact": {
+                    "predicate": "all/use",
+                    "subject": "machine",
+                    "object": "battery",
+                    "negative": false,
+                    "scope": "present"
+                  },
+                  "support": {
+                    "kind": "asserted",
+                    "source": "doc",
+                    "premises": []
+                  },
+                  "premises": []
+                }
+              ]
+            },
+            "opposing_proof": {
+              "fact": {
+                "predicate": "use",
+                "subject": "Atlas",
+                "object": "battery",
+                "negative": true,
+                "scope": "present"
+              },
+              "support": {
+                "kind": "asserted",
+                "source": "negative",
+                "premises": []
+              },
+              "premises": []
+            }
+          }
+        ],
+        "answers_truncated": false,
+        "opposition": [
+          {
+            "fact": {
+              "predicate": "use",
+              "subject": "Atlas",
+              "object": "battery",
+              "negative": true,
+              "scope": "present"
+            },
+            "support": {
+              "kind": "asserted",
+              "source": "negative",
+              "premises": []
+            },
+            "premises": []
+          }
+        ],
+        "proof_note": "Null proof means the explanation depth limit was reached, not absence of support.",
+        "context": "main",
+        "revision": 2,
+        "world": "base",
+        "query": {
+          "predicate": "use",
+          "subject": "Atlas",
+          "object": "battery",
+          "negative": false,
+          "scope": "present"
+        },
+        "assumptions": [],
+        "metrics": {
+          "work": 1,
+          "total_work": 29,
+          "facts": 7,
+          "pending": 0,
+          "complete": true,
+          "limits": [],
+          "resumable": false
+        },
+        "reuse": {
+          "checkpoint": true,
+          "prior_facts": 6,
+          "new_work": 1
+        },
+        "semantics": "Conditional on supplied premises, interpretations and scope; not verified world truth.",
+        "sources": {
+          "doc": "source revision 1",
+          "negative": ""
+        },
+        "approximation": [],
+        "answer": "Hay apoyo tanto a favor como en contra."
+      },
+      {
+        "status": "conflict",
+        "answers": [
+          {
+            "fact": {
+              "predicate": "use",
+              "subject": "Atlas",
+              "object": "battery",
+              "negative": false,
+              "scope": "present"
+            },
+            "binding": {},
+            "proof": {
+              "fact": {
+                "predicate": "use",
+                "subject": "Atlas",
+                "object": "battery",
+                "negative": false,
+                "scope": "present"
+              },
+              "support": {
+                "kind": "deduced",
+                "source": "@builtin",
+                "rule": "e56e8fdb7c88109892c5ec18b4b48245a579af2883960565cae3773ece0c9def",
+                "premises": [
+                  "065d6da487d41a13c81b007de179c87fc0ae7d1a50af2eba7f0c03c64fdb9751",
+                  "42192cc03939e8130440afb8574d022bcea5564b0a3ddfe5aa5b0c681cec5688"
+                ]
+              },
+              "premises": [
+                {
+                  "fact": {
+                    "predicate": "type",
+                    "subject": "Atlas",
+                    "object": "machine",
+                    "negative": false,
+                    "scope": "present"
+                  },
+                  "support": {
+                    "kind": "deduced",
+                    "source": "@builtin",
+                    "rule": "95844861aba2673e4ea27e8ee98795e371fc3551c6dc45b666a52bc35ba3620d",
+                    "premises": [
+                      "a2e66a33eba322ecddfee072fec72e0d9559effbf2be18fe447e79eedb4bbb42",
+                      "a7e1ef23cf7f8ea314494aad42688da65c274c0415a83bdf14ad961377f454dc"
+                    ]
+                  },
+                  "premises": [
+                    {
+                      "fact": {
+                        "predicate": "subclass",
+                        "subject": "robot",
+                        "object": "machine",
+                        "negative": false,
+                        "scope": "present"
+                      },
+                      "support": {
+                        "kind": "asserted",
+                        "source": "doc",
+                        "premises": []
+                      },
+                      "premises": []
+                    },
+                    {
+                      "fact": {
+                        "predicate": "type",
+                        "subject": "Atlas",
+                        "object": "robot",
+                        "negative": false,
+                        "scope": "present"
+                      },
+                      "support": {
+                        "kind": "asserted",
+                        "source": "doc",
+                        "premises": []
+                      },
+                      "premises": []
+                    }
+                  ]
+                },
+                {
+                  "fact": {
+                    "predicate": "all/use",
+                    "subject": "machine",
+                    "object": "battery",
+                    "negative": false,
+                    "scope": "present"
+                  },
+                  "support": {
+                    "kind": "asserted",
+                    "source": "doc",
+                    "premises": []
+                  },
+                  "premises": []
+                }
+              ]
+            },
+            "opposing_proof": {
+              "fact": {
+                "predicate": "use",
+                "subject": "Atlas",
+                "object": "battery",
+                "negative": true,
+                "scope": "present"
+              },
+              "support": {
+                "kind": "asserted",
+                "source": "negative",
+                "premises": []
+              },
+              "premises": []
+            }
+          }
+        ],
+        "answers_truncated": false,
+        "opposition": [
+          {
+            "fact": {
+              "predicate": "use",
+              "subject": "Atlas",
+              "object": "battery",
+              "negative": true,
+              "scope": "present"
+            },
+            "support": {
+              "kind": "asserted",
+              "source": "negative",
+              "premises": []
+            },
+            "premises": []
+          }
+        ],
+        "proof_note": "Null proof means the explanation depth limit was reached, not absence of support.",
+        "context": "main",
+        "revision": 2,
+        "world": "302ce04c4a0313141006e6d43944e14aa010714e0935d4d66a3f946e31e12f0c",
+        "query": {
+          "predicate": "use",
+          "subject": "Atlas",
+          "object": "battery",
+          "negative": false,
+          "scope": "present"
+        },
+        "assumptions": [
+          {
+            "predicate": "use",
+            "subject": "Other",
+            "object": "battery",
+            "negative": false,
+            "scope": "present"
+          }
+        ],
+        "metrics": {
+          "work": 1,
+          "total_work": 30,
+          "facts": 8,
+          "pending": 0,
+          "complete": true,
+          "limits": [],
+          "resumable": false
+        },
+        "reuse": {
+          "checkpoint": true,
+          "prior_facts": 7,
+          "new_work": 1
+        },
+        "semantics": "Conditional on supplied premises, interpretations and scope; not verified world truth.",
+        "sources": {
+          "doc": "source revision 1",
+          "negative": ""
+        },
+        "approximation": [],
+        "answer": "Bajo los supuestos indicados: Hay apoyo tanto a favor como en contra."
+      },
+      {
+        "changed": true,
+        "revision": 3,
+        "update": "invalidate_context"
+      },
+      {
+        "status": "supported",
+        "answers": [
+          {
+            "fact": {
+              "predicate": "use",
+              "subject": "Atlas",
+              "object": "battery",
+              "negative": false,
+              "scope": "present"
+            },
+            "binding": {},
+            "proof": {
+              "fact": {
+                "predicate": "use",
+                "subject": "Atlas",
+                "object": "battery",
+                "negative": false,
+                "scope": "present"
+              },
+              "support": {
+                "kind": "deduced",
+                "source": "@builtin",
+                "rule": "e56e8fdb7c88109892c5ec18b4b48245a579af2883960565cae3773ece0c9def",
+                "premises": [
+                  "065d6da487d41a13c81b007de179c87fc0ae7d1a50af2eba7f0c03c64fdb9751",
+                  "42192cc03939e8130440afb8574d022bcea5564b0a3ddfe5aa5b0c681cec5688"
+                ]
+              },
+              "premises": [
+                {
+                  "fact": {
+                    "predicate": "type",
+                    "subject": "Atlas",
+                    "object": "machine",
+                    "negative": false,
+                    "scope": "present"
+                  },
+                  "support": {
+                    "kind": "deduced",
+                    "source": "@builtin",
+                    "rule": "95844861aba2673e4ea27e8ee98795e371fc3551c6dc45b666a52bc35ba3620d",
+                    "premises": [
+                      "a2e66a33eba322ecddfee072fec72e0d9559effbf2be18fe447e79eedb4bbb42",
+                      "a7e1ef23cf7f8ea314494aad42688da65c274c0415a83bdf14ad961377f454dc"
+                    ]
+                  },
+                  "premises": [
+                    {
+                      "fact": {
+                        "predicate": "subclass",
+                        "subject": "robot",
+                        "object": "machine",
+                        "negative": false,
+                        "scope": "present"
+                      },
+                      "support": {
+                        "kind": "asserted",
+                        "source": "doc",
+                        "premises": []
+                      },
+                      "premises": []
+                    },
+                    {
+                      "fact": {
+                        "predicate": "type",
+                        "subject": "Atlas",
+                        "object": "robot",
+                        "negative": false,
+                        "scope": "present"
+                      },
+                      "support": {
+                        "kind": "asserted",
+                        "source": "doc",
+                        "premises": []
+                      },
+                      "premises": []
+                    }
+                  ]
+                },
+                {
+                  "fact": {
+                    "predicate": "all/use",
+                    "subject": "machine",
+                    "object": "battery",
+                    "negative": false,
+                    "scope": "present"
+                  },
+                  "support": {
+                    "kind": "asserted",
+                    "source": "doc",
+                    "premises": []
+                  },
+                  "premises": []
+                }
+              ]
+            },
+            "opposing_proof": null
+          }
+        ],
+        "answers_truncated": false,
+        "opposition": [],
+        "proof_note": "Null proof means the explanation depth limit was reached, not absence of support.",
+        "context": "main",
+        "revision": 3,
+        "world": "base",
+        "query": {
+          "predicate": "use",
+          "subject": "Atlas",
+          "object": "battery",
+          "negative": false,
+          "scope": "present"
+        },
+        "assumptions": [],
+        "metrics": {
+          "work": 28,
+          "total_work": 28,
+          "facts": 6,
+          "pending": 0,
+          "complete": true,
+          "limits": [],
+          "resumable": false
+        },
+        "reuse": {
+          "checkpoint": false,
+          "prior_facts": 0,
+          "new_work": 28
+        },
+        "semantics": "Conditional on supplied premises, interpretations and scope; not verified world truth.",
+        "sources": {
+          "doc": "source revision 1"
+        },
+        "approximation": [],
+        "answer": "Hay apoyo en las premisas para la consulta."
+      },
+      {
+        "changed": true,
+        "revision": 4,
+        "update": "invalidate_context"
+      },
+      {
+        "status": "unknown",
+        "answers": [],
+        "answers_truncated": false,
+        "opposition": [],
+        "proof_note": "Null proof means the explanation depth limit was reached, not absence of support.",
+        "context": "main",
+        "revision": 4,
+        "world": "base",
+        "query": {
+          "predicate": "use",
+          "subject": "Atlas",
+          "object": "battery",
+          "negative": false,
+          "scope": "present"
+        },
+        "assumptions": [],
+        "metrics": {
+          "work": 1,
+          "total_work": 1,
+          "facts": 1,
+          "pending": 0,
+          "complete": true,
+          "limits": [],
+          "resumable": false
+        },
+        "reuse": {
+          "checkpoint": false,
+          "prior_facts": 0,
+          "new_work": 1
+        },
+        "semantics": "Conditional on supplied premises, interpretations and scope; not verified world truth.",
+        "sources": {},
+        "approximation": [],
+        "answer": "No hay evidencia suficiente entre los hechos alcanzados."
+      }
+    ]
+  },
+  "arithmetic": [
+    {
+      "expression": "0.1 + 0.2",
+      "result": {
+        "status": "calculated",
+        "expression": "0.1 + 0.2",
+        "exact": "3/10",
+        "method": "rational-arithmetic/1",
+        "stored_as_premise": false
+      }
+    },
+    {
+      "expression": "(3/4)*8",
+      "result": {
+        "status": "calculated",
+        "expression": "(3/4)*8",
+        "exact": "6",
+        "method": "rational-arithmetic/1",
+        "stored_as_premise": false
+      }
+    },
+    {
+      "expression": "-2**2",
+      "result": {
+        "status": "calculated",
+        "expression": "-2**2",
+        "exact": "-4",
+        "method": "rational-arithmetic/1",
+        "stored_as_premise": false
+      }
+    },
+    {
+      "expression": "2**-3",
+      "result": {
+        "status": "calculated",
+        "expression": "2**-3",
+        "exact": "1/8",
+        "method": "rational-arithmetic/1",
+        "stored_as_premise": false
+      }
+    },
+    {
+      "expression": "1e-5 + .5",
+      "result": {
+        "status": "calculated",
+        "expression": "1e-5 + .5",
+        "exact": "50001/100000",
+        "method": "rational-arithmetic/1",
+        "stored_as_premise": false
+      }
+    },
+    {
+      "expression": "999999999999999999999999999999**16",
+      "result": {
+        "status": "calculated",
+        "expression": "999999999999999999999999999999**16",
+        "exact": "999999999999999999999999999984000000000000000000000000000119999999999999999999999999999440000000000000000000000000001819999999999999999999999999995632000000000000000000000000008007999999999999999999999999988560000000000000000000000000012869999999999999999999999999988560000000000000000000000000008007999999999999999999999999995632000000000000000000000000001819999999999999999999999999999440000000000000000000000000000119999999999999999999999999999984000000000000000000000000000001",
+        "method": "rational-arithmetic/1",
+        "stored_as_premise": false
+      }
+    },
+    {
+      "expression": "1/0",
+      "error": "Undefined or out-of-range arithmetic"
+    },
+    {
+      "expression": "x+1",
+      "error": "Only numbers, parentheses and + - * / ** are supported"
+    },
+    {
+      "expression": "2**17",
+      "error": "Exponent must be an integer between -16 and 16"
+    },
+    {
+      "expression": "True",
+      "error": "Only numbers, parentheses and + - * / ** are supported"
+    },
+    {
+      "expression": "1e101",
+      "error": "Decimal exponent magnitude limit"
+    },
+    {
+      "expression": "[1,2]",
+      "error": "Only numbers, parentheses and + - * / ** are supported"
+    }
+  ],
+  "justification": {
+    "version": 1,
+    "kind": "decision",
+    "rationale": "Keep scope.",
+    "evidence": [
+      {
+        "path": "src/cache.py",
+        "note": "Observation"
+      }
+    ],
+    "dependencies": [
+      {
+        "kind": "tree",
+        "path": "src",
+        "pattern": "*.py",
+        "sha256": "fe2305667533b4bdfccf02eaca8152134b6e0af9ce08703eea285cec4d59dd48"
+      },
+      {
+        "kind": "file",
+        "path": "src/cache.py",
+        "sha256": "c19ee3e84e27cad26e948955970c4f2e1b1b603aceb63a67660d987fada9455c"
+      }
+    ],
+    "assumptions": [
+      "Configuration matches."
+    ],
+    "recheck": "Check again."
+  },
+  "validity": {
+    "state": "unchanged",
+    "issues": [],
+    "scope": "declared dependencies only; not a truth or coverage check"
+  },
+  "stale": {
+    "state": "stale",
+    "issues": [
+      "src"
+    ],
+    "scope": "declared dependencies only; not a truth or coverage check"
+  },
+  "contexts": {
+    "summary": {
+      "topic": "cache identity",
+      "conclusion": "Include rules in the cache key.",
+      "conclusion_complete": true,
+      "kind": "decision",
+      "validity": {
+        "state": "unchanged",
+        "issues": [],
+        "scope": "declared dependencies only; not a truth or coverage check"
+      },
+      "rationale": "Keep scope.",
+      "assumptions": [
+        "Configuration matches."
+      ],
+      "sources": [
+        {
+          "path": "src/cache.py",
+          "note": "Observation"
+        }
+      ],
+      "recheck": "Check again.",
+      "expand": {
+        "topic": "cache identity",
+        "detail": "full"
+      }
+    },
+    "answer": {
+      "topic": "cache identity",
+      "conclusion": "Include rules in the cache key.",
+      "conclusion_complete": true,
+      "kind": "decision",
+      "validity": {
+        "state": "unchanged"
+      },
+      "assumptions": [
+        "Configuration matches."
+      ],
+      "sources": [
+        {
+          "path": "src/cache.py",
+          "note": "Observation"
+        }
+      ],
+      "expand": {
+        "topic": "cache identity",
+        "detail": "full"
+      },
+      "reuse": "consider_if_question_and_assumptions_match"
+    },
+    "compact": {
+      "memories": [
+        {
+          "topic": "cache identity",
+          "conclusion": "Include rules in the cache key.",
+          "conclusion_complete": true,
+          "kind": "decision",
+          "validity": {
+            "state": "unchanged"
+          },
+          "assumptions": [
+            "Configuration matches."
+          ],
+          "sources": [
+            {
+              "path": "src/cache.py",
+              "note": "Observation"
+            }
+          ],
+          "expand": {
+            "topic": "cache identity",
+            "detail": "full"
+          },
+          "reuse": "consider_if_question_and_assumptions_match"
+        }
+      ],
+      "omitted": 0,
+      "detail": "answer",
+      "validity_scope": "Declared inputs only; the conclusion and assumptions are not independently proved."
+    },
+    "brief": "[dependencias sin cambios; supuestos pendientes] cache identity — Include rules in the cache key.. Motivo: Keep scope.",
+    "omitted": {
+      "memories": [
+        {
+          "topic": "cache identity",
+          "conclusion_omitted": true,
+          "validity": {
+            "state": "unchanged"
+          },
+          "expand": {
+            "topic": "cache identity",
+            "detail": "full"
+          }
+        }
+      ],
+      "omitted": 0,
+      "detail": "answer",
+      "validity_scope": "Declared inputs only; the conclusion and assumptions are not independently proved."
+    }
+  },
+  "graph": {
+    "refs": [
+      {
+        "ref_kind": "file",
+        "ref_key": "src/cache.py",
+        "file_id": 1,
+        "symbol_id": null,
+        "method": "path",
+        "resolved": 1
+      },
+      {
+        "ref_kind": "file",
+        "ref_key": "missing.rs",
+        "file_id": null,
+        "symbol_id": null,
+        "method": "path",
+        "resolved": 0
+      },
+      {
+        "ref_kind": "symbol",
+        "ref_key": "CacheEntry\u001fsrc/cache.py",
+        "file_id": null,
+        "symbol_id": 1,
+        "method": "ident",
+        "resolved": 1
+      }
+    ],
+    "anchor": [
+      {
+        "topic": "cache",
+        "content": "src/cache.py CacheEntry",
+        "tags": [
+          "cache",
+          "kind:finding"
+        ],
+        "anchor": {
+          "kind": "error",
+          "key": "database is locked"
+        },
+        "updated_at": 1000
+      }
+    ],
+    "related": {
+      "ok": true,
+      "topic": "cache",
+      "edge_coverage": "shared_file/shared_symbol/shared_tag are exact; semantic is approximate",
+      "neighbors": [
+        {
+          "topic": "reuse",
+          "has_exact_link": true,
+          "best_weight": 0.5,
+          "edges": [
+            {
+              "type": "shared_file",
+              "weight": 0.5,
+              "evidence": {
+                "keys": [
+                  "src/cache.py"
+                ],
+                "n": 1
+              }
+            },
+            {
+              "type": "shared_tag",
+              "weight": 0.5,
+              "evidence": {
+                "tags": [
+                  "cache"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "file": {
+      "ok": true,
+      "path": "src/cache.py",
+      "findings": [
+        {
+          "topic": "reuse",
+          "content": "src/cache.py"
+        },
+        {
+          "topic": "cache",
+          "content": "src/cache.py CacheEntry"
+        }
+      ],
+      "related": []
+    }
+  }
+}

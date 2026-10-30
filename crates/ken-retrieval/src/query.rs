@@ -33,22 +33,7 @@ impl Default for SearchOptions {
 pub fn deserialize_query_text<'de, D: Deserializer<'de>>(
     deserializer: D,
 ) -> std::result::Result<PythonText, D::Error> {
-    let text = PythonText::deserialize(deserializer)?;
-    let mut input = text.codepoints().iter().copied().peekable();
-    let mut points = Vec::new();
-    while let Some(point) = input.next() {
-        if (0xd800..=0xdbff).contains(&point)
-            && input
-                .peek()
-                .is_some_and(|low| (0xdc00..=0xdfff).contains(low))
-        {
-            let low = input.next().expect("validated low surrogate");
-            points.push(0x10000 + ((point - 0xd800) << 10) + (low - 0xdc00));
-        } else {
-            points.push(point)
-        }
-    }
-    Ok(PythonText::from_codepoints(points).expect("validated text points"))
+    PythonText::deserialize(deserializer).map(PythonText::joined_surrogates)
 }
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(transparent)]

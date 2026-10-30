@@ -217,7 +217,7 @@ fn remap(tx: &WriteTransaction<'_>, space: VectorSpace, rows: &[(i64, i64)]) -> 
     Ok(())
 }
 
-fn copy_unmanaged(source: &Path, dest: &Path) -> StoreResult<()> {
+pub(crate) fn copy_unmanaged(source: &Path, dest: &Path) -> StoreResult<()> {
     let entries = match std::fs::read_dir(source) {
         Ok(entries) => entries,
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(()),

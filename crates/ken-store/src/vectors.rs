@@ -38,16 +38,34 @@ impl VectorStore {
         model: Option<&str>,
     ) -> StoreResult<Self> {
         let manifest = VectorManifest::open(directory, space, dim, model)?;
-        let segments = Segments {
-            directory: directory.into(),
-            space,
-            capacity: manifest.segment_bytes()?,
-        };
+        let segments = Segments::new(directory, space, manifest.segment_bytes()?)?;
         Ok(Self {
             manifest,
             segments,
             dirty: DirtySegments::default(),
         })
+    }
+    pub(crate) fn validate_referenced_segments(&self, conn: &Connection) -> StoreResult<()> {
+        let slots = slot_set(
+            conn,
+            &format!(
+                "SELECT vec_slot FROM {} WHERE vec_slot IS NOT NULL",
+                self.space()
+            ),
+            None,
+        )?;
+        let indices = slots
+            .into_iter()
+            .map(|slot| slot as u64 / self.manifest.segment_rows as u64)
+            .collect::<std::collections::BTreeSet<_>>();
+        for index in indices {
+            if self.segments.open(index, false)?.is_none() {
+                return Err(StoreError::InvalidSlot(
+                    "referenced replacement segment is missing",
+                ));
+            }
+        }
+        Ok(())
     }
     pub fn manifest(&self) -> &VectorManifest {
         &self.manifest

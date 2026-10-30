@@ -1,0 +1,112 @@
+{
+  "format": "ken-public-model-metadata-provenance/1",
+  "reference_fingerprint": "5b849bf6f01a5915aea972274dba5bd00073bf42efab6563297c2ded0e368038",
+  "original_source": "src/ken/cli.py::_models_cli",
+  "original_rows": 32,
+  "fastembed_rows": 30,
+  "torch_rows": 2,
+  "observation": "pure metadata only; no model construction, assets, inference or network",
+  "metadata": {
+    "bytes": 5064,
+    "sha256": "30d7cbb0cd839ab648373711ce722b8ba0269a10b1ce925063d59a24591264c5"
+  },
+  "installed_profile": {
+    "python": "3.12.9",
+    "versions": {
+      "fastembed": "0.8.0",
+      "numpy": "2.4.4",
+      "onnxruntime": "1.25.1",
+      "tokenizers": "0.22.2"
+    },
+    "fastembed_sources": {
+      "fastembed/__init__.py": "7d5baddda3e49a0812685f4c476c696477a26f5aa6de98280c088ab39b7b4065",
+      "fastembed/common/__init__.py": "d0b11760d80cee25bbb987b53bb41df07541a50d7d7dc75f4e48cb0235e063b7",
+      "fastembed/common/model_description.py": "6d912942c7b54e62c78e7d259a8cb70ed3e3877214d2d13e2e5a9319d610918a",
+      "fastembed/common/model_management.py": "8f5e95e7641e25cd5591c28db38fa21be9de09ff60d0f58195f0cf5da551db60",
+      "fastembed/common/onnx_model.py": "8b2d85430028dfc705fb368fbdf58f779eff3871dfc1f3b987e71302dddb566f",
+      "fastembed/common/preprocessor_utils.py": "4f131ba66d533ee5a9132b31504b4d5d8bb3418afaa6e7438782b7c04b84f810",
+      "fastembed/common/types.py": "0a29e1cde1aaaf985bb0ef3e5976307baa137f3164d96c4a7e8c813ab1f27071",
+      "fastembed/common/utils.py": "af11cee52ad15b6eda4d669783843636ef2beb7001a8605139d8cd09aceb686a",
+      "fastembed/embedding.py": "a049bf9a66fae78e71af78a2cfbcefca2c8a077e1d5409130bcd8bcaa110562d",
+      "fastembed/image/__init__.py": "610dcd1d2216d6e7d1e6211a073cc9d5c55e388144e4ee93a5f74d2ad5ab6ef8",
+      "fastembed/image/image_embedding.py": "cb886b2e8155e1c78c74ec1ea1e8cf3d9b0b23ac84dd2aaff73de76520aa2753",
+      "fastembed/image/image_embedding_base.py": "e06b76cc87d3bd0349c75f1b9ac283a7427a9d1f568c4f450304fd68ab00dbbb",
+      "fastembed/image/onnx_embedding.py": "b8d71c49f09173f1798a73b260e1f03b34e1495f9fea50f7a1eb201ec1b3ce6f",
+      "fastembed/image/onnx_image_model.py": "1de5d522a2f5c8ec62c148841ae689f715a83e1ba5f73b91f8404e11e1df4eda",
+      "fastembed/image/transform/functional.py": "ed1dfd19d1f315b6e389059c4607a04d786e0abd93be1d98752c6668e408073e",
+      "fastembed/image/transform/operators.py": "142f7e99655104c34ee93db8b42adb245bfbba9873ea39eb6d2d65f0050243b1",
+      "fastembed/late_interaction/__init__.py": "f818b566d8338296c59bd6e977957741c251385e1c3a0ca266510797efb34128",
+      "fastembed/late_interaction/colbert.py": "86311047ff3ee26f8120a2bc36091ed85acaece04d89329154563d8b9c3e55af",
+      "fastembed/late_interaction/jina_colbert.py": "a1f28d75472dc3497526b89c1c1b6e60da6accb89bc1bdde1dd9df97f435724e",
+      "fastembed/late_interaction/late_interaction_embedding_base.py": "09dd93d364473921d06c5657d31b2d7ef902d98dcd7b08c1fd33e02b824b4247",
+      "fastembed/late_interaction/late_interaction_text_embedding.py": "72329828ee9da6fcf64277c60b61607d896ccbed81144db17b3f1f77218b4577",
+      "fastembed/late_interaction/token_embeddings.py": "c7d8e2803464fdce722d45f0caecec77b1f70fadb41bbe37d1d29a26cc576ed1",
+      "fastembed/late_interaction_multimodal/__init__.py": "1005618047ad68a6463af890c88b276b33fc9f662ab5b88475134dd56c93d566",
+      "fastembed/late_interaction_multimodal/colmodernvbert.py": "cf9c50eb38cdff9701c62ad3381a840d86bf234a352b2693ec22b2240447a51b",
+      "fastembed/late_interaction_multimodal/colpali.py": "66c1453b26cb42f45155152bb7988f8ee8ca3205e99c0a965f54e6566748834a",
+      "fastembed/late_interaction_multimodal/late_interaction_multimodal_embedding.py": "a66adbd1d43796756c1a0a99747d47c5a824db67174294c220d57a63301e29c2",
+      "fastembed/late_interaction_multimodal/late_interaction_multimodal_embedding_base.py": "56dbe141f41ad0c7a0540df54831777113ce051654301a3d58ad86b05a9d5c51",
+      "fastembed/late_interaction_multimodal/onnx_multimodal_model.py": "e17687598fcfb6b8ccc55b6eb9afa810918d01d1fcd2ff979736bb15cbe6f07c",
+      "fastembed/parallel_processor.py": "067d734057b1f5ed8d0bfb9fa249631d783636f139fc7043a9a048091e9d9c9d",
+      "fastembed/postprocess/__init__.py": "a6cd3af0c8158cbeb004c995a9343650644b626fcbdde9629a7ce88c61bb6ae9",
+      "fastembed/postprocess/muvera.py": "ef813f1ea3fd83d99c3827ae0655cc52aba3dae81371ed9c5279c450eb43b8a1",
+      "fastembed/rerank/cross_encoder/__init__.py": "dc04bbb52d5600b10e26634877d5f193507023ec747c9287152572269489be47",
+      "fastembed/rerank/cross_encoder/custom_text_cross_encoder.py": "a8d1c0d6826d41c28fef4cceb5b733a1644a9742f9e3482fac5bebdba12eb85d",
+      "fastembed/rerank/cross_encoder/onnx_text_cross_encoder.py": "34b49ad6ec5470ada07ba6c1ad22818b25c75cbdd6cd76bf464ae85cad21c733",
+      "fastembed/rerank/cross_encoder/onnx_text_model.py": "b97c4c01608e55e9805a07bc9499aa52480a4f1edd99212ac8bb8fda234cd9bd",
+      "fastembed/rerank/cross_encoder/text_cross_encoder.py": "ab00ca4f13c8e8b5a61fc1d9ad3cf589c9fe69d0e392bc5c86e1a9854776f3d5",
+      "fastembed/rerank/cross_encoder/text_cross_encoder_base.py": "689ba292d42426bb8a6269e91358d8d67d5b0261c74b5a86c26ba5657c427b33",
+      "fastembed/sparse/__init__.py": "19e52837f7e98813e8aa43b570e213c5ff29a3495575c3d5d3b0847c42ec508d",
+      "fastembed/sparse/bm25.py": "85a91ac795aa335f29126db0a47db9ae15b1473b5f9baef755b664fa0aa1308b",
+      "fastembed/sparse/bm42.py": "df05ef73b43af61e04c3ad4f969b53a5bfec2b61a98188457c39ca258e1e20ff",
+      "fastembed/sparse/minicoil.py": "6fea4e249ef075346881d4c8dbec9f05cdba3d08effe947cd831933c42f75ef4",
+      "fastembed/sparse/sparse_embedding_base.py": "2aae16714adc444ef87652392f70ba1f9c24efef87005c0ff10ccc1789623c41",
+      "fastembed/sparse/sparse_text_embedding.py": "e8c4d0b3cd12105892246a0c219c9153543e0a5d82a8116e9e771aa267a635c6",
+      "fastembed/sparse/splade_pp.py": "b9d0de017fb42721ef842d1d00fabd4971ac61ac91309865037bf504394b64cd",
+      "fastembed/sparse/utils/minicoil_encoder.py": "e8f2e21665f2b68e2cc92b04c7dafc5d062a5a23bc303a71e3c551f114d0ff3f",
+      "fastembed/sparse/utils/sparse_vectors_converter.py": "6f9cee2a42c07b1c896c6c7b6effc269f47d7b09a554341ad48d122db47eb464",
+      "fastembed/sparse/utils/tokenizer.py": "e5b808ef6632aa895362e7d7c6c0a2b993f58dc21732a0f5a0268d680c6b3f06",
+      "fastembed/sparse/utils/vocab_resolver.py": "b61171e7078c73fffdca995753e3c0d006a7c767d1daa5a36c17fc714473a361",
+      "fastembed/text/__init__.py": "e7f27cfc0487a06f8bad516f27f179a30e7a3c7bf98bd8f8b33880cb132a29d9",
+      "fastembed/text/clip_embedding.py": "8b70d00d55fd725e4fb925b37fbe21a3da1cbf3c46d7b6294f4dbe182c34a2be",
+      "fastembed/text/custom_text_embedding.py": "f9a69317fcc3716bda5d5a555fe4fd37ff539390fb4faaf10f20d3e86d75a266",
+      "fastembed/text/multitask_embedding.py": "7f31518514a1ccc9636856ab649137151b85b10b34d0cb3aedc6e56d5e130228",
+      "fastembed/text/onnx_embedding.py": "c3752705280b27a74e34d2b75f48bcb4ac0e3ba96f4a8897f1273423e4508100",
+      "fastembed/text/onnx_text_model.py": "f0867d16e0589dac8cc50427c53c2d1b1ff5c8423e031e64886a47f4cd7dc73f",
+      "fastembed/text/pooled_embedding.py": "a7b62c7eec9d506f457c77ede5cdf297cf0bc89b6df29b8e2f3c2cc138bace57",
+      "fastembed/text/pooled_normalized_embedding.py": "9c00ccdee745d276abddb90b0a1376f7d203c455aca3de096ebb4ad2bcb41f68",
+      "fastembed/text/text_embedding.py": "de7c6c2bb8b0b05f70b02d0bb62308e1cef50cdb0c618ff74d0d75598ac326a7",
+      "fastembed/text/text_embedding_base.py": "1e3dd7639f40cf6db91e8cb9ce4021570d80a23db5a7045df61116af9b4410c8"
+    }
+  },
+  "capture_files": {
+    "observer.py": {
+      "bytes": 1058,
+      "sha256": "115dbe426415c1f72e9cc7f89514e55aa4d13e98a825129f40ef74699cad57a2"
+    },
+    "request.json": {
+      "bytes": 250,
+      "sha256": "11fec9229c993ae77968634fd3c2d184890fcec23fd8fae450e4e21e972f1a73"
+    },
+    "models.stdout": {
+      "bytes": 5064,
+      "sha256": "30d7cbb0cd839ab648373711ce722b8ba0269a10b1ce925063d59a24591264c5"
+    },
+    "supported.json": {
+      "bytes": 15454,
+      "sha256": "4d7e9cd999a3f04879e1f9fc145033dfd3a1cad45697d7dce037c95dde7fb0cf"
+    },
+    "profile.json": {
+      "bytes": 14236,
+      "sha256": "0036e60a060ee386406a1851b7b259c2acc0a4dac580bb6f539287fea5e39dcc"
+    },
+    "process.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "process.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

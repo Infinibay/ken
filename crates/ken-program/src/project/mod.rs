@@ -2,6 +2,7 @@
 mod calls;
 mod cpp;
 mod imports;
+pub use imports::python_module_targets;
 mod resolution;
 mod types;
 use crate::{Attributes, Entity, Fact, IR_VERSION, ProgramError, StructuralIr};

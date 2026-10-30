@@ -222,8 +222,11 @@ fn killed_compaction_recovers_before_project_data_is_exposed() {
 }
 
 #[test]
-fn killed_recovery_cleanup_resumes_after_its_internal_owner_receipt_is_deleted() {
-    // Catches loss of recovery authority partway through recursive removal.
+fn partial_discard_cleanup_resumes_after_its_internal_owner_receipt_is_deleted() {
+    // Construct the exact durable crash image after unlinking the internal owner.
+    // Recursive deletion order is unspecified; waiting for this interval with
+    // SIGSTOP raced with rmdir when the owner happened to be removed last.
+    // Actual external SIGKILL publication-boundary cases remain above.
     let root = tempfile::tempdir().unwrap();
     seed(root.path());
     let live = root.path().join(".ken/vectors");
@@ -235,31 +238,23 @@ fn killed_recovery_cleanup_resumes_after_its_internal_owner_receipt_is_deleted()
     kill_at(root.path(), "new_published");
     let owner = live.join(".ken-storage-owner.json");
     assert!(owner.is_file());
-    let mut process = child(root.path(), "recover");
-    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
-    let interrupted = loop {
-        if !owner.exists() && live.exists() {
-            // Freeze before checking the remaining entries, then kill externally.
-            assert_eq!(unsafe { libc::kill(process.id() as i32, libc::SIGSTOP) }, 0);
-            let incomplete = std::fs::read_dir(&live).unwrap().next().is_some();
-            process.kill().unwrap();
-            assert_eq!(process.wait().unwrap().signal(), Some(9));
-            break incomplete;
-        }
-        if process.try_wait().unwrap().is_some() {
-            break false;
-        }
-        if std::time::Instant::now() >= deadline {
-            process.kill().unwrap();
-            process.wait().unwrap();
-            break false;
-        }
-        std::thread::yield_now();
-    };
-    assert!(
-        interrupted,
-        "did not interrupt a partially removed generation"
-    );
+    let journal = root.path().join(".ken/vectors-maintenance.json");
+    let mut record: Value = serde_json::from_slice(&std::fs::read(&journal).unwrap()).unwrap();
+    assert_eq!(record["phase"], "prepared");
+    record["phase"] = json!("discarding_new");
+    std::fs::write(&journal, serde_json::to_vec(&record).unwrap()).unwrap();
+    std::fs::File::open(&journal).unwrap().sync_all().unwrap();
+    std::fs::File::open(journal.parent().unwrap())
+        .unwrap()
+        .sync_all()
+        .unwrap();
+    std::fs::remove_file(&owner).unwrap();
+    std::fs::remove_file(many.join("00000")).unwrap();
+    std::fs::File::open(&many).unwrap().sync_all().unwrap();
+    std::fs::File::open(&live).unwrap().sync_all().unwrap();
+    assert!(!owner.exists());
+    assert_eq!(std::fs::read_dir(&many).unwrap().count(), 14_999);
+    assert!(live.join("ci_files.json").is_file());
     let hidden = root.path().join(".ken/interrupted-generation");
     std::fs::rename(&live, &hidden).unwrap();
     std::fs::create_dir(&live).unwrap();

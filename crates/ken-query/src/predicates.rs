@@ -7,7 +7,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fmt::{self, Write},
 };
-#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "__class__")]
 pub struct Predicate {
     pub name: String,

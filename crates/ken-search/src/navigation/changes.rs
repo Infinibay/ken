@@ -12,7 +12,7 @@ use std::{
 
 impl IndexNavigation {
     pub fn changed_context(&self) -> Result<Document> {
-        let mut command = Command::new("git");
+        let mut command = Command::new(ken_core::native_program::git_program()?);
         command
             .args(["status", "--porcelain=v1"])
             .current_dir(self.paths.root());

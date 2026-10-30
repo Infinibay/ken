@@ -123,7 +123,7 @@ impl Engine<'_> {
                 } else if !(if mode == "role" {
                     actual.string().as_deref() == Some(bound(row, text)?)
                 } else {
-                    self.comparisons.compare(&actual, mode, text)?
+                    self.comparisons.compare_source(&actual, mode, text)?
                 }) {
                     rejected = true;
                     break;

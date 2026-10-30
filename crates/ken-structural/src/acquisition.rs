@@ -11,6 +11,7 @@ use ken_store::{
 use rusqlite::OptionalExtension;
 use serde_json::{Value, json};
 use std::{
+    cell::RefCell,
     fs::{File, OpenOptions},
     os::fd::AsRawFd,
     path::{Path, PathBuf},
@@ -26,6 +27,57 @@ pub struct AcquiredProject {
 impl AcquiredProject {
     pub fn index(&mut self) -> Result<GraphIndex<'_>> {
         Ok(GraphIndex::open(&mut self.store, self.graph)?)
+    }
+    pub fn retained_index(&self) -> Result<GraphIndex<'_>> {
+        Ok(GraphIndex::open_retained(&self.store, self.graph)?)
+    }
+    /// Reconstruct the legacy source view from these captured units, never from
+    /// a second worktree read. The normalized query graph has different facts.
+    pub fn source_graph(
+        &self,
+        mut check: impl FnMut() -> Result<()>,
+    ) -> Result<ken_program::StructuralIr> {
+        let snapshot = self.store.connection().query_row(
+            "SELECT snapshot_id FROM k2_graphs WHERE graph_id=?",
+            [self.graph],
+            |row| row.get(0),
+        )?;
+        self.store.check_pinned_snapshot(snapshot)?;
+        let mut ids = Vec::new();
+        self.store.snapshot_units_checked(snapshot, |id| {
+            ids.push(id);
+            Ok(())
+        })?;
+        let mut units = Vec::with_capacity(ids.len());
+        for id in ids {
+            check()?;
+            units.push(self.store.load_unit(id)?);
+        }
+        let mut failure = None;
+        let graph = ken_program::project::link_project_owned_with_check(units, || match check() {
+            Ok(()) => Ok(()),
+            Err(error) => {
+                failure = Some(error);
+                Err(ken_program::ProgramError::Invalid(
+                    "source graph reconstruction interrupted",
+                ))
+            }
+        });
+        if let Some(error) = failure {
+            return Err(error);
+        }
+        let graph = graph?;
+        self.store.check_pinned_snapshot(snapshot)?;
+        Ok(graph)
+    }
+    pub fn source_store(&self) -> &StructuralStore {
+        &self.store
+    }
+    pub fn source_store_mut(&mut self) -> &mut StructuralStore {
+        &mut self.store
+    }
+    pub fn close(self) -> Result<()> {
+        Ok(self.store.close()?)
     }
     pub fn persistent(&self) -> bool {
         self.store.path().is_some()
@@ -51,14 +103,36 @@ impl<'a, 'b> ProjectAcquisition<'a, 'b> {
         &mut self,
         path: &Path,
         limits: ScanLimits,
+        check: impl FnMut() -> Result<()>,
+    ) -> Result<AcquiredProject> {
+        self.acquire_sources(path, None, limits, check)
+    }
+    pub fn acquire_sources(
+        &mut self,
+        path: &Path,
+        source_paths: Option<&[String]>,
+        limits: ScanLimits,
         mut check: impl FnMut() -> Result<()>,
     ) -> Result<AcquiredProject> {
         let start = Instant::now();
-        let manifest = self.builder.manifest(path, limits, &mut check)?;
+        let manifest = self
+            .builder
+            .manifest_sources(path, source_paths, limits, &mut check)?;
         let count = manifest.entries().len();
+        use sha2::{Digest, Sha256};
+        let source_manifest = manifest
+            .entries()
+            .iter()
+            .map(|source| {
+                json!([
+                    source.path(),
+                    format!("{:x}", Sha256::digest(source.content()))
+                ])
+            })
+            .collect::<Vec<_>>();
         let skipped = serde_json::to_value(manifest.skipped())?;
         let key = ArtifactCache::key([
-            b"native-query-index/3".as_slice(),
+            b"native-query-index/4".as_slice(),
             manifest.graph_key().as_bytes(),
             crate::IMPLEMENTATION_FINGERPRINT.as_bytes(),
         ]);
@@ -95,9 +169,35 @@ impl<'a, 'b> ProjectAcquisition<'a, 'b> {
             drop(index);
             (graph, analysis)
         } else {
-            // No live store lease is held while parsing and linking source units.
+            // Keep a building lease renewed by linker checks while immutable raw
+            // units are projected. This protects them from concurrent collection.
             drop(store);
-            let report = self.builder.build_manifest(manifest, &mut check)?;
+            let building = RefCell::new(StructuralStore::open(
+                self.persistent.then_some(self.database.as_path()),
+                None,
+            )?);
+            let mut source_units = vec![];
+            let frontend = self.builder.frontend_revision().to_owned();
+            let report = self.builder.build_manifest_with_units(
+                manifest,
+                || {
+                    check()?;
+                    building.borrow().renew(false)?;
+                    Ok(())
+                },
+                |source, ir| {
+                    let source_hash = format!("{:x}", Sha256::digest(source.content()));
+                    let id = building.borrow_mut().put_unit(
+                        source.key(),
+                        ir,
+                        &source_hash,
+                        &frontend,
+                        true,
+                    )?;
+                    source_units.push((id, source.key().to_owned(), source_hash));
+                    Ok(())
+                },
+            )?;
             check()?;
             let complete = report.analysis.coverage_complete;
             let failed = report.analysis.files.len() != count;
@@ -106,11 +206,27 @@ impl<'a, 'b> ProjectAcquisition<'a, 'b> {
             let analysis = serde_json::to_value(&report.analysis)?;
             let raw = serde_json::value::to_raw_value(&analysis)?;
             let encoded = GraphValue::parse(&raw)?;
-            store = StructuralStore::open(
-                (self.persistent && !failed).then_some(self.database.as_path()),
-                None,
-            )?;
-            let snapshot = store.publish(&[], store.current()?, &key, complete)?;
+            store = building.into_inner();
+            if failed && self.persistent {
+                // Partial frontend failures never publish a reusable graph. Raw
+                // cached units may survive, but the returned reader is ephemeral.
+                let mut ephemeral = StructuralStore::open(None, None)?;
+                for (id, key, source_hash) in &mut source_units {
+                    *id = ephemeral.put_unit(
+                        key,
+                        &store.load_unit(*id)?,
+                        source_hash,
+                        &frontend,
+                        true,
+                    )?;
+                }
+                store = ephemeral;
+            }
+            let units = source_units
+                .iter()
+                .map(|(id, _, _)| *id)
+                .collect::<Vec<_>>();
+            let snapshot = store.publish(&units, store.current()?, &key, complete)?;
             let mut cancelled = None;
             let result = publish_graph_owned(
                 &mut store,
@@ -147,6 +263,7 @@ impl<'a, 'b> ProjectAcquisition<'a, 'b> {
         } else {
             json!("")
         };
+        analysis["manifest"] = json!(source_manifest);
         analysis["query_index"] = json!({"backend":"sqlite_columns","hit":found.is_some(),"persistent":store.path().is_some(),"bytes":store.allocated_bytes()?,"reclaimed_snapshots":reclaimed.snapshots});
         analysis["elapsed_ms"] =
             json!((start.elapsed().as_secs_f64() * 1_000_000.).round() / 1000.);

@@ -98,3 +98,10 @@ mod compilation;
 pub use compilation::{BackendPreference, compile};
 
 pub mod execution;
+pub mod legacy;
+
+pub mod authoring;
+pub mod legacy_blocks;
+mod literal_strings;
+
+pub mod exploration;

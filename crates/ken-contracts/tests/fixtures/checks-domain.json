@@ -1,0 +1,662 @@
+{
+  "definition": {
+    "id": "python.mutable-default",
+    "query": "language \"kql/2\"; module project.bugs; query mutable_defaults { edge HAS_HAZARD($site, \"mutable-default-argument\"); select $site; }",
+    "description": "No mutable literal defaults in src",
+    "path": "src",
+    "examples": [
+      {
+        "name": "good",
+        "files": {
+          "src/a.py": "def target(items=None): return items\n"
+        },
+        "expect": "pass"
+      },
+      {
+        "name": "bad",
+        "files": {
+          "src/a.py": "def target(items=[]): return items\n"
+        },
+        "expect": "fail"
+      }
+    ]
+  },
+  "views": [
+    {
+      "id": "python.mutable-default",
+      "description": "No mutable literal defaults in src",
+      "path": "src",
+      "expectation": "no_matches",
+      "state": "draft",
+      "automatic": false,
+      "revision": "8774cea97b324a11d76e277917558f8eea620b9ffbcfc0c224ee22e23dec0072",
+      "definition": {
+        "id": "python.mutable-default",
+        "query": "language \"kql/2\"; module project.bugs; query mutable_defaults { edge HAS_HAZARD($site, \"mutable-default-argument\"); select $site; }",
+        "description": "No mutable literal defaults in src",
+        "path": "src",
+        "expectation": "no_matches",
+        "examples": [
+          {
+            "name": "good",
+            "files": {
+              "src/a.py": "def target(items=None): return items\n"
+            },
+            "expect": "pass"
+          },
+          {
+            "name": "bad",
+            "files": {
+              "src/a.py": "def target(items=[]): return items\n"
+            },
+            "expect": "fail"
+          }
+        ],
+        "libraries": {}
+      },
+      "validation": null
+    },
+    {
+      "id": "python.mutable-default",
+      "description": "No mutable literal defaults in src",
+      "path": "src",
+      "expectation": "no_matches",
+      "state": "validated",
+      "automatic": false,
+      "revision": "8774cea97b324a11d76e277917558f8eea620b9ffbcfc0c224ee22e23dec0072",
+      "definition": {
+        "id": "python.mutable-default",
+        "query": "language \"kql/2\"; module project.bugs; query mutable_defaults { edge HAS_HAZARD($site, \"mutable-default-argument\"); select $site; }",
+        "description": "No mutable literal defaults in src",
+        "path": "src",
+        "expectation": "no_matches",
+        "examples": [
+          {
+            "name": "good",
+            "files": {
+              "src/a.py": "def target(items=None): return items\n"
+            },
+            "expect": "pass"
+          },
+          {
+            "name": "bad",
+            "files": {
+              "src/a.py": "def target(items=[]): return items\n"
+            },
+            "expect": "fail"
+          }
+        ],
+        "libraries": {}
+      },
+      "validation": {
+        "revision": "8774cea97b324a11d76e277917558f8eea620b9ffbcfc0c224ee22e23dec0072",
+        "engine": "checks-engine-fixture/1",
+        "passed": true,
+        "cases": [
+          {
+            "name": "good",
+            "expected": "pass",
+            "actual": "pass",
+            "passed": true,
+            "reason": null
+          },
+          {
+            "name": "bad",
+            "expected": "fail",
+            "actual": "fail",
+            "passed": true,
+            "reason": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "python.mutable-default",
+      "description": "No mutable literal defaults in src",
+      "path": "src",
+      "expectation": "no_matches",
+      "state": "enabled",
+      "automatic": true,
+      "revision": "8774cea97b324a11d76e277917558f8eea620b9ffbcfc0c224ee22e23dec0072"
+    }
+  ],
+  "before": {
+    "version": 1,
+    "run_id": "00000000000000000000000000000001",
+    "created_at": "2026-10-30T12:00:00+00:00",
+    "scope": "project",
+    "selection": ".",
+    "status": "pass",
+    "checks": [
+      {
+        "rule": "python.mutable-default",
+        "description": "No mutable literal defaults in src",
+        "revision": "8774cea97b324a11d76e277917558f8eea620b9ffbcfc0c224ee22e23dec0072",
+        "path": "src",
+        "query": "language \"kql/2\"; module project.bugs; query mutable_defaults { edge HAS_HAZARD($site, \"mutable-default-argument\"); select $site; }",
+        "libraries": {},
+        "expectation": "no_matches",
+        "status": "pass",
+        "engine": "checks-engine-fixture/1",
+        "result": {
+          "rows": [],
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "check_snapshot": {
+            "scope": "src",
+            "sha256": "731416f8fb166bfe135a26c30494afcf3e010ebcb06f2f00c9de19dec4bb8c96",
+            "manifest": [
+              [
+                "src/a.py",
+                "9881f70c9d7b9f63351ee8f7dcf048b3105d3a38d2d6a865aa4f23d1fc8264ce"
+              ]
+            ]
+          },
+          "check_dependencies": {
+            "manifest": [],
+            "imports": [
+              [
+                "src/a.py",
+                []
+              ]
+            ],
+            "issues": []
+          },
+          "check_engine": "checks-engine-fixture/1"
+        }
+      }
+    ],
+    "selection_evidence": {}
+  },
+  "after": {
+    "version": 1,
+    "run_id": "00000000000000000000000000000002",
+    "created_at": "2026-10-30T12:00:00+00:00",
+    "scope": "project",
+    "selection": ".",
+    "status": "fail",
+    "checks": [
+      {
+        "rule": "python.mutable-default",
+        "description": "No mutable literal defaults in src",
+        "revision": "8774cea97b324a11d76e277917558f8eea620b9ffbcfc0c224ee22e23dec0072",
+        "path": "src",
+        "query": "language \"kql/2\"; module project.bugs; query mutable_defaults { edge HAS_HAZARD($site, \"mutable-default-argument\"); select $site; }",
+        "libraries": {},
+        "expectation": "no_matches",
+        "status": "fail",
+        "engine": "checks-engine-fixture/1",
+        "result": {
+          "rows": [
+            [
+              {
+                "path": "src/a.py",
+                "line": 1,
+                "name": "target",
+                "kind": "function"
+              }
+            ]
+          ],
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "check_snapshot": {
+            "scope": "src",
+            "sha256": "bda5f5f44227935276802c66eb4f9c2ff8a96aef72cad0d2f9865362d43cc904",
+            "manifest": [
+              [
+                "src/a.py",
+                "b2971641459744643bbffa98c32e90e8c22b9779f93e29ea13ed11579fcacb52"
+              ]
+            ]
+          },
+          "check_dependencies": {
+            "manifest": [],
+            "imports": [
+              [
+                "src/a.py",
+                []
+              ]
+            ],
+            "issues": []
+          },
+          "check_engine": "checks-engine-fixture/1"
+        }
+      }
+    ],
+    "selection_evidence": {},
+    "comparison": {
+      "baseline": "00000000000000000000000000000001",
+      "changes": [
+        {
+          "rule": "python.mutable-default",
+          "change": "regression",
+          "before": "pass",
+          "after": "fail",
+          "matches_before": 0,
+          "matches_after": 1
+        }
+      ],
+      "not_checked": []
+    }
+  },
+  "fixed": {
+    "version": 1,
+    "run_id": "00000000000000000000000000000003",
+    "created_at": "2026-10-30T12:00:00+00:00",
+    "scope": "project",
+    "selection": ".",
+    "status": "pass",
+    "checks": [
+      {
+        "rule": "python.mutable-default",
+        "description": "No mutable literal defaults in src",
+        "revision": "8774cea97b324a11d76e277917558f8eea620b9ffbcfc0c224ee22e23dec0072",
+        "path": "src",
+        "query": "language \"kql/2\"; module project.bugs; query mutable_defaults { edge HAS_HAZARD($site, \"mutable-default-argument\"); select $site; }",
+        "libraries": {},
+        "expectation": "no_matches",
+        "status": "pass",
+        "engine": "checks-engine-fixture/1",
+        "result": {
+          "rows": [],
+          "complete": true,
+          "coverage_complete": true,
+          "unknown_candidates": 0,
+          "results_truncated": false,
+          "reason": null,
+          "check_snapshot": {
+            "scope": "src",
+            "sha256": "731416f8fb166bfe135a26c30494afcf3e010ebcb06f2f00c9de19dec4bb8c96",
+            "manifest": [
+              [
+                "src/a.py",
+                "9881f70c9d7b9f63351ee8f7dcf048b3105d3a38d2d6a865aa4f23d1fc8264ce"
+              ]
+            ]
+          },
+          "check_dependencies": {
+            "manifest": [],
+            "imports": [
+              [
+                "src/a.py",
+                []
+              ]
+            ],
+            "issues": []
+          },
+          "check_engine": "checks-engine-fixture/1"
+        }
+      }
+    ],
+    "selection_evidence": {},
+    "comparison": {
+      "baseline": "00000000000000000000000000000002",
+      "changes": [
+        {
+          "rule": "python.mutable-default",
+          "change": "resolved",
+          "before": "fail",
+          "after": "pass",
+          "matches_before": 1,
+          "matches_after": 0
+        }
+      ],
+      "not_checked": []
+    }
+  },
+  "fresh": {
+    "state": "unchanged",
+    "issues": [],
+    "checks": [
+      {
+        "rule": "python.mutable-default",
+        "path": "src",
+        "status": "pass",
+        "validity": "unchanged",
+        "changed_files": []
+      }
+    ],
+    "scope": "Recorded check inputs; the memory's prose is not independently proved."
+  },
+  "stale": {
+    "state": "stale",
+    "issues": [
+      "python.mutable-default: source inventory or contents changed"
+    ],
+    "checks": [
+      {
+        "rule": "python.mutable-default",
+        "path": "src",
+        "status": "pass",
+        "validity": "stale",
+        "changed_files": [
+          "src/a.py"
+        ]
+      }
+    ],
+    "scope": "Recorded check inputs; the memory's prose is not independently proved."
+  },
+  "related": {
+    "rules": [
+      {
+        "id": "python.mutable-default",
+        "description": "No mutable literal defaults in src",
+        "path": "src",
+        "expectation": "no_matches",
+        "state": "enabled",
+        "automatic": true,
+        "revision": "8774cea97b324a11d76e277917558f8eea620b9ffbcfc0c224ee22e23dec0072"
+      }
+    ],
+    "checks": [
+      {
+        "rule": "python.mutable-default",
+        "description": "No mutable literal defaults in src",
+        "path": "src",
+        "expectation": "no_matches",
+        "status": "pass",
+        "matches": 0,
+        "locations": [],
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "run_id": "00000000000000000000000000000003",
+        "validity": {
+          "state": "unchanged",
+          "issues": [],
+          "checks": [
+            {
+              "rule": "python.mutable-default",
+              "path": "src",
+              "status": "pass",
+              "validity": "unchanged",
+              "changed_files": []
+            }
+          ],
+          "scope": "Recorded check inputs; the memory's prose is not independently proved."
+        }
+      }
+    ],
+    "omitted_rules": 0,
+    "selection_evidence": {
+      "python.mutable-default": {
+        "basis": "declared_scope"
+      }
+    }
+  },
+  "attached": {
+    "kind": "observation",
+    "rationale": "This note references the selected KQL2 source-contract checks; retain their scope and uncertainty.",
+    "recheck": "ken_check with the referenced rules; update this note only after reviewing the new result.",
+    "check_runs": [
+      "00000000000000000000000000000003"
+    ]
+  },
+  "resume": "<ken-checks>\nLast source-contract check: pass; input validity: unchanged. Inspect: ken_check(run_id=\"00000000000000000000000000000003\"). Recheck if inputs changed.\n</ken-checks>",
+  "judgments": [
+    {
+      "input": {
+        "rows": [],
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "some_match": "fail",
+      "no_matches": "pass"
+    },
+    {
+      "input": {
+        "rows": [
+          [
+            1
+          ]
+        ],
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "some_match": "pass",
+      "no_matches": "fail"
+    },
+    {
+      "input": {
+        "rows": [],
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "some_match": "unknown",
+      "no_matches": "unknown"
+    },
+    {
+      "input": {
+        "rows": [
+          [
+            1
+          ]
+        ],
+        "complete": false,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "some_match": "unknown",
+      "no_matches": "unknown"
+    },
+    {
+      "input": {
+        "rows": [],
+        "complete": true,
+        "coverage_complete": false,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "some_match": "unknown",
+      "no_matches": "unknown"
+    },
+    {
+      "input": {
+        "rows": [
+          [
+            1
+          ]
+        ],
+        "complete": true,
+        "coverage_complete": false,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": null
+      },
+      "some_match": "unknown",
+      "no_matches": "unknown"
+    },
+    {
+      "input": {
+        "rows": [],
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 1,
+        "results_truncated": false,
+        "reason": null
+      },
+      "some_match": "unknown",
+      "no_matches": "unknown"
+    },
+    {
+      "input": {
+        "rows": [
+          [
+            1
+          ]
+        ],
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 1,
+        "results_truncated": false,
+        "reason": null
+      },
+      "some_match": "unknown",
+      "no_matches": "unknown"
+    },
+    {
+      "input": {
+        "rows": [],
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": true,
+        "reason": null
+      },
+      "some_match": "unknown",
+      "no_matches": "unknown"
+    },
+    {
+      "input": {
+        "rows": [
+          [
+            1
+          ]
+        ],
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": true,
+        "reason": null
+      },
+      "some_match": "unknown",
+      "no_matches": "unknown"
+    },
+    {
+      "input": {
+        "rows": [],
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "timeout"
+      },
+      "some_match": "unknown",
+      "no_matches": "unknown"
+    },
+    {
+      "input": {
+        "rows": [
+          [
+            1
+          ]
+        ],
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0,
+        "results_truncated": false,
+        "reason": "timeout"
+      },
+      "some_match": "unknown",
+      "no_matches": "unknown"
+    }
+  ],
+  "compact": {
+    "run_id": "00000000000000000000000000000002",
+    "status": "fail",
+    "scope": "project",
+    "selection": ".",
+    "created_at": "2026-10-30T12:00:00+00:00",
+    "checks": [
+      {
+        "rule": "python.mutable-default",
+        "description": "No mutable literal defaults in src",
+        "path": "src",
+        "expectation": "no_matches",
+        "status": "fail",
+        "matches": 1,
+        "locations": [
+          {
+            "path": "src/a.py",
+            "line": 1,
+            "name": "target",
+            "kind": "function"
+          }
+        ],
+        "complete": true,
+        "coverage_complete": true,
+        "unknown_candidates": 0
+      }
+    ],
+    "comparison": {
+      "baseline": "00000000000000000000000000000001",
+      "changes": [
+        {
+          "rule": "python.mutable-default",
+          "change": "regression",
+          "before": "pass",
+          "after": "fail",
+          "matches_before": 0,
+          "matches_after": 1
+        }
+      ],
+      "not_checked": []
+    },
+    "claim": "Selected source contracts only; not proof of runtime behavior or absence of all bugs."
+  },
+  "message": "<ken-checks>\npython.mutable-default: fail; python.mutable-default: regression\nScope: selected source contracts. Inspect: ken_check(run_id=\"00000000000000000000000000000002\", full=true).\n</ken-checks>",
+  "changed": {
+    "id": "python.mutable-default",
+    "description": "Changed definition",
+    "path": "src",
+    "expectation": "no_matches",
+    "state": "draft",
+    "automatic": false,
+    "revision": "da425f65c9bc1bcefcca6fcc99630a76e8385d6d641c5fa4ff077cc3b78a93d7"
+  },
+  "invalidated": {
+    "state": "stale",
+    "issues": [
+      "python.mutable-default: rule or engine changed"
+    ],
+    "checks": [
+      {
+        "rule": "python.mutable-default",
+        "path": "src",
+        "status": "pass",
+        "validity": "stale"
+      }
+    ],
+    "scope": "Recorded check inputs; the memory's prose is not independently proved."
+  },
+  "requests": [
+    {
+      "path": "src",
+      "libraries": {}
+    },
+    {
+      "path": "src",
+      "libraries": {}
+    },
+    {
+      "path": "src",
+      "libraries": {}
+    },
+    {
+      "path": "src",
+      "libraries": {}
+    },
+    {
+      "path": "src",
+      "libraries": {}
+    }
+  ]
+}

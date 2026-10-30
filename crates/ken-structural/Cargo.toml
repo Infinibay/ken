@@ -7,16 +7,20 @@ publish.workspace = true
 license.workspace = true
 
 [dependencies]
+ken-contracts = { path = "../ken-contracts" }
 ken-query = { path = "../ken-query" }
 ken-core = { path = "../ken-core" }
+ken-text = { path = "../ken-text" }
 ken-program = { path = "../ken-program" }
 ken-syntax = { path = "../ken-syntax" }
 ken-store = { path = "../ken-store" }
 serde.workspace = true
 serde_json.workspace = true
+toml.workspace = true
 thiserror.workspace = true
 rusqlite.workspace = true
 libc.workspace = true
+sha2.workspace = true
 
 [build-dependencies]
 sha2.workspace = true

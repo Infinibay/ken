@@ -1,0 +1,34 @@
+"""Teaching fixture: commit and replace are stubs; no files or database are used."""
+
+
+def commit():
+    pass
+
+
+def replace():
+    pass
+
+
+def commit_then_publish():
+    commit()
+    replace()
+
+
+def publish_then_commit():
+    replace()
+    commit()
+
+
+def publish_only():
+    replace()
+
+
+def split_branches(flag):
+    if flag:
+        commit()
+    else:
+        replace()
+
+
+def mentions_only():
+    return "replace() after commit()"

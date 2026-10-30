@@ -1,0 +1,25 @@
+[package]
+name = "ken-context"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+ken-core = { path = "../ken-core" }
+ken-text = { path = "../ken-text" }
+ken-store = { path = "../ken-store" }
+ken-retrieval = { path = "../ken-retrieval" }
+ken-knowledge = { path = "../ken-knowledge" }
+ken-history = { path = "../ken-history" }
+rusqlite.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+regex.workspace = true
+
+[dev-dependencies]
+flate2.workspace = true
+sha2.workspace = true
+tempfile.workspace = true

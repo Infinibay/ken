@@ -77,6 +77,17 @@ impl SourceManifest {
         limits: ScanLimits,
         check: &mut impl FnMut() -> Result<()>,
     ) -> Result<Self> {
+        Self::capture_sources(paths, context, scope, None, revision, limits, check)
+    }
+    pub(crate) fn capture_sources(
+        paths: &ProjectPaths,
+        context: &DiscoveryContext,
+        scope: &Path,
+        source_paths: Option<&[String]>,
+        revision: &str,
+        limits: ScanLimits,
+        check: &mut impl FnMut() -> Result<()>,
+    ) -> Result<Self> {
         if limits.max_files == Some(0) || limits.max_file_bytes == 0 {
             return Err(BuildError::Invalid("scan limits must be positive"));
         }
@@ -92,7 +103,31 @@ impl SourceManifest {
         let directory = metadata.is_dir();
         let mut considered = vec![];
         let mut skipped = vec![];
-        if directory {
+        if let Some(sources) = source_paths {
+            if sources.len() > 4000 {
+                return Err(BuildError::Invalid(
+                    "explicit source inventory exceeds 4000 files",
+                ));
+            }
+            for item in sources {
+                check()?;
+                let selected = paths.resolve_inside(Path::new(item), context)?;
+                if !fs::metadata(&selected)?.is_file()
+                    || (directory && !selected.starts_with(&target))
+                    || (!directory && selected != target)
+                {
+                    return Err(BuildError::Invalid(
+                        "explicit source files must exist inside the analysis scope",
+                    ));
+                }
+                considered.push(
+                    selected
+                        .strip_prefix(paths.root())
+                        .map_err(|_| BuildError::Invalid("source path escapes root"))?
+                        .to_path_buf(),
+                );
+            }
+        } else if directory {
             for entry in ProjectSources::new(paths.clone(), context.clone()).walk(&target)? {
                 check()?;
                 match entry {
@@ -122,6 +157,7 @@ impl SourceManifest {
             );
         }
         considered.sort();
+        considered.dedup();
         let reader = SourceFileReader::new(paths)?;
         let mut entries = vec![];
         for relative in considered {
@@ -181,13 +217,23 @@ impl SourceManifest {
                 });
                 continue;
             }
+            let mut stopped = None;
             let read = (|| {
                 let file = reader.open(&absolute)?;
                 if file.metadata()?.len() > limits.max_file_bytes {
                     return Ok(None);
                 }
-                file.read_bounded(limits.max_file_bytes)
+                file.read_bounded_checked(limits.max_file_bytes, &mut || match check() {
+                    Ok(()) => Ok(()),
+                    Err(error) => {
+                        stopped = Some(error);
+                        Err(std::io::Error::other("source capture interrupted"))
+                    }
+                })
             })();
+            if let Some(error) = stopped {
+                return Err(error);
+            }
             let content = match read {
                 Ok(Some(b)) => b,
                 Ok(None) => {

@@ -12,6 +12,17 @@ pub struct PythonFile {
     headers: Vec<usize>,
 }
 impl PythonFile {
+    pub fn module(&self) -> &py::ModModule {
+        &self.module
+    }
+    /// CPython starts decorated definitions at def/async/class, not decorators.
+    pub fn declaration_line(&self, node: &Stmt) -> usize {
+        let offset = declaration_offset(node, &self.headers);
+        1 + self.source[..offset]
+            .bytes()
+            .filter(|b| *b == b'\n')
+            .count()
+    }
     pub fn parse(source: String) -> Option<Self> {
         if source.contains('\0')
             || source.starts_with('\u{feff}')
@@ -91,33 +102,12 @@ struct Find<'s, 'a> {
 impl<'a> Visitor<'a> for Find<'_, 'a> {
     fn visit_stmt(&mut self, node: &'a Stmt) {
         let selected = match node {
-            Stmt::FunctionDef(n) => Some((
-                n.name.as_str(),
-                n.body.as_slice(),
-                n.decorator_list
-                    .last()
-                    .map(|d| d.range().end().to_usize())
-                    .unwrap_or(node.range().start().to_usize()),
-                n.name.range().start().to_usize(),
-            )),
-            Stmt::ClassDef(n) => Some((
-                n.name.as_str(),
-                n.body.as_slice(),
-                n.decorator_list
-                    .last()
-                    .map(|d| d.range().end().to_usize())
-                    .unwrap_or(node.range().start().to_usize()),
-                n.name.range().start().to_usize(),
-            )),
+            Stmt::FunctionDef(n) => Some((n.name.as_str(), n.body.as_slice())),
+            Stmt::ClassDef(n) => Some((n.name.as_str(), n.body.as_slice())),
             _ => None,
         };
-        if let Some((name, body, after, before)) = selected {
-            let header = self
-                .headers
-                .iter()
-                .find(|start| **start >= after && **start <= before)
-                .copied()
-                .unwrap_or(before);
+        if let Some((name, body)) = selected {
+            let header = declaration_offset(node, self.headers);
             let start = 1 + self.source[..header]
                 .bytes()
                 .filter(|b| *b == b'\n')
@@ -133,4 +123,31 @@ impl<'a> Visitor<'a> for Find<'_, 'a> {
         }
         visitor::walk_stmt(self, node);
     }
+}
+
+fn declaration_offset(node: &Stmt, headers: &[usize]) -> usize {
+    let bounds = match node {
+        Stmt::FunctionDef(n) => Some((
+            n.decorator_list
+                .last()
+                .map(|d| d.range().end().to_usize())
+                .unwrap_or(node.range().start().to_usize()),
+            n.name.range().start().to_usize(),
+        )),
+        Stmt::ClassDef(n) => Some((
+            n.decorator_list
+                .last()
+                .map(|d| d.range().end().to_usize())
+                .unwrap_or(node.range().start().to_usize()),
+            n.name.range().start().to_usize(),
+        )),
+        _ => None,
+    };
+    bounds.map_or(node.range().start().to_usize(), |(after, before)| {
+        headers
+            .iter()
+            .find(|start| **start >= after && **start <= before)
+            .copied()
+            .unwrap_or(before)
+    })
 }

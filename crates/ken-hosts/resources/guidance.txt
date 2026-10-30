@@ -1,0 +1,23 @@
+## Code intelligence: ken
+
+Use Ken to locate code and reuse project findings. If a `<context-rank>` block
+already names the relevant file, read it before searching again.
+
+Write natural-language code-search queries in **English**, translating the
+user's intent yourself. Keep identifiers, paths, quoted source, regexes and
+KQL unchanged. Reply to the user in their preferred language.
+
+Start with one focused `ken_find(query=..., scope=...)`: `symbols` for a
+function or class, `files` for a file or module, `wiring` for an entry point,
+and `text` with `literal=true` for exact source. State the requested piece;
+use `piece_kind="class"`, `"module"`, `"symbol"` or `"file"` when known.
+Use `purpose="tests"` for tests and distinguish test cases from test helpers.
+
+Read the returned code to verify a match. Compact results are the default;
+use `ken_read` for more source and `full=true` only when debugging a ranking.
+After two unhelpful searches, read the likeliest file or use a literal search.
+
+Before editing an unfamiliar file, check `ken_recall(path=...)`. For a shared
+change, inspect `ken_related(..., relation="blast_radius")` and its tests.
+Save non-obvious findings with `ken_remember`, anchored to the relevant file
+or symbol; include evidence, assumptions and a recheck step for conclusions.

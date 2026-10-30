@@ -215,12 +215,36 @@ fn malformed_frames_invalid_calls_and_notifications_do_not_poison_the_stdio_sess
             .iter()
             .map(|tool| tool["name"].as_str().unwrap())
             .collect::<Vec<_>>(),
-        vec!["ken_find", "ken_read", "ken_related", "ken_rank"]
+        vec![
+            "ken_find",
+            "ken_read",
+            "ken_related",
+            "ken_rank",
+            "ken_query",
+            "ken_calculate",
+            "ken_rule",
+            "ken_check",
+            "ken_remember",
+            "ken_recall",
+            "ken_reason_record",
+            "ken_reason",
+            "ken_who"
+        ]
     );
     assert_eq!(tools[0]["name"], "ken_find");
     assert_eq!(
         tools[0]["inputSchema"]["properties"]["scope"]["enum"],
-        json!(["files", "symbols", "text", "tests", "wiring"])
+        json!([
+            "files",
+            "symbols",
+            "text",
+            "tests",
+            "wiring",
+            "structure",
+            "patterns",
+            "bugs",
+            "intent"
+        ])
     );
     let invalid = client.call(3, json!({"query":"find value","scope":"structure"}));
     assert_eq!(invalid["result"]["isError"], true);
@@ -245,13 +269,21 @@ fn malformed_frames_invalid_calls_and_notifications_do_not_poison_the_stdio_sess
 }
 
 #[test]
-fn invalid_initialized_notification_cannot_enable_tool_execution() {
+fn invalid_initialized_notification_does_not_undo_successful_sdk_handshake() {
     let fixture = Fixture::new();
     let mut client = Client::new(&fixture);
     client.begin_initialization();
     client.send(&json!({"jsonrpc":"2.0","method":"notifications/initialized","params":[]}));
     client.send(&json!({"jsonrpc":"2.0","id":1,"method":"tools/list"}));
-    assert_eq!(client.receive()["error"]["code"], -32002);
+    // Pinned SDK2.0.0 runner commits initialize_accepted on successful initialize;
+    // notification validation cannot undo that completed handshake.
+    assert_eq!(
+        client.receive()["result"]["tools"]
+            .as_array()
+            .unwrap()
+            .len(),
+        13
+    );
     client.send(&json!({"jsonrpc":"2.0","method":"notifications/initialized"}));
     assert_eq!(
         text(&client.call(2, json!({"query":"find value"}))),

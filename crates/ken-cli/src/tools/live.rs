@@ -5,13 +5,16 @@ use ken_search::{
     navigation::{CallGraphRequest, IndexNavigation},
 };
 use ken_syntax::GrammarCatalog;
-use std::path::PathBuf;
+use std::{path::PathBuf, sync::Arc};
 
 pub(super) struct LiveTools {
     installation: PathBuf,
-    grammars: Option<GrammarCatalog>,
+    grammars: Option<Arc<GrammarCatalog>>,
 }
 impl LiveTools {
+    pub(super) fn installation(&self) -> &std::path::Path {
+        &self.installation
+    }
     pub(super) fn new(installation: PathBuf) -> Self {
         Self {
             installation,
@@ -20,11 +23,18 @@ impl LiveTools {
     }
     fn catalog(&mut self) -> Result<&GrammarCatalog, String> {
         if self.grammars.is_none() {
-            self.grammars = Some(
+            self.grammars = Some(Arc::new(
                 SearchInstallation::open_grammars(&self.installation).map_err(|e| e.to_string())?,
-            );
+            ));
         }
         Ok(self.grammars.as_ref().unwrap())
+    }
+    pub(super) fn shared_catalog(&mut self) -> Result<Arc<GrammarCatalog>, String> {
+        self.catalog()?;
+        Ok(self.grammars.as_ref().unwrap().clone())
+    }
+    pub(super) fn grammar_manifest(&self) -> Result<PathBuf, String> {
+        SearchInstallation::grammar_manifest(&self.installation).map_err(|e| e.to_string())
     }
     pub(super) fn related(
         &mut self,

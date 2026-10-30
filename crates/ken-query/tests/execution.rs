@@ -306,12 +306,12 @@ fn deadlines_snapshot_membership_and_explicit_regex_capabilities_are_preserved()
     let q = query(
         &json!({"name":"regex","nodes":[{"kind":"fact","value":{"subject":"$x","relation":"ENTITY","object":"_","attrs":[["name","regex","(?r)foo"]]},"children":[]}],"exports":{},"definitions":{}}),
     );
-    assert!(matches!(
-        Execution::new(Default::default())
-            .unwrap()
-            .execute(&empty_graph(), &q),
-        Err(ken_query::execution::ExecutionError::Unsupported(_))
-    ));
+    let regex = Execution::new(Default::default())
+        .unwrap()
+        .execute(&empty_graph(), &q)
+        .unwrap();
+    assert!(regex.complete);
+    assert!(regex.matches.is_empty());
     let mut ir=StructuralIr::from_json(r#"{"path":"snapshot","language":"mixed","version":"1.88.0","view":"query","entities":{},"operations":[],"facts":[],"capabilities":[],"diagnostics":[],"relations":["ENTITY"]}"#).unwrap();
     let graph = MemoryGraph::new(&ir).unwrap();
     ir.facts.push(ken_program::Fact {

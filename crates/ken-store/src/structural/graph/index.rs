@@ -47,7 +47,20 @@ pub struct GraphIndex<'a> {
     pub capabilities: BTreeSet<String>,
     pub relations: BTreeSet<String>,
 }
+struct GraphHeader {
+    snapshot: i64,
+    path: String,
+    language: String,
+    metadata: i64,
+}
 impl<'a> GraphIndex<'a> {
+    /// The pinned source reader; immutable access cannot repin or close the store.
+    pub fn source_store(&self) -> &StructuralStore {
+        self.store
+    }
+    pub fn check_snapshot(&self) -> Result<()> {
+        self.store.check_pinned_snapshot(self.snapshot)
+    }
     pub fn graph_id(&self) -> i64 {
         self.graph
     }
@@ -63,12 +76,8 @@ impl<'a> GraphIndex<'a> {
         mut check: impl FnMut() -> Result<()>,
     ) -> Result<Self> {
         check()?;
-        let row:Option<(i64,String,String,String,String,i64)>=store.connection().query_row("SELECT snapshot_id,path,language,version,view,metadata FROM k2_graphs g JOIN k2_graph_publications p USING(graph_id) WHERE graph_id=?1 AND ready=1",[graph],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?,r.get(5)?))).optional()?;
-        let (snapshot, path, language, version, view, metadata) =
-            row.ok_or(StructuralError::Missing(graph))?;
-        if version != ken_program::IR_VERSION || view != "query" {
-            return Err(StructuralError::Invalid("incompatible query graph"));
-        }
+        let header = Self::header(store, graph)?;
+        let snapshot = header.snapshot;
         store.pin_snapshot(snapshot)?;
         if !syntax::ready(store.connection(), graph)? {
             let tx =
@@ -80,6 +89,40 @@ impl<'a> GraphIndex<'a> {
             tx.commit()?;
         }
         check()?;
+        Self::read_metadata(store, graph, header)
+    }
+    /// Borrow an already prepared and pinned revision without creating a write scope.
+    pub fn open_retained(store: &'a StructuralStore, graph: i64) -> Result<Self> {
+        let header = Self::header(store, graph)?;
+        store.check_pinned_snapshot(header.snapshot)?;
+        if !syntax::ready(store.connection(), graph)? {
+            return Err(StructuralError::Invalid(
+                "retained query graph is not prepared",
+            ));
+        }
+        Self::read_metadata(store, graph, header)
+    }
+    fn header(store: &StructuralStore, graph: i64) -> Result<GraphHeader> {
+        let row:Option<(i64,String,String,String,String,i64)>=store.connection().query_row("SELECT snapshot_id,path,language,version,view,metadata FROM k2_graphs g JOIN k2_graph_publications p USING(graph_id) WHERE graph_id=?1 AND ready=1",[graph],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?,r.get(5)?))).optional()?;
+        let (snapshot, path, language, version, view, metadata) =
+            row.ok_or(StructuralError::Missing(graph))?;
+        if version != ken_program::IR_VERSION || view != "query" {
+            return Err(StructuralError::Invalid("incompatible query graph"));
+        }
+        Ok(GraphHeader {
+            snapshot,
+            path,
+            language,
+            metadata,
+        })
+    }
+    fn read_metadata(store: &'a StructuralStore, graph: i64, header: GraphHeader) -> Result<Self> {
+        let GraphHeader {
+            snapshot,
+            path,
+            language,
+            metadata,
+        } = header;
         let values = GraphValues::new(store.connection(), graph);
         let metadata = values.get(metadata)?;
         let capabilities = store

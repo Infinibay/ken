@@ -16,7 +16,7 @@ pub struct Document {
     pub target: DocumentTarget,
     pub text: String,
 }
-fn symbol_text(kind: &str, name: &str, doc: Option<&str>) -> String {
+pub fn symbol_text(kind: &str, name: &str, doc: Option<&str>) -> String {
     let tail = doc.unwrap_or("").trim_matches(whitespace);
     if tail.is_empty() {
         format!("{kind} {name}")
@@ -24,10 +24,10 @@ fn symbol_text(kind: &str, name: &str, doc: Option<&str>) -> String {
         format!("{kind} {name} — {tail}")
     }
 }
-fn intent(kind: &str, text: &str) -> String {
+pub fn intent_text(kind: &str, text: &str) -> String {
     format!("{kind} — {}", collapse(text))
 }
-fn file_text(language: Option<&str>, path: &str, top: &[&str]) -> String {
+pub fn file_text(language: Option<&str>, path: &str, top: &[&str]) -> String {
     let head = format!(
         "{} {}",
         language.filter(|s| !s.is_empty()).unwrap_or("text"),
@@ -51,7 +51,7 @@ pub(crate) fn for_file(file: &PreparedFile) -> Vec<Document> {
             if let Some(doc) = s.docstring.as_deref().filter(|s| !s.is_empty()) {
                 add(
                     DocumentTarget::SymbolDoc(i),
-                    intent("symbol_docstring", doc),
+                    intent_text("symbol_docstring", doc),
                 );
             }
         }
@@ -66,7 +66,10 @@ pub(crate) fn for_file(file: &PreparedFile) -> Vec<Document> {
             file_text(file.source.language.as_deref(), &file.source.path, &top),
         );
         if let Some(doc) = parsed.docstring.as_deref().filter(|s| !s.is_empty()) {
-            add(DocumentTarget::ModuleDoc, intent("module_docstring", doc));
+            add(
+                DocumentTarget::ModuleDoc,
+                intent_text("module_docstring", doc),
+            );
         }
     } else {
         let top: Vec<_> = file
@@ -80,7 +83,10 @@ pub(crate) fn for_file(file: &PreparedFile) -> Vec<Document> {
             file_text(None, &file.source.path, &top),
         );
         for (i, text) in file.intent_texts.iter().enumerate() {
-            add(DocumentTarget::PlainIntent(i), intent("plain_text", text));
+            add(
+                DocumentTarget::PlainIntent(i),
+                intent_text("plain_text", text),
+            );
         }
     }
     out

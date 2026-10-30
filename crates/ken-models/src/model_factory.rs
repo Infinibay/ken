@@ -112,6 +112,43 @@ impl ModelFactory {
         }
     }
 
+    /// Preserve explicit legacy transformer budgets without reading process
+    /// environment or changing the default owner selected by legacy_encoder.
+    pub fn legacy_encoder_with_settings(
+        &self,
+        name: &str,
+        settings: &TransformerSettings,
+    ) -> Result<Arc<ManagedEncoder>, ModelError> {
+        use crate::model_catalog::EncoderDefinition;
+        settings.validate()?;
+        let definition = match self.catalog.legacy_encoder(name)? {
+            EncoderDefinition::Sentence(model, _) => {
+                EncoderDefinition::Sentence(model, settings.clone())
+            }
+            EncoderDefinition::Mlx(model, _) => EncoderDefinition::Mlx(model, settings.clone()),
+            _ => return self.legacy_encoder(name),
+        };
+        let key = format!(
+            "legacy-settings:{name}:{}",
+            crate::assets::python_json(&serde_json::json!({
+                "dtype": settings.dtype,
+                "sequence_length": settings.sequence_length,
+                "batch_size": settings.batch_size,
+            }))
+        );
+        match self.cached(key, || {
+            Ok(Cached::Encoder(Arc::new(ManagedEncoder::new(
+                definition,
+                self.sources.clone(),
+            ))))
+        })? {
+            Cached::Encoder(owner) => Ok(owner),
+            _ => Err(crate::profile::invalid(
+                "factory legacy settings cache kind mismatch",
+            )),
+        }
+    }
+
     pub fn judge(
         &self,
         spec: &EncoderSpec,

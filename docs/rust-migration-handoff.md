@@ -2544,3 +2544,103 @@ La preparación registrada en español sigue sin aceptar: dos pruebas CT2 exigen
 una plataforma ARM registrada. Pasaron 42/42 pruebas elegibles de modelos, no
 44/44. CT2/expansión x86 es el siguiente bloque después de resolver BestSearch.
 M4/global y M5–M8 permanecen pendientes; la aplicación instalada continúa en Python.
+
+
+## Cierre de la aplicación nativa: avance del 30 de octubre
+
+La implementación continúa en `codex/rust-migration`, desde `59477a7d`.
+El alcance actual es Linux x86_64. El diseño y plan de cierre están en
+[la especificación](superpowers/specs/2026-10-30-rust-migration-completion-design.md)
+y [el plan](superpowers/plans/2026-10-30-rust-migration-completion.md).
+Los recibos detallados de esta etapa permanecen ignorados en
+`.superpowers/sdd/2026-10-30-rust-migration-completion/`; no se agregan capturas
+crudas ni directorios de validación a Git.
+
+La aplicación ya tiene implementaciones Rust de valores de consulta, BODY,
+ejecución indexada, KQL1, bibliotecas y reglas TOML, sesiones retenidas,
+inspección, conocimiento, razonamiento, contratos de fuente, responsabilidad,
+historia, ranking contextual, daemon, hooks, mantenimiento e instalación de hosts.
+La CLI y MCP comparten los trece tools públicos. Las respuestas conservan
+incertidumbre, cancelación, enteros grandes y cadenas con surrogates aislados.
+Las pruebas nuevas se ejecutan por bloques completos; no se repiten las matrices
+originales ni los modelos aceptados en cada edición.
+
+Evidencia reciente de integración, sin convertirla en aceptación global:
+
+- `instructions-first-comparison.log`: 106 observaciones congeladas de lowering
+  y ensamblado de instrucciones, consumidas por dos raíces nativas.
+- `catalogue-red-authoring-group.log`: dos raíces de capacidades/explicación
+  comparadas con 36 observaciones nuevas del original autenticado.
+- `public-installation-package-control-first.log`: instalación de proyecto
+  (10), memoria ordinaria (3), paquete (10), CLI de instalación (6), memoria (6),
+  paquete/lanzador (4), conocimiento (2), consulta/IR (4) y tools de dominio (4)
+  pasaron. Ese log completo terminó con fallos deliberados de catálogo y etiqueta
+  de diagnóstico; dos comandos mal nombrados no ejecutaron sus pruebas.
+- `control-and-session-repair-group.log` terminó con código cero: control de
+  operación completo (4+5), checks reales (7), observaciones (3), supervisión (4),
+  scheduler (2), inspección (10), módulos (11), sesiones (10), etiqueta de
+  diagnóstico (1), CLI de consulta/IR/caché externa (5) y MCP (7).
+- `search-catalogue-first-group.log` terminó con código cero: catálogo (9,
+  incluyendo ONNX real), instalación diferida de catálogo (2), búsqueda
+  legacy/evidence (14), autenticación del catálogo empaquetado (2), CLI de
+  mantenimiento (10) y CLI de búsqueda de compatibilidad (5).
+
+El paquete nativo tiene un lanzador sin Python, inventario SHA256 de archivos,
+releases independientes, activación atómica, recuperación y rollback autenticado.
+La reinstalación ejecuta la versión nueva usando sus recursos inmutables y deja
+las configuraciones de hosts apuntando a las rutas estables. La desinstalación
+espera la finalización efectiva del daemon antes de retirar datos. La revisión
+independiente detectó y se corrigió la publicación de reglas tras una cancelación
+previa; también se está cerrando la resolución efectiva de dependencias ELF.
+
+`tools/native_release.py` compila desde una exportación identificada de fuentes
+con un target separado y conserva las salidas Cargo y sus tres binarios. Sus
+ocho pruebas nuevas usan compilaciones nativas pequeñas y pasaron; esto todavía
+no constituye una compilación final ni una cualificación de modelos del paquete.
+`tools/native_package.py` mantiene separadas la autenticidad de los bytes, la
+vinculación de compilación y la aceptación del comportamiento.
+
+La exploración de sintaxis y los buckets del catálogo ya tienen almacenamiento,
+presupuestos, cancelación y métricas propios. Pasaron las 35 pruebas del bloque,
+más tres pruebas de representación de programas y controles de lectura/parser.
+La revisión detectó una divergencia entre admisión y ejecución para programas
+sin steps explícitos: dos regresiones fallaron antes de unificar la proyección
+que consumen admisión, barreras y planificación. El recorrido de parámetros
+reutiliza además el control de pila existente, sin imponer un límite nuevo de
+anchura. No se afirma un fallo de pila a partir de los experimentos inconclusos.
+Las métricas nativas se identifican como tales; no se presentan como contadores
+FlatBuffers del original.
+
+También pasaron 15 recorridos de compatibilidad CLI, seis de consultas/IR,
+cuatro de exploración CLI, cinco pruebas nuevas de metadatos públicos y las
+reparaciones de instalación/almacenamiento. Se conservan las etiquetas, tamaños,
+orden y multilingüismo de los 32 modelos anunciados originalmente; todos tienen
+registro nativo, y la aceptación de inferencia se declara por separado. Los
+extras sin metadatos históricos usan valores desconocidos explícitos.
+
+La revisión de instalación reprodujo una escritura externa por un segmento de
+vectores enlazado simbólicamente y un panic al serializar una raíz Unix no UTF-8.
+El dueño compartido de segmentos usa ahora directorios retenidos, apertura sin
+seguir enlaces y publicación exclusiva de archivos completos; las pruebas de
+propiedad y de almacenamiento existente pasaron. Las raíces no UTF-8 reciben un
+error controlado antes de aprovisionar, una limitación explícita del instalador.
+La comprobación ELF usa rutas efectivas de carga y contextos privados; la
+vinculación de compilación conserva la identidad exacta comparada durante el
+staging. Las 28 pruebas Python de estas herramientas pasaron.
+
+El formato y Clippy estricto pasaron para los 23 crates propios y sus targets;
+las dependencias vendorizadas se compilan pero no se alteran ni se seleccionan
+sus harnesses externos. El bloque nativo posterior pasó las pruebas afectadas
+de BODY, regex, valores, ejecución indexada, instrucciones, exploración, CLI y
+supervisión. Quedan la compilación vinculada a fuentes definitivas y el recorrido
+completo del paquete instalado fuera del checkout.
+
+Siguen vigentes las restricciones externas: falta la observación original del
+par exacto SkylakeX `4fd097c7...`/`1f613df1...` tras agotar las tres asignaciones,
+y la aceptación Intel/MKL correspondiente. No se cambiaron referencias,
+tolerancias ni límites para ocultarlo. Los binarios del equipo actual tampoco
+establecen por sí solos una línea base portable para todo x86_64.
+
+Estado: `migration_complete=false`, `M4_accepted=false`. La aplicación instalada
+sigue en Python hasta demostrar los requisitos de promoción. Los originales,
+las referencias congeladas y los datos locales se conservan.

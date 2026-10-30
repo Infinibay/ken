@@ -327,6 +327,10 @@ pub struct QueryStats {
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct QueryOutcome {
+    /// Detached usage occurrences for typed public column projection. Proof
+    /// truncation never controls whether a captured occurrence has metadata.
+    #[serde(skip)]
+    pub usage_metadata: BTreeMap<String, BTreeMap<String, ken_program::value::GraphValue>>,
     pub matches: Vec<Match>,
     pub complete: bool,
     pub unknown: Vec<String>,
