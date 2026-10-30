@@ -52,10 +52,10 @@ La resolución conserva orden, cualificación y ciclos de importación; la
 especialización comprueba firmas y genera instancias higiénicas `@model` en orden
 de uso. La expansión `@variant` conserva el máximo de128 alternativas y pertenece
 sólo a la ruta indexada. `predicate_components` calcula componentes y rechaza
-recursión no estratificada. La ruta relacional consumirá el árbol preparado sin
-pasar por esa expansión. Estas APIs producen sintaxis preparada. La compilación indexada se añadió en el
-bloque siguiente; el backend relacional, operadores, sesiones y evaluación BODY
-siguen pendientes.
+recursión no estratificada. La ruta relacional consume el árbol preparado sin
+pasar por esa expansión. Estas APIs producen sintaxis preparada. Los dos backends
+de compilación se describen abajo; operadores, sesiones y evaluación BODY siguen
+pendientes.
 
 Los límites normales siguen en2MB de entrada,4KB por regex, anidamiento96 e
 instancias de modelo128. El validador regex comprueba la gramática restringida
@@ -98,8 +98,7 @@ let program = compile_indexed_branches(&prepared, None)?;
 `compile_indexed` comprueba una sola rama, equivalente al `_compile` original.
 `compile_indexed_branches` añade expansión acotada y composición: conserva el
 límite global, quita límites de ramas y calcula la huella de sus hashes ordenados.
-El caller sigue siendo responsable de elegir el backend; el dispatcher público
-y el lowering relacional todavía no están migrados. Estos planes no ejecutan
+El coordinador `compile` descrito abajo elige el backend. Estos planes no ejecutan
 consultas ni incorporan grafos, proyectos o IDs de SQLite.
 
 El chequeo conserva ámbitos cuantificados, dominios finitos/enums, tipos de
@@ -132,6 +131,65 @@ Call, span de constructor y validación cuadrática de gaps. La expansión recha
 bajó de1839935 a134699 asignaciones y un gap de512 restricciones, de271903 a6178.
 Los conteos son evidencia de asignaciones, sin umbrales de tiempo.
 Ver el [plan](superpowers/plans/2026-10-29-rust-kql-indexed-compiler.md).
+
+## KQL2: compilación relacional y coordinación
+
+`ken-query` añade `compile_relational` sobre un árbol preparado y `compile` para
+coordinar validación, bibliotecas explícitas, modelos y selección de backend:
+
+```rust
+use ken_query::{parse, ParseLimits, compile, BackendPreference};
+use std::collections::BTreeMap;
+
+let tree = parse(kql_source, "query.kql", ParseLimits::default())?;
+let compiled = compile(&tree, None, &BTreeMap::new(), BackendPreference::Automatic)?;
+let metadata = &compiled.program; // Program; IndexedProgram sigue como alias
+let relational_plan = &compiled.relational; // Some(Arc<RelationalQuery>) o None
+```
+
+El host proporciona las bibliotecas, incluidas las empaquetadas. El coordinador no
+hace descubrimiento de archivos ni reemplaza todavía la integración Python. La
+preferencia `Relational` fuerza esa ruta. La validación de profundidad compilable96
+se aplica al módulo y a todas las bibliotecas antes de resolver/especializar.
+
+El lowering cubre selectores de fuente, requisitos, usos, inicializadores,
+comparaciones semánticas y sus cadenas de testigos, edges, walks, counts,
+alternativas, ámbitos privados, aliases, patrones y comprobación BODY. Cada
+patrón alcanzable se compila una vez; las llamadas comparten planes mediante
+`Arc`. El forwarding corto comparte nodos y conserva el orden e identidad de
+las definiciones originales. `OrderedMap` mantiene orden e índice de consulta;
+`Term` distingue roles de literales con token original y valor decodificado.
+Los aliases nunca convierten un literal en rol ni reescriben atributos o ASTs
+embebidos. La huella relacional es SHA256 del repr del File preparado, calculada
+en streaming.
+
+Se conservan errores, spans, proyección y representación originales. El límite
+nativo512 y el presupuesto compartido de65536 unidades acotan trabajo de lowering,
+incluidos nombres de testigos generados, metadata completa, expresiones y copias
+de bindings/tipos entre ámbitos. Ese límite puede rechazar expansiones patológicas
+antes que Python. Los patrones string de `initialized_with` tienen un comprobador
+de sintaxis acotado para extensiones de Python `regex`, sin construir autómatas:
+flags, grupos/referencias/recursión, lookaround, conjuntos y restricciones fuzzy.
+El vocabulario de propiedades Unicode está congelado desde el original. Los regex
+restringidos usan su validador existente. Un regex inválido observado como ValueError
+de Python produce error estructurado nativo. No se añade ninguna dependencia.
+Las capturas finitas no prueban equivalencia de toda gramática regex.
+
+Las referencias nuevas contienen440 observaciones relacionales (145 planes) y34
+del coordinador (13 programas), autenticadas contra original1066. Incluyen tags de
+literales y mapas ordenados, repr, huellas, diagnósticos y el corte exacto de
+profundidad. Otros127 casos fijan aceptación/rechazo de sintaxis regex extendida. Pasaron39
+pruebas nativas, Clippy estricto y formato, con caché compartida, ámbitos,4000 exports,
+DAGs, registros corruptos y presupuestos. La revisión final encontró tres Important
+(regex, payload sin cobrar y copias de ámbitos), corregidos en una pasada con
+regresiones rojas→verdes; no hubo Critical ni Minor. Los crudos quedan locales; no se
+repitieron suites originales aceptadas. Ver el
+[plan](superpowers/plans/2026-10-29-rust-kql-relational-compiler.md).
+
+Los dos compiladores KQL2 están implementados como bibliotecas. Falta ejecutar
+sus planes sobre QueryView/GraphIndex: operadores, sesiones y evaluación BODY;
+después KQL1 y conexión con CLI/MCP/config/cachés y catálogo de bibliotecas. M5
+sigue abierto y no hay aceptación global nueva de la migración.
 
 ## Núcleo estructural: almacén de snapshots
 
@@ -323,7 +381,7 @@ público270/Best246; no son recibos globales nuevos.
 
 El API `link_nominal` termina antes de `sequential_returns` del linker original.
 El ensamblado completo descrito abajo añade las fases restantes. La construcción/caché y el índice ejecutable también se implementaron en las
-etapas descritas abajo. El compilador/ejecutor KQL1/2 sigue pendiente. M5 no está cerrado; M6 y el resto de M7/M8 tampoco. No se repitieron
+etapas descritas abajo. KQL1 y la ejecución KQL2 siguen pendientes. M5 no está cerrado; M6 y el resto de M7/M8 tampoco. No se repitieron
 modelos, matrices CPU/CI ni originales ya aceptados. Ver el
 [plan de esta etapa](superpowers/plans/2026-10-29-rust-source-frontend.md).
 
@@ -385,7 +443,7 @@ actualizados también compilan en Python.
 Esto completa la implementación del ensamblado semántico en biblioteca. El
 builder descrito a continuación ya captura archivos y administra cachés de IR.
 El índice ejecutable está implementado en la sección siguiente. La conexión de
-configuración/transporte y el compilador/ejecutor KQL1/2 siguen pendientes. Tampoco
+configuración/transporte, KQL1 y la ejecución KQL2 siguen pendientes. Tampoco
 cierra M5 ni reemplaza los comandos Python instalados. Ver el
 [plan](superpowers/plans/2026-10-29-rust-project-semantics.md).
 
@@ -523,8 +581,8 @@ También se ejercitan adquisición caliente/fría, edición, omisiones, fallos,
 locks, cancelación, publicaciones abandonadas, ciclos, GC/pins, profundidad150 e
 interrupción durante trabajo SQL. Una prueba sobre10000 operaciones comprueba
 coste acotado de accesos que sí tienen índice, incluidos atributos correlacionados.
-Son bibliotecas nativas: compilador, operadores, sesiones y evaluación BODY KQL1/2,
-configuración/env y transport público siguen pendientes. M5 sigue abierto.
+Son bibliotecas nativas: el compilador KQL2 ya está implementado; KQL1, operadores,
+sesiones, evaluación BODY, configuración/env y transporte restante siguen pendientes. M5 sigue abierto.
 Validación del bloque:81 raíces del alcance afectado (program30, structural15,
 store30 y syntax6); los seis escenarios de la revisión incluyen lectores WAL,
 crecimiento SQL, lotes/cancelación, sintaxis legacy y overflow de IDs. Clippy y

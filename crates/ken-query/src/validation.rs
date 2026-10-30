@@ -13,18 +13,40 @@ pub(crate) fn tree(tree: &File) -> Result<()> {
         .iter()
         .map(|d| (Node::Declaration(d), 1usize))
         .collect();
-    validate(pending, &tree.span)
+    validate(
+        pending,
+        &tree.span,
+        MAX_AST_DEPTH,
+        "prepared AST depth limit exceeded",
+    )
 }
 pub(crate) fn clause(c: &Clause) -> Result<()> {
-    validate(vec![(Node::Clause(c), 1)], &c.span)
+    validate(
+        vec![(Node::Clause(c), 1)],
+        &c.span,
+        MAX_AST_DEPTH,
+        "prepared AST depth limit exceeded",
+    )
 }
-fn validate(mut pending: Vec<(Node<'_>, usize)>, span: &Span) -> Result<()> {
+pub(crate) fn compiled_tree(tree: &File) -> Result<()> {
+    // Python visits each dataclass field at depth+1, including scalar/empty
+    // tuple fields; every AST record has such a field, so a record at96 fails.
+    let pending = tree
+        .declarations
+        .iter()
+        .map(|d| (Node::Declaration(d), 1))
+        .collect();
+    validate(pending, &tree.span, 95, "compiled AST depth limit exceeded")
+}
+fn validate(
+    mut pending: Vec<(Node<'_>, usize)>,
+    span: &Span,
+    maximum: usize,
+    message: &str,
+) -> Result<()> {
     while let Some((node, depth)) = pending.pop() {
-        if depth > MAX_AST_DEPTH {
-            return Err(ParseError::resource(
-                "prepared AST depth limit exceeded",
-                span.clone(),
-            ));
+        if depth > maximum {
+            return Err(ParseError::resource(message, span.clone()));
         }
         let next = depth + 1;
         match node {

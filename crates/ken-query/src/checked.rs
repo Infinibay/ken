@@ -76,7 +76,7 @@ impl PartialEq for IntegerLiteral {
 impl Eq for IntegerLiteral {}
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 #[serde(tag = "__class__", rename = "Program")]
-pub struct IndexedProgram {
+pub struct Program {
     pub name: String,
     pub scans: Vec<Scan>,
     pub filters: Vec<Expr>,
@@ -84,7 +84,7 @@ pub struct IndexedProgram {
     pub ordering: Vec<Expr>,
     pub limit: Option<IntegerLiteral>,
     pub fingerprint: String,
-    pub branches: Vec<IndexedProgram>,
+    pub branches: Vec<Program>,
     pub actions: Vec<(String, Expr)>,
     pub predicates: Vec<Predicate>,
     pub optional: Vec<Expr>,
@@ -118,7 +118,7 @@ record!(
     call_aliases
 );
 record!(
-    IndexedProgram,
+    Program,
     "Program",
     name,
     scans,
@@ -172,7 +172,7 @@ impl PythonRepr for Enums<'_> {
         out.write_char('}')
     }
 }
-impl IndexedProgram {
+impl Program {
     pub(crate) fn compute_fingerprint(&mut self) {
         use sha2::{Digest, Sha256};
         let mut out = String::from("(");
@@ -198,3 +198,6 @@ impl IndexedProgram {
         self.fingerprint = format!("{:x}", Sha256::digest(out.as_bytes()));
     }
 }
+
+/// Compatibility name for the indexed compiler's shared program metadata.
+pub type IndexedProgram = Program;

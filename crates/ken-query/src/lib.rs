@@ -76,7 +76,7 @@ pub(crate) fn with_stack<T>(work: impl FnOnce() -> T) -> T {
 mod capabilities;
 mod checked;
 mod source_matcher;
-pub use checked::{Action, BodyPattern, IndexedProgram, IntegerLiteral, Scan, Step};
+pub use checked::{Action, BodyPattern, IndexedProgram, IntegerLiteral, Program, Scan, Step};
 
 mod body_check;
 mod expression_check;
@@ -90,3 +90,9 @@ mod syntax_shape;
 mod existential;
 
 mod compile_budget;
+
+pub mod relational;
+pub use relational::{CompiledQuery, compile_relational};
+
+mod compilation;
+pub use compilation::{BackendPreference, compile};

@@ -10,14 +10,69 @@ evidencia en hitos. Esta instrucción sustituye la cadencia más frecuente de lo
 planes anteriores; conserva los criterios de corrección y las referencias
 originales. Mantener el foco de implementación en Linux x86_64.
 
+Actualización relacional del30/10: `ken-query` completa el otro backend KQL2 y
+el coordinador puro `compile`. Leer la
+[API](rust-migration.md#kql2-compilación-relacional-y-coordinación) y el
+[plan](superpowers/plans/2026-10-29-rust-kql-relational-compiler.md).
+`Program` es el nombre común; `IndexedProgram` sigue como alias compatible.
+`CompiledQuery` contiene metadata y opcionalmente un `Arc<RelationalQuery>`.
+`compile` valida profundidad96 de fuente y todas las bibliotecas, resuelve imports,
+especializa modelos y decide backend; la preferencia puede forzar Relational.
+Recibe bibliotecas explícitas: descubrimiento empaquetado queda en el host.
+
+El lowering conserva selectores/requisitos/usos, relaciones semánticas, witnesses,
+walk/count, scopes, aliases, patrones y BODY checking. No confundir compilación
+con ejecución. Próximo núcleo: operadores relacionales/indexados sobre
+QueryView/GraphIndex, sesiones y evaluación BODY; después KQL1 y superficies
+CLI/MCP/config/cachés/catálogo. Python instalado sigue activo. M5 sigue abierto;
+M6 y el resto de M7/M8, y la calificación SkylakeX/Intel, siguen pendientes.
+
+Trampas de protocolo: `QuotedTerm` conserva token y literal decodificado; no es un
+rol aunque empiece por `$`. Mapas se capturan como OrderedMap/items para conservar
+orden. El alias final no visita AST/BodyPattern ni attrs de Edge. Los witnesses
+privados se renombran por span de clause; parámetros de AST no se remapean. Las
+alternativas intersectan bindings/tipos, sin filtrar aliases por intuición nueva.
+El cache de patrones usa Arc y orden postorder. Al inlinear un forwarding corto,
+el root nuevo conserva como definición el root original además del patrón hijo:
+la exclusión original depende de identidad. No simplificar ese detalle.
+
+SHA relacional: repr del File preparado, en streaming. Los presupuestos de trabajo
+se comparten entre patrones/BODY y cobran metadata completa, expresiones, flags,
+parámetros, copias de scopes y payload generado; candidatos de nombres
+son locales por bloque para mantener sufijos entre alternativas. Las búsquedas de
+exports tienen índice sin permitir mutación pública de sus items. Regex string de
+initialized_with usa un comprobador de sintaxis nativo acotado, con flags/grupos/
+referencias/recursión/lookaround/conjuntos/fuzzy y propiedades Unicode congeladas.
+La primera aproximación con Onig se retiró: aceptaba escapes inválidos y rechazaba
+flags válidos del paquete Python regex. No se añade dependencia ni se construyen
+autómatas. Un ValueError original por regex inválido se convierte en diagnóstico
+nativo controlado. Se conserva literalmente el patrón; matching sigue pendiente.
+
+| Recurso en ken-query | Casos | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| relational-reference.json.gz |440/145 planes|121358|`c0899f8f0cab01ec1393935d3de70e85cd2fcac02ce5895f0a463b9fc1137d34`|
+| compilation-reference.json.gz |34/13 programas|30544|`76f73dfcee0101816a76a4404b0661ec3439e364ed644bd5754a7bbb20a7aac8`|
+| relational-capabilities.json |vocabulario original|5945|`b0d3a69e5e8eca927b034c704a5e916c7e9d5079ea5e008fbb8d42f18e262dc4`|
+| relational-regex-reference.json.gz |127/78 válidos|1401|`809ff9aba2443c7ce1ebe7fe7c6880e4eff10f3f31a57e832fc17ee75d70a72b`|
+| regex-properties.json |aliases/valores originales|29011|`2320628a29037e51df72191258fe09e69ea2539c6198ce597030007eb40a48ef`|
+
+Pasaron39 raíces nativas, Clippy estricto y formato. Una revisión fresca final
+identificó tres Important: gramática regex, payload sin cobrar y snapshots de
+ámbitos cuadráticos. Todos tienen regresión roja→verde en una pasada; no hubo
+Critical/Minor ni segunda revisión. Se preserva el ejemplo válido de4000 exports.
+La sintaxis regex limita profundidad512 y trabajo de rescans; no acredita matching.
+
+Observaciones nuevas una vez, contra original1066 autenticado antes/después.
+No se repitieron parser/indexed/BODY/model/CPU/CI/global; público271/Best247 no
+cambian. Crudos/scripts/workspace se conservan locales y sin seguimiento.
+
 Actualización de compilación indexada del29/10: `ken-query` implementa
 `compile_indexed`, `compile_indexed_branches`, `IndexedProgram` y `compile_body`.
 La [API](rust-migration.md#kql2-compilación-indexada-y-comprobación-body) recibe
 sintaxis ya resuelta/especializada. El primer entry equivale a `_compile`; el
 segundo compone alternativas indexadas, mantiene el límite global y las huellas
-originales. No reemplaza el dispatcher `compile` que elige entre ambos backends.
-Próximo núcleo: lowering relacional/source selectors/quantifiers/usages; después
-operadores, sesiones, evaluación BODY y conexión KQL1/2 con CLI/MCP/config.
+originales. El dispatcher y el lowering relacional se completaron en el bloque descrito arriba.
+Siguen operadores, sesiones, evaluación BODY y conexión KQL1/2 con CLI/MCP/config.
 
 Scans/actions/BODY conservan el orden del pipeline; scopes de cuantificadores y
 testigos `exists` son privados, y patrones generan roles higiénicos con el mismo
@@ -88,9 +143,9 @@ solamente la indexada expande alternativas128 antes de `_compile`. No confundir
 inmutable módulo→File; `specialize_models` comprueba firmas y genera `@model` en
 orden de primer uso; `expand_indexed_alternatives` genera `@variant` y detecta
 recursión; `predicate_components` calcula SCC/estratificación iterativamente.
-La compilación indexada se añadió en el bloque descrito arriba; no hay dispatcher
-público completo ni ejecución BODY todavía. Siguen el lowering relacional y los
-operadores sobre QueryView/GraphIndex, sesiones, runtime BODY y conexión KQL1/2.
+Los dos compiladores y el coordinador puro se añadieron en los bloques descritos
+arriba; no hay ejecución BODY todavía. Siguen operadores sobre QueryView/GraphIndex,
+sesiones, runtime BODY y conexión KQL1/2.
 
 Trampas observadas: `dataclasses.asdict` pierde Expr frente a SourceExpr;
 conservar `__class__` recursivo. Las identidades usan repr de dataclass/tuple,
@@ -715,14 +770,15 @@ cambiar de máquina. No dependen del historial del chat ni de memoria local de K
 | Búsqueda por piezas Linux x86_64 | PieceSearch aceptado | 45 observaciones originales, 3 frames Ettin reales; cadena completa local y dos réplicas CI, 586 pruebas de herramientas y 206 nativas por host; replay aislado |
 | M4d | En curso: BestSearch, preparación contextual y expansión CT2 x86 implementados; aceptación pendiente | Cadena local y CI Haswell pasan; contrastar SkylakeX con su original y completar Intel/MKL. Quedan modos de compatibilidad, modelos/canales y calidad global |
 | Búsqueda pública por defecto x86_64 | CLI y MCP stdio implementados; calificación en curso | Manifest de instalación reubicable, recursos diferidos, texto/JSON y sesiones recuperables. MCP negocia el protocolo 2025-11-25; otros scopes/modos y el protocolo moderno quedan pendientes |
-| M5a | En curso: núcleo del almacén estructural implementado | Esquema15, unidades/AST/operaciones, snapshots/scans/leases/GC nativos; quedan productor IR/CFG, grafo semántico/publicación completa y calificación M5 |
-| M5b/M5c | Pendientes | KQL1/2, compilador/operadores/sesiones y flujo/completitud |
+| M5a | Implementación en biblioteca; calificación M5 pendiente | Productor IR/CFG, ensamblado semántico, builder/caché y publicación/adquisición QueryView/GraphIndex nativos; integración y recibos globales pendientes |
+| M5b/M5c | Parcial: frontend, preparación y ambos compiladores KQL2 implementados | Quedan KQL1, operadores, sesiones, evaluación BODY, flujo/completitud e integración pública |
 | M6 | Pendiente | Conocimiento, memoria justificada, anchors, vigencia, entrega, razonamiento, checks, inspection y responsabilidad |
 | M7 | Parcial: navegación/perfiles, literal/BM25, orientación y llamadas/tipos/wiring por CLI/MCP implementadas | Quedan ranking de sesión, otras relaciones, daemon, colas, watcher, lifecycle, concurrencia, CLI restante, MCP completo, hooks e integración con hosts |
 | M8 | Pendiente | Distribución, matriz global, upgrade/rollback y promoción nativa sin Python |
 
 No hay un porcentaje funcional global acreditado. M3 incluye el modelo común,
-pero **no** acredita el productor completo de IR ni la ejecución KQL de M5.
+pero **no** acredita la ejecución KQL de M5. El productor IR ya tiene implementación
+en biblioteca; su aceptación integrada pertenece a M5.
 Ningún bloque numérico o probe interno acredita por sí solo la búsqueda pública.
 
 Los recibos siguientes están bajo `docs/validation/rust-migration-2026-10-23/`:
