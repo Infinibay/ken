@@ -81,6 +81,13 @@ existing installed Python entry point until those requirements are resolved.
 
 ## Review focus
 
+Current user scope supersedes the earlier promotion/portability tasks: prioritize
+numerical compatibility; optional full models may follow; defer portability and
+do not switch the installed default. Investigate existing Cargo CLI distribution
+tools comparable to uv before designing a final installation mechanism. Preserve
+all existing qualified evidence and exact-profile gates; the scope change does
+not authorize replacing numerical expectations or ignoring the SkylakeX mismatch.
+
 - Stable identity versus historical value provenance across exclusive CFG arms.
 - Exact scalar/enum/option identity, arithmetic and open quantifier domains.
 - Source/graph snapshot ownership across refresh, cancellation and delivery.

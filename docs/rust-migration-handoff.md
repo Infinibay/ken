@@ -2734,3 +2734,26 @@ establecen por sí solos una línea base portable para todo x86_64.
 Estado: `migration_complete=false`, `M4_accepted=false`. La aplicación instalada
 sigue en Python hasta demostrar los requisitos de promoción. Los originales,
 las referencias congeladas y los datos locales se conservan.
+
+## Prioridades actuales indicadas por el usuario
+
+La siguiente etapa prioriza la compatibilidad numérica: resolver el caso
+SkylakeX con evidencia independiente del perfil que falla y completar Intel/MKL.
+Los modelos opcionales son una posible continuación, usando primero el runtime
+ya verificado y distinguiendo sus pruebas de las de modelos completos.
+
+Cambiar la instalación habitual a Rust no está autorizado como siguiente paso.
+Primero se investiga la distribución existente del ecosistema. La portabilidad
+queda pospuesta y no es un requisito de cierre de esta etapa. Esto no convierte
+las mediciones del equipo actual en pruebas de otros sistemas ni acepta el
+pendiente numérico.
+
+La investigación de herramientas distingue
+[`cargo install`](https://doc.rust-lang.org/cargo/commands/cargo-install.html)
+para compilar e instalar CLIs,
+[`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall) para obtener
+binarios publicados y
+[`cargo-run-bin`](https://github.com/dustinblackman/cargo-run-bin) para fijar,
+almacenar en caché y ejecutar herramientas por proyecto. Son candidatos de
+distribución, no una instalación ya aplicada a Ken: sus tres ejecutables,
+bibliotecas y recursos requieren conservar el inventario autenticado existente.
