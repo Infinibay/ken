@@ -2,13 +2,12 @@
 from pathlib import Path
 from dataclasses import replace
 from importlib.metadata import version
-import gzip,hashlib,json,platform,sys,unicodedata
+import gzip,hashlib,json,platform,re,sys,unicodedata
 
 from .execution_profiles import authenticate_frozen,FP
 from .translation_reference import capture as observe,_CHILD,translation_cases
 
 FIXTURE='crates/ken-models/tests/fixtures/translation-linux-x86_64.json.gz'
-REFERENCE_ID={'bytes':12338,'sha256':'97815693b2aef5441f887685623025260360fdfb6c8d888637f8b1582b7a7f00'}
 OBSERVER_SHA='b4f0d0c95d7172296ac999ae7fc0a70f27f9bd770958b859c9af82a04df55809'
 DEFINITION_SHA='1af342f7677e9f51477171000e5aa6e6527590a715f064bd64679c1aa491a9f0'
 MODULE_HASHES={
@@ -17,6 +16,7 @@ MODULE_HASHES={
     'ken.retrieval.translation_preparation':'677dada3a32969617b1febaa3fd89750975ad8ae2900b407acd0f37d5ab2faed',
 }
 RUNTIME={'ctranslate2':'4.8.2','sentencepiece':'0.2.1'}
+PROFILES='crates/ken-models/tests/fixtures/translation-reference-profiles.json'
 
 def digest(value):
     return hashlib.sha256(json.dumps(value,sort_keys=True,ensure_ascii=True).encode()).hexdigest()
@@ -56,17 +56,55 @@ def validate(value):
     except(KeyError,TypeError,ValueError,AttributeError)as error:
         return[str(error)]
 
-def load(repo):
-    path=Path(repo)/FIXTURE
+def profile(repo,*,float_backend,int8_backend):
+    """Select one complete, independently observed numerical reference."""
+    document=json.loads((Path(repo)/PROFILES).read_bytes())
+    if document.get('format')!='ken-translation-reference-profiles/1':
+        raise ValueError('translation reference profile format differs')
+    rows=document['profiles'];keys=set();artifacts=set()
+    if not isinstance(rows,list):raise ValueError('translation reference profiles must be a list')
+    for row in rows:
+        key=tuple(row[field]for field in('platform','architecture','float_backend','int8_backend'))
+        artifact=row['artifact'];name=row['file']
+        if (not all(isinstance(part,str)and part for part in key)
+                or not isinstance(name,str)or Path(name).name!=name or name in('.', '..')
+                or type(artifact['bytes'])is not int or artifact['bytes']<=0
+                or not isinstance(artifact['sha256'],str)or re.fullmatch('[0-9a-f]{64}',artifact['sha256'])is None
+                or not isinstance(row['results_sha256'],str)or re.fullmatch('[0-9a-f]{64}',row['results_sha256'])is None):
+            raise ValueError('invalid translation reference profile')
+        if key in keys or artifact['sha256']in artifacts:
+            raise ValueError('duplicate translation reference profile or shared observations')
+        keys.add(key);artifacts.add(artifact['sha256'])
+    matches=[row for row in rows if tuple(row[field]for field in
+        ('platform','architecture','float_backend','int8_backend'))==('Linux','x86_64',float_backend,int8_backend)]
+    if len(matches)!=1:
+        raise ValueError(f'independent original translation oracle required for Linux/x86_64 {float_backend}/{int8_backend}')
+    return matches[0]
+
+
+def require_reference(value,*,float_backend,int8_backend,repo=None):
+    """Reject numerical comparisons against another backend's observations."""
+    row=profile(Path(__file__).resolve().parents[2]if repo is None else repo,
+        float_backend=float_backend,int8_backend=int8_backend)
+    if errors:=validate(value):raise ValueError('; '.join(errors))
+    if value['results_sha256']!=row['results_sha256']:
+        raise ValueError('independent translation observations differ from selected backend profile')
+    return row
+
+
+def load(repo,*,backend='DNNL'):
     try:
+        row=profile(repo,float_backend=backend,int8_backend=backend)
+        path=Path(repo)/Path(PROFILES).parent/row['file']
         raw=path.read_bytes()
         identity=dict(bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())
-        if identity!=REFERENCE_ID:raise ValueError('identity differs')
+        if identity!=row['artifact']:raise ValueError('identity differs')
         value=json.loads(gzip.decompress(raw))
-        if errors:=validate(value):raise ValueError('; '.join(errors))
+        require_reference(value,float_backend=backend,int8_backend=backend,repo=repo)
         return value
-    except(OSError,ValueError,EOFError)as error:
+    except(OSError,ValueError,EOFError,KeyError,TypeError,AttributeError)as error:
         raise ValueError('preserved x86 translation reference required: '+str(error))from error
+
 
 def capture(reference,source,out):
     out=Path(out)

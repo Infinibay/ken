@@ -1,4 +1,7 @@
 //! Verified native model execution, independent of project discovery and storage.
+#[cfg(test)]
+extern crate self as ken_models;
+
 mod artifact_cache;
 mod assets;
 mod cache_directory;

@@ -9,7 +9,7 @@ from .native_snapshot import read_source_snapshot
 from .translation_cpu_prepare import registration, expected_files, verify_sdk
 from .translation_cpu_build import verify_build, proof_errors, PROOF_FILES
 from .translation_compare import compare_output
-from .x86_translation_reference import load as original, FIXTURE
+from .x86_translation_reference import load as original
 from .command_gates import run_command_gates, command_gate_errors, run_python_scope, python_scope_errors, cargo_artifact
 
 PREFIX='ken-x86-translation-'
@@ -19,8 +19,8 @@ PLAN='docs/superpowers/plans/2026-10-28-rust-x86-query-expansion.md'
 PYTHON_FILES=['tests/rust_migration/test_'+name+'.py'for name in(
     'translation_reference','x86_translation_reference','translation_compare','translation_cpu_prepare',
     'translation_cpu_build','native_core_prepare','native_core_gates','command_gates','x86_translation_host')]
-PYTHON_ROOTS=79
-RUST_TEST=['cargo','test','--locked','--offline','-p','ken-models','--lib','--test','query_expansion','--test','translation_runtime','--test','model_factory']
+PYTHON_ROOTS=88
+RUST_TEST=['cargo','test','--locked','--offline','-p','ken-models','--lib','--test','query_expansion','--test','translation_profile_selection','--test','translation_runtime','--test','model_factory']
 SEARCH_TEST=['cargo','test','--locked','--offline','-p','ken-search','--test','translation_warming']
 COMMANDS={
     'model-list':[*RUST_TEST,'--','--list'],'model-tests':[*RUST_TEST,'--no-fail-fast'],
@@ -61,16 +61,23 @@ def sdk_manifest(repo):
     return dict(format='ken-translation-cpu-sdk/1',os='linux',arch='x86_64',version='4.8.2',
         source_wheel=row['wheel'],source_headers=row['headers'],files=expected_files(row),python_runtime_imported=False)
 
+def host_reference(repo,cpu):
+    """Preflight the default CPU backend; observed native identities are checked later."""
+    vendors=set(re.findall(r'^vendor_id\s*:\s*(\S+)',cpu,re.M))
+    require(len(vendors)==1,'one CPU vendor required')
+    vendor=vendors.pop();backend='MKL'if vendor=='GenuineIntel'else'DNNL'
+    return vendor,backend,original(repo,backend=backend)
+
+
 def verify_capture(out,repo):
     try:
-        out,repo=map(Path,(out,repo));expected=original(repo);host=load(out/'HOST.json')
+        out,repo=map(Path,(out,repo));host=load(out/'HOST.json')
         require(host['format']=='ken-x86-translation-host/1'and(host['os'],host['arch'])==('linux','x86_64'),'x86 translation host differs')
         require(host['python']=='3.12.9'and host['rustc'].startswith('rustc 1.95.0 '),'pinned host tools differ')
         require(re.fullmatch('[0-9a-f]{40}',host['commit'])is not None and type(host['dirty'])is bool,'candidate Git state missing')
         require(all(Path(host[key]).is_absolute()and'..'not in Path(host[key]).parts for key in('repo','target')),'recorded repository/target directory required')
-        cpu=(out/'CPUINFO.txt').read_text();vendors=set(re.findall(r'^vendor_id\s*:\s*(\S+)',cpu,re.M))
-        require(len(vendors)==1 and host['cpu_vendor']in vendors,'actual CPU vendor differs')
-        backend='MKL'if host['cpu_vendor']=='GenuineIntel'else'DNNL'
+        cpu=(out/'CPUINFO.txt').read_text();vendor,backend,expected=host_reference(repo,cpu)
+        require(host['cpu_vendor']==vendor,'actual CPU vendor differs')
         require(host['backend']==backend,'default CT2 CPU backend differs')
         require(load(out/'SOURCES.json')==sources(repo),'complete translation source/tooling inventory differs')
         require(load(out/'SDK.json')==sdk_manifest(repo),'registered SDK source/header inventory differs')
@@ -106,7 +113,7 @@ def verify_host(out,repo):
         selected=probe_artifact(out/'gates/selected-probe-build.log',recorded_repo,target)
         require(load(out/'PROBE.json')==dict(path=str(selected),artifact=identity(out/'bin/translation_probe')),'copied probe differs from Cargo-selected executable')
         from .integration_validate import rust_gate_errors
-        for name,count in(('model',68),('search',1)):
+        for name,count in(('model',73),('search',1)):
             listed=(out/'gates'/f'{name}-list.log').read_text();output=(out/'gates'/f'{name}-tests.log').read_text()
             require(not rust_gate_errors(listed,output)and len(re.findall(r'^([^\n]+): test$',listed,re.M))==count,'complete native test roots required: '+name)
         errors=python_scope_errors(out,PYTHON_FILES,PYTHON_ROOTS,cwd=recorded_repo);require(not errors,str(errors))
@@ -118,9 +125,10 @@ def verify_host(out,repo):
 def _capture_into(repo,out,source,sdk,backend,*,binary=None,target=None):
     repo,out,source,sdk,backend=map(Path,(repo,out,source,sdk,backend))
     if(platform.system(),platform.machine())!=('Linux','x86_64'):raise ValueError('Linux x86 translation host required')
+    cpu=Path('/proc/cpuinfo').read_text();vendor,selected_backend,expected=host_reference(repo,cpu)
     if errors:=verify_sdk(sdk,repo):raise ValueError(errors)
     if errors:=verify_build(backend,repo,sdk):raise ValueError(errors)
-    expected=original(repo);records=sources(repo);ready=load(backend/'PREPARATION.json')
+    records=sources(repo);ready=load(backend/'PREPARATION.json')
     (out/'bin').mkdir()
     binary=repo/'target/debug/examples/translation_probe'if binary is None else Path(binary)
     target=repo/'target'if target is None else Path(target)
@@ -130,10 +138,9 @@ def _capture_into(repo,out,source,sdk,backend,*,binary=None,target=None):
     shutil.copyfile(sdk/'PREPARATION.json',out/'SDK.json');shutil.copyfile(backend/'PREPARATION.json',out/'BACKEND-BUILD.json')
     for name in PROOF_FILES:
         proof=out/'backend-proof'/name;proof.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(backend/name,proof)
-    cpu=Path('/proc/cpuinfo').read_text();(out/'CPUINFO.txt').write_text(cpu)
-    vendors=set(re.findall(r'^vendor_id\s*:\s*(\S+)',cpu,re.M));require(len(vendors)==1,'one CPU vendor required');vendor=vendors.pop()
+    (out/'CPUINFO.txt').write_text(cpu)
     host=dict(format='ken-x86-translation-host/1',os='linux',arch='x86_64',python=platform.python_version(),
-        rustc=subprocess.check_output(['rustc','--version'],text=True).strip(),cpu_vendor=vendor,backend='MKL'if vendor=='GenuineIntel'else'DNNL',
+        rustc=subprocess.check_output(['rustc','--version'],text=True).strip(),cpu_vendor=vendor,backend=selected_backend,
         commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip(),
         dirty=bool(subprocess.check_output(['git','status','--porcelain'],cwd=repo,text=True)),repo=str(repo),target=str(target))
     (out/'HOST.json').write_text(json.dumps(host,indent=2)+'\n');(out/'SOURCES.json').write_text(json.dumps(records,indent=2)+'\n')
@@ -163,6 +170,7 @@ def run_host(repo,out,source,sdk,backend):
     if not target.is_absolute():target=repo/target
     target=target.absolute()
     if out.exists()or out.is_symlink():raise ValueError('fresh translation host output required')
+    host_reference(repo,Path('/proc/cpuinfo').read_text())
     (out/'gates').mkdir(parents=True);environment=os.environ.copy()
     try:
         os.environ.update(KEN_CT2_SDK=str(sdk),KEN_CT2_PREPARATION=str(backend/'PREPARATION.json'),

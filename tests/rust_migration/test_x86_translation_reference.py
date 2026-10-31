@@ -21,6 +21,11 @@ def test_missing_x86_reference_cannot_fall_back_to_arm(tmp_path):
     with pytest.raises(ValueError,match='preserved x86 translation'):
         load(tmp_path)
 
+def test_unobserved_mkl_reference_is_required_instead_of_amd_fallback():
+    from tools.rust_migration.x86_translation_reference import load
+    with pytest.raises(ValueError,match='independent.*MKL'):
+        load(ROOT,backend='MKL')
+
 @pytest.mark.parametrize('change',['architecture','runtime','source','definition','inputs','result-order','calls','backend'])
 def test_resealed_foreign_or_incomplete_x86_histories_are_rejected(change):
     from tools.rust_migration.x86_translation_reference import load,validate,digest
@@ -38,9 +43,10 @@ def test_resealed_foreign_or_incomplete_x86_histories_are_rejected(change):
     assert validate(value)
 
 def test_changed_compressed_reference_is_rejected_before_comparison(tmp_path):
-    from tools.rust_migration.x86_translation_reference import FIXTURE,load
+    from tools.rust_migration.x86_translation_reference import FIXTURE,PROFILES,load
     path=tmp_path/FIXTURE;path.parent.mkdir(parents=True)
     shutil.copyfile(ROOT/FIXTURE,path)
+    shutil.copyfile(ROOT/PROFILES,tmp_path/PROFILES)
     raw=bytearray(path.read_bytes());raw[-1]^=1;path.write_bytes(raw)
     with pytest.raises(ValueError,match='preserved x86 translation'):
         load(tmp_path)
@@ -57,3 +63,20 @@ def test_non_x86_host_is_rejected_before_original_execution(tmp_path,monkeypatch
     out=tmp_path/'original'
     with pytest.raises(ValueError,match='Linux x86_64'):observer.capture(None,None,out)
     assert not out.exists()
+
+
+@pytest.mark.parametrize('change',['duplicate-profile','shared-observations','traversal','result-digest'])
+def test_profile_registry_cannot_alias_or_reseal_another_original(tmp_path,change):
+    from tools.rust_migration.x86_translation_reference import FIXTURE,PROFILES,load
+    path=tmp_path/PROFILES;path.parent.mkdir(parents=True)
+    shutil.copyfile(ROOT/FIXTURE,tmp_path/FIXTURE)
+    registry=json.loads((ROOT/PROFILES).read_bytes())
+    row=registry['profiles'][0]
+    if change=='duplicate-profile':registry['profiles'].append(copy.deepcopy(row))
+    elif change=='shared-observations':
+        other=copy.deepcopy(row);other.update(float_backend='MKL',int8_backend='MKL')
+        registry['profiles'].append(other)
+    elif change=='traversal':row['file']='../'+row['file']
+    else:row['results_sha256']='0'*64
+    path.write_text(json.dumps(registry))
+    with pytest.raises(ValueError):load(tmp_path)

@@ -2757,3 +2757,53 @@ binarios publicados y
 almacenar en caché y ejecutar herramientas por proyecto. Son candidatos de
 distribución, no una instalación ya aplicada a Ken: sus tres ejecutables,
 bibliotecas y recursos requieren conservar el inventario autenticado existente.
+
+## Compatibilidad numérica: referencias separadas por backend
+
+El seguimiento del 30 de octubre encontró un falso positivo en el validador:
+aceptaba las 29 respuestas AMD originales con identidades nativas MKL si las
+respuestas coincidían. Una prueba reprodujo esa aceptación antes del arreglo.
+No era evidencia independiente de compatibilidad Intel.
+
+Python y los tests Rust comparten ahora un registro de referencias completas,
+seleccionado por plataforma, arquitectura y pareja real float/int8. El único
+perfil observado registrado sigue siendo Linux/x86_64 DNNL/DNNL. MKL/MKL y
+parejas mixtas exigen un original independiente; nunca toman las respuestas
+AMD como sustituto. Se comprueban bytes comprimidos, SHA256 y digest del
+conjunto entero de resultados. El registro rechaza claves duplicadas y el uso
+del mismo artefacto para dos perfiles. La fixture AMD conserva sus bytes.
+
+El selector Rust consulta los metadatos del runtime autenticado, sin ejecutar
+inferencia, antes de elegir el original. El ejecutor Python precomprueba el
+backend predeterminado de CPU antes de compilar o inferir y contrasta después
+las identidades reales de todas las historias. El diagnóstico de referencia
+Intel ausente reemplaza una comparación inválida, no constituye una aceptación.
+
+Pasaron 33 pruebas Python enfocadas y cinco pruebas puras Rust, Clippy estricto
+de la biblioteca y los cuatro targets de integración afectados, y formato.
+La enumeración, sin ejecutar modelos, confirma los 73 roots Rust y 88 Python
+del alcance actualizado. La revisión focalizada tuvo una reparación: Rust
+también debía rechazar referencias compartidas entre perfiles. Los logs y el
+inventario detallado permanecen locales e ignorados; no se repitieron matrices
+de modelos, capturas originales ni asignaciones CI.
+
+La auditoría de 31 ZIPs existentes confirmó 29 historias/39 llamadas nativas
+Intel, con tres diferencias frente al original AMD: spanish-lexicon,
+source-boundary511 y source-boundary512. Ninguno de los 28 artefactos de
+asignación del original contiene inferencia Intel; una asignación Intel falló
+en el diagnóstico histórico num_replicas. El workflow actual ya usa
+num_translators, por lo que ese arreglo no se repite. Hace falta observar las
+29 historias originales completas en Intel y cualificar después las fuentes
+vigentes. No se derivará un original de las respuestas nativas.
+
+En SkylakeX, la diferencia conocida pertenece a la puntuación del owner wrapper
+en registered-symbol, para la consulta “Preserve the exception cause”. La ruta
+de símbolos no usa el forest de piezas: el valor procede de EvidenceReranker,
+antes del reranker neural. Una hipótesis de una sola hoja distinta no produjo
+candidatos y no se considera causa demostrada. Sigue faltando el original del
+perfil exacto registrado; no se amplían tolerancias ni se reinician las
+asignaciones a ciegas.
+
+Este cambio afecta a validadores y tests, no al runtime de inferencia.
+migration_complete=false y M4_accepted=false siguen vigentes. La instalación
+habitual y la portabilidad mantienen las prioridades indicadas arriba.

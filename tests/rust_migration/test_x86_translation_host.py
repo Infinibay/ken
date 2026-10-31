@@ -78,3 +78,24 @@ def test_resealed_native_host_compiler_proof_cannot_contradict_its_registered_in
     path=target/'backend-proof'/member;path.write_text(after);report['proof_files'][member]=identity(path)
     (target/'BACKEND-BUILD.json').write_text(json.dumps(report))
     assert verify_capture(target,ROOT),change
+
+
+def test_missing_intel_reference_stops_before_build_or_inference(tmp_path,monkeypatch):
+    from tools.rust_migration import x86_translation_host as host
+    original_read=Path.read_text
+    monkeypatch.setattr(Path,'read_text',lambda self,*args,**kwargs: 'vendor_id : GenuineIntel\n'
+        if str(self)=='/proc/cpuinfo' else original_read(self,*args,**kwargs))
+    def forbidden(*args,**kwargs):
+        pytest.fail('missing reference must stop before build/inference')
+    monkeypatch.setattr(host,'run_command_gates',forbidden)
+    with pytest.raises(ValueError,match='independent.*MKL'):
+        host.run_host(ROOT,tmp_path/'out',tmp_path/'source',tmp_path/'sdk',tmp_path/'backend')
+    assert not (tmp_path/'out').exists()
+
+
+def test_cpu_preflight_selects_dnnl_original_and_rejects_ambiguous_vendors():
+    from tools.rust_migration.x86_translation_host import host_reference
+    vendor,backend,expected=host_reference(ROOT,'vendor_id : AuthenticAMD\nvendor_id : AuthenticAMD\n')
+    assert (vendor,backend)==('AuthenticAMD','DNNL')and len(expected['results'])==29
+    with pytest.raises(ValueError,match='one CPU vendor'):
+        host_reference(ROOT,'vendor_id : AuthenticAMD\nvendor_id : GenuineIntel\n')

@@ -43,28 +43,49 @@ def test_exact_native_histories_accept_both_platform_originals_with_actual_measu
         assert len(actual['results'])==29
         assert compare_output(expected,actual)==[]
 
-def test_x86_comparison_requires_an_explicit_registered_native_backend():
-    from tools.rust_migration.translation_compare import native_identity
+def x86_evidence(backend):
+    from tools.rust_migration.translation_compare import native_identity, _native_error
     from tools.rust_migration.x86_translation_reference import load
     expected=load(ROOT)
+    actual={'format':'ken-translation-native/1','preparation':dict(fresh_cache=True,reused_without_source=True,
+        source_artifacts=expected['source_artifacts'],artifacts=expected['prepared_artifacts'],recipe_key=expected['recipe_sha256']),
+        'prepare_ns':1,'runtime':{'engine':'rust','ken_models':'0.18.0'},
+        'memory_samples':deepcopy(expected['memory_samples']),'results':deepcopy(expected['results'])}
+    runtime=native_identity('Linux','x86_64',backend=backend)
+    for case,row in zip(expected['cases'],actual['results'],strict=True):
+        row['actual_runtime']=deepcopy(runtime)if row['calls'][-1]['runtime_loaded']else None
+        for call in row['calls']:
+            if 'error'in call:call['error']=_native_error(case,call['error'])
+    return expected,actual
+
+
+def test_amd_original_cannot_qualify_mkl_even_if_all_numerical_answers_match():
+    expected,actual=x86_evidence('MKL')
+    errors=compare_output(expected,actual,backend='MKL')
+    assert errors, 'AMD reference plus MKL labels must never establish independent MKL parity'
+    assert any('independent' in error.lower() and 'MKL' in error for error in errors), errors
+
+
+def test_x86_comparison_requires_an_explicit_registered_native_backend():
+    from tools.rust_migration.translation_compare import native_identity
+    expected,actual=x86_evidence('DNNL')
+    assert not compare_output(expected,actual,backend='DNNL')
+    assert compare_output(expected,actual)
+    assert compare_output(expected,actual,backend='MKL')
     for backend in ('DNNL','MKL'):
-        actual={'format':'ken-translation-native/1','preparation':dict(fresh_cache=True,reused_without_source=True,
-            source_artifacts=expected['source_artifacts'],artifacts=expected['prepared_artifacts'],recipe_key=expected['recipe_sha256']),
-            'prepare_ns':1,'runtime':{'engine':'rust','ken_models':'0.18.0'},
-            'memory_samples':deepcopy(expected['memory_samples']),'results':deepcopy(expected['results'])}
         runtime=native_identity('Linux','x86_64',backend=backend)
-        assert runtime['native_binding']=='ken-translation/1' and 'ct2rs_crate'not in runtime
-        for case,row in zip(expected['cases'],actual['results'],strict=True):
-            row['actual_runtime']=deepcopy(runtime)if row['calls'][-1]['runtime_loaded']else None
-            for call in row['calls']:
-                if 'error'in call:
-                    from tools.rust_migration.translation_compare import _native_error
-                    call['error']=_native_error(case,call['error'])
-        assert not compare_output(expected,actual,backend=backend)
-        assert compare_output(expected,actual)
-        assert compare_output(expected,actual,backend='MKL'if backend=='DNNL'else'DNNL')
+        assert runtime['native_binding']=='ken-translation/1'and 'ct2rs_crate'not in runtime
     for backend in (None,'Ruy','OpenBLAS0.3.26'):
         with pytest.raises(ValueError):native_identity('Linux','x86_64',backend=backend)
+
+
+def test_actual_mixed_or_unregistered_backend_cannot_hide_behind_dnnl_declaration():
+    for float_backend,int8_backend in [('MKL','MKL'),('DNNL','MKL'),('MKL','DNNL')]:
+        expected,actual=x86_evidence('DNNL')
+        runtime=next(row['actual_runtime']for row in actual['results']if row['actual_runtime'])
+        runtime.update(float_backend=float_backend,int8_backend=int8_backend)
+        errors=compare_output(expected,actual,backend='DNNL')
+        assert any('independent' in error and f'{float_backend}/{int8_backend}'in error for error in errors),errors
 
 
 def test_changed_tokens_hypotheses_text_failure_boundaries_and_lazy_states_are_rejected():

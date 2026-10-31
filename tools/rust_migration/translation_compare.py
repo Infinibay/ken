@@ -118,6 +118,15 @@ def compare_output(expected:dict,actual:object,*,backend:str|None=None)->list[st
     if set(actual)!={'format','preparation','prepare_ns','runtime','memory_samples','results'}:
         return ['missing or unexpected native translation output fields']
     try:
+        if (expected['platform'],expected['architecture'])==('Linux','x86_64'):
+            from .x86_translation_reference import require_reference
+            # Each loaded history must use the same independently observed pair.
+            # The declared backend cannot hide a different actual runtime.
+            require_reference(expected,float_backend=backend,int8_backend=backend)
+            for row in actual['results']:
+                runtime=row['actual_runtime']
+                if runtime is not None:
+                    require_reference(expected,float_backend=runtime['float_backend'],int8_backend=runtime['int8_backend'])
         errors=_differences('ken-translation-native/1',actual['format'],'format')
         errors.extend(preparation_errors(expected,actual['preparation']))
         errors.extend(_differences(RUNTIME,actual['runtime'],'runtime'))
